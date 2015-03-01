@@ -1,0 +1,9 @@
+RewriteEngine On
+
+RewriteRule ^admin/ /School/backend.php [QSA,L]
+
+RewriteRule ^school/ /School/school.php [QSA,L]
+
+RewriteCond %{REQUEST_FILENAME} !-f
+
+RewriteRule ^(.*)$ /School/frontend.php [QSA,L]

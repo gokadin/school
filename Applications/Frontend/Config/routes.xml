@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="iso-8859-1" ?>
+<routes>
+    <!-- INDEX MODULE -->
+    <route url="/School/" method="GET" module="Index" action="index" />
+    <route url="/School/" method="POST" module="Index" action="insert" />
+    
+    <!-- ACCOUNT MODULE -->
+    <route url="/School/account/login" method="GET" module="Account" action="login" />
+    <route url="/School/account/logout" method="GET" module="Account" action="logout" />
+    <route url="/School/account/forgot-password" method="GET" module="Account" action="forgotPassword" />
+
+    <!-- AJAX -->
+    <route url="/School/ajax/exists" method="GET" module="Ajax" action="exists" />
+</routes>
