@@ -10,12 +10,7 @@ class FrontendApplication extends \Library\Application {
     
     public function run() {
         $controller = $this->getController();
-        
-        // LANGUAGE VARIABLES
-        require 'Web/lang/common.php';
-        $controller->set_lang($lang);
-        $controller->page()->addVar('lang', $lang);
-        
+
         // SETTING RESTRICTIONS
 
         // SETTING NON DEFAULT LAYOUTS
