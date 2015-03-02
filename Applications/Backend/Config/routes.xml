@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="iso-8859-1" ?>
-<routes>
-    <!-- INDEX MODULE -->
-    <route url="/School/admin/" method="GET" module="Index" action="index" />
-    
-</routes>
