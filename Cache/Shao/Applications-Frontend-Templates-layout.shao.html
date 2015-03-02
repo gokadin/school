@@ -1,5 +1,5 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<!DOCTYPE html>
+<html>
   <head>
     <title>School</title>
     <meta http-equiv="Content-type" content="text/html; charset=UTF-8" />
@@ -9,12 +9,13 @@
     <script src="/School/Web/js/jquery.js"></script>
   </head>
   <body>
+    <nav>
+        <a href="/School/">Home</a>
+        <a href="/School/account/login">Login</a>
+        <a href="/School/account/signup">Sign up</a>
+    </nav>
     <div id="content">
-        <div id="contentdiv">
-            <div id="insidecontent">
-                <?php echo $content ; ?>
-            <div class="spacer_50"></div>
-        </div>
+        <?php echo $content ; ?>
     </div>
   </body>
 </html>

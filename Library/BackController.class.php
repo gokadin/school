@@ -71,7 +71,7 @@ abstract class BackController extends ApplicationComponent {
 
         $viewPrefix = 'Applications/' . $this->app->name() . '/Modules/' . $this->module . '/Views/';
         $contentFile = null;
-        if (file_exists($viewPrefix . $this->view . '.shao.html'))
+        if (file_exists($viewPrefix . $this->view . '.shao.html')) // change later for in_array based on config
         {
             $contentFile = Shao::parseFile($viewPrefix . $this->view . '.shao.html');
         } else if (file_exists($viewPrefix . $this->view . '.php'))
@@ -87,7 +87,7 @@ abstract class BackController extends ApplicationComponent {
 
         $layoutPrefix = 'Applications/'.$this->app->name().'/Templates/';
         $layoutFile = null;
-        if (file_exists($layoutPrefix.'layout.shao.html'))
+        if (file_exists($layoutPrefix.'layout.shao.html')) // change later for in_array based on configs
         {
             $layoutFile = Shao::parseFile($layoutPrefix.'layout.shao.html');
         }

@@ -1,7 +1,8 @@
 <?php
 namespace Library;
 
-class Router {
+class Router
+{
     protected $routes = array();
 
     const NO_ROUTE = 1;

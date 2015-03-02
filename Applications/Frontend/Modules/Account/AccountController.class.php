@@ -9,5 +9,15 @@ class AccountController extends \Library\BackController
     {
         
     }
+
+    public function executeSignUp(HTTPRequest $request)
+    {
+
+    }
+
+    public function executeRegisterUser(HTTPRequest $request)
+    {
+
+    }
 }
 ?>

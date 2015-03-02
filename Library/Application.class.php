@@ -20,10 +20,22 @@ abstract class Application {
         $router = new \Library\Router;
 
         $xml = new \DOMDocument;
-        $xml->load(__DIR__.'/../Applications/'.$this->name.'/Config/routes.xml');
+        $xml->load(__DIR__.'/../Config/routes.xml');
 
-        $routes = $xml->getElementsByTagName('route');
-        
+        $applications = $xml->getElementsByTagName('application');
+        $routes = array();
+        foreach ($applications as $application)
+        {
+            if ($application->getAttribute('name') == $this->name)
+            {
+                $routes = $application->getElementsByTagName('route');
+                break;
+            }
+        }
+
+        if ($routes == null)
+            throw new \Exception("Application.getController : could not find route.");
+
         foreach ($routes as $route) {
             $vars = array();
 

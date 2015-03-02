@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="iso-8859-1" ?>
+<routes>
+    <application name="Frontend">
+        <!-- INDEX MODULE -->
+        <route url="/School/" method="GET" module="Index" action="index" />
+        <!-- ACCOUNT MODULE -->
+        <route url="/School/account/login" method="GET" module="Account" action="index" />
+        <route url="/School/account/signup" method="GET" module="Account" action="signUp" />
+        <route url="/School/account/signup" method="POST" module="Account" action="registerUser" />
+    </application>
+    <application name="School">
+        <!-- INDEX MODULE -->
+        <route url="/School/school/" method="GET" module="Index" action="index" />
+    </application>
+    <application name="Backend">
+        <!-- INDEX MODULE -->
+        <route url="/School/admin/" method="GET" module="Index" action="index" />
+    </application>
+</routes>
