@@ -1,5 +1,6 @@
 <?php
 namespace Library;
+use \Library\Shao\Shao as Shao;
 
 abstract class BackController extends ApplicationComponent {
     protected $action = '';
