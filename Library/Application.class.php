@@ -34,7 +34,7 @@ abstract class Application {
         }
 
         if ($routes == null)
-            throw new \Exception("Application.getController : could not find route.");
+            throw new \Exception("Application.getController : could not find routes.");
 
         foreach ($routes as $route) {
             $vars = array();
@@ -46,9 +46,12 @@ abstract class Application {
             $router->addRoute(new Route($route->getAttribute('url'), $route->getAttribute('module'), $route->getAttribute('method'), $route->getAttribute('action'), $vars));
         }
 
-        try {
+        try
+        {
             $matchedRoute = $router->getRoute($this->httpRequest->requestURI(), $this->httpRequest->method());
-        } catch (\RuntimeException $e) {
+        }
+        catch (\RuntimeException $e)
+        {
             if ($e->getCode() == \Library\Router::NO_ROUTE) {
                 $this->httpResponse->redirect404();
             }

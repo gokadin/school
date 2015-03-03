@@ -17,7 +17,7 @@ class AccountController extends \Library\BackController
 
     public function executeRegisterUser(HTTPRequest $request)
     {
-
+        $this->app()->httpResponse()->redirect('/School/account/');
     }
 }
 ?>
