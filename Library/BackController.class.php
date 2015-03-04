@@ -75,15 +75,14 @@ abstract class BackController extends ApplicationComponent {
         if (file_exists($viewPrefix . $this->view . '.shao.html')) // change later for in_array based on config
         {
             $contentFile = Shao::parseFile($viewPrefix . $this->view . '.shao.html');
-        } else if (file_exists($viewPrefix . $this->view . '.php'))
+        }
+        else if (file_exists($viewPrefix . $this->view . '.php'))
         {
             $contentFile = $viewPrefix . $this->view . '.php';
-        } else if (file_exists($viewPrefix . $this->view . '.html'))
+        }
+        else if (file_exists($viewPrefix . $this->view . '.html'))
         {
             $contentFile = $viewPrefix . $this->view . '.html';
-        } else
-        {
-            throw new \InvalidArgumentException('View file does not exist.');
         }
 
         $layoutPrefix = 'Applications/'.$this->app->name().'/Templates/';
@@ -99,10 +98,6 @@ abstract class BackController extends ApplicationComponent {
         else if (file_exists($layoutPrefix.'layout.html'))
         {
             $layoutFile = $layoutPrefix.'layout.html';
-        }
-        else
-        {
-            throw new \InvalidArgumentException('View file does not exist.');
         }
 
         $this->page->setContentFile($contentFile);

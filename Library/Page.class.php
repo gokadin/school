@@ -24,29 +24,27 @@ class Page extends ApplicationComponent  {
         extract($this->vars);
 
         ob_start();
+
         require $this->contentFile;
-        $content = ob_get_clean();   
-        
+
+        $content = ob_get_clean();
+
         ob_start();
         if (empty($this->layoutFile))
             $this->setLayoutFile('layout.php');
-        require $this->layoutFile;
+        if (file_exists($this->layoutFile))
+            require $this->layoutFile;
+
         return ob_get_clean();
     }
     
-    public function setContentFile($contentFile) {
-        if (!is_string($contentFile) || empty($contentFile)) {
-            throw new \InvalidArgumentException('Invalid file');
-        }
-        
+    public function setContentFile($contentFile)
+    {
         $this->contentFile = $contentFile;
     }
     
-    public function setLayoutFile($layoutFile) {
-        if (!is_string($layoutFile) || empty($layoutFile)) {
-            throw new \InvalidArgumentException('Invalid file');
-        }
-        
+    public function setLayoutFile($layoutFile)
+    {
         $this->layoutFile = $layoutFile;
     }
 }
