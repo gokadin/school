@@ -1,30 +1,25 @@
 <?php
 namespace Library;
 
-abstract class Model {
-    protected $dao = null;
-    protected $table_name = null;
+class Model {
 
-    public function __construct($dao, $table_name)
+    public static function tableName()
     {
-        $this->dao = $dao;
-        $this->table_name = $table_name;
+        return substr(strstr(strtolower(get_called_class()), '\\'), 1);
     }
 
-    abstract function init();
-
-    public function query($sql)
+    public static function query($sql)
     {
-        return $this->dao->query($sql);
+        return DB::dao()->query($sql);
     }
 
-    public function exists($var, $value)
+    public static function exists($var, $value)
     {
-        $sql = 'SELECT COUNT(*) FROM '.$this->table_name.' WHERE '.$var.' = '.$value;
+        $sql = 'SELECT COUNT(*) FROM '.self::tableName().' WHERE '.$var.' = '.$value;
 
         try
         {
-            $result = $this->dao->query($sql);
+            $result = DB::dao()->query($sql);
             return $result->rowCount() > 0;
         }
         catch (\PDOException $e)
@@ -33,13 +28,11 @@ abstract class Model {
         }
     }
 
-    public function select()
+    public static function select()
     {
-        $sql = 'SELECT * FROM '.$this->table_name;
+        $sql = 'SELECT * FROM '.self::tableName();
 
-        $q = $this->dao->prepare($sql);
-
-        //$q->bindValue(':table', $this->table_name);
+        $q = DB::dao()->prepare($sql);
 
         $q->execute();
         $q->setFetchMode(\PDO::FETCH_CLASS | \PDO::FETCH_PROPS_LATE, 'Entity');
