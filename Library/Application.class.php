@@ -65,11 +65,11 @@ abstract class Application {
     
     abstract public function run();
 
-    public function httpRequest() {
+    public function request() {
         return $this->httpRequest;
     }
 
-    public function httpResponse() {
+    public function response() {
         return $this->httpResponse;
     }
 

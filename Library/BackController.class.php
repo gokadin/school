@@ -8,14 +8,18 @@ abstract class BackController extends ApplicationComponent {
     protected $method = '';
     protected $page = null;
     protected $view = '';
+    protected $response = null;
+    protected $request = null;
     protected $lang = null;
 	
     public function __construct(Application $app, $module, $method, $action) {
         parent::__construct($app);
 
         DB::init(PDOFactory::get_mysql_connexion());
-        $this->page = new Page($app);
 
+        $this->page = new Page($app);
+        $this->response = $app->response();
+        $this->request = $app->request();
         $this->setModule($module);
         $this->setMethod($method);
         $this->setAction($action);
@@ -29,7 +33,7 @@ abstract class BackController extends ApplicationComponent {
             throw new \RuntimeException('The action '.$this->action.' is not defined on this module');
         }
 
-        $this->$function_name($this->app->httpRequest());
+        $this->$function_name();
     }
 
     public function page() {
@@ -64,9 +68,8 @@ abstract class BackController extends ApplicationComponent {
 
     public function setView($view)
     {
-        if (!is_string($view) || empty($view)) {
+        if (!is_string($view) || empty($view))
             throw new \InvalidArgumentException('This view has to be a string');
-        }
 
         $this->view = $view;
 
@@ -119,6 +122,16 @@ abstract class BackController extends ApplicationComponent {
     
     public function action() {
         return $this->action;
+    }
+
+    public function request()
+    {
+        return $this->request;
+    }
+
+    public function response()
+    {
+        return $this->response;
     }
     
     public function setLang($lang) {

@@ -10,7 +10,7 @@ class FrontendApplication extends \Library\Application {
     
     public function run() {
         $controller = $this->getController();
-echo 'AAAAAAAAAAAA';
+
         // SETTING RESTRICTIONS
 
         // SETTING NON DEFAULT LAYOUTS

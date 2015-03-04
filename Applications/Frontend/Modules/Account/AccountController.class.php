@@ -1,23 +1,22 @@
 <?php
 namespace Applications\Frontend\Modules\Account;
 use \Library\DB as DB;
-use \Library\HTTPRequest as HTTPRequest;
 
 class AccountController extends \Library\BackController
 {
-    public function executeIndex(HTTPRequest $request)
+    public function executeIndex()
     {
         
     }
 
-    public function executeSignUp(HTTPRequest $request)
+    public function executeSignUp()
     {
-
+        echo $this->request()->getData('test');
     }
 
-    public function executeRegisterUser(HTTPRequest $request)
+    public function executeRegisterUser()
     {
-        $this->app()->httpResponse()->redirect('/School/account/');
+        $this->response()->redirect('/School/account/signup');
     }
 }
 ?>
