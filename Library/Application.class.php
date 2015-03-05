@@ -1,7 +1,10 @@
 <?php
 namespace Library;
 
-abstract class Application {
+use Library\Container\Container;
+use Library\Facades\Facade;
+
+abstract class Application extends Container {
     protected $httpRequest;
     protected $httpResponse;
     protected $name;
@@ -9,6 +12,9 @@ abstract class Application {
     protected $config;
 
     public function __construct() {
+        Facade::setFacadeApplication($this);
+        $this->instance('app', $this);
+
         $this->httpRequest = new HTTPRequest($this);
         $this->httpResponse = new HTTPResponse($this);
         $this->name = '';
@@ -83,6 +89,11 @@ abstract class Application {
     
     public function config() {
         return $this->config;
+    }
+
+    public function make($abstract, $parameters = [])
+    {
+        return parent::make($abstract, $parameters);
     }
 }	
 ?>
