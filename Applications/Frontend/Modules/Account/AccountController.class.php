@@ -5,17 +5,17 @@ use Library\Facades\Session;
 
 class AccountController extends \Library\BackController
 {
-    public function executeIndex()
-    {
-        
-    }
-
-    public function executeSignUp()
+    public function index()
     {
 
     }
 
-    public function executeRegisterUser()
+    public function signUp()
+    {
+
+    }
+
+    public function registerUser()
     {
 
     }

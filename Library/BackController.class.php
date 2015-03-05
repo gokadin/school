@@ -21,7 +21,7 @@ abstract class BackController extends ApplicationComponent {
     }
 
     public function execute() {
-        $function_name = 'execute'.ucfirst($this->action);
+        $function_name = $this->action;
 
         if (!is_callable(array($this, $function_name))) {
             throw new \RuntimeException('The action '.$this->action.' is not defined on this module');

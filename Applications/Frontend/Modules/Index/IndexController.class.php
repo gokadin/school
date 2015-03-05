@@ -8,7 +8,7 @@ use Library\Facades\Session;
 
 class IndexController extends \Library\BackController
 {
-    public function executeIndex()
+    public function index()
     {
         $errors = array('testkey' => 'testvalue');
 
