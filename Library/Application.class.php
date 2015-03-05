@@ -3,13 +3,14 @@ namespace Library;
 
 use Library\Container\Container;
 use Library\Facades\Facade;
+use Library\Session;
 use Library\DB;
 
 abstract class Application extends Container {
     protected $httpRequest;
     protected $httpResponse;
     protected $name;
-    protected $user;
+    protected $session;
     protected $config;
 
     public function __construct()
@@ -17,7 +18,7 @@ abstract class Application extends Container {
         $this->httpRequest = new HTTPRequest($this);
         $this->httpResponse = new HTTPResponse($this);
         $this->name = '';
-        $this->user = new \Library\User($this);
+        $this->session = new Session();
         $this->config = new Config($this);
 
         Facade::setFacadeApplication($this);
@@ -25,6 +26,7 @@ abstract class Application extends Container {
         $this->instance('response', $this->httpResponse);
         $this->instance('request', $this->httpRequest);
         $this->instance('config', $this->config);
+        $this->instance('session', $this->session);
         $this->instance('db', new DB(PDOFactory::conn()));
     }
 

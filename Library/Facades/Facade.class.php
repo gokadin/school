@@ -30,7 +30,7 @@ abstract class Facade
         if (isset(static::$resolvedInstance[$name]))
             return static::$resolvedInstance[$name];
 
-        return static::$resolvedInstance = static::$app[$name];
+        return static::$resolvedInstance[$name] = static::$app[$name];
     }
 
     public static function __callStatic($method, $args)

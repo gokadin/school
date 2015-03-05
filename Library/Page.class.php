@@ -17,8 +17,7 @@ class Page extends ApplicationComponent  {
     public function getGeneratedPage() {
         if (!file_exists($this->contentFile))
             throw new \RuntimeException('Content file does not exist');
-        
-        $user = $this->app->user();
+
         extract($this->vars);
 
         ob_start();
