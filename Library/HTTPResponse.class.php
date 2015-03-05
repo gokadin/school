@@ -16,6 +16,17 @@ class HTTPResponse extends ApplicationComponent
         exit();
     }
 
+    public function toAction($location)
+    {
+        $this->redirect($this->app->router()->getUrlFromAction($location));
+    }
+
+    public function back()
+    {
+        header("location:javascript://history.go(-1)");
+        exit();
+    }
+
     public function redirect404()
     {
         $this->page = new Page($this->app);

@@ -2,6 +2,7 @@
 namespace Library;
 
 use Library\Container\Container;
+use Library\Router;
 use Library\Facades\Facade;
 use Library\Session;
 use Library\DB;
@@ -9,6 +10,7 @@ use Library\DB;
 abstract class Application extends Container {
     protected $httpRequest;
     protected $httpResponse;
+    protected $router;
     protected $name;
     protected $session;
     protected $config;
@@ -17,6 +19,7 @@ abstract class Application extends Container {
     {
         $this->httpRequest = new HTTPRequest($this);
         $this->httpResponse = new HTTPResponse($this);
+        $this->router = new Router();
         $this->name = '';
         $this->session = new Session();
         $this->config = new Config($this);
@@ -31,8 +34,6 @@ abstract class Application extends Container {
     }
 
     public function getController() {
-        $router = new \Library\Router;
-
         $xml = new \DOMDocument;
         $xml->load(__DIR__.'/../Config/routes.xml');
 
@@ -57,12 +58,12 @@ abstract class Application extends Container {
                 $vars = explode(',', $route->getAttribute('vars'));
             }
 
-            $router->addRoute(new Route($route->getAttribute('url'), $route->getAttribute('module'), $route->getAttribute('method'), $route->getAttribute('action'), $vars));
+            $this->router->addRoute(new Route($route->getAttribute('url'), $route->getAttribute('module'), $route->getAttribute('method'), $route->getAttribute('action'), $vars));
         }
 
         try
         {
-            $matchedRoute = $router->getRoute($this->httpRequest->requestURI(), $this->httpRequest->method());
+            $matchedRoute = $this->router->getRoute($this->httpRequest->requestURI(), $this->httpRequest->method());
         }
         catch (\RuntimeException $e)
         {
@@ -79,24 +80,13 @@ abstract class Application extends Container {
     
     abstract public function run();
 
-    public function request() {
-        return $this->httpRequest;
-    }
-
-    public function response() {
-        return $this->httpResponse;
-    }
-
     public function name() {
         return $this->name;
     }
-    
-    public function user() {
-        return $this->user;
-    }
-    
-    public function config() {
-        return $this->config;
+
+    public function router()
+    {
+        return $this->router;
     }
 
     public function make($abstract, $parameters = [])

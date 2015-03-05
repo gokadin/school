@@ -8,16 +8,12 @@ abstract class BackController extends ApplicationComponent {
     protected $method = '';
     protected $page = null;
     protected $view = '';
-    protected $response = null;
-    protected $request = null;
     protected $lang = null;
 	
     public function __construct(Application $app, $module, $method, $action) {
         parent::__construct($app);
 
         $this->page = new Page($app);
-        $this->response = $app->response();
-        $this->request = $app->request();
         $this->setModule($module);
         $this->setMethod($method);
         $this->setAction($action);
@@ -120,16 +116,6 @@ abstract class BackController extends ApplicationComponent {
     
     public function action() {
         return $this->action;
-    }
-
-    public function request()
-    {
-        return $this->request;
-    }
-
-    public function response()
-    {
-        return $this->response;
     }
     
     public function setLang($lang) {

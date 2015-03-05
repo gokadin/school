@@ -1,6 +1,8 @@
 <?php
 namespace Library\Shao;
 
+use Library\Facades\App;
+
 class ShaoFunctions
 {
     public static function includeView($string)
@@ -24,40 +26,7 @@ class ShaoFunctions
 
     public static function path($string)
     {
-        $arr = explode('/', $string);
-        $app = $arr[0];
-        $module = $arr[1];
-        $action = $arr[2];
-
-        $xml = new \DOMDocument;
-        $xml->load(__DIR__.'/../../Config/routes.xml');
-
-        $applications = $xml->getElementsByTagName('application');
-        $routes = array();
-        foreach ($applications as $application)
-        {
-            if ($application->getAttribute('name') == $app)
-            {
-                $routes = $application->getElementsByTagName('route');
-                break;
-            }
-        }
-
-        if ($routes == null)
-        {
-            throw new \Exception('Shao.path : route not found');
-            return '';
-        }
-
-        foreach ($routes as $route) {
-            if ($route->getAttribute('module') == $module &&
-                $route->getAttribute('action') == $action)
-            {
-                return $route->getAttribute('url');
-            }
-        }
-
-        throw new \Exception('Shao.path : route not found.');
+        return App::router()->getUrlFromAction($string);
     }
 }
 ?>

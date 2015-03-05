@@ -10,9 +10,7 @@ class IndexController extends \Library\BackController
 {
     public function executeIndex()
     {
-        $x = DB::table('users')->select();
-        Session::set('x', 'xxx');
-        echo Session::exists('x') ? 'true' : 'false';
+        
     }
 }
 ?>
