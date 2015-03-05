@@ -3,7 +3,7 @@ namespace Library;
 
 use Library\Container\Container;
 use Library\Facades\Facade;
-use Models\Users;
+use Library\DB;
 
 abstract class Application extends Container {
     protected $httpRequest;
@@ -25,8 +25,7 @@ abstract class Application extends Container {
         $this->instance('response', $this->httpResponse);
         $this->instance('request', $this->httpRequest);
         $this->instance('config', $this->config);
-
-        $this->instance('users', new Users());
+        $this->instance('db', new DB(PDOFactory::conn()));
     }
 
     public function getController() {

@@ -1,9 +1,9 @@
 <?php namespace Library\Facades;
 
-class Users extends Facade
+class DB extends Facade
 {
     protected static function getFacadeAccessor()
     {
-        return 'users';
+        return 'db';
     }
 }

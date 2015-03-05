@@ -4,14 +4,17 @@ use Library\Model;
 
 class Users extends Model
 {
-    public function __construct()
+    public function __construct($dao)
     {
+        parent::__construct($dao);
         $this->tableName = 'users';
+
+        $this->init();
     }
 
-    public function init() // MOVE FROM HERE
-    {echo 'tableexistsorno';
-        $this->query('CREATE TABLE IF NOT EXISTS '.self::tableName()
+    public function init()
+    {
+        $this->query('CREATE TABLE IF NOT EXISTS '.$this->tableName
                 .'(id INT(11) unsigned NOT NULL AUTO_INCREMENT, '
                 .'venue_id INT(11) NOT NULL, '
                 .'superior_id INT(11) NOT NULL, '

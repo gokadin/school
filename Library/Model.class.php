@@ -1,12 +1,21 @@
 <?php namespace Library;
 
+use PDOException;
+use PDO;
+
 class Model
 {
     protected $tableName;
+    protected $dao;
+
+    public function __construct($dao)
+    {
+        $this->dao = $dao;
+    }
 
     public function query($sql)
     {
-        return DB::dao()->query($sql);
+        return $this->dao->query($sql);
     }
 
     public function exists($var, $value)
@@ -15,10 +24,10 @@ class Model
 
         try
         {
-            $result = DB::dao()->query($sql);
+            $result = $this->dao->query($sql);
             return $result->rowCount() > 0;
         }
-        catch (\PDOException $e)
+        catch (PDOException $e)
         {
             return false;
         }
@@ -28,10 +37,10 @@ class Model
     {
         $sql = 'SELECT * FROM '.$this->tableName;
 
-        $q = DB::dao()->prepare($sql);
+        $q = $this->dao->prepare($sql);
 
         $q->execute();
-        $q->setFetchMode(\PDO::FETCH_CLASS | \PDO::FETCH_PROPS_LATE, 'Entity');
+        $q->setFetchMode(PDO::FETCH_CLASS | PDO::FETCH_PROPS_LATE, 'Entity');
         $list = $q->fetchAll();
         $q->closeCursor();
 

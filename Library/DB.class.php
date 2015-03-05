@@ -2,14 +2,19 @@
 namespace Library;
 
 class DB {
-    private static $dao;
+    private $dao;
 
-    public static function init($dao)
+    public function __construct($dao)
     {
-        self::$dao = $dao;
+        $this->dao = $dao;
     }
 
-    public static function table($tableName)
+    public function dao()
+    {
+        return $this->dao;
+    }
+
+    public function table($tableName)
     {
         if (!is_string($tableName) || empty($tableName)) {
             throw new \InvalidArgumentException('Invalid module');
@@ -18,12 +23,7 @@ class DB {
         $tableName = strtolower($tableName);
         $className = '\\Models\\'.ucfirst($tableName);
 
-        return null;
-    }
-
-    public static function dao()
-    {
-        return self::$dao;
+        return new $className($this->dao);
     }
 }
 ?>

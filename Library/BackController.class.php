@@ -15,8 +15,6 @@ abstract class BackController extends ApplicationComponent {
     public function __construct(Application $app, $module, $method, $action) {
         parent::__construct($app);
 
-        DB::init(PDOFactory::get_mysql_connexion());
-
         $this->page = new Page($app);
         $this->response = $app->response();
         $this->request = $app->request();
