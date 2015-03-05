@@ -1,5 +1,4 @@
-<?php
-namespace Library;
+<?php namespace Library;
 
 class Entity implements \ArrayAccess {
     protected $errors = array();
@@ -48,4 +47,3 @@ class Entity implements \ArrayAccess {
         throw new \Exception('Impossible to delete any value');
     }
 }
-?>

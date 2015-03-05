@@ -1,5 +1,4 @@
-<?php
-namespace Library;
+<?php namespace Library;
 
 use Library\Container\Container;
 use Library\Router;
@@ -33,7 +32,8 @@ abstract class Application extends Container {
         $this->instance('db', new DB(PDOFactory::conn()));
     }
 
-    public function getController() {
+    public function getController()
+    {
         $xml = new \DOMDocument;
         $xml->load(__DIR__.'/../Config/routes.xml');
 
@@ -80,7 +80,8 @@ abstract class Application extends Container {
     
     abstract public function run();
 
-    public function name() {
+    public function name()
+    {
         return $this->name;
     }
 
@@ -94,4 +95,3 @@ abstract class Application extends Container {
         return parent::make($abstract, $parameters);
     }
 }	
-?>

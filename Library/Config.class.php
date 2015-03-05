@@ -1,5 +1,4 @@
-<?php
-namespace Library;
+<?php namespace Library;
 
 class Config extends ApplicationComponent {
     protected $vars = array();
@@ -23,4 +22,3 @@ class Config extends ApplicationComponent {
         return null;
     }
 }
-?>

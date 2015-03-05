@@ -1,5 +1,5 @@
-<?php
-namespace Library;
+<?php namespace Library;
+
 use \Library\Shao\Shao as Shao;
 
 abstract class BackController extends ApplicationComponent {
@@ -122,4 +122,3 @@ abstract class BackController extends ApplicationComponent {
         $this->lang = $lang;
     }
 }
-?>

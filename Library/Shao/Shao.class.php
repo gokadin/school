@@ -1,5 +1,4 @@
-<?php
-namespace Library\Shao;
+<?php namespace Library\Shao;
 
 class Shao
 {
@@ -209,4 +208,3 @@ class Shao
         return substr(substr($string, 0, -1), 1);
     }
 }
-?>

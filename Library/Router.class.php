@@ -1,5 +1,4 @@
-<?php
-namespace Library;
+<?php namespace Library;
 
 class Router
 {
@@ -71,4 +70,3 @@ class Router
         throw new \RuntimeException('Router.getRouteFromAction : route not found.');
     }
 }
-?>

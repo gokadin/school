@@ -1,5 +1,4 @@
-<?php
-namespace Library;
+<?php namespace Library;
 
 class Route {
     protected $action;
@@ -83,4 +82,3 @@ class Route {
         return $this->varsNames;
     }
 }
-?>

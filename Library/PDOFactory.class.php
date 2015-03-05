@@ -1,5 +1,4 @@
-<?php
-namespace Library;
+<?php namespace Library;
 
 class PDOFactory {
     public static function conn() {
@@ -9,4 +8,3 @@ class PDOFactory {
         return $db;
     }
 }
-?>

@@ -1,5 +1,4 @@
-<?php
-namespace Library;
+<?php namespace Library;
 
 session_start();
 
@@ -75,4 +74,3 @@ class Session
         return $_SESSION[self::SHOULD_CLEAR_ERRORS_KEY];
     }
 }
-?>

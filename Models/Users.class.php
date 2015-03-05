@@ -29,4 +29,3 @@ class Users extends Model
                 .'PRIMARY KEY(id))');
     }
 }
-?>

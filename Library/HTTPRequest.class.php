@@ -1,5 +1,4 @@
-<?php
-namespace Library;
+<?php namespace Library;
 
 class HTTPRequest extends ApplicationComponent
 {
@@ -53,4 +52,3 @@ class HTTPRequest extends ApplicationComponent
             return $_SERVER['REQUEST_URI'];
     }
 }
-?>

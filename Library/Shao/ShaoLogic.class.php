@@ -1,5 +1,4 @@
-<?php
-namespace Library\Shao;
+<?php namespace Library\Shao;
 
 class ShaoLogic
 {
@@ -82,4 +81,3 @@ class ShaoLogic
         return '<?php } ?>';
     }
 }
-?>

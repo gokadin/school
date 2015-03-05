@@ -1,5 +1,4 @@
-<?php
-namespace Library\Shao;
+<?php namespace Library\Shao;
 
 use Library\Facades\App;
 
@@ -29,4 +28,3 @@ class ShaoFunctions
         return App::router()->getUrlFromAction($string);
     }
 }
-?>

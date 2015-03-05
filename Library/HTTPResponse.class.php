@@ -1,5 +1,4 @@
-<?php
-namespace Library;
+<?php namespace Library;
 
 use Library\Facades\Session;
 
@@ -59,4 +58,3 @@ class HTTPResponse extends ApplicationComponent
         set_cookie($name, $value, $expire, $path, $domain, $secure, $http_only);
     }
 }
-?>

@@ -1,5 +1,4 @@
-<?php
-namespace Library;
+<?php namespace Library;
 
 class DB {
     private $dao;
@@ -26,4 +25,3 @@ class DB {
         return new $className($this->dao);
     }
 }
-?>

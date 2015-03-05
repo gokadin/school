@@ -1,5 +1,4 @@
-<?php
-namespace Library;
+<?php namespace Library;
 
 class Page extends ApplicationComponent  {
     protected $contentFile;
@@ -49,4 +48,3 @@ class Page extends ApplicationComponent  {
         $this->layoutFile = $layoutFile;
     }
 }
-?>

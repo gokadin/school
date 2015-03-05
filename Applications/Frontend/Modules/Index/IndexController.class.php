@@ -1,5 +1,4 @@
-<?php
-namespace Applications\Frontend\Modules\Index;
+<?php namespace Applications\Frontend\Modules\Index;
 
 use Library\Facades\App;
 use Library\Facades\Response;
@@ -16,4 +15,3 @@ class IndexController extends \Library\BackController
         //print_r(Session::getErrors());
     }
 }
-?>
