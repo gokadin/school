@@ -3,6 +3,7 @@ namespace Library;
 
 use Library\Container\Container;
 use Library\Facades\Facade;
+use Models\Users;
 
 abstract class Application extends Container {
     protected $httpRequest;
@@ -11,16 +12,21 @@ abstract class Application extends Container {
     protected $user;
     protected $config;
 
-    public function __construct() {
-        Facade::setFacadeApplication($this);
-        $this->instance('app', $this);
-
-
+    public function __construct()
+    {
         $this->httpRequest = new HTTPRequest($this);
-        $this->httpResponse = new HTTPResponse($this);$this->instance('response', $this->httpResponse);
+        $this->httpResponse = new HTTPResponse($this);
         $this->name = '';
         $this->user = new \Library\User($this);
         $this->config = new Config($this);
+
+        Facade::setFacadeApplication($this);
+        $this->instance('app', $this);
+        $this->instance('response', $this->httpResponse);
+        $this->instance('request', $this->httpRequest);
+        $this->instance('config', $this->config);
+
+        $this->instance('users', new Users());
     }
 
     public function getController() {

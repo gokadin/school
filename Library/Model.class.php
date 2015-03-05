@@ -1,21 +1,17 @@
-<?php
-namespace Library;
+<?php namespace Library;
 
-class Model {
+class Model
+{
+    protected $tableName;
 
-    public static function tableName()
-    {
-        return substr(strstr(strtolower(get_called_class()), '\\'), 1);
-    }
-
-    public static function query($sql)
+    public function query($sql)
     {
         return DB::dao()->query($sql);
     }
 
-    public static function exists($var, $value)
+    public function exists($var, $value)
     {
-        $sql = 'SELECT COUNT(*) FROM '.self::tableName().' WHERE '.$var.' = '.$value;
+        $sql = 'SELECT COUNT(*) FROM '.$this->tableName.' WHERE '.$var.' = '.$value;
 
         try
         {
@@ -28,9 +24,9 @@ class Model {
         }
     }
 
-    public static function select()
+    public function select()
     {
-        $sql = 'SELECT * FROM '.self::tableName();
+        $sql = 'SELECT * FROM '.$this->tableName;
 
         $q = DB::dao()->prepare($sql);
 

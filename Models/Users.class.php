@@ -4,8 +4,13 @@ use Library\Model;
 
 class Users extends Model
 {
-    public function init() // MOVE FROM HERE
+    public function __construct()
     {
+        $this->tableName = 'users';
+    }
+
+    public function init() // MOVE FROM HERE
+    {echo 'tableexistsorno';
         $this->query('CREATE TABLE IF NOT EXISTS '.self::tableName()
                 .'(id INT(11) unsigned NOT NULL AUTO_INCREMENT, '
                 .'venue_id INT(11) NOT NULL, '
