@@ -23,8 +23,13 @@ class ShaoFunctions
         throw new \Exception('Shao.includeView : could not find common view');
     }
 
-    public static function path($string)
+    public static function path($action, $var = null)
     {
-        return App::router()->getUrlFromAction($string);
+        $url = App::router()->getUrlFromAction($action);
+
+        if ($var != null)
+            return $url.$var;
+
+        return $url;
     }
 }

@@ -63,7 +63,12 @@ class Router
             if ($route->getAttribute('module') == $module &&
                 $route->getAttribute('action') == $action)
             {
-                return $route->getAttribute('url');
+                if (!$route->hasAttribute('vars'))
+                    return $route->getAttribute('url');
+                else
+                {
+                    return preg_replace('/\/\(.+\)$/', '/', $route->getAttribute('url'));
+                }
             }
         }
 

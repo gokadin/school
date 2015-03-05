@@ -1,5 +1,7 @@
 <?php namespace Library\Shao;
 
+use Library\Facades\Config;
+
 class Shao
 {
     const SHAO_FOLDER = 'Cache/Shao/';
@@ -12,8 +14,10 @@ class Shao
         $cachedFileName = self::generateCachedFileName($file);
         $str = file_get_contents($file);
 
-        if (!self::isFileChanged($file, $str)) {
-            //return $cachedFileName;
+        if (Config::get('env') != 'local')
+        {
+            if (!self::isFileChanged($file, $str))
+                return $cachedFileName;
         }
 
         self::createMetadataFile($file, $str);
@@ -182,8 +186,13 @@ class Shao
         $string = trim($string);
         $functionName = trim(strstr(str_replace('@', self::FUNCTIONS_CLASS_NAME.'::', $string), '(', true));
         $functionArgs = substr(substr(strstr($string, '('), 0, -1), 1);
-        $functionArgs = self::removeSingleQuotes($functionArgs);
         $functionArgs = explode(',', $functionArgs);
+        foreach ($functionArgs as &$functionArg) {
+            $functionArg = trim($functionArg);
+
+            if (substr($functionArg, 0, 1) == '\'' && substr($functionArg, -1) == '\'')
+                $functionArg = self::removeSingleQuotes($functionArg);
+        }
 
         // Different function names (exceptions):
         if ($functionName == self::FUNCTIONS_CLASS_NAME.'::include')

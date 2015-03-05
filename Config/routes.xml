@@ -5,7 +5,7 @@
         <route url="/School/" method="GET" module="Index" action="index" />
         <!-- ACCOUNT MODULE -->
         <route url="/School/account/login" method="GET" module="Account" action="index" />
-        <route url="/School/account/signup/([0-9]+)" method="GET" module="Account" action="signUp" vars="test"/>
+        <route url="/School/account/signup" method="GET" module="Account" action="signUp" />
         <route url="/School/account/signup" method="POST" module="Account" action="registerUser" />
     </application>
     <application name="School">
