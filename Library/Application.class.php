@@ -15,8 +15,9 @@ abstract class Application extends Container {
         Facade::setFacadeApplication($this);
         $this->instance('app', $this);
 
+
         $this->httpRequest = new HTTPRequest($this);
-        $this->httpResponse = new HTTPResponse($this);
+        $this->httpResponse = new HTTPResponse($this);$this->instance('response', $this->httpResponse);
         $this->name = '';
         $this->user = new \Library\User($this);
         $this->config = new Config($this);
