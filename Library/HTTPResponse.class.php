@@ -1,6 +1,8 @@
 <?php
 namespace Library;
 
+use Library\Facades\Session;
+
 class HTTPResponse extends ApplicationComponent
 {
     protected $page;
@@ -10,15 +12,20 @@ class HTTPResponse extends ApplicationComponent
         header($header);
     }
 
-    public function redirect($location)
+    public function redirect($location, array $args = null)
     {
+        if ($args != null)
+        {
+            Session::setErrors($args);
+        }
+
         header('Location: '.$location);
         exit();
     }
 
-    public function toAction($location)
+    public function toAction($location, array $args = null)
     {
-        $this->redirect($this->app->router()->getUrlFromAction($location));
+        $this->redirect($this->app->router()->getUrlFromAction($location), $args);
     }
 
     public function back()

@@ -10,7 +10,10 @@ class IndexController extends \Library\BackController
 {
     public function executeIndex()
     {
-        
+        $errors = array('testkey' => 'testvalue');
+
+        Response::toAction('Frontend/Account/index', $errors);
+        //print_r(Session::getErrors());
     }
 }
 ?>
