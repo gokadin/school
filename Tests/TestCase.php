@@ -5,8 +5,8 @@ use Applications\Frontend\FrontendApplication;
 use Applications\School\SchoolApplication;
 use Applications\Backend\BackendApplication;
 
-require 'Library/autoload.php';
-require 'Applications/Frontend/FrontendApplication.class.php';
+//require 'Library/autoload.php';
+//require 'Applications/Frontend/FrontendApplication.class.php';
 
 class TestCase extends PHPUnit_Framework_TestCase
 {
