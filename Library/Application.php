@@ -4,6 +4,7 @@ use Library\Container\Container;
 use Library\Router;
 use Library\Facades\Facade;
 use Library\Session;
+use Library\Database\Database;
 
 abstract class Application extends Container {
     protected $httpRequest;
@@ -28,7 +29,7 @@ abstract class Application extends Container {
         $this->instance('request', $this->httpRequest);
         $this->instance('config', $this->config);
         $this->instance('session', $this->session);
-        $this->instance('db', new DB(PDOFactory::conn()));
+        $this->instance('database', new Database(PDOFactory::conn()));
     }
 
     public function getController()
