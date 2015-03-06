@@ -18,7 +18,7 @@ class Column
         $this->size = $size;
         $this->isPrimaryKey = false;
         $this->isUnique = false;
-        $this->default = '';
+        $this->default = null;
     }
 
     public function primaryKey()

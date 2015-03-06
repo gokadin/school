@@ -15,9 +15,4 @@ class Model
         $modelName = strtolower(substr(get_called_class(), strrpos($modelName, '\\') + 1));
         $this->blueprint = DB::getBlueprint($modelName);
     }
-
-    public function b()
-    {
-        return $this->blueprint;
-    }
 }

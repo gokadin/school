@@ -3,6 +3,7 @@
 class Blueprint
 {
     protected $modelName;
+    protected $table;
     protected $columns;
 
     public function __construct($modelName)
@@ -11,14 +12,21 @@ class Blueprint
         $this->columns = array();
     }
 
+    public function setTable($name)
+    {
+        $this->table = $name;
+    }
+
     public function increments($name)
     {
-        return $this->columns[] = new Column($name, 'int', 11);
+        $column = new Column($name, 'integer', 11);
+        $column->primaryKey();
+        return $this->columns[] = $column;
     }
 
     public function integer($name, $size = 11)
     {
-        return $this->columns[] = new Column($name, 'int', $size);
+        return $this->columns[] = new Column($name, 'integer', $size);
     }
 
     public function double($name, $size = 11)
@@ -33,7 +41,7 @@ class Blueprint
 
     public function boolean($name)
     {
-        return $this->columns[] = new Column($name, 'boolean');
+        return $this->columns[] = new Column($name, 'boolean', 1);
     }
 
     public function timestamps()
@@ -45,6 +53,11 @@ class Blueprint
     public function modelName()
     {
         return $this->modelName;
+    }
+
+    public function table()
+    {
+        return $this->table;
     }
 
     public function columns()

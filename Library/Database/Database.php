@@ -10,7 +10,7 @@ class Database
     public function __construct($dao)
     {
         $this->dao = $dao;
-        $this->tables = new TableBuilder();
+        $this->tables = new TableBuilder($this);
     }
 
     public function dao()
@@ -32,5 +32,11 @@ class Database
         $className = '\\Models\\'.ucfirst($table);
 
         return new $className($this->dao);
+    }
+
+    // SHOULD BE MOVED FROM HERE *****
+    public function query($sql)
+    {
+        return $this->dao->query($sql);
     }
 }
