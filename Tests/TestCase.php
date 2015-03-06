@@ -5,7 +5,6 @@ use Applications\Frontend\FrontendApplication;
 use Applications\School\SchoolApplication;
 use Applications\Backend\BackendApplication;
 
-//require 'Library/autoload.php';
 //require 'Applications/Frontend/FrontendApplication.class.php';
 
 class TestCase extends PHPUnit_Framework_TestCase
@@ -15,6 +14,7 @@ class TestCase extends PHPUnit_Framework_TestCase
 
     public function setUp()
     {
+        @session_start();
         $app = new FrontendApplication();
         //$app->run();
     }
