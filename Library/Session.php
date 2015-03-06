@@ -1,6 +1,8 @@
 <?php namespace Library;
 
-session_start();
+if(!isset($_SESSION)){
+    session_start();
+}
 
 class Session
 {
