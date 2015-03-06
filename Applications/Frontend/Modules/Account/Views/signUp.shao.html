@@ -1,7 +1,18 @@
 <h3>Sign Up</h3>
 
 <form method="POST" action="">
-    <input type="text" name="username" />
-    <input type="password" name="password" />
+    First name<br /><input type="text" name="firstName" /><br />
+    Last name<br /><input type="text" name="lastName" /><br />
+    Email<br /><input type="email" name="email" /><br />
+    Password<br /><input type="password" name="password" /><br />
+    Confirm password<br /><input type="password" name="confirmPassword" /><br />
     <input type="submit" value="Sign Up" />
 </form>
+<br />
+@if (isset($errors))
+    IT IS SET!!!
+
+    @foreach ($errors as $key => $error)
+        {{ $key.': '.$error }}
+    @endforeach
+@endif

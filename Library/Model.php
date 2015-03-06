@@ -5,12 +5,20 @@ use PDO;
 
 class Model
 {
-    protected $tableName;
     protected $dao;
+    protected $tableName;
+    protected $entityName;
 
-    public function __construct($dao)
+    public function __construct($dao, $tableName)
     {
         $this->dao = $dao;
+        $this->tableName = $tableName;
+        $this->entityName = 'Entity';
+    }
+
+    protected function setEntityName($name)
+    {
+        $this->entityName = '\\Entities\\'.ucfirst($name);
     }
 
     public function query($sql)
@@ -40,7 +48,7 @@ class Model
         $q = $this->dao->prepare($sql);
 
         $q->execute();
-        $q->setFetchMode(PDO::FETCH_CLASS | PDO::FETCH_PROPS_LATE, 'Entity');
+        $q->setFetchMode(PDO::FETCH_CLASS | PDO::FETCH_PROPS_LATE, $this->entityName);
         $list = $q->fetchAll();
         $q->closeCursor();
 

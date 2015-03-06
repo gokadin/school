@@ -27,9 +27,14 @@ class HTTPResponse extends ApplicationComponent
         $this->redirect($this->app->router()->getUrlFromAction($location), $args);
     }
 
-    public function back()
+    public function back($args)
     {
-        header("location:javascript://history.go(-1)");
+        if ($args != null)
+        {
+            Session::setErrors($args);
+        }
+
+        header('Location: '.$_SESSION['HTTP_REFERER']);
         exit();
     }
 

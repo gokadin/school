@@ -14,6 +14,7 @@ abstract class BackController extends ApplicationComponent {
         parent::__construct($app);
 
         $this->page = new Page($app);
+        $this->app()->instance('page', $this->page);
         $this->setModule($module);
         $this->setMethod($method);
         $this->setAction($action);
