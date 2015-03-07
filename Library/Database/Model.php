@@ -2,16 +2,18 @@
 
 use Library\Facades\DB;
 use Symfony\Component\Yaml\Exception\RuntimeException;
+use Carbon\Carbon;
 
-class Model extends Query
+class Model extends Query implements ModelQueryContract
 {
     const CREATED_AT = 'created_at';
     const UPDATED_AT = 'updated_at';
 
     protected $vars = array();
-    protected $table;
     protected $primaryKey;
     protected $columns;
+    protected $columnNames;
+    protected $hasTimestamps;
 
     public function __construct(array $data = array())
     {
@@ -21,12 +23,16 @@ class Model extends Query
         $modelName = strtolower(substr($modelName, strrpos($modelName, '\\') + 1));
         $blueprint = DB::getBlueprint($modelName);
         $this->table = $blueprint->table();
+        $this->hasTimestamps = $blueprint->hasTimestamps();
         foreach ($blueprint->columns() as $column)
         {
             if ($column->isPrimaryKey())
-                $this->primaryKey = $column;
+                $this->primaryKey = $column->getName();
             else
+            {
                 $this->columns[] = $column;
+                $this->columnNames[] = $column->getName();
+            }
         }
 
         foreach ($data as $var => $value)
@@ -47,69 +53,97 @@ class Model extends Query
             return $this->vars[$var];
     }
 
-    public function exists()
+    public function isNew()
     {
-        return isset($this->vars[$this->primaryKey]);
+        return !isset($this->vars[$this->primaryKey]);
     }
 
     public function save()
     {
-        if ($this->exists())
-            return $this->update();
-        else
+        if ($this->isNew())
             return $this->insert();
+        else
+            return $this->update();
+    }
+
+    protected function validateInsert()
+    {
+        foreach ($this->columns as $column)
+        {
+            if (!$column->isNullable() &&
+                $column->getName() != self::CREATED_AT &&
+                $column->getName() != self::UPDATED_AT)
+            {
+                if (!isset($this->vars[$column->getName()]))
+                    return false;
+            }
+        }
+
+        return true;
     }
 
     protected function insert()
     {
-        if (!isset($this->vars['updated_at']) && $this->blueprint->hasTimestamps())
-            $this->vars['updated_at'] = 'somedate';
-        if (!isset($this->vars['created_at']) && $this->blueprint->hasTimestamps())
-            $this->vars['created_at'] = 'somedate';
-
-        $sql = 'INSERT INTO '.$this->blueprint->table().' (';
-        foreach ($this->blueprint->columns() as $column)
+        if (!$this->validateInsert())
         {
-            if (isset($this->vars[$column->getName()]))
-            {
-                $sql .= $column->getName().', ';
-            }
-        }
-        $sql = substr($sql, 0, -2);
-        $sql .= ') VALUES(\'\', ';
-
-        foreach ($this->blueprint->columns() as $column)
-        {
-            if (isset($this->vars[$column->getName()]))
-            {
-                if (is_string($this->vars[$column->getName()]))
-                    $sql .= '\''.$this->vars[$column->getName()].'\', ';
-                else
-                    $sql .= $this->vars[$column->getName()].', ';
-            }
+            throw new RuntimeException('Missing required fields for insert.');
+            return false;
         }
 
-        $sql = substr($sql, 0, -2);
-        $sql .= ')';
+        $str = $this->buildInsert($this->columnNames);
+        if ($this->prepareAndExecute($str, $this->getValuesArray($this->columnNames)))
+        {
+            $this->vars[$this->primaryKey] = $this->lastInsertId();
+            return true;
+        }
 
-        return $sql;//$this->dao->query($sql);
+        return false;
     }
 
     protected function update()
     {
-        $sql = 'UPDATE '.$this->blueprint->table().' SET ';
-        foreach ($this->blueprint->columns() as $column)
+        $names = array();
+        foreach ($this->columnNames as $columnName)
         {
-            if (isset($this->vars[$column->getName()]))
-            {
-                $sql .= $column->getName().'='.$this->vars[$column->getName()].', ';
-            }
+            if ($columnName == self::CREATED_AT)
+                continue;
+
+            $names[] = $columnName;
         }
-        $sql = substr($sql, 0, -2);
 
-        $sql .= ' WHERE '.$this->blueprint->getPrimaryKey()->getName().'='
-                .$this->vars[$this->blueprint->getPrimaryKey()->getName()];
+        $str = $this->buildUpdate($names);
+        return $this->prepareAndExecute($str, $this->getValuesArray($names));
+    }
 
-        return $sql;//$this->dao->query($sql);
+    public static function exists($var, $value)
+    {
+        $instance = new static;
+        return $instance->instanceExists($var, $value);
+    }
+
+    protected function instanceExists($var, $value)
+    {
+        $q = $this->dao->prepare('SELECT '.$this->primaryKey.' FROM '.$this->table.' WHERE '.$var.' = :value');
+        if ($q->execute(array(':value' => $value)))
+            return $q->rowCount();
+
+        return false;
+    }
+
+    protected function getValuesArray($names)
+    {
+        $values = array();
+
+        foreach ($names as $name)
+        {
+            if (isset($this->vars[$name]))
+                $values[] = $this->vars[$name];
+            else if ($name == self::CREATED_AT || $name == self::UPDATED_AT)
+                $values[] = Carbon::now();
+            else
+                $values[] = null;
+        }
+
+        return $values;
     }
 }
