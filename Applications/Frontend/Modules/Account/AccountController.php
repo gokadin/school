@@ -11,7 +11,12 @@ class AccountController extends BackController
 {
     public function index()
     {
+        $s = DB::table('school');
 
+        $s->name = 'musamuse';
+        $s->id = 3;
+
+        echo $s->update();
     }
 
     public function signUp()

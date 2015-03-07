@@ -4,12 +4,10 @@ use Symfony\Component\Yaml\Exception\RuntimeException;
 
 class Database
 {
-    protected $dao;
     protected $tables;
 
     public function __construct($dao)
     {
-        $this->dao = $dao;
         $this->tables = new TableBuilder($this);
     }
 
@@ -31,10 +29,9 @@ class Database
         $table = strtolower($table);
         $className = '\\Models\\'.ucfirst($table);
 
-        return new $className($this->dao);
+        return new $className();
     }
 
-    // SHOULD BE MOVED FROM HERE *****
     public function query($sql)
     {
         return $this->dao->query($sql);

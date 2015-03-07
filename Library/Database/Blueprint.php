@@ -1,5 +1,7 @@
 <?php namespace Library\Database;
 
+use Symfony\Component\Yaml\Exception\RuntimeException;
+
 class Blueprint
 {
     protected $modelName;
@@ -50,6 +52,8 @@ class Blueprint
         $this->columns[] = new Column('created_at', 'datetime');
     }
 
+    /* ACCESSORS */
+
     public function modelName()
     {
         return $this->modelName;
@@ -63,5 +67,21 @@ class Blueprint
     public function columns()
     {
         return $this->columns;
+    }
+
+    public function hasColumn($name)
+    {
+        foreach ($this->columns as $column)
+        {
+            if ($column->getName() == $name)
+                return true;
+        }
+
+        return false;
+    }
+
+    public function hasTimestamps()
+    {
+        return $this->hasColumn('updated_at') && $this->hasColumn(('created_at'));
     }
 }
