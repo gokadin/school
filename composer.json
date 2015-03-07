@@ -6,6 +6,9 @@
     "phpunit/phpunit-story": "*",
     "phpunit/php-invoker": "*"
   },
+  "require": {
+    "nesbot/carbon": "~1.14"
+  },
   "autoload": {
     "psr-0": {"": ""}
   },

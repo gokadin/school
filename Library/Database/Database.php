@@ -4,10 +4,12 @@ use Symfony\Component\Yaml\Exception\RuntimeException;
 
 class Database
 {
+    protected $dao;
     protected $tables;
 
     public function __construct($dao)
     {
+        $this->dao = $dao;
         $this->tables = new TableBuilder($this);
     }
 

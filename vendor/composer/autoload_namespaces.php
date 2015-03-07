@@ -10,5 +10,6 @@ return array(
     'Symfony\\Component\\Yaml\\' => array($vendorDir . '/symfony/yaml'),
     'Prophecy\\' => array($vendorDir . '/phpspec/prophecy/src'),
     'Doctrine\\Instantiator\\' => array($vendorDir . '/doctrine/instantiator/src'),
+    'Carbon' => array($vendorDir . '/nesbot/carbon/src'),
     '' => array($baseDir . '/'),
 );
