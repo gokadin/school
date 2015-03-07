@@ -4,11 +4,15 @@ interface ModelQueryContract
 {
     public function save();
 
-    //public function touch();
+    public function delete();
 
-    //public static function where(array $args);
+    public function touch();
 
-    //public static function find($id);
+    public static function create(array $values);
 
     public static function exists($var, $value);
+
+    public static function where($var, $operator, $value, $link = 'AND');
+
+    public static function find($id);
 }

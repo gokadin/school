@@ -4,21 +4,18 @@ use Library\Facades\DB;
 use Symfony\Component\Yaml\Exception\RuntimeException;
 use Carbon\Carbon;
 
-class Model extends Query implements ModelQueryContract
+class Model implements ModelQueryContract
 {
-    const CREATED_AT = 'created_at';
-    const UPDATED_AT = 'updated_at';
-
+    private $query;
     protected $vars = array();
+    protected $table;
     protected $primaryKey;
-    protected $columns;
+    private $columns;
     protected $columnNames;
-    protected $hasTimestamps;
+    private $hasTimestamps;
 
     public function __construct(array $data = array())
     {
-        parent::__construct(DB::dao());
-
         $modelName = get_called_class();
         $modelName = strtolower(substr($modelName, strrpos($modelName, '\\') + 1));
         $blueprint = DB::getBlueprint($modelName);
@@ -37,6 +34,28 @@ class Model extends Query implements ModelQueryContract
 
         foreach ($data as $var => $value)
             $this->__set($var, $value);
+
+        $this->query = new Query($this);
+    }
+
+    public function tableName()
+    {
+        return $this->table;
+    }
+
+    public function columnNames()
+    {
+        return $this->columnNames;
+    }
+
+    public function primaryKey()
+    {
+        return $this->primaryKey;
+    }
+
+    public function hasTimestamps()
+    {
+        return $this->hasTimestamps;
     }
 
     public function __set($var, $value)
@@ -53,81 +72,131 @@ class Model extends Query implements ModelQueryContract
             return $this->vars[$var];
     }
 
-    public function isNew()
-    {
-        return !isset($this->vars[$this->primaryKey]);
-    }
-
     public function save()
     {
-        if ($this->isNew())
+        if ($this->isMissingPrimaryKey())
             return $this->insert();
         else
             return $this->update();
     }
 
-    protected function validateInsert()
+    private function update()
     {
-        foreach ($this->columns as $column)
+        if ($this->isMissingRequiredColumn())
         {
-            if (!$column->isNullable() &&
-                $column->getName() != self::CREATED_AT &&
-                $column->getName() != self::UPDATED_AT)
-            {
-                if (!isset($this->vars[$column->getName()]))
-                    return false;
-            }
-        }
-
-        return true;
-    }
-
-    protected function insert()
-    {
-        if (!$this->validateInsert())
-        {
-            throw new RuntimeException('Missing required fields for insert.');
+            throw new RuntimeException('A required column is missing from table '.$this->table);
             return false;
         }
 
-        $str = $this->buildInsert($this->columnNames);
-        if ($this->prepareAndExecute($str, $this->getValuesArray($this->columnNames)))
+        $values = array();
+
+        foreach ($this->vars as $key => $var)
         {
-            $this->vars[$this->primaryKey] = $this->lastInsertId();
-            return true;
+            if ($this->hasColumn($key))
+                $values[$key] = $var;
         }
 
-        return false;
+        return $this->query->update($values);
     }
 
-    protected function update()
+    public function touch()
     {
-        $names = array();
-        foreach ($this->columnNames as $columnName)
-        {
-            if ($columnName == self::CREATED_AT)
-                continue;
-
-            $names[] = $columnName;
+        if ($this->isMissingPrimaryKey()) {
+            throw new RuntimeException('Cannot delete model, it was not yet created.');
+            return false;
         }
 
-        $str = $this->buildUpdate($names);
-        return $this->prepareAndExecute($str, $this->getValuesArray($names));
+        if (!$this->hasTimestamps)
+        {
+            throw new RuntimeException('Cannot perform touch. Timestamps are disabled or not present.');
+            return false;
+        }
+
+        $this->vars[QueryBuilder::UPDATED_AT] = Carbon::now();
+
+        return $this->update();
+    }
+
+    public function delete()
+    {
+        if ($this->isMissingPrimaryKey())
+        {
+            throw new RuntimeException('Cannot delete model, it was not yet created.');
+            return false;
+        }
+
+        return $this->query->delete();
+    }
+
+    private function insert()
+    {
+        if ($this->isMissingRequiredColumn())
+        {
+            throw new RuntimeException('A required column is missing from table '.$this->table);
+            return false;
+        }
+
+        $values = array();
+
+        foreach ($this->vars as $key => $var)
+        {
+            if ($this->hasColumn($key))
+                $values[$key] = $var;
+        }
+
+        return $this->query->create($values);
+    }
+
+    public static function create(array $values)
+    {
+        if ($values == null)
+        {
+            throw new RuntimeException('Values cannot be empty when creating a new model.');
+            return null;
+        }
+
+        $instance = new static;
+
+        foreach ($values as $key => $value)
+        {
+            if (!$instance->hasColumn($key))
+            {
+                throw new RuntimeException('Column '.$key.' does not exist in table '.$instance->tableName());
+                return null;
+            }
+
+            $instance->$key = $value;
+        }
+
+        if ($instance->isMissingRequiredColumn())
+        {
+            throw new RuntimeException('A required column is missing from table '.$instance->tableName());
+            return null;
+        }
+
+        $query = new Query($instance, 'insert');
+        return $query->create($values);
     }
 
     public static function exists($var, $value)
     {
         $instance = new static;
-        return $instance->instanceExists($var, $value);
+        $query = new Query($instance);
+        return $query->exists($var, $value);
     }
 
-    protected function instanceExists($var, $value)
+    public static function where($var, $operator, $value, $link = 'AND')
     {
-        $q = $this->dao->prepare('SELECT '.$this->primaryKey.' FROM '.$this->table.' WHERE '.$var.' = :value');
-        if ($q->execute(array(':value' => $value)))
-            return $q->rowCount();
+        $instance = new static;
+        $query = new Query($instance, 'select');
+        return $query->where($var, $operator, $value, $link);
+    }
 
-        return false;
+    public static function find($id)
+    {
+        $instance = new static;
+        $query = new Query($instance, 'select');
+        return $query->where($instance->primaryKey, '=', $id)->get();//->first()
     }
 
     protected function getValuesArray($names)
@@ -145,5 +214,35 @@ class Model extends Query implements ModelQueryContract
         }
 
         return $values;
+    }
+
+    public function hasColumn($name)
+    {
+        foreach ($this->columnNames as $columnName)
+        {
+            if ($columnName === $name)
+                return true;
+        }
+
+        return false;
+    }
+
+    public function isMissingRequiredColumn()
+    {
+        foreach ($this->columns as $column)
+        {
+            if ($column->getName() == QueryBuilder::CREATED_AT || $column->getName() == QueryBuilder::UPDATED_AT)
+                continue;
+
+            if (!$column->isNullable() && !isset($this->vars[$column->getName()]))
+                return true;
+        }
+
+        return false;
+    }
+
+    public function isMissingPrimaryKey()
+    {
+        return !isset($this->vars[$this->primaryKey]);
     }
 }
