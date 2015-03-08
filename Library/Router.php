@@ -1,5 +1,7 @@
 <?php namespace Library;
 
+use Symfony\Component\Yaml\Exception\RuntimeException;
+
 class Router
 {
     protected $routes = array();
@@ -55,7 +57,7 @@ class Router
 
         if ($routes == null)
         {
-            throw new \Exception('Shao.path : route not found');
+            throw new RuntimeException('Route not found.');
             return '';
         }
 

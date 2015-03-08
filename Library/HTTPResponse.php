@@ -11,29 +11,23 @@ class HTTPResponse extends ApplicationComponent
         header($header);
     }
 
-    public function redirect($location, array $args = null)
+    public function redirect($location, $args = null)
     {
         if ($args != null)
-        {
-            Session::setErrors($args);
-        }
+            header('Location: '.$location.  $args);
+        else
+            header('Location: '.$location);
 
-        header('Location: '.$location);
         exit();
     }
 
-    public function toAction($location, array $args = null)
+    public function toAction($location, $args = null)
     {
         $this->redirect($this->app->router()->getUrlFromAction($location), $args);
     }
 
-    public function back($args)
+    public function back()
     {
-        if ($args != null)
-        {
-            Session::setErrors($args);
-        }
-
         header('Location: '.$_SESSION['HTTP_REFERER']);
         exit();
     }
