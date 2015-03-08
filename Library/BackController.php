@@ -103,7 +103,7 @@ abstract class BackController extends ApplicationComponent {
 
         require 'Web/lang/common.php';
         $this->setLang($lang);
-        $this->page()->addVar('lang', $lang);
+        $this->page->add('lang', $lang);
     }
     
     public function module() {

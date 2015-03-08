@@ -67,7 +67,7 @@ class Query extends QueryBuilder implements QueryContract
 
     public function exists($var, $value)
     {
-        $q = $this->dao->prepare('SELECT '.$this->model->primaryKey.' FROM '.$this->model->table.' WHERE '.$var.' = :value');
+        $q = $this->dao->prepare('SELECT '.$this->model->primaryKey().' FROM '.$this->model->tableName().' WHERE '.$var.' = :value');
         if ($q->execute(array(':value' => $value)))
             return $q->rowCount();
 
@@ -147,7 +147,7 @@ class Query extends QueryBuilder implements QueryContract
 
         if ($this->selectValues == null)
         {
-            $result->setFetchMode(PDO::FETCH_CLASS | PDO::FETCH_PROPS_LATE, self::MODEL_DIRECTORY.$this->model->name());
+            $result->setFetchMode(PDO::FETCH_CLASS | PDO::FETCH_PROPS_LATE, self::MODEL_DIRECTORY.$this->model->modelName());
             $list = $result->fetchAll();
         }
         else if (sizeof($this->selectValues) > 1)
@@ -160,7 +160,7 @@ class Query extends QueryBuilder implements QueryContract
         if (sizeof($list) == 0)
             return null;
 
-        if (sizeof($list) == 1)
+        if (is_array($list) && sizeof($list) == 1)
             return $list[0];
 
         return $list;

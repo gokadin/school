@@ -10,9 +10,7 @@
 </form>
 <br />
 @if (isset($errors))
-    IT IS SET!!!
-
     @foreach ($errors as $key => $error)
-        {{ $key.': '.$error }}
+        {{ $key.': '.$error.'<br />' }}
     @endforeach
 @endif

@@ -5,12 +5,22 @@ class Page extends ApplicationComponent  {
     protected $layoutFile;
     protected $vars = array();
     
-    public function addVar($var, $value) {
-        if (!is_string($var) || is_numeric($var) || empty($var)) {
-            throw new \InvalidArgumentException('Invalid variable name');
+    public function add($var, $value = null)
+    {
+        if ($value != null)
+        {
+            if (!is_string($var))
+                return;
+
+            $this->vars[$var] = $value;
+            return;
         }
-        
-        $this->vars[$var] = $value;
+
+        if (!is_array($var))
+            return;
+
+        foreach ($var as $key => $v)
+            $this->vars[$key] = $v;
     }
     
     public function getGeneratedPage() {

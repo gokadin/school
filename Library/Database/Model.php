@@ -46,7 +46,7 @@ class Model implements ModelQueryContract
         return $this->table;
     }
 
-    public function name()
+    public function modelName()
     {
         return $this->modelName;
     }

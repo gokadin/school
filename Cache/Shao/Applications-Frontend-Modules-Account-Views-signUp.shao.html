@@ -10,9 +10,7 @@
 </form>
 <br />
 <?php if (isset($errors)) { ?>
-    IT IS SET!!!
-
     <?php foreach ($errors as $key => $error) { ?>
-        <?php echo  $key.': '.$error ; ?>
+        <?php echo  $key.': '.$error.'<br />' ; ?>
     <?php } ?>
 <?php } ?>
