@@ -160,9 +160,6 @@ class Query extends QueryBuilder implements QueryContract
         if (sizeof($list) == 0)
             return null;
 
-        if (is_array($list) && sizeof($list) == 1)
-            return $list[0];
-
-        return $list;
+        return new ModelCollection($list);
     }
 }

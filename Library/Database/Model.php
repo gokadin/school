@@ -186,7 +186,7 @@ class Model implements ModelQueryContract
         }
 
         $query = new Query($instance);
-        return $query->create($values);
+        return $query->create($values)->first();
     }
 
     protected function hydrate($otherModel)
@@ -213,24 +213,7 @@ class Model implements ModelQueryContract
     {
         $instance = new static;
         $query = new Query($instance);
-        return $query->where($instance->primaryKey, '=', $id)->get();
-    }
-
-    protected function getValuesArray($names)
-    {
-        $values = array();
-
-        foreach ($names as $name)
-        {
-            if (isset($this->vars[$name]))
-                $values[] = $this->vars[$name];
-            else if ($name == self::CREATED_AT || $name == self::UPDATED_AT)
-                $values[] = Carbon::now();
-            else
-                $values[] = null;
-        }
-
-        return $values;
+        return $query->where($instance->primaryKey, '=', $id)->get()->first();
     }
 
     public function hasColumn($name)
