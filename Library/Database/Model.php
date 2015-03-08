@@ -9,6 +9,7 @@ class Model implements ModelQueryContract
     private $query;
     protected $vars = array();
     protected $table;
+    protected $modelName;
     protected $primaryKey;
     private $columns;
     protected $columnNames;
@@ -17,8 +18,8 @@ class Model implements ModelQueryContract
     public function __construct(array $data = array())
     {
         $modelName = get_called_class();
-        $modelName = strtolower(substr($modelName, strrpos($modelName, '\\') + 1));
-        $blueprint = DB::getBlueprint($modelName);
+        $this->modelName = strtolower(substr($modelName, strrpos($modelName, '\\') + 1));
+        $blueprint = DB::getBlueprint($this->modelName);
         $this->table = $blueprint->table();
         $this->hasTimestamps = $blueprint->hasTimestamps();
         foreach ($blueprint->columns() as $column)
@@ -32,8 +33,10 @@ class Model implements ModelQueryContract
             }
         }
 
-        foreach ($data as $var => $value)
-            $this->__set($var, $value);
+        foreach ($data as $key => $value)
+        {
+            $this->__set($key, $value);
+        }
 
         $this->query = new Query($this);
     }
@@ -41,6 +44,11 @@ class Model implements ModelQueryContract
     public function tableName()
     {
         return $this->table;
+    }
+
+    public function name()
+    {
+        return $this->modelName;
     }
 
     public function columnNames()
@@ -60,10 +68,7 @@ class Model implements ModelQueryContract
 
     public function __set($var, $value)
     {
-        if ($var == $this->primaryKey)
-            throw new RuntimeException('Cannot set primary key to model');
-        else
-            $this->vars[$var] = $value;
+        $this->vars[$var] = $value;
     }
 
     public function __get($var)
@@ -96,7 +101,7 @@ class Model implements ModelQueryContract
                 $values[$key] = $var;
         }
 
-        return $this->query->update($values);
+        return $this->query->update($values) > 0;
     }
 
     public function touch()
@@ -114,7 +119,7 @@ class Model implements ModelQueryContract
 
         $this->vars[QueryBuilder::UPDATED_AT] = Carbon::now();
 
-        return $this->update();
+        return $this->update() > 0;
     }
 
     public function delete()
@@ -125,7 +130,7 @@ class Model implements ModelQueryContract
             return false;
         }
 
-        return $this->query->delete();
+        return $this->query->delete() > 0;
     }
 
     private function insert()
@@ -144,7 +149,13 @@ class Model implements ModelQueryContract
                 $values[$key] = $var;
         }
 
-        return $this->query->create($values);
+        $result = $this->query->create($values);
+
+        if (!$result)
+            return false;
+
+        $this->hydrate($result);
+        return true;
     }
 
     public static function create(array $values)
@@ -174,8 +185,14 @@ class Model implements ModelQueryContract
             return null;
         }
 
-        $query = new Query($instance, 'insert');
+        $query = new Query($instance);
         return $query->create($values);
+    }
+
+    protected function hydrate($otherModel)
+    {
+        foreach ($otherModel->vars as $key => $value)
+            $this->$key = $value;
     }
 
     public static function exists($var, $value)
@@ -188,15 +205,15 @@ class Model implements ModelQueryContract
     public static function where($var, $operator, $value, $link = 'AND')
     {
         $instance = new static;
-        $query = new Query($instance, 'select');
+        $query = new Query($instance);
         return $query->where($var, $operator, $value, $link);
     }
 
     public static function find($id)
     {
         $instance = new static;
-        $query = new Query($instance, 'select');
-        return $query->where($instance->primaryKey, '=', $id)->get();//->first()
+        $query = new Query($instance);
+        return $query->where($instance->primaryKey, '=', $id)->get();
     }
 
     protected function getValuesArray($names)
@@ -231,11 +248,11 @@ class Model implements ModelQueryContract
     {
         foreach ($this->columns as $column)
         {
-            if ($column->getName() == QueryBuilder::CREATED_AT || $column->getName() == QueryBuilder::UPDATED_AT)
-                continue;
-
-            if (!$column->isNullable() && !isset($this->vars[$column->getName()]))
+            if (!$column->isRequired() && !isset($this->vars[$column->getName()]))
+            {
+                echo $column->getName();
                 return true;
+            }
         }
 
         return false;

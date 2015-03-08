@@ -2,10 +2,11 @@
 
 use Library\Facades\DB;
 use Symfony\Component\Yaml\Exception\RuntimeException;
+use PDO;
 
 class Query extends QueryBuilder implements QueryContract
 {
-    const SELECT = 'select';
+    const MODEL_DIRECTORY = '\\Models\\';
 
     protected $dao;
     protected $model;
@@ -14,41 +15,54 @@ class Query extends QueryBuilder implements QueryContract
 
     protected $wheres;
 
-    public function __construct($model, $command = '')
+    public function __construct($model)
     {
         $this->dao = DB::dao();
         parent::__construct($this->dao, $model);
         $this->model = $model;
-        $this->command = $command;
 
         $this->wheres = array();
     }
 
+    public function lastInsertId()
+    {
+        return $this->dao->lastInsertId();
+    }
+
     public function create($values)
     {
-        return $this->buildInsert($values);
+        $str = $this->buildInsert($values);
+
+        if (!$this->dao->exec($str))
+            return false;
+        else
+            return $this->where($this->model->primaryKey(), '=', $this->lastInsertId())->get();
     }
 
     public function update($values)
     {
         $primaryKey = $this->model->primaryKey();
 
-        return $this->buildUpdate($values)
+        $str = $this->buildUpdate($values)
             .$this->buildWhere([[
                 'var' => $primaryKey,
                 'operator' => '=',
                 'value' => $this->model->$primaryKey]]);
+
+        return $this->dao->exec($str);
     }
 
     public function delete()
     {
         $primarykey = $this->model->primaryKey();
 
-        return $this->buildDelete()
+        $str = $this->buildDelete()
             .$this->buildWhere([[
                 'var' => $primarykey,
                 'operator' => '=',
                 'value' => $this->model->$primarykey]]);
+
+        return $this->dao->exec($str);
     }
 
     public function exists($var, $value)
@@ -94,6 +108,9 @@ class Query extends QueryBuilder implements QueryContract
             return $this;
         }
 
+        if (trim($values) == '*')
+            return;
+
         if (!$this->columnExists($values))
         {
             throw new RuntimeException('Column '.$values.' does not exist in table '.$this->model->table);
@@ -123,13 +140,29 @@ class Query extends QueryBuilder implements QueryContract
         if ($values != null)
             $this->addValues($values);
 
-        switch ($this->command)
+        $str = $this->buildSelect($this->selectValues, $this->wheres);
+
+        $result = $this->dao->prepare($str);
+        $result->execute();
+
+        if ($this->selectValues == null)
         {
-            case 'select':
-                return $this->buildSelect($this->selectValues, $this->wheres);
-            default:
-                throw new RuntimeException('Invalid query builder command.');
-                return null;
+            $result->setFetchMode(PDO::FETCH_CLASS | PDO::FETCH_PROPS_LATE, self::MODEL_DIRECTORY.$this->model->name());
+            $list = $result->fetchAll();
         }
+        else if (sizeof($this->selectValues) > 1)
+            $list = $result->fetchAll(PDO::FETCH_ASSOC);
+        else
+            $list = $result->fetchAll(PDO::FETCH_COLUMN, 0);
+
+        $result->closeCursor();
+
+        if (sizeof($list) == 0)
+            return null;
+
+        if (sizeof($list) == 1)
+            return $list[0];
+
+        return $list;
     }
 }

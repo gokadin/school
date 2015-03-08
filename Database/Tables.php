@@ -16,7 +16,7 @@ class Tables
         $table->string('password');
         $table->string('phone', 32)->nullable();
         $table->integer('type');
-        $table->boolean('active');
+        $table->boolean('active')->default(1);
         $table->timestamps();
 
         return $table;

@@ -78,6 +78,14 @@ class Column
         return $this->canBeNull;
     }
 
+    public function isRequired()
+    {
+        return !$this->canBeNull ||
+            ($this->canBeNull && $this->default == null) ||
+            $this->name == QueryBuilder::UPDATED_AT ||
+            $this->name == QueryBuilder::CREATED_AT;
+    }
+
     public function isUnique()
     {
         return $this->isUnique;

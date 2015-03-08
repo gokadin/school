@@ -67,11 +67,14 @@ class QueryBuilder
         $str .= ' ('.implode(', ', $vars).')';
         $str .= ' VALUES(';
 
+        foreach ($values as &$value)
+            $value = $this->addQuotes($value);
+
         $str .= implode(', ', $values);
         if (!$createdAtIsSet)
-            $str .= ', '.Carbon::now();
+            $str .= ', '.$this->addQuotes(Carbon::now());
         if (!$updatedAtIsSet)
-            $str .= ', '.Carbon::now();
+            $str .= ', '.$this->addQuotes(Carbon::now());
 
         $str .= ')';
 
@@ -80,11 +83,11 @@ class QueryBuilder
 
     protected function buildUpdate($values)
     {
-        $str = 'UPDATE '.$this->model->tableName().' SET';
+        $str = 'UPDATE '.$this->model->tableName().' SET ';
         $toImplode = array();
         foreach ($values as $key => $value)
         {
-            $toImplode[] = $key.'='.$value;
+            $toImplode[] = $key.'='.$this->addQuotes($value);
         }
         $str .= implode(', ', $toImplode);
 
@@ -98,11 +101,16 @@ class QueryBuilder
 
     protected function buildWhere($wheres)
     {
-        $str = ' WHERE '.$wheres[0]['var'].$wheres[0]['operator'].$wheres[0]['value'];
+        $str = ' WHERE '.$wheres[0]['var'].$wheres[0]['operator'].$this->addQuotes($wheres[0]['value']);
 
         for ($i = 1; $i < sizeof($wheres); $i++)
-            $str .= ' '.$wheres[$i]['link'].' '.$wheres[$i]['var'].$wheres[$i]['operator'].$wheres[$i]['value'];
+            $str .= ' '.$wheres[$i]['link'].' '.$wheres[$i]['var'].$wheres[$i]['operator'].$this->addQuotes($wheres[$i]['value']);
 
         return $str;
+    }
+
+    protected function addQuotes($str)
+    {
+        return '\''.$str.'\'';
     }
 }

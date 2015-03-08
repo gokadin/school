@@ -14,7 +14,7 @@ class AccountController extends BackController
 {
     public function index()
     {
-        
+
     }
 
     public function signUp()
