@@ -13,9 +13,7 @@ class AccountController extends BackController
 {
     public function index()
     {
-        $school = School::find(29);
-        $users = $school->users();
-        echo sizeof($users);
+        $users = User::all()->where('first_name', '>', 'kkkk');
     }
 
     public function signUp()

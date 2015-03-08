@@ -16,7 +16,7 @@ class QueryBuilder
         $this->model = $model;
     }
 
-    protected function buildSelect($selectValues, $wheres)
+    protected function buildSelect($selectValues, $wheres = null)
     {
         if ($selectValues == null || ($selectValues) == 0)
             $selectValues = '*';

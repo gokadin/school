@@ -22,19 +22,16 @@ class Model implements ModelQueryContract
         $blueprint = DB::getBlueprint($this->modelName);
         $this->table = $blueprint->table();
         $this->hasTimestamps = $blueprint->hasTimestamps();
-        foreach ($blueprint->columns() as $column)
-        {
+        foreach ($blueprint->columns() as $column) {
             if ($column->isPrimaryKey())
                 $this->primaryKey = $column->getName();
-            else
-            {
+            else {
                 $this->columns[] = $column;
                 $this->columnNames[] = $column->getName();
             }
         }
 
-        foreach ($data as $key => $value)
-        {
+        foreach ($data as $key => $value) {
             $this->__set($key, $value);
         }
 
@@ -87,16 +84,14 @@ class Model implements ModelQueryContract
 
     private function update()
     {
-        if ($this->isMissingRequiredColumn())
-        {
-            throw new RuntimeException('A required column is missing from table '.$this->table);
+        if ($this->isMissingRequiredColumn()) {
+            throw new RuntimeException('A required column is missing from table ' . $this->table);
             return false;
         }
 
         $values = array();
 
-        foreach ($this->vars as $key => $var)
-        {
+        foreach ($this->vars as $key => $var) {
             if ($this->hasColumn($key))
                 $values[$key] = $var;
         }
@@ -111,8 +106,7 @@ class Model implements ModelQueryContract
             return false;
         }
 
-        if (!$this->hasTimestamps)
-        {
+        if (!$this->hasTimestamps) {
             throw new RuntimeException('Cannot perform touch. Timestamps are disabled or not present.');
             return false;
         }
@@ -124,8 +118,7 @@ class Model implements ModelQueryContract
 
     public function delete()
     {
-        if ($this->isMissingPrimaryKey())
-        {
+        if ($this->isMissingPrimaryKey()) {
             throw new RuntimeException('Cannot delete model, it was not yet created.');
             return false;
         }
@@ -135,16 +128,14 @@ class Model implements ModelQueryContract
 
     private function insert()
     {
-        if ($this->isMissingRequiredColumn())
-        {
-            throw new RuntimeException('A required column is missing from table '.$this->table);
+        if ($this->isMissingRequiredColumn()) {
+            throw new RuntimeException('A required column is missing from table ' . $this->table);
             return false;
         }
 
         $values = array();
 
-        foreach ($this->vars as $key => $var)
-        {
+        foreach ($this->vars as $key => $var) {
             if ($this->hasColumn($key))
                 $values[$key] = $var;
         }
@@ -160,28 +151,24 @@ class Model implements ModelQueryContract
 
     public static function create(array $values)
     {
-        if ($values == null)
-        {
+        if ($values == null) {
             throw new RuntimeException('Values cannot be empty when creating a new model.');
             return null;
         }
 
         $instance = new static;
 
-        foreach ($values as $key => $value)
-        {
-            if (!$instance->hasColumn($key))
-            {
-                throw new RuntimeException('Column '.$key.' does not exist in table '.$instance->tableName());
+        foreach ($values as $key => $value) {
+            if (!$instance->hasColumn($key)) {
+                throw new RuntimeException('Column ' . $key . ' does not exist in table ' . $instance->tableName());
                 return null;
             }
 
             $instance->$key = $value;
         }
 
-        if ($instance->isMissingRequiredColumn())
-        {
-            throw new RuntimeException('A required column is missing from table '.$instance->tableName());
+        if ($instance->isMissingRequiredColumn()) {
+            throw new RuntimeException('A required column is missing from table ' . $instance->tableName());
             return null;
         }
 
@@ -200,6 +187,13 @@ class Model implements ModelQueryContract
         $instance = new static;
         $query = new Query($instance);
         return $query->exists($var, $value);
+    }
+
+    public static function all()
+    {
+        $instance = new static;
+        $query = new Query($instance);
+        return $query->get();
     }
 
     public static function where($var, $operator, $value, $link = 'AND')

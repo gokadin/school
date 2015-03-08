@@ -140,7 +140,10 @@ class Query extends QueryBuilder implements QueryContract
         if ($values != null)
             $this->addValues($values);
 
-        $str = $this->buildSelect($this->selectValues, $this->wheres);
+        if ($this->wheres = null || sizeof($this->wheres) == 0)
+            $str = $this->buildSelect($this->selectValues);
+        else
+            $str = $this->buildSelect($this->selectValues, $this->wheres);
 
         $result = $this->dao->prepare($str);
         $result->execute();
