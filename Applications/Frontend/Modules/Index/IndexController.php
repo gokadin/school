@@ -4,6 +4,6 @@ class IndexController extends \Library\BackController
 {
     public function index()
     {
-        
+
     }
 }

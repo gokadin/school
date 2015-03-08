@@ -13,10 +13,9 @@ class AccountController extends BackController
 {
     public function index()
     {
-        $users = User::where('active', '>=', 0)->get();
-        $schools = School::where('created_at', '>=', 0)->get();
-
-        Page::add(['users' => $users, 'schools' => $schools]);
+        $school = School::find(29);
+        $users = $school->users();
+        echo sizeof($users);
     }
 
     public function signUp()

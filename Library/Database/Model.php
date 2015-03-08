@@ -262,4 +262,129 @@ class Model implements ModelQueryContract
     {
         return !isset($this->vars[$this->primaryKey]);
     }
+
+    protected function camelCaseToUnderscore($str)
+    {
+        return strtolower(preg_replace('/([a-z])([A-Z])/', '$1_$2', $str));
+    }
+
+    /* RELATIONSHIPS */
+
+    public function hasOne($modelName, $foreignKey = null)
+    {
+        if (!isset($this->vars[$foreignKey]))
+        {
+            throw new RuntimeException('Relationship foreign key not found.');
+            return null;
+        }
+
+        if ($foreignKey == null)
+            $foreignKey = $this->camelCaseToUnderscore($modelName).'_id';
+
+        if ($this->isMissingPrimaryKey())
+        {
+            throw new RuntimeException('Primary key not found in table '.$this->table.'.');
+            return null;
+        }
+
+        $modelName = Query::MODEL_DIRECTORY.$modelName;
+        return $modelName::find($this->vars[$foreignKey]);
+    }
+
+    public function belongsTo($modelName, $foreignKey = null)
+    {
+        if ($this->isMissingPrimaryKey())
+        {
+            throw new RuntimeException('Primary key not found in table '.$this->table.'.');
+            return null;
+        }
+
+        if ($foreignKey == null)
+            $foreignKey = $this->camelCaseToUnderscore($this->modelName).'_id';
+
+        $modelName = Query::MODEL_DIRECTORY.$modelName;
+        return $modelName::where($foreignKey, '=', $this->vars[$this->primaryKey])->get();
+    }
+
+    public function hasMany($modelName, $foreignKey = null)
+    {
+        if ($this->isMissingPrimaryKey())
+        {
+            throw new RuntimeException('Primary key not found in table '.$this->table.'.');
+            return null;
+        }
+
+        if ($foreignKey == null)
+            $foreignKey = $this->camelCaseToUnderscore($this->modelName).'_id';
+
+        $modelName = Query::MODEL_DIRECTORY.$modelName;
+        return $modelName::where($foreignKey, '=', $this->vars[$this->primaryKey])->get();
+    }
+
+    public function hasManyThrough($modelName, $throughModelName,  $foreignKey = null, $throughForeignKey = null)
+    {
+        if ($this->isMissingPrimaryKey())
+        {
+            throw new RuntimeException('Primary key not found in table '.$this->table.'.');
+            return null;
+        }
+
+        if ($foreignKey == null)
+            $foreignKey = $this->camelCaseToUnderscore($this->modelName).'_id';
+
+        if ($throughForeignKey == null)
+            $throughForeignKey = $this->camelCaseToUnderscore($throughModelName);
+
+        $modelName = Query::MODEL_DIRECTORY.$modelName;
+        $throughModelName = Query::MODEL_DIRECTORY.$throughModelName;
+
+        $throughModels = $throughModelName::where($foreignKey, '=', $this->vars[$this->primaryKey])->get();
+
+        $throughModelNameIds = array();
+        foreach ($throughModels as $throughModel)
+            $throughModelNameIds[] = $throughModel->id;
+        $throughModelNameIds = '('.implode(', ', $throughModelNameIds).')';
+
+        return $modelName::where($throughForeignKey, 'in', $throughModelNameIds)->get();
+    }
+
+    public function belongsToMany($modelName, $pivotName = null, $thisForeignKey = null, $targetForeignKey = null)
+    {
+        if ($this->isMissingPrimaryKey())
+        {
+            throw new RuntimeException('Primary key not found in table '.$this->table.'.');
+            return null;
+        }
+
+        if ($thisForeignKey == null)
+            $thisForeignKey = $this->camelCaseToUnderscore($this->modelName).'_id';
+
+        if (!isset($this->vars[$thisForeignKey]))
+        {
+            throw new RuntimeException('Relationship foreign key not found.');
+            return null;
+        }
+
+        if ($targetForeignKey == null)
+            $targetForeignKey = $this->camelCaseToUnderscore($modelName).'_id';
+
+        if ($pivotName == null)
+        {
+            if (strcmp($this->modelName, $modelName) < 0)
+                $pivotName = $this->camelCaseToUnderscore($this->modelName).'_'.$this->camelCaseToUnderscore($modelName);
+            else if (strcmp($this->modelName, $modelName) > 0)
+                $pivotName = $this->camelCaseToUnderscore($modelName).'_'.$this->camelCaseToUnderscore($this->modelName);
+            else
+            {
+                throw new RuntimeException($this->modelName.' cannot belong to the same table');
+                return null;
+            }
+        }
+
+        $targetIds = $pivotName::where($thisForeignKey, '=', $this->vars[$this->primaryKey])->get($targetForeignKey);
+        $targetIds = '('.implode(', ', $targetIds).')';
+
+        $model = new $modelName();
+        return $modelName::where($model->primaryKey(), 'in', $targetIds);
+    }
 }

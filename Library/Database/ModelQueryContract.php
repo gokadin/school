@@ -15,4 +15,14 @@ interface ModelQueryContract
     public static function where($var, $operator, $value, $link = 'AND');
 
     public static function find($id);
+
+    public function hasOne($modelName, $foreignKey = null);
+
+    public function belongsTo($modelName, $foreignKey = null);
+
+    public function hasMany($modelName, $foreignKey = null);
+
+    public function hasManyThrough($modelName, $throughModelName, $foreignKey = null, $throughForeignKey = null);
+
+    public function belongsToMany($modelName, $pivotName = null, $thisForeignKey = null, $targetForeignKey = null);
 }
