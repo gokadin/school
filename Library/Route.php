@@ -1,6 +1,7 @@
 <?php namespace Library;
 
-class Route {
+class Route
+{
     protected $action;
     protected $module;
     protected $url;

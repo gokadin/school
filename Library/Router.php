@@ -36,7 +36,7 @@ class Router
 
     public function getUrlFromAction($string)
     {
-        $arr = explode('/', $string);
+        $arr = explode('#', $string);
         $app = $arr[0];
         $module = $arr[1];
         $action = $arr[2];
@@ -57,11 +57,12 @@ class Router
 
         if ($routes == null)
         {
-            throw new RuntimeException('Route not found.');
+            throw new RuntimeException('Route not found: '.$string.'.');
             return '';
         }
 
-        foreach ($routes as $route) {
+        foreach ($routes as $route)
+        {
             if ($route->getAttribute('module') == $module &&
                 $route->getAttribute('action') == $action)
             {

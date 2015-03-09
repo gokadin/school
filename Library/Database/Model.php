@@ -249,18 +249,18 @@ class Model implements ModelQueryContract
 
     public function hasOne($modelName, $foreignKey = null)
     {
+        if ($foreignKey == null)
+            $foreignKey = $this->camelCaseToUnderscore($modelName).'_id';
+
         if (!isset($this->vars[$foreignKey]))
         {
             throw new RuntimeException('Relationship foreign key not found.');
             return null;
         }
 
-        if ($foreignKey == null)
-            $foreignKey = $this->camelCaseToUnderscore($modelName).'_id';
-
         if ($this->isMissingPrimaryKey())
         {
-            throw new RuntimeException('Primary key not found in table '.$this->table.'.');
+            throw new RuntimeException('Primary key not found in table '.$this->tableName.'.');
             return null;
         }
 
@@ -272,7 +272,7 @@ class Model implements ModelQueryContract
     {
         if ($this->isMissingPrimaryKey())
         {
-            throw new RuntimeException('Primary key not found in table '.$this->table.'.');
+            throw new RuntimeException('Primary key not found in table '.$this->tableName.'.');
             return null;
         }
 
@@ -287,7 +287,7 @@ class Model implements ModelQueryContract
     {
         if ($this->isMissingPrimaryKey())
         {
-            throw new RuntimeException('Primary key not found in table '.$this->table.'.');
+            throw new RuntimeException('Primary key not found in table '.$this->tableName.'.');
             return null;
         }
 
@@ -302,7 +302,7 @@ class Model implements ModelQueryContract
     {
         if ($this->isMissingPrimaryKey())
         {
-            throw new RuntimeException('Primary key not found in table '.$this->table.'.');
+            throw new RuntimeException('Primary key not found in table '.$this->tableName.'.');
             return null;
         }
 
@@ -329,7 +329,7 @@ class Model implements ModelQueryContract
     {
         if ($this->isMissingPrimaryKey())
         {
-            throw new RuntimeException('Primary key not found in table '.$this->table.'.');
+            throw new RuntimeException('Primary key not found in table '.$this->tableName.'.');
             return null;
         }
 
