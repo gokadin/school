@@ -1,11 +1,9 @@
 <?php namespace Library\Database;
 
-use Symfony\Component\Yaml\Exception\RuntimeException;
-
-class Blueprint
+class Table
 {
     protected $modelName;
-    protected $table;
+    protected $tableName;
     protected $columns;
 
     public function __construct($modelName)
@@ -16,7 +14,7 @@ class Blueprint
 
     public function setTable($name)
     {
-        $this->table = $name;
+        $this->tableName = $name;
     }
 
     public function increments($name)
@@ -31,9 +29,9 @@ class Blueprint
         return $this->columns[] = new Column($name, 'integer', $size);
     }
 
-    public function double($name, $size = 11)
+    public function decimal($name, $size = 11)
     {
-        return $this->columns[] = new Column($name, 'double', $size);
+        return $this->columns[] = new Column($name, 'decimal', $size);
     }
 
     public function string($name, $size = 50)
@@ -59,9 +57,9 @@ class Blueprint
         return $this->modelName;
     }
 
-    public function table()
+    public function tableName()
     {
-        return $this->table;
+        return $this->tableName;
     }
 
     public function columns()

@@ -18,9 +18,9 @@ class Database
         return $this->dao;
     }
 
-    public function getBlueprint($modelName)
+    public function getTable($modelName)
     {
-        return $this->tables->getBlueprint($modelName);
+        return $this->tables->getTable($modelName);
     }
 
     public function table($table)

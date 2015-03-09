@@ -8,7 +8,7 @@ class Model implements ModelQueryContract
 {
     private $query;
     protected $vars = array();
-    protected $table;
+    protected $tableName;
     protected $modelName;
     protected $primaryKey;
     private $columns;
@@ -19,10 +19,10 @@ class Model implements ModelQueryContract
     {
         $modelName = get_called_class();
         $this->modelName = strtolower(substr($modelName, strrpos($modelName, '\\') + 1));
-        $blueprint = DB::getBlueprint($this->modelName);
-        $this->table = $blueprint->table();
-        $this->hasTimestamps = $blueprint->hasTimestamps();
-        foreach ($blueprint->columns() as $column) {
+        $table = DB::getTable($this->modelName);
+        $this->tableName = $table->tableName();
+        $this->hasTimestamps = $table->hasTimestamps();
+        foreach ($table->columns() as $column) {
             if ($column->isPrimaryKey())
                 $this->primaryKey = $column->getName();
             else {
@@ -40,7 +40,7 @@ class Model implements ModelQueryContract
 
     public function tableName()
     {
-        return $this->table;
+        return $this->tableName;
     }
 
     public function modelName()

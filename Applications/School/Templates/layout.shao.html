@@ -12,17 +12,7 @@
 </head>
 <body>
     <div class="container-fluid">
-        <header class="row">
-            <div class="col-md-4">
-                School name
-            </div>
-            <div class="col-md-4">
-                Search...
-            </div>
-            <div class="col-md-4">
-                {{ $currentUser->name() }}
-            </div>
-        </header>
+        @include('School/topMenu')
 
         <div class="row">
             <nav class="col-md-4">

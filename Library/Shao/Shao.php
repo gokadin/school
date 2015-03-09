@@ -22,6 +22,7 @@ class Shao
 
         self::createMetadataFile($file, $str);
 
+        self::parseRawPhp($str);
         self::parseEchoAndEscape($str);
         self::parseEcho($str);
         self::parseLogic($str);
@@ -78,8 +79,14 @@ class Shao
 
     private static function parseEchoAndEscape(&$str)
     {
-        $str = str_replace('{{{', '<?php echo htmlspecialchars(', $str);
-        $str = str_replace('}}}', '); ?>', $str);
+        $str = str_replace('{!!', '<?php echo htmlspecialchars(', $str);
+        $str = str_replace('!!}', '); ?>', $str);
+    }
+
+    private static function parseRawPhp(&$str)
+    {
+        $str = str_replace('{{{', '<?php ', $str);
+        $str = str_replace('}}}', ' ?>', $str);
     }
 
     private static function parseEcho(&$str)

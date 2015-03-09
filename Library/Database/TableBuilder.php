@@ -2,12 +2,11 @@
 
 use Database\Tables;
 use Symfony\Component\Yaml\Exception\RuntimeException;
-use Library\Facades\DB;
 
 class TableBuilder extends Tables
 {
     protected $db;
-    protected $blueprints;
+    protected $tables;
 
     public function __construct($db)
     {
@@ -17,20 +16,20 @@ class TableBuilder extends Tables
 
         foreach ($functions as $function)
         {
-            $blueprint = $this->$function();
-            $blueprint->setTable($function);
-            $this->blueprints[] = $blueprint;
+            $table = $this->$function();
+            $table->setTable($function);
+            $this->tables[] = $table;
         }
 
         $this->buildTables();
     }
 
-    public function getBlueprint($modelName)
+    public function getTable($modelName)
     {
-        foreach ($this->blueprints as $blueprint)
+        foreach ($this->tables as $table)
         {
-            if ($blueprint->modelName() == $modelName)
-                return $blueprint;
+            if ($table->modelName() == $modelName)
+                return $table;
         }
 
         throw new RuntimeException('Table schema for '.$modelName.' does not exist.');
@@ -38,19 +37,19 @@ class TableBuilder extends Tables
 
     protected function buildTables()
     {
-        foreach ($this->blueprints as $blueprint)
-            $this->buildTable($blueprint);
+        foreach ($this->tables as $table)
+            $this->buildTable($table);
     }
 
-    protected function buildTable($blueprint)
+    protected function buildTable($table)
     {
-        $sql = 'CREATE TABLE IF NOT EXISTS '.$blueprint->table().' (';
+        $sql = 'CREATE TABLE IF NOT EXISTS '.$table->tableName().' (';
 
-        foreach ($blueprint->columns() as $column)
+        foreach ($table->columns() as $column)
             $sql .= $this->buildColumn($column);
         $sql = substr($sql, 0, -3);
 
-        foreach ($blueprint->columns() as $column)
+        foreach ($table->columns() as $column)
         {
             if ($column->isUnique())
                 $sql .= $this->buildUnique($column);
@@ -99,8 +98,8 @@ class TableBuilder extends Tables
         {
             case 'integer':
                 return 'INT';
-            case 'double':
-                return 'DOUBLE';
+            case 'decimal':
+                return 'DECIMAL';
             case 'string':
                 return 'VARCHAR';
             case 'boolean':
