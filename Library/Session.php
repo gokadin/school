@@ -38,6 +38,12 @@ class Session
         if (isset($_SESSION[$key]))
             unset($_SESSION[$key]);
     }
+
+    public function login($id)
+    {
+        $_SESSION['id'] = $id;
+        $_SESSION['authenticated'] = true;
+    }
     
     public function logout()
     {

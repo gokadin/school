@@ -13,7 +13,26 @@ class AccountController extends BackController
 {
     public function index()
     {
-        $users = User::all()->where('first_name', '>', 'kkkk');
+        if (Session::hasErrors())
+            Page::add('errors', Session::getErrors());
+    }
+
+    public function login()
+    {
+        $user = User::where('email', '=', Request::postData('email'))
+            ->where('password', '=', md5(Request::postData('password')))
+            ->get();
+
+        if ($user != null)
+        {
+            Session::login($user->id);
+            Response::toAction('School/Index/index');
+        }
+        else
+        {
+            Session::setErrors('The email or password is incorrect.');
+            Response::back();
+        }
     }
 
     public function signUp()

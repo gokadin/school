@@ -20,7 +20,7 @@
                 Search...
             </div>
             <div class="col-md-4">
-                {{ $currentUser->name() }}
+                <?php echo  $currentUser->name() ; ?>
             </div>
         </header>
 
@@ -37,7 +37,7 @@
             </nav>
 
             <div class="col-md-8">
-                {{ $content }}
+                <?php echo  $content ; ?>
             </div>
         </div>
     </div>

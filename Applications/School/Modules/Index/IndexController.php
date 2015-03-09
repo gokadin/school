@@ -1,11 +1,11 @@
-<?php
-namespace Applications\Frontend\Modules\Index;
+<?php namespace Applications\School\Modules\Index;
 
-class IndexController extends \Library\BackController
+use Library\BackController;
+
+class IndexController extends BackController
 {
     public function index()
     {
        
     }
 }
-?>

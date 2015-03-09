@@ -5,13 +5,23 @@
         <route url="/School/" method="GET" module="Index" action="index" />
         <!-- ACCOUNT MODULE -->
         <route url="/School/account/login" method="GET" module="Account" action="index" />
+        <route url="/School/account/login" method="POST" module="Account" action="login" />
         <route url="/School/account/signup" method="GET" module="Account" action="signUp" />
         <route url="/School/account/signup" method="POST" module="Account" action="registerUser" />
     </application>
+
     <application name="School">
         <!-- INDEX MODULE -->
         <route url="/School/school/" method="GET" module="Index" action="index" />
+        <!-- ACTIVITY MODULE -->
+        <route url="/school/school/activities" method="GET" module="Activity" action="index" />
+        <route url="/school/school/activities/create" method="GET" module="Activity" action="create" />
+        <route url="/school/school/activities/create" method="POST" module="Activity" action="store" />
+        <route url="/school/school/activities/edit/([0-9]+)" method="GET" module="Activity" action="edit" />
+        <route url="/school/school/activities/edit/([0-9]+)" method="PUT" module="Activity" action="update" vars="activityId" />
+        <route url="/school/school/activities/delete/([0-9]+)" method="DELETE" module="Activity" action="destroy" vars="activityId" />
     </application>
+
     <application name="Backend">
         <!-- INDEX MODULE -->
         <route url="/School/admin/" method="GET" module="Index" action="index" />
