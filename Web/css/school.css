@@ -5,7 +5,7 @@
 
 .main-content
 {
-    margin-left: 5%;
+    margin-left: 0px;
     margin-right: 5%;
 }
 
@@ -16,6 +16,7 @@
     border: none;
     padding-right: 5%;
     padding-left: 5%;
+    margin-bottom: 0px;
 }
 
 @media (min-width: 768px)
@@ -43,14 +44,49 @@
     box-shadow: none;
 }
 
+.sidebar
+{
+    padding-left: 0px;
+    border-radius: 0px;;
+}
+
+.sidebar .list-group-item:first-child
+{
+    border-top-left-radius: 0px;
+    border-top-right-radius: 0px;
+    height: 50px;
+    padding-top: 0px;
+}
+
+.sidebar .list-group-item
+{
+    background-color: #080808;
+    background-image: url('/School/Web/images/textures/darkStripes.png');
+    color: #e2e2e2;
+    border: none;
+    border-bottom: 1px solid #8C8C8C;
+    margin-bottom: 0px;
+}
+
+.sidebar .list-group-item:not(:first-child):hover
+{
+    color: white;
+    background: #474747;
+}
+
+.sidemenu-slide-button
+{
+    font-size: 36px;
+    color: #d3cfcf;
+    cursor: pointer;
+}
+
 .mini-submenu
 {
     display:none;
     background-color: rgba(0, 0, 0, 0);
     border: 1px solid rgba(0, 0, 0, 0.9);
-    border-radius: 4px;
     padding: 9px;
-    /*position: relative;*/
     width: 42px;
 }
 
@@ -61,7 +97,6 @@
 
 .mini-submenu .icon-bar
 {
-    border-radius: 1px;
     display: block;
     height: 2px;
     width: 22px;
