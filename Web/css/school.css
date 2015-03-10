@@ -1,5 +1,74 @@
-header
+.container-fluid
 {
-    background-color: #343232;
+    padding: 0px;
+}
+
+.main-content
+{
+    margin-left: 5%;
+    margin-right: 5%;
+}
+
+.nav-top
+{
+    min-height: 10px;
+    border-radius: 0px;
+    border: none;
+    padding-right: 5%;
+    padding-left: 5%;
+}
+
+@media (min-width: 768px)
+{
+    .nav-top-search
+    {
+        margin-left: 20%;
+    }
+}
+
+.nav-top-search input
+{
+    background-color: #222;
+    border: none;
+    border-bottom: 1px solid #9D9D9D;
+    box-shadow: none;
+    border-radius: 0px;
+}
+
+.nav-top-search input:focus
+{
     color: white;
+    border: none;
+    border-bottom: 1px solid white;
+    box-shadow: none;
+}
+
+.mini-submenu
+{
+    display:none;
+    background-color: rgba(0, 0, 0, 0);
+    border: 1px solid rgba(0, 0, 0, 0.9);
+    border-radius: 4px;
+    padding: 9px;
+    /*position: relative;*/
+    width: 42px;
+}
+
+.mini-submenu:hover
+{
+    cursor: pointer;
+}
+
+.mini-submenu .icon-bar
+{
+    border-radius: 1px;
+    display: block;
+    height: 2px;
+    width: 22px;
+    margin-top: 3px;
+}
+
+.mini-submenu .icon-bar
+{
+    background-color: #000;
 }

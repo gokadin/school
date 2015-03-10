@@ -31,7 +31,8 @@ class Router
                 return $route;
             }
         }
-        throw new \RuntimeException('No routes found corresponding to the URL', self::NO_ROUTE);
+
+        throw new RuntimeException('No routes found corresponding to the URL', self::NO_ROUTE);
     }
 
     public function getUrlFromAction($string)
@@ -75,6 +76,6 @@ class Router
             }
         }
 
-        throw new \RuntimeException('Router.getRouteFromAction : route not found.');
+        throw new RuntimeException('Router.getRouteFromAction : route not found.');
     }
 }

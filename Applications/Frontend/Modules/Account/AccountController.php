@@ -26,13 +26,19 @@ class AccountController extends BackController
         if ($user != null)
         {
             Session::login($user->id);
-            Response::toAction('School/Index/index');
+            Response::toAction('School#Index#index');
         }
         else
         {
             Session::setErrors('The email or password is incorrect.');
             Response::back();
         }
+    }
+
+    public function logout()
+    {
+        Session::logout();
+        Response::toAction('Frontend#Index#index');
     }
 
     public function signUp()
@@ -67,6 +73,6 @@ class AccountController extends BackController
 
         $user->save();
 
-        Response::toAction('Frontend/Account/index');
+        Response::toAction('Frontend#Account#index');
     }
 }

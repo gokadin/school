@@ -6,6 +6,7 @@
         <!-- ACCOUNT MODULE -->
         <route url="/School/account/login" method="GET" module="Account" action="index" />
         <route url="/School/account/login" method="POST" module="Account" action="login" />
+        <route url="/School/account/logout" method="GET" module="Account" action="logout" />
         <route url="/School/account/signup" method="GET" module="Account" action="signUp" />
         <route url="/School/account/signup" method="POST" module="Account" action="registerUser" />
     </application>

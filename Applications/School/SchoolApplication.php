@@ -25,7 +25,7 @@ class SchoolApplication extends Application
 
         $currentUser = User::find(Session::get('id'));
         if ($currentUser == null || !Session::get('authenticated'))
-            Response::toAction('Frontend/Account/index');
+            Response::toAction('Frontend#Account#index');
 
         $controller->page()->add(['currentUser' => $currentUser]);
         

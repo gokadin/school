@@ -1,6 +1,8 @@
 <?php namespace Applications\Frontend\Modules\Index;
 
-class IndexController extends \Library\BackController
+use Library\BackController;
+
+class IndexController extends BackController
 {
     public function index()
     {

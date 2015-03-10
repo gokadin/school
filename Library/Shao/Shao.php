@@ -182,7 +182,7 @@ class Shao
 
     private static function parseFunctions(&$str)
     {
-            $functionRegex = '/@[a-z0-9]+\(\'.+\'\)/';
+        $functionRegex = '/@[a-z0-9]+\(\'.+\'\)/';
 
         $str = preg_replace_callback($functionRegex, 'self::parseFunctionReplaceCallback', $str);
     }
