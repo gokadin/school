@@ -5,9 +5,11 @@ use Library\Facades\Request;
 use Library\Facades\Response;
 use Library\Facades\Page;
 use Library\Facades\Session;
-use Library\Facades\Config;
-use Models\User;
+use Models\Address;
 use Models\School;
+use Models\Teacher;
+use Models\UserInfo;
+use Models\UserSetting;
 
 class AccountController extends BackController
 {
@@ -19,13 +21,13 @@ class AccountController extends BackController
 
     public function login()
     {
-        $user = User::where('email', '=', Request::postData('email'))
+        $userInfo = UserInfo::where('email', '=', Request::postData('email'))
             ->where('password', '=', md5(Request::postData('password')))
             ->get();
 
-        if ($user != null)
+        if ($userInfo != null)
         {
-            Session::login($user->id);
+            Session::login($userInfo->id);
             Response::toAction('School#Index#index');
         }
         else
@@ -49,7 +51,7 @@ class AccountController extends BackController
 
     public function registerUser()
     {
-        if (User::exists('email', Request::postData('email')))
+        if (UserInfo::exists('email', Request::postData('email')))
         {
             Session::setErrors(['Email is already in use.']);
             Response::back();
@@ -61,17 +63,22 @@ class AccountController extends BackController
             Response::back();
         }
 
-        $school = School::create(['name' => '']);
+        $schoolAddress = Address::create();
+        $school = School::create(['name' => 'Your School', 'address_id' => $schoolAddress->id]);
+        $userAddress = Address::create();
+        $userSetting = UserSetting::create();
 
-        $user = new User();
-        $user->school_id = $school->id;
-        $user->first_name = Request::postData('firstName');
-        $user->last_name = Request::postData('lastName');
-        $user->email = Request::postData('email');
-        $user->password = md5(Request::postData('password'));
-        $user->type = Config::get('testType');
+        $userInfo = new UserInfo();
+        $userInfo->school_id = $school->id;
+        $userInfo->address_id = $userAddress->id;
+        $userInfo->user_setting_id = $userSetting->id;
+        $userInfo->first_name = Request::postData('firstName');
+        $userInfo->last_name = Request::postData('lastName');
+        $userInfo->email = Request::postData('email');
+        $userInfo->password = md5(Request::postData('password'));
+        $userInfo->save();
 
-        $user->save();
+        Teacher::create(['user_info_id' => $userInfo->id, 'school_id' => $school->id]);
 
         Response::toAction('Frontend#Account#index');
     }

@@ -28,7 +28,7 @@ class TableBuilder extends Tables
     {
         foreach ($this->tables as $table)
         {
-            if ($table->modelName() == $modelName)
+            if (strcasecmp($table->modelName(), $modelName) == 0)
                 return $table;
         }
 

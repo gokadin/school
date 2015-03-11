@@ -4,8 +4,13 @@ use Library\Database\Model;
 
 class School extends Model
 {
-    public function users()
+    public function teacher()
     {
-        return $this->hasMany('User');
+        return $this->belongsTo('Teacher');
+    }
+
+    public function students()
+    {
+        return $this->hasMany('Student');
     }
 }

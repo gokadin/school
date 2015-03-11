@@ -80,10 +80,11 @@ class Column
 
     public function isRequired()
     {
-        return !$this->canBeNull ||
-            ($this->canBeNull && $this->default == null) ||
-            $this->name == QueryBuilder::UPDATED_AT ||
-            $this->name == QueryBuilder::CREATED_AT;
+        if ($this->name != QueryBuilder::UPDATED_AT ||
+            $this->name != QueryBuilder::CREATED_AT)
+            return false;
+
+        return !$this->canBeNull && $this->default == null;
     }
 
     public function isUnique()

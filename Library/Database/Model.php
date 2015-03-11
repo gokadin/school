@@ -17,8 +17,8 @@ class Model implements ModelQueryContract
 
     public function __construct(array $data = array())
     {
-        $modelName = get_called_class();
-        $this->modelName = strtolower(substr($modelName, strrpos($modelName, '\\') + 1));
+        $this->modelName = get_called_class();
+        $this->modelName = substr($this->modelName, strrpos($this->modelName, '\\') + 1);
         $table = DB::getTable($this->modelName);
         $this->tableName = $table->tableName();
         $this->hasTimestamps = $table->hasTimestamps();
@@ -142,38 +142,45 @@ class Model implements ModelQueryContract
 
         $result = $this->query->create($values);
 
-        if (!$result)
-            return false;
+        if ($result != null)
+        {
+            $this->hydrate($result->first());
+            return true;
+        }
 
-        $this->hydrate($result);
-        return true;
+        return false;
     }
 
-    public static function create(array $values)
+    public static function create(array $values = null)
     {
-        if ($values == null) {
-            throw new RuntimeException('Values cannot be empty when creating a new model.');
-            return null;
-        }
-
         $instance = new static;
 
-        foreach ($values as $key => $value) {
-            if (!$instance->hasColumn($key)) {
-                throw new RuntimeException('Column ' . $key . ' does not exist in table ' . $instance->tableName());
-                return null;
-            }
+        if ($values != null)
+        {
+            foreach ($values as $key => $value)
+            {
+                if (!$instance->hasColumn($key))
+                {
+                    throw new RuntimeException('Column ' . $key . ' does not exist in table ' . $instance->tableName());
+                    return null;
+                }
 
-            $instance->$key = $value;
+                $instance->$key = $value;
+            }
         }
 
-        if ($instance->isMissingRequiredColumn()) {
+        if ($instance->isMissingRequiredColumn())
+        {
             throw new RuntimeException('A required column is missing from table ' . $instance->tableName());
             return null;
         }
 
         $query = new Query($instance);
-        return $query->create($values)->first();
+        $result = $query->create($values);
+        if ($result != null)
+            return $result->first();
+
+        return null;
     }
 
     protected function hydrate($otherModel)
@@ -225,7 +232,7 @@ class Model implements ModelQueryContract
     {
         foreach ($this->columns as $column)
         {
-            if (!$column->isRequired() && !isset($this->vars[$column->getName()]))
+            if ($column->isRequired() && !isset($this->vars[$column->getName()]))
             {
                 echo $column->getName();
                 return true;

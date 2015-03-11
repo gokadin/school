@@ -40,14 +40,17 @@ class QueryBuilder
         return $str;
     }
 
-    protected function buildInsert($values)
+    protected function buildInsert($values = array())
     {
         $createdAtIsSet = false;
         $updatedAtIsSet = false;
 
         $str = 'INSERT INTO '.$this->model->tableName();
 
-        $vars = array_keys($values);
+        $vars = array();
+        if (sizeof($values) > 0)
+            $vars = array_keys($values);
+
         if ($this->model->hasTimestamps())
         {
             foreach ($vars as $var)
@@ -67,14 +70,18 @@ class QueryBuilder
         $str .= ' ('.implode(', ', $vars).')';
         $str .= ' VALUES(';
 
+        if ($this->model->hasTimestamps())
+        {
+            if (!$createdAtIsSet)
+                $values[] = Carbon::now();
+            if (!$updatedAtIsSet)
+                $values[] = Carbon::now();
+        }
+
         foreach ($values as &$value)
             $value = $this->addQuotes($value);
 
         $str .= implode(', ', $values);
-        if (!$createdAtIsSet)
-            $str .= ', '.$this->addQuotes(Carbon::now());
-        if (!$updatedAtIsSet)
-            $str .= ', '.$this->addQuotes(Carbon::now());
 
         $str .= ')';
 
