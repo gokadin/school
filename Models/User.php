@@ -2,8 +2,13 @@
 
 use Library\Database\Model;
 
-class UserInfo extends Model
+class User extends Model
 {
+    public function morph()
+    {
+        return $this->morphTo();
+    }
+
     public function address()
     {
         return $this->hasOne('Address');

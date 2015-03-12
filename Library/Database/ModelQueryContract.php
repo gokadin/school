@@ -27,4 +27,6 @@ interface ModelQueryContract
     public function hasManyThrough($modelName, $throughModelName, $foreignKey = null, $throughForeignKey = null);
 
     public function belongsToMany($modelName, $pivotName = null, $thisForeignKey = null, $targetForeignKey = null);
+
+    public function morphTo($metaIdField = Table::META_ID, $metaTypeField = Table::META_TYPE, $thisForeignKey = null);
 }

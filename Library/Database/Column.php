@@ -84,6 +84,10 @@ class Column
             $this->name != QueryBuilder::CREATED_AT)
             return false;
 
+        if ($this->name != Table::META_TYPE ||
+            $this->name != Table::META_ID)
+            return false;
+
         return !$this->canBeNull && $this->default == null;
     }
 

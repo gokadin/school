@@ -4,9 +4,9 @@ use Library\Database\Table;
 
 class Tables
 {
-    protected function user_info()
+    protected function users()
     {
-        $t = new Table('UserInfo');
+        $t = new Table('User');
 
         $t->increments('id');
         $t->integer('address_id');
@@ -17,6 +17,7 @@ class Tables
         $t->string('password');
         $t->string('phone', 32)->nullable();
         $t->boolean('active')->default(1);
+        $t->meta();
         $t->timestamps();
 
         return $t;

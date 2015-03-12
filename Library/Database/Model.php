@@ -14,6 +14,7 @@ class Model implements ModelQueryContract
     private $columns;
     protected $columnNames;
     private $hasTimestamps;
+    private $isMeta;
 
     public function __construct(array $data = array())
     {
@@ -22,6 +23,7 @@ class Model implements ModelQueryContract
         $table = DB::getTable($this->modelName);
         $this->tableName = $table->tableName();
         $this->hasTimestamps = $table->hasTimestamps();
+        $this->isMeta = $table->isMeta();
         foreach ($table->columns() as $column) {
             if ($column->isPrimaryKey())
                 $this->primaryKey = $column->getName();
@@ -61,6 +63,11 @@ class Model implements ModelQueryContract
     public function hasTimestamps()
     {
         return $this->hasTimestamps;
+    }
+
+    public function isMeta()
+    {
+        return $this->isMeta;
     }
 
     public function __set($var, $value)
@@ -233,10 +240,7 @@ class Model implements ModelQueryContract
         foreach ($this->columns as $column)
         {
             if ($column->isRequired() && !isset($this->vars[$column->getName()]))
-            {
-                echo $column->getName();
                 return true;
-            }
         }
 
         return false;
@@ -287,7 +291,7 @@ class Model implements ModelQueryContract
             $foreignKey = $this->camelCaseToUnderscore($this->modelName).'_id';
 
         $modelName = Query::MODEL_DIRECTORY.$modelName;
-        return $modelName::where($foreignKey, '=', $this->vars[$this->primaryKey])->get();
+        return $modelName::where($foreignKey, '=', $this->vars[$this->primaryKey])->get()->first();
     }
 
     public function hasMany($modelName, $foreignKey = null)
@@ -369,6 +373,27 @@ class Model implements ModelQueryContract
         $targetIds = '('.implode(', ', $targetIds).')';
 
         $model = new $modelName();
-        return $modelName::where($model->primaryKey(), 'in', $targetIds);
+        return $modelName::where($model->primaryKey(), 'in', $targetIds)->get()->first();
+    }
+
+    public function morphTo($metaIdField = Table::META_ID, $metaTypeField = Table::META_TYPE, $thisForeignKey = null)
+    {
+        if (!$this->isMeta)
+            throw new RuntimeException('Model is not a meta type.');
+
+        if (!isset($this->vars[$metaTypeField]) || !isset($this->vars[$metaIdField]))
+            throw new RuntimeException('Model meta field names are invalid or do not exist.');
+
+        $metaType = $this->$metaTypeField;
+
+        if ($metaType == null || !is_string($metaType))
+            throw new RuntimeException('Meta type is invalid or is not defined.');
+
+        $metaModel = new $metaType(); // add validation if exists...
+
+        if ($thisForeignKey == null)
+            $thisForeignKey = $this->camelCaseToUnderscore($this->modelName).'_id';
+
+        return $metaModel::where($thisForeignKey, '=', $this->$metaIdField)->get()->first();
     }
 }
