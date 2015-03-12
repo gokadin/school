@@ -4,9 +4,14 @@ use Library\Database\Model;
 
 class Teacher extends Model
 {
-    public function userInfo()
+    protected $delegates = array
+    (
+        'User'
+    );
+
+    public function user()
     {
-        return $this->hasOne('UserInfo');
+        return $this->morphOne('User');
     }
 
     public function school()

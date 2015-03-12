@@ -4,9 +4,9 @@ use Library\Database\Model;
 
 class Student extends Model
 {
-    public function userInfo()
+    public function user()
     {
-        return $this->hasOne('UserInfo');
+        return $this->morphOne('User');
     }
 
     public function activities()

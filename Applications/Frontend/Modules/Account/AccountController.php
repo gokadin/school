@@ -8,7 +8,7 @@ use Library\Facades\Session;
 use Models\Address;
 use Models\School;
 use Models\Teacher;
-use Models\UserInfo;
+use Models\User;
 use Models\UserSetting;
 
 class AccountController extends BackController
@@ -21,13 +21,13 @@ class AccountController extends BackController
 
     public function login()
     {
-        $userInfo = UserInfo::where('email', '=', Request::postData('email'))
+        $user = User::where('email', '=', Request::postData('email'))
             ->where('password', '=', md5(Request::postData('password')))
             ->get();
 
-        if ($userInfo != null)
+        if ($user != null)
         {
-            Session::login($userInfo->id);
+            Session::login($user->id);
             Response::toAction('School#Index#index');
         }
         else
@@ -51,7 +51,7 @@ class AccountController extends BackController
 
     public function registerUser()
     {
-        if (UserInfo::exists('email', Request::postData('email')))
+        if (User::exists('email', Request::postData('email')))
         {
             Session::setErrors(['Email is already in use.']);
             Response::back();
@@ -68,17 +68,15 @@ class AccountController extends BackController
         $userAddress = Address::create();
         $userSetting = UserSetting::create();
 
-        $userInfo = new UserInfo();
-        $userInfo->school_id = $school->id;
-        $userInfo->address_id = $userAddress->id;
-        $userInfo->user_setting_id = $userSetting->id;
-        $userInfo->first_name = Request::postData('firstName');
-        $userInfo->last_name = Request::postData('lastName');
-        $userInfo->email = Request::postData('email');
-        $userInfo->password = md5(Request::postData('password'));
-        $userInfo->save();
-
-        Teacher::create(['user_info_id' => $userInfo->id, 'school_id' => $school->id]);
+        $user = new Teacher();
+        $user->school_id = $school->id;
+        $user->address_id = $userAddress->id;
+        $user->user_setting_id = $userSetting->id;
+        $user->first_name = Request::postData('firstName');
+        $user->last_name = Request::postData('lastName');
+        $user->email = Request::postData('email');
+        $user->password = md5(Request::postData('password'));
+        $user->save();
 
         Response::toAction('Frontend#Account#index');
     }

@@ -28,7 +28,7 @@ interface ModelQueryContract
 
     public function belongsToMany($modelName, $pivotName = null, $thisForeignKey = null, $targetForeignKey = null);
 
-    public function morphTo($metaIdField = Table::META_ID, $metaTypeField = Table::META_TYPE, $thisForeignKey = null);
+    public function morphTo($metaIdField = Table::META_ID, $metaTypeField = Table::META_TYPE);
 
     public function morphOne($modelName, $metaIdField = Table::META_ID, $metaTypeField = Table::META_TYPE, $typeName = null);
 }

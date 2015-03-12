@@ -41,7 +41,6 @@ class Tables
         $t = new Table('Teacher');
 
         $t->increments('id');
-        $t->integer('user_info_id');
         $t->integer('school_id');
         $t->integer('plan', 5)->default(1);
         $t->integer('type', 5)->default(1);
@@ -54,7 +53,6 @@ class Tables
         $t = new Table('Student');
 
         $t->increments('id');
-        $t->integer('user_info_id');
         $t->integer('school_id');
         $t->integer('teacher_id');
         $t->integer('type', 5)->default(1);

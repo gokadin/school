@@ -57,8 +57,8 @@ class Table
 
     public function meta()
     {
-        $this->columns[] = new Column('meta_id', integer);
-        $this->columns[] = new Column('meta_type', string, 32);
+        $this->columns[] = new Column('meta_id', 'integer');
+        $this->columns[] = new Column('meta_type', 'string', 32);
     }
 
     /* ACCESSORS */
