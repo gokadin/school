@@ -18,7 +18,7 @@ class QueryBuilder
 
     protected function buildSelect($selectValues, $wheres = null)
     {
-        if ($selectValues == null || ($selectValues) == 0)
+        if ($selectValues == null || sizeof($selectValues) == 0)
             $selectValues = '*';
 
         $str = 'SELECT ';

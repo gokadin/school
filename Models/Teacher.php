@@ -4,10 +4,7 @@ use Library\Database\Model;
 
 class Teacher extends Model
 {
-    protected $delegates = array
-    (
-        'User'
-    );
+    protected $inheritsFrom = 'User';
 
     public function user()
     {

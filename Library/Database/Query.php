@@ -77,10 +77,7 @@ class Query extends QueryBuilder implements QueryContract
     public function where($var, $operator, $value, $link = 'AND')
     {
         if (!$this->columnExists($var))
-        {
-            throw new RuntimeException('Column '.$var.' does not exist in table '.$this->model->table);
-            return $this;
-        }
+            throw new RuntimeException('Column '.$var.' does not exist in table '.$this->model->tableName);
 
         $this->wheres[] = compact('var', 'operator', 'value', 'link');
         return $this;
@@ -98,10 +95,7 @@ class Query extends QueryBuilder implements QueryContract
             foreach ($values as $value)
             {
                 if (!$this->columnExists($value))
-                {
                     throw new RuntimeException('Column '.$value.' does not exist in table '.$this->model->table);
-                    return;
-                }
             }
 
             $this->selectValues = $values;
@@ -112,10 +106,7 @@ class Query extends QueryBuilder implements QueryContract
             return;
 
         if (!$this->columnExists($values))
-        {
             throw new RuntimeException('Column '.$values.' does not exist in table '.$this->model->table);
-            return;
-        }
 
         $this->selectValues[] = $values;
         return $this;
@@ -140,7 +131,7 @@ class Query extends QueryBuilder implements QueryContract
         if ($values != null)
             $this->addValues($values);
 
-        if ($this->wheres = null || sizeof($this->wheres) == 0)
+        if ($this->wheres == null || sizeof($this->wheres) == 0)
             $str = $this->buildSelect($this->selectValues);
         else
             $str = $this->buildSelect($this->selectValues, $this->wheres);

@@ -12,6 +12,8 @@
     </application>
 
     <application name="School">
+        <!-- Test -->
+        <route url="/school/school/teacher/" method="GET" module="Teacher/Index" action="index" />
         <!-- INDEX MODULE -->
         <route url="/School/school/" method="GET" module="Index" action="index" />
         <!-- ACTIVITY MODULE -->

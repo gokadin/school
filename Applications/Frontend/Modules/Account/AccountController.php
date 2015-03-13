@@ -23,12 +23,12 @@ class AccountController extends BackController
     {
         $user = User::where('email', '=', Request::postData('email'))
             ->where('password', '=', md5(Request::postData('password')))
-            ->get();
+            ->get()->first();
 
         if ($user != null)
         {
             Session::login($user->id);
-            Response::toAction('School#Index#index');
+            Response::toAction('School#Teacher/Index#index');
         }
         else
         {

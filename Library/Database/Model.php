@@ -15,8 +15,8 @@ class Model implements ModelQueryContract
     protected $columnNames;
     private $hasTimestamps;
     private $isMeta;
-    protected $delegates = array();
-    private $delegateModels = array();
+    protected $inheritsFrom = null;
+    private $baseModel = null;
 
     public function __construct(array $data = array())
     {
@@ -26,7 +26,8 @@ class Model implements ModelQueryContract
         $this->tableName = $table->tableName();
         $this->hasTimestamps = $table->hasTimestamps();
         $this->isMeta = $table->isMeta();
-        foreach ($table->columns() as $column) {
+        foreach ($table->columns() as $column)
+        {
             if ($column->isPrimaryKey())
                 $this->primaryKey = $column->getName();
             else {
@@ -35,9 +36,14 @@ class Model implements ModelQueryContract
             }
         }
 
-        foreach ($data as $key => $value) {
-            $this->__set($key, $value);
+        if ($this->inheritsFrom != null)
+        {
+            $baseModelName = Query::MODEL_DIRECTORY.ucfirst($this->inheritsFrom);
+            $this->baseModel = new $baseModelName();
         }
+
+        foreach ($data as $key => $value)
+            $this->__set($key, $value);
 
         $this->query = new Query($this);
     }
@@ -72,8 +78,27 @@ class Model implements ModelQueryContract
         return $this->isMeta;
     }
 
+    public function hasBaseModel()
+    {
+        return $this->baseModel != null;
+    }
+
+    public function baseModel()
+    {
+        return $this->baseModel;
+    }
+
     public function __set($var, $value)
     {
+        if (!$this->hasColumn($var) && $this->hasBaseModel())
+        {
+            if ($this->baseModel->hasColumn($var))
+            {
+                $this->baseModel->$var = $value;
+                return;
+            }
+        }
+
         $this->vars[$var] = $value;
     }
 
@@ -81,47 +106,40 @@ class Model implements ModelQueryContract
     {
         if (isset($this->vars[$var]))
             return $this->vars[$var];
-        else
+        else if ($this->hasBaseModel() && $var != $this->primaryKey)
         {
-            foreach ($this->delegateModels as $delegateModel)
-            {
-                if (isset($delegateModel->$var))
-                    return $delegateModel->$var;
-            }
+            return $this->baseModel->$var;
         }
     }
 
     public function __isset($var)
     {
-        return isset($this->vars[$var]);
+        if (isset($this->vars[$var]))
+            return true;
+
+        if ($this->hasBaseModel())
+            return isset($this->baseModel->$var);
     }
 
     public function __call($method, $args)
     {
-        foreach ($this->delegateModels as $delegateModel)
+        if (!$this->hasBaseModel())
+            throw new RuntimeException('Method not found: '.$method);
+
+        switch (count($args))
         {
-            $classMethods = get_class_methods(Query::MODEL_DIRECTORY.$delegateModel->modelName());
-            foreach ($classMethods as $classMethod)
-            {
-                if ($classMethod == $method)
-                {
-                    switch (count($args))
-                    {
-                        case 0:
-                            return $delegateModel->$method();
-                        case 1:
-                            return $delegateModel->$method($args[0]);
-                        case 2:
-                            return $delegateModel->$method($args[0], $args[1]);
-                        case 3:
-                            return $delegateModel->$method($args[0], $args[1], $args[2]);
-                        case 4:
-                            return $delegateModel->$method($args[0], $args[1], $args[2], $args[3]);
-                        default:
-                            return call_user_func_array(array($delegateModel, $method), $args);
-                    }
-                }
-            }
+            case 0:
+                return $this->baseModel->$method();
+            case 1:
+                return $this->baseModel->$method($args[0]);
+            case 2:
+                return $this->baseModel->$method($args[0], $args[1]);
+            case 3:
+                return $this->baseModel->$method($args[0], $args[1], $args[2]);
+            case 4:
+                return $this->baseModel->$method($args[0], $args[1], $args[2], $args[3]);
+            default:
+                return call_user_func_array(array($this->baseModel, $method), $args);
         }
     }
 
@@ -136,14 +154,18 @@ class Model implements ModelQueryContract
     private function update()
     {
         if ($this->isMissingRequiredColumn())
-            throw new RuntimeException('A required column is missing from table ' . $this->table);
+            throw new RuntimeException('A required column is missing from table ' . $this->tableName);
 
         $values = array();
 
-        foreach ($this->vars as $key => $var) {
+        foreach ($this->vars as $key => $var)
+        {
             if ($this->hasColumn($key))
                 $values[$key] = $var;
         }
+
+        if ($this->hasBaseModel())
+            return $this->query->update($values) > 0 && $this->baseModel->update();
 
         return $this->query->update($values) > 0;
     }
@@ -151,20 +173,28 @@ class Model implements ModelQueryContract
     public function touch()
     {
         if ($this->isMissingPrimaryKey())
-            throw new RuntimeException('Cannot delete model, it was not yet created.');
+            throw new RuntimeException('Cannot touch model '.$this->modelName.', it was not yet created.');
 
-        if (!$this->hasTimestamps)
-            throw new RuntimeException('Cannot perform touch. Timestamps are disabled or not present.');
+        if ($this->hasTimestamps)
+        {
+            $this->vars[QueryBuilder::UPDATED_AT] = Carbon::now();
+            if ($this->update() == 0)
+                return false;
+        }
 
-        $this->vars[QueryBuilder::UPDATED_AT] = Carbon::now();
+        if ($this->hasBaseModel() && $this->baseModel->hasTimestamps())
+            return $this->baseModel->touch();
 
-        return $this->update() > 0;
+        return true;
     }
 
     public function delete()
     {
         if ($this->isMissingPrimaryKey())
             throw new RuntimeException('Cannot delete model, it was not yet created.');
+
+        if ($this->hasBaseModel())
+            return $this->query->delete() > 0 && $this->baseModel->delete();
 
         return $this->query->delete() > 0;
     }
@@ -175,8 +205,6 @@ class Model implements ModelQueryContract
             throw new RuntimeException('A required column is missing from table ' . $this->tableName);
 
         $values = array();
-        $this->createAllDelegateModels();
-        $this->addDelegateVars();
 
         foreach ($this->vars as $key => $var)
         {
@@ -190,18 +218,14 @@ class Model implements ModelQueryContract
         {
             $this->hydrate($result->first());
 
-            foreach ($this->delegateModels as $delegateModel)
+            if ($this->hasBaseModel())
             {
-                if ($delegateModel->isMeta())
-                {
-                    $metaIdField = Table::META_ID;
-                    $metaTypeField = Table::META_TYPE;
-                    $delegateModel->$metaIdField = $this->vars[$this->primaryKey];
-                    $delegateModel->$metaTypeField = $this->modelName;
-                }
+                $metaTypeField = Table::META_TYPE;
+                $metaIdField = Table::META_ID;
+                $this->baseModel->$metaTypeField = ucfirst($this->modelName);
+                $this->baseModel->$metaIdField = $this->vars[$this->primaryKey];
 
-                if (!$delegateModel->save())
-                    throw new RuntimeException('Delegate model '.$delegateModel->modelName().' failed to create.');
+                return $this->baseModel->save();
             }
 
             return true;
@@ -228,36 +252,19 @@ class Model implements ModelQueryContract
 
     protected function hydrate($otherModel)
     {
+        if ($otherModel == null)
+            return;
+
         foreach ($otherModel->vars as $key => $value)
             $this->$key = $value;
     }
 
-    protected function createAllDelegateModels()
+    public function hydrateBaseModel()
     {
-        foreach ($this->delegates as $delegate)
-        {
-            $delegateModelName = Query::MODEL_DIRECTORY.ucfirst($delegate);
-            if (!class_exists($delegateModelName))
-                throw new RuntimeException('Model '.$delegate.' to delegate from '.$this->modelName.' does not exist.');
+        if (!$this->hasBaseModel())
+            return;
 
-            if (!isset($this->delegateModels[$delegate]))
-                $this->delegateModels[$delegate] = new $delegateModelName();
-        }
-    }
-
-    protected function addDelegateVars()
-    {
-        foreach ($this->vars as $key => $value)
-        {
-            foreach ($this->delegateModels as $delegateModel)
-            {
-                if ($delegateModel->hasColumn($key))
-                {
-                    $delegateModel->$key = $value;
-                    break;
-                }
-            }
-        }
+        $this->baseModel->hydrate($this->morphOne($this->baseModel->modelName()));
     }
 
     public static function exists($var, $value)
@@ -267,14 +274,13 @@ class Model implements ModelQueryContract
 
         if (!$instance->hasColumn($var))
         {
-            foreach ($instance->delegates as $delegate)
+            if ($instance->hasBaseModel())
             {
-                $delegateName = Query::MODEL_DIRECTORY.ucfirst($delegate);
-                if ($delegateName::exists($var, $value))
-                    return true;
+                $baseModelName = Query::MODEL_DIRECTORY.$instance->baseModel()->modelName();
+                return $baseModelName::exists($var, $value);
             }
-
-            return false;
+            else
+                throw new RuntimeException('Field '.$var.' does not exists in model '.$instance->modelName());
         }
 
         return $query->exists($var, $value);
@@ -284,7 +290,11 @@ class Model implements ModelQueryContract
     {
         $instance = new static;
         $query = new Query($instance);
-        return $query->get();
+        $all = $query->get();
+        if ($all != null && $all->count() > 0)
+        {
+            // *
+        }
     }
 
     public static function where($var, $operator, $value, $link = 'AND')
@@ -303,8 +313,7 @@ class Model implements ModelQueryContract
         if ($model == null)
             return null;
 
-        foreach ($model->delegates as $delegate)
-            $model->delegateModels[$delegate] = $model->morphOne($delegate);
+        $model->hydrateBaseModel();
 
         return $model;
     }
@@ -314,7 +323,8 @@ class Model implements ModelQueryContract
         if ($name == $this->primaryKey)
             return true;
 
-        foreach ($this->columnNames as $columnName) {
+        foreach ($this->columnNames as $columnName)
+        {
             if ($columnName === $name)
                 return true;
         }
@@ -350,7 +360,7 @@ class Model implements ModelQueryContract
             $foreignKey = $this->camelCaseToUnderscore($modelName) . '_id';
 
         if (!isset($this->vars[$foreignKey]))
-            throw new RuntimeException('Relationship foreign key not found.');
+            throw new RuntimeException('Relationship foreign key '.$foreignKey.' found in '.$modelName.'.');
 
         if ($this->isMissingPrimaryKey())
             throw new RuntimeException('Primary key not found in table ' . $this->tableName . '.');
@@ -455,8 +465,9 @@ class Model implements ModelQueryContract
         if (!class_exists($metaType))
             throw new RuntimeException('Model '.$metaType.' does not exist,');
 
-        $metaModel = new $metaType();
-        return $metaModel::where($metaModel->primaryKey(), '=', $this->$metaIdField)->get()->first();
+        //$metaModel = new $metaType();
+        //return $metaModel::where($metaModel->primaryKey(), '=', $this->$metaIdField)->get()->first();
+        return new $metaType($this->vars);
     }
 
     public function morphOne($modelName, $metaIdField = Table::META_ID, $metaTypeField = Table::META_TYPE, $typeName = null)
