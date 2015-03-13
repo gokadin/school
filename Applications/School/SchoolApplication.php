@@ -4,8 +4,7 @@ namespace Applications\School;
 use Library\Application;
 use Library\Facades\Session;
 use Library\Facades\Response;
-use Models\UserInfo;
-use Models\Teacher;
+use Models\User;
 
 class SchoolApplication extends Application
 {
@@ -24,7 +23,8 @@ class SchoolApplication extends Application
 
         // SETTING NON DEFAULT LAYOUTS
 
-        $currentUser = Teacher::where('user_info_id', '=', UserInfo::find(Session::get('id'))->id)->get()->first();
+        $currentUser = User::find(Session::get('id'));
+        $currentUser = $currentUser->morph();
         if ($currentUser == null || !Session::get('authenticated'))
             Response::toAction('Frontend#Account#index');
 

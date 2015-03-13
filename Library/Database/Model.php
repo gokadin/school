@@ -81,6 +81,48 @@ class Model implements ModelQueryContract
     {
         if (isset($this->vars[$var]))
             return $this->vars[$var];
+        else
+        {
+            foreach ($this->delegateModels as $delegateModel)
+            {
+                if (isset($delegateModel->$var))
+                    return $delegateModel->$var;
+            }
+        }
+    }
+
+    public function __isset($var)
+    {
+        return isset($this->vars[$var]);
+    }
+
+    public function __call($method, $args)
+    {
+        foreach ($this->delegateModels as $delegateModel)
+        {
+            $classMethods = get_class_methods(Query::MODEL_DIRECTORY.$delegateModel->modelName());
+            foreach ($classMethods as $classMethod)
+            {
+                if ($classMethod == $method)
+                {
+                    switch (count($args))
+                    {
+                        case 0:
+                            return $delegateModel->$method();
+                        case 1:
+                            return $delegateModel->$method($args[0]);
+                        case 2:
+                            return $delegateModel->$method($args[0], $args[1]);
+                        case 3:
+                            return $delegateModel->$method($args[0], $args[1], $args[2]);
+                        case 4:
+                            return $delegateModel->$method($args[0], $args[1], $args[2], $args[3]);
+                        default:
+                            return call_user_func_array(array($delegateModel, $method), $args);
+                    }
+                }
+            }
+        }
     }
 
     public function save()
@@ -93,10 +135,8 @@ class Model implements ModelQueryContract
 
     private function update()
     {
-        if ($this->isMissingRequiredColumn()) {
+        if ($this->isMissingRequiredColumn())
             throw new RuntimeException('A required column is missing from table ' . $this->table);
-            return false;
-        }
 
         $values = array();
 
@@ -245,7 +285,15 @@ class Model implements ModelQueryContract
     {
         $instance = new static;
         $query = new Query($instance);
-        return $query->where($instance->primaryKey, '=', $id)->get()->first();
+        $model = $query->where($instance->primaryKey, '=', $id)->get()->first();
+
+        if ($model == null)
+            return null;
+
+        foreach ($model->delegates as $delegate)
+            $model->delegateModels[$delegate] = $model->morphOne($delegate);
+
+        return $model;
     }
 
     public function hasColumn($name)
@@ -321,10 +369,8 @@ class Model implements ModelQueryContract
 
     public function hasManyThrough($modelName, $throughModelName, $foreignKey = null, $throughForeignKey = null)
     {
-        if ($this->isMissingPrimaryKey()) {
+        if ($this->isMissingPrimaryKey())
             throw new RuntimeException('Primary key not found in table ' . $this->tableName . '.');
-            return null;
-        }
 
         if ($foreignKey == null)
             $foreignKey = $this->camelCaseToUnderscore($this->modelName) . '_id';
