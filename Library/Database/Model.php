@@ -360,7 +360,7 @@ class Model implements ModelQueryContract
             $foreignKey = $this->camelCaseToUnderscore($modelName) . '_id';
 
         if (!isset($this->vars[$foreignKey]))
-            throw new RuntimeException('Relationship foreign key '.$foreignKey.' found in '.$modelName.'.');
+            throw new RuntimeException('Relationship foreign key '.$foreignKey.' not found in '.$this->modelName.'.');
 
         if ($this->isMissingPrimaryKey())
             throw new RuntimeException('Primary key not found in table ' . $this->tableName . '.');
@@ -465,9 +465,8 @@ class Model implements ModelQueryContract
         if (!class_exists($metaType))
             throw new RuntimeException('Model '.$metaType.' does not exist,');
 
-        //$metaModel = new $metaType();
-        //return $metaModel::where($metaModel->primaryKey(), '=', $this->$metaIdField)->get()->first();
-        return new $metaType($this->vars);
+        $metaModel = new $metaType();
+        return $metaModel::where($metaModel->primaryKey(), '=', $this->$metaIdField)->get()->first();
     }
 
     public function morphOne($modelName, $metaIdField = Table::META_ID, $metaTypeField = Table::META_TYPE, $typeName = null)

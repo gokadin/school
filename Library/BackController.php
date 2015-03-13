@@ -21,7 +21,8 @@ abstract class BackController extends ApplicationComponent {
         $this->setView($action);
     }
 
-    public function execute() {
+    public function execute()
+    {
         $function_name = $this->action;
 
         if (!is_callable(array($this, $function_name))) {
@@ -35,7 +36,8 @@ abstract class BackController extends ApplicationComponent {
         return $this->page;
     }
 
-    public function setModule($module) {
+    public function setModule($module)
+    {
         if (!is_string($module) || empty($module)) {
             throw new \InvalidArgumentException('This module has to be a string');
         }
@@ -53,7 +55,8 @@ abstract class BackController extends ApplicationComponent {
         $this->method = $method;
     }
 
-    public function setAction($action) {
+    public function setAction($action)
+    {
         if (!is_string($action) || empty($action)) {
             throw new \InvalidArgumentException('This action has to be a string');
         }

@@ -8,23 +8,27 @@ class Router
 
     const NO_ROUTE = 1;
 
-    public function addRoute(Route $route) {
-        if (!in_array($route, $this->routes)) {
+    public function addRoute(Route $route)
+    {
+        if (!in_array($route, $this->routes))
             $this->routes[] = $route;
-        }
     }
 
-    public function getRoute($url, $method) {
-        foreach ($this->routes as $route) {
-            if (($varsValues = $route->match($url, $method)) !== false) {
-                if ($route->hasVars()) {
+    public function getRoute($url, $method)
+    {
+        foreach ($this->routes as $route)
+        {
+            if (($varsValues = $route->match($url, $method)) !== false)
+            {
+                if ($route->hasVars())
+                {
                     $varsNames = $route->varsNames();
                     $listVars = array();
 
-                    foreach ($varsValues as $key => $match) {
-                        if ($key !== 0) {
+                    foreach ($varsValues as $key => $match)
+                    {
+                        if ($key !== 0)
                             $listVars[$varsNames[$key - 1]] = $match;
-                        }
                     }
                     $route->setVars($listVars);
                 }
@@ -57,10 +61,7 @@ class Router
         }
 
         if ($routes == null)
-        {
             throw new RuntimeException('Route not found: '.$string.'.');
-            return '';
-        }
 
         foreach ($routes as $route)
         {

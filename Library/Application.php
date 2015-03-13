@@ -51,12 +51,12 @@ abstract class Application extends Container {
         if ($routes == null)
             throw new \Exception("Application.getController : could not find routes.");
 
-        foreach ($routes as $route) {
+        foreach ($routes as $route)
+        {
             $vars = array();
 
-            if ($route->hasAttribute('vars')) {
+            if ($route->hasAttribute('vars'))
                 $vars = explode(',', $route->getAttribute('vars'));
-            }
 
             $this->router->addRoute(new Route($route->getAttribute('url'), $route->getAttribute('module'), $route->getAttribute('method'), $route->getAttribute('action'), $vars));
         }
@@ -67,15 +67,18 @@ abstract class Application extends Container {
         }
         catch (\RuntimeException $e)
         {
-            if ($e->getCode() == \Library\Router::NO_ROUTE) {
+            if ($e->getCode() == Router::NO_ROUTE) {
                 $this->httpResponse->redirect404();
             }
         }
 
         $_GET = array_merge($_GET, $matchedRoute->vars());
 
-        $controllerClass = 'Applications\\'.$this->name.'\\Modules\\'.$matchedRoute->module().'\\'.$matchedRoute->module().'Controller';
-        return new $controllerClass($this, $matchedRoute->module(), $matchedRoute->method(), $matchedRoute->action());
+        $controllerPrefix = strstr($matchedRoute->module(), '\\');
+        if (substr($controllerPrefix, 0, 1) == '\\')
+            $controllerPrefix = substr($controllerPrefix, 1);
+        $controllerClass = 'Applications\\'.$this->name.'\\Modules\\'.$matchedRoute->module().'\\'.$controllerPrefix.'Controller';
+        return new $controllerClass($this, str_replace('\\', '/', $matchedRoute->module()), $matchedRoute->method(), $matchedRoute->action());
     }	
     
     abstract public function run();

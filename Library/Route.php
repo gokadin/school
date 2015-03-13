@@ -10,7 +10,7 @@ class Route
     protected $vars = array();
 
     public function __construct($url, $module, $method, $action, array $varsNames) {
-        $this->setUrl($url);
+        $this->setUrl(strtolower($url));
         $this->setMethod($method);
         $this->setModule($module);
         $this->setAction($action);
@@ -21,8 +21,9 @@ class Route
         return !empty($this->varsNames);
     }
 
-    public function match($url, $method) {
-        if (preg_match('`^' . $this->url . '$`', $url, $matches) && strcmp($method, $this->method) == 0) {
+    public function match($url, $method)
+    {   $url = strtolower($url);
+        if (preg_match('`^' . $this->url . '$`', $url, $matches) && strcasecmp($method, $this->method) == 0) {
             return $matches;
         } else {
             return false;
