@@ -72,8 +72,8 @@
       <file leaf-file-name="Model.php" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Library/Database/Model.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="-18.407408" vertical-offset="1663" max-vertical-offset="8532">
-              <caret line="120" column="76" selection-start-line="120" selection-start-column="76" selection-end-line="120" selection-end-column="76" />
+            <state vertical-scroll-proportion="-9.740741" vertical-offset="4597" max-vertical-offset="8820">
+              <caret line="270" column="13" selection-start-line="270" selection-start-column="13" selection-end-line="270" selection-end-column="13" />
               <folding>
                 <element signature="e#35#58#0#PHP" expanded="true" />
               </folding>
@@ -94,7 +94,7 @@
       <file leaf-file-name="ModelQueryContract.php" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Library/Database/ModelQueryContract.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="-16.0" vertical-offset="108" max-vertical-offset="720">
+            <state vertical-scroll-proportion="-20.0" vertical-offset="0" max-vertical-offset="720">
               <caret line="30" column="92" selection-start-line="30" selection-start-column="92" selection-end-line="30" selection-end-column="92" />
               <folding />
             </state>
@@ -104,8 +104,8 @@
       <file leaf-file-name="Query.php" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Library/Database/Query.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="-11.740741" vertical-offset="2581" max-vertical-offset="3132">
-              <caret line="163" column="24" selection-start-line="163" selection-start-column="24" selection-end-line="163" selection-end-column="24" />
+            <state vertical-scroll-proportion="-7.0740743" vertical-offset="1069" max-vertical-offset="3132">
+              <caret line="72" column="0" selection-start-line="72" selection-start-column="0" selection-end-line="72" selection-end-column="0" />
               <folding />
             </state>
           </provider>
@@ -848,22 +848,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Library/Database/Query.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-11.740741" vertical-offset="2581" max-vertical-offset="3132">
-          <caret line="163" column="24" selection-start-line="163" selection-start-column="24" selection-end-line="163" selection-end-column="24" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Library/Database/ModelQueryContract.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-16.0" vertical-offset="108" max-vertical-offset="720">
-          <caret line="30" column="92" selection-start-line="30" selection-start-column="92" selection-end-line="30" selection-end-column="92" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/Models/User.php">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="-5.3333335" vertical-offset="0" max-vertical-offset="558">
@@ -880,10 +864,26 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/Library/Database/ModelQueryContract.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="-20.0" vertical-offset="0" max-vertical-offset="720">
+          <caret line="30" column="92" selection-start-line="30" selection-start-column="92" selection-end-line="30" selection-end-column="92" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Library/Database/Query.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="-7.0740743" vertical-offset="1069" max-vertical-offset="3132">
+          <caret line="72" column="0" selection-start-line="72" selection-start-column="0" selection-end-line="72" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/Library/Database/Model.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-18.407408" vertical-offset="1663" max-vertical-offset="8532">
-          <caret line="120" column="76" selection-start-line="120" selection-start-column="76" selection-end-line="120" selection-end-column="76" />
+        <state vertical-scroll-proportion="-9.740741" vertical-offset="4597" max-vertical-offset="8820">
+          <caret line="270" column="13" selection-start-line="270" selection-start-column="13" selection-end-line="270" selection-end-column="13" />
           <folding>
             <element signature="e#35#58#0#PHP" expanded="true" />
           </folding>

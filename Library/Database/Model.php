@@ -264,6 +264,19 @@ class Model implements ModelQueryContract
     {
         $instance = new static;
         $query = new Query($instance);
+
+        if (!$instance->hasColumn($var))
+        {
+            foreach ($instance->delegates as $delegate)
+            {
+                $delegateName = Query::MODEL_DIRECTORY.ucfirst($delegate);
+                if ($delegateName::exists($var, $value))
+                    return true;
+            }
+
+            return false;
+        }
+
         return $query->exists($var, $value);
     }
 
@@ -298,6 +311,9 @@ class Model implements ModelQueryContract
 
     public function hasColumn($name)
     {
+        if ($name == $this->primaryKey)
+            return true;
+
         foreach ($this->columnNames as $columnName) {
             if ($columnName === $name)
                 return true;
