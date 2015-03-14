@@ -6,7 +6,8 @@ use Library\Facades\Facade;
 use Library\Session;
 use Library\Database\Database;
 
-abstract class Application extends Container {
+abstract class Application extends Container
+{
     protected $httpRequest;
     protected $httpResponse;
     protected $router;

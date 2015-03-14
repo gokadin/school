@@ -1,7 +1,5 @@
 <?php namespace Library;
 
-use Library\Facades\Session;
-
 class HTTPResponse extends ApplicationComponent
 {
     protected $page;

@@ -2,6 +2,7 @@
 
 use Library\Database\Blueprint;
 use Library\Database\Column;
+use Library\Database\Table;
 use Tests\FrameworkTests\BaseTest;
 
 class ExampleTests extends BaseTest
@@ -9,7 +10,7 @@ class ExampleTests extends BaseTest
     public function testIfIReturnColumnInstanceThenModifyingItShouldChangeTheInstanceInBlueprintArray()
     {
         // Arrange
-        $blueprint = new Blueprint('test');
+        $blueprint = new Table('test');
 
         // Act
         $blueprint->integer('col1')->unique();
