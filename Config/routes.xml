@@ -12,17 +12,21 @@
     </application>
 
     <application name="School">
-        <!-- Test -->
-        <route url="/school/school/teacher/" method="GET" module="Teacher\Index" action="index" />
-        <!-- INDEX MODULE -->
+        <!-- COMMON INDEX MODULE -->
         <route url="/School/school/" method="GET" module="Index" action="index" />
-        <!-- ACTIVITY MODULE -->
-        <route url="/school/school/activities" method="GET" module="Activity" action="index" />
-        <route url="/school/school/activities/create" method="GET" module="Activity" action="create" />
-        <route url="/school/school/activities/create" method="POST" module="Activity" action="store" />
-        <route url="/school/school/activities/edit/([0-9]+)" method="GET" module="Activity" action="edit" />
-        <route url="/school/school/activities/edit/([0-9]+)" method="PUT" module="Activity" action="update" vars="activityId" />
-        <route url="/school/school/activities/delete/([0-9]+)" method="DELETE" module="Activity" action="destroy" vars="activityId" />
+
+        <!-- TEACHER INDEX MODULE -->
+        <route url="/school/school/teacher/" method="GET" module="Teacher/Index" action="index" />
+        <!-- TEACHER ACTIVITY MODULE -->
+        <route url="/school/school/teacher/activities" method="GET" module="Teacher/Activity" action="index" />
+        <route url="/school/school/teacher/activities/create" method="GET" module="Teacher/Activity" action="create" />
+        <route url="/school/school/teacher/activities/create" method="POST" module="Teacher/Activity" action="store" />
+        <route url="/school/school/teacher/activities/edit/([0-9]+)" method="GET" module="Teacher/Activity" action="edit" />
+        <route url="/school/school/teacher/activities/edit/([0-9]+)" method="PUT" module="Teacher/Activity" action="update" vars="activityId" />
+        <route url="/school/school/teacher/activities/delete/([0-9]+)" method="DELETE" module="Teacher/Activity" action="destroy" vars="activityId" />
+
+        <!-- STUDENT INDEX MODULE -->
+        <route url="/school/school/student/" method="GET" module="Student/Index" action="index" />
     </application>
 
     <application name="Backend">

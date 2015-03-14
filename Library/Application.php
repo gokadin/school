@@ -77,10 +77,16 @@ abstract class Application extends Container
 
         $controllerPrefix = $matchedRoute->module();
         if (strpos($controllerPrefix, '\\'))
-            $controllerPrefix = strstr($matchedRoute->module(), '\\');
+            $controllerPrefix = strstr($controllerPrefix, '\\');
         if (substr($controllerPrefix, 0, 1) == '\\')
             $controllerPrefix = substr($controllerPrefix, 1);
-        $controllerClass = 'Applications\\'.$this->name.'\\Modules\\'.$matchedRoute->module().'\\'.$controllerPrefix.'Controller';
+
+        if (strpos($controllerPrefix, '/'))
+            $controllerPrefix = strstr($controllerPrefix, '/');
+        if (substr($controllerPrefix, 0, 1) == '/')
+            $controllerPrefix = substr($controllerPrefix, 1);
+
+        $controllerClass = 'Applications\\'.$this->name.'\\Modules\\'.str_replace('/', '\\', $matchedRoute->module()).'\\'.$controllerPrefix.'Controller';
         return new $controllerClass($this, str_replace('\\', '/', $matchedRoute->module()), $matchedRoute->method(), $matchedRoute->action());
     }	
     

@@ -1,4 +1,4 @@
-<?php namespace Applications\School\Modules\Activity;
+<?php namespace Applications\School\Modules\Teacher\Activity;
 
 use Library\BackController;
 

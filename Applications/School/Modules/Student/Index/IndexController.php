@@ -1,4 +1,4 @@
-<?php namespace Applications\School\Modules\Index;
+<?php namespace Applications\School\Modules\Student\Index;
 
 use Library\BackController;
 

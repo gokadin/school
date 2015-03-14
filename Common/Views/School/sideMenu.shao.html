@@ -1,42 +1,21 @@
-<div class="col-sm-4 col-md-3 sidebar">
-    <div class="mini-submenu">
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-    </div>
-    <div class="list-group">
-        <span href="#" class="list-group-item">
-            <span class="pull-right sidemenu-slide-button" id="slide-submenu">
-                <span class="fa fa-bars"></span>
-            </span>
-        </span>
-        <a href="#" class="list-group-item">
-            <i class="fa fa-home"></i>
-            &nbsp;Home
-        </a>
-        <a href="#" class="list-group-item">
-            <i class="fa fa-group"></i>
-            &nbsp;Students
-        </a>
-        <a href="#" class="list-group-item">
-            <i class="fa fa-gears"></i>
-            &nbsp;Activities
-        </a>
-    </div>
+<div class="page-sidebar navbar-collapse collapse">
+    <ul class="page-sidebar-menu" data-slide-speed="200" data-auto-scroll="false">
+        <li class="sidebar-toggler-wrapper">
+            <div class="sidebar-toggler hidden-phone"></div>
+        </li>
+        <li class="start">
+            <a href="#">Home</a>
+        </li>
+        <li>
+            <a href="javascript:;">Top level</a>
+            <ul class="sub-menu" style="display: block;">
+                <li>
+                    <a href="#">Sub menu</a>
+                </li>
+                <li>
+                    <a href="#">Sub menu</a>
+                </li>
+            </ul>
+        </li>
+    </ul>
 </div>
-
-<script>
-    $(function(){
-        $('#slide-submenu').on('click',function() {
-            $(this).closest('.list-group').fadeOut('slide',function(){
-                $('.mini-submenu').fadeIn();
-            });
-
-        });
-
-        $('.mini-submenu').on('click',function(){
-            $(this).next('.list-group').toggle('slide');
-            $('.mini-submenu').hide();
-        })
-    })
-</script>
