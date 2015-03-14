@@ -7,107 +7,135 @@
     <!-- <link rel="shortcut icon" href="/images/favicon.ico" > -->
     <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
     <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="/School/Web/css/responsive.css" type="text/css" />
     <link rel="stylesheet" href="/School/Web/css/default.css" type="text/css" />
     <link rel="stylesheet" href="/School/Web/css/school.css" type="text/css" />
-    <link rel="stylesheet" href="/School/Web/css/responsive.css" type="text/css" />
 </head>
 <body>
+<div class="header navbar">
+    <div class="header-inner">
+        <nav role="navigation" class="navbar navbar-inverse nav-top">
+            <div class="navbar-header">
+                <a href="javascript:;" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </a>
+                <a href="@path('School#Index#index')" class="navbar-brand">{{ $currentUser->school()->name }}</a>
+            </div>
+            <div id="navbarCollapse" class="collapse navbar-collapse">
+                <form role="search" class="navbar-form navbar-left nav-top-search">
+                    <div class="form-group search">
+                        <input type="text" placeholder="Search" class="form-control">
+                        <span class="fa fa-search"></span>
+                    </div>
+                </form>
+                <ul class="nav navbar-nav navbar-right">
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                            {{ $currentUser->name() }}&nbsp;<b class="caret"></b>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a href="#">Action</a></li>
+                            <li><a href="#">Another action</a></li>
+                            <li><a href="#">Something else here</a></li>
+                            <li class="divider"></li>
+                            <li><a href="@path('Frontend#Account#logout')">Log out</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+    </div>
+</div>
+<div class="clearfix"></div>
 <div class="container-fluid">
-    <nav role="navigation" class="navbar navbar-inverse nav-top">
-        <div class="navbar-header">
-            <a href="javascript:;" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-                <span class="sr-only">Toggle navigation</span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-            </a>
-            <a href="@path('School#Index#index')" class="navbar-brand">{{ $currentUser->school()->name }}</a>
-        </div>
-        <div id="navbarCollapse" class="collapse navbar-collapse">
-            <form role="search" class="navbar-form navbar-left nav-top-search">
-                <div class="form-group search">
-                    <input type="text" placeholder="Search" class="form-control">
-                    <span class="fa fa-search"></span>
-                </div>
-            </form>
-            <ul class="nav navbar-nav navbar-right">
-                <li class="dropdown">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                        {{ $currentUser->name() }}&nbsp;<b class="caret"></b>
+    <div class="page-sidebar-wrapper">
+        <div class="page-sidebar navbar-collapse collapse">
+            <ul class="page-sidebar-menu" data-slide-speed="200">
+                <li class="sidebar-toggler-wrapper">
+                    <div class="sidebar-toggler hidden-phone"></div>
+                </li>
+                <li class="start ">
+                    <a href="#">
+                        <i class="fa fa-home"></i>
+                        <span class="title">Home</span>
                     </a>
-                    <ul class="dropdown-menu">
-                        <li><a href="#">Action</a></li>
-                        <li><a href="#">Another action</a></li>
-                        <li><a href="#">Something else here</a></li>
-                        <li class="divider"></li>
-                        <li><a href="@path('Frontend#Account#logout')">Log out</a></li>
+                </li>
+                <li>
+                    <a href="javascript:;">
+                        <i class="fa fa-gear"></i>
+                        <span class="title">Activities</span>
+                        <span class="arrow"></span>
+                    </a>
+                    <ul class="sub-menu">
+                        <li>
+                            <a href="#">
+                                <span class="title">View activities</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#">
+                                <span class="title">Add an activity</span>
+                            </a>
+                        </li>
                     </ul>
+                </li>
+                <li class="active ">
+                    <a href="javascript:;">
+                        <i class="fa fa-group"></i>
+                        <span class="title">Students</span>
+                        <span class="selected"></span>
+                        <span class="arrow open"></span>
+                    </a>
+                    <ul class="sub-menu">
+                        <li>
+                            <a href="#">View students</a>
+                        </li>
+                        <li class="active">
+                            <a href="#">Add a student</a>
+                        </li>
+                    </ul>
+                </li>
+                <li class="last ">
+                    <a href="#">
+                        <i class="fa fa-cogs"></i>
+                        <span class="title">Settings</span>
+                    </a>
                 </li>
             </ul>
         </div>
-    </nav>
-    <div class="page-sidebar navbar-collapse collapse">
-        <ul class="page-sidebar-menu" data-slide-speed="200">
-            <li class="sidebar-toggler-wrapper">
-                <div class="sidebar-toggler hidden-phone"></div>
-            </li>
-            <li class="start ">
-                <a href="#">
-                    <i class="fa fa-home"></i>
-                    <span class="title">Home</span>
-                </a>
-            </li>
-            <li>
-                <a href="javascript:;">
-                    <i class="fa fa-gear"></i>
-                    <span class="title">Activities</span>
-                    <span class="arrow"></span>
-                </a>
-                <ul class="sub-menu">
-                    <li>
-                        <a href="#">
-                            <span class="title">View activities</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="#">
-                            <span class="title">Add an activity</span>
-                        </a>
-                    </li>
-                </ul>
-            </li>
-            <li class="active ">
-                <a href="javascript:;">
-                    <i class="fa fa-group"></i>
-                    <span class="title">Students</span>
-                    <span class="selected"></span>
-                    <span class="arrow open"></span>
-                </a>
-                <ul class="sub-menu">
-                    <li>
-                        <a href="#">View students</a>
-                    </li>
-                    <li class="active">
-                        <a href="#">Add a student</a>
-                    </li>
-                </ul>
-            </li>
-            <li class="last ">
-                <a href="#">
-                    <i class="fa fa-cogs"></i>
-                    <span class="title">Settings</span>
-                </a>
-            </li>
-        </ul>
+        <div class="page-content-wrapper">
+            <div class="page-content">
+                <div class="row">
+                    <div class="col-md-12">
+                        <h3 class="page-title">Home <small>blank page</small></h3>
+                        <ul class="page-breadcrumb breadcrumb">
+                            <li>
+                                <i class="fa fa-home"></i>
+                                <a href="index.html">Home</a>
+                                <i class="fa fa-angle-right"></i>
+                            </li>
+                            <li>
+                                <a href="#">Page Layouts</a>
+                                <i class="fa fa-angle-right"></i>
+                            </li>
+                            <li>
+                                <a href="#">Blank Page</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="row content">
+                    <div class="col-md-12">
+                        {{ $content }}
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
-
-<div class="page-content-wrapper">
-    <div class="page-content">
-
-    </div>
-</div>
-
 <div class="footer">
 
 </div>
