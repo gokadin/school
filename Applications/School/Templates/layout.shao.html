@@ -22,7 +22,7 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </a>
-                <a href="@path('School#Index#index')" class="navbar-brand">{{ $currentUser->school()->name }}</a>
+                <a href="@path('School#Common/Index#index')" class="navbar-brand">{{ $currentUser->school()->name }}</a>
             </div>
             <div id="navbarCollapse" class="collapse navbar-collapse">
                 <form role="search" class="navbar-form navbar-left nav-top-search">
@@ -57,48 +57,47 @@
                 <li class="sidebar-toggler-wrapper">
                     <div class="sidebar-toggler hidden-phone"></div>
                 </li>
-                <li class="start ">
-                    <a href="#">
+                <li class="start @if ($module == 'Teacher/Index') active @endif">
+                    <a href="@path('School#Teacher/Index#index')">
                         <i class="fa fa-home"></i>
                         <span class="title">Home</span>
                     </a>
                 </li>
-                <li>
+                <li class="@if ($module == 'Teacher/Activity') active @endif">
                     <a href="javascript:;">
                         <i class="fa fa-gear"></i>
                         <span class="title">Activities</span>
                         <span class="arrow"></span>
                     </a>
                     <ul class="sub-menu">
-                        <li>
-                            <a href="#">
+                        <li @if ($module == 'Teacher/Activity' && $action == 'index') class="active" @endif>
+                            <a href="@path('School#Teacher/Activity#index')">
                                 <span class="title">View activities</span>
                             </a>
                         </li>
-                        <li>
-                            <a href="#">
+                        <li @if ($module == 'Teacher/Activity' && $action == 'create') class="active" @endif>
+                            <a href="@path('School#Teacher/Activity#create')">
                                 <span class="title">Add an activity</span>
                             </a>
                         </li>
                     </ul>
                 </li>
-                <li class="active ">
+                <li class="@if ($module == 'Teacher/Student') active @endif">
                     <a href="javascript:;">
                         <i class="fa fa-group"></i>
                         <span class="title">Students</span>
-                        <span class="selected"></span>
-                        <span class="arrow open"></span>
+                        <span class="arrow"></span>
                     </a>
                     <ul class="sub-menu">
-                        <li>
-                            <a href="#">View students</a>
+                        <li @if ($module == 'Teacher/Student' && $action == 'index') class="active" @endif>
+                            <a href="@path('School#Teacher/Student#index')">View students</a>
                         </li>
-                        <li class="active">
-                            <a href="#">Add a student</a>
+                        <li @if ($module == 'Teacher/Student' && $action == 'create') class="active" @endif>
+                            <a href="@path('School#Teacher/Student#create')">Add a student</a>
                         </li>
                     </ul>
                 </li>
-                <li class="last ">
+                <li class="last @if ($module == 'Teacher/Setting') active @endif">
                     <a href="#">
                         <i class="fa fa-cogs"></i>
                         <span class="title">Settings</span>
@@ -110,20 +109,26 @@
             <div class="page-content">
                 <div class="row">
                     <div class="col-md-12">
-                        <h3 class="page-title">Home <small>blank page</small></h3>
+                        <h3 class="page-title">
+                            @if (sizeof($breadcrumbs) == 1)
+                                Home
+                            @elseif (sizeof($breadcrumbs) > 1)
+                                {{{ $keys = array_keys($breadcrumbs); }}}
+                                {{ $keys[1] }}
+                            @endif
+                        </h3>
                         <ul class="page-breadcrumb breadcrumb">
-                            <li>
-                                <i class="fa fa-home"></i>
-                                <a href="index.html">Home</a>
-                                <i class="fa fa-angle-right"></i>
-                            </li>
-                            <li>
-                                <a href="#">Page Layouts</a>
-                                <i class="fa fa-angle-right"></i>
-                            </li>
-                            <li>
-                                <a href="#">Blank Page</a>
-                            </li>
+                            @foreach ($breadcrumbs as $key => $value)
+                                <li>
+                                    @if ($key == 'Home')
+                                        <i class="fa fa-home"></i>
+                                    @endif
+                                    <a href="{{ $value }}">{{ $key }}</a>
+                                    @if ($value != end($breadcrumbs))
+                                        <i class="fa fa-angle-right"></i>
+                                    @endif
+                                </li>
+                            @endforeach
                         </ul>
                     </div>
                 </div>

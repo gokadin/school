@@ -4,6 +4,7 @@ namespace Applications\School;
 use Library\Application;
 use Library\Facades\Session;
 use Library\Facades\Response;
+use Library\Facades\Router;
 use Models\User;
 
 class SchoolApplication extends Application
@@ -19,8 +20,12 @@ class SchoolApplication extends Application
     {
         $controller = $this->getController();
 
+        /* ASSIGNING CURRENT USER */
+
         $currentUser = User::find(Session::get('id'));
         $currentUser = $currentUser->morph();
+
+        /* PERMISSIONS */
 
         if ($currentUser == null || !Session::get('authenticated'))
             Response::toAction('Frontend#Account#index');
@@ -41,9 +46,37 @@ class SchoolApplication extends Application
         {
             Response::toAction('Frontend#Account#index');
         }
+
+        /* BREADCRUMBS */
+
+        $breadcrumbs = $this->buildBreadcrumbs($controller, $currentUser->meta_type);
+        $controller->page()->add(['breadcrumbs' => $breadcrumbs]);
+        $controller->page()->add(['module' => $controller->module(), 'action' => $controller->action()]);
         
         $controller->execute();
         $this->httpResponse->setPage($controller->page());
         $this->httpResponse->send();
+    }
+
+    private function buildBreadcrumbs($controller, $userType)
+    {
+        $breadcrumbs = array();
+
+        if ($userType == 'Teacher')
+            $breadcrumbs['Home'] = Router::actionToPath('School#Teacher/Index#index');
+        else
+            $breadcrumbs['Home'] = Router::actionToPath('School#Student/Index#index');
+
+        switch ($controller->module())
+        {
+            case 'Teacher/Activity':
+                $breadcrumbs['Activities'] = Router::actionToPath('School#Teacher/Activity#index');
+                break;
+            case 'Teacher/Student':
+                $breadcrumbs['Students'] = Router::actionToPath('School#Teacher/Student#index');
+                break;
+        }
+
+        return $breadcrumbs;
     }
 }

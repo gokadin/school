@@ -57,48 +57,47 @@
                 <li class="sidebar-toggler-wrapper">
                     <div class="sidebar-toggler hidden-phone"></div>
                 </li>
-                <li class="start ">
-                    <a href="#">
+                <li class="start <?php if ($module == 'Teacher/Index') { ?> active <?php } ?>">
+                    <a href="/School/school/teacher/">
                         <i class="fa fa-home"></i>
                         <span class="title">Home</span>
                     </a>
                 </li>
-                <li>
+                <li class="<?php if ($module == 'Teacher/Activity') { ?> active <?php } ?>">
                     <a href="javascript:;">
                         <i class="fa fa-gear"></i>
                         <span class="title">Activities</span>
                         <span class="arrow"></span>
                     </a>
                     <ul class="sub-menu">
-                        <li>
-                            <a href="#">
+                        <li <?php if ($module == 'Teacher/Activity' && $action == 'index') { ?> class="active" <?php } ?>>
+                            <a href="/School/school/teacher/activities">
                                 <span class="title">View activities</span>
                             </a>
                         </li>
-                        <li>
-                            <a href="#">
+                        <li <?php if ($module == 'Teacher/Activity' && $action == 'create') { ?> class="active" <?php } ?>>
+                            <a href="/School/school/teacher/activities/create">
                                 <span class="title">Add an activity</span>
                             </a>
                         </li>
                     </ul>
                 </li>
-                <li class="active ">
+                <li class="<?php if ($module == 'Teacher/Student') { ?> active <?php } ?>">
                     <a href="javascript:;">
                         <i class="fa fa-group"></i>
                         <span class="title">Students</span>
-                        <span class="selected"></span>
-                        <span class="arrow open"></span>
+                        <span class="arrow"></span>
                     </a>
                     <ul class="sub-menu">
-                        <li>
-                            <a href="#">View students</a>
+                        <li <?php if ($module == 'Teacher/Student' && $action == 'index') { ?> class="active" <?php } ?>>
+                            <a href="/School/school/teacher/students">View students</a>
                         </li>
-                        <li class="active">
-                            <a href="#">Add a student</a>
+                        <li <?php if ($module == 'Teacher/Student' && $action == 'create') { ?> class="active" <?php } ?>>
+                            <a href="/School/school/teacher/students/create">Add a student</a>
                         </li>
                     </ul>
                 </li>
-                <li class="last ">
+                <li class="last <?php if ($module == 'Teacher/Setting') { ?> active <?php } ?>">
                     <a href="#">
                         <i class="fa fa-cogs"></i>
                         <span class="title">Settings</span>
@@ -110,20 +109,26 @@
             <div class="page-content">
                 <div class="row">
                     <div class="col-md-12">
-                        <h3 class="page-title">Home <small>blank page</small></h3>
+                        <h3 class="page-title">
+                            <?php if (sizeof($breadcrumbs) == 1) { ?>
+                                Home
+                            <?php } else if (sizeof($breadcrumbs) > 1) { ?>
+                                <?php  $keys = array_keys($breadcrumbs);  ?>
+                                <?php echo  $keys[1] ; ?>
+                            <?php } ?>
+                        </h3>
                         <ul class="page-breadcrumb breadcrumb">
-                            <li>
-                                <i class="fa fa-home"></i>
-                                <a href="index.html">Home</a>
-                                <i class="fa fa-angle-right"></i>
-                            </li>
-                            <li>
-                                <a href="#">Page Layouts</a>
-                                <i class="fa fa-angle-right"></i>
-                            </li>
-                            <li>
-                                <a href="#">Blank Page</a>
-                            </li>
+                            <?php foreach ($breadcrumbs as $key => $value) { ?>
+                                <li>
+                                    <?php if ($key == 'Home') { ?>
+                                        <i class="fa fa-home"></i>
+                                    <?php } ?>
+                                    <a href="<?php echo  $value ; ?>"><?php echo  $key ; ?></a>
+                                    <?php if ($value != end($breadcrumbs)) { ?>
+                                        <i class="fa fa-angle-right"></i>
+                                    <?php } ?>
+                                </li>
+                            <?php } ?>
                         </ul>
                     </div>
                 </div>

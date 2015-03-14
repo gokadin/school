@@ -13,20 +13,27 @@
 
     <application name="School">
         <!-- COMMON INDEX MODULE -->
-        <route url="/School/school/" method="GET" module="Index" action="index" />
+        <route url="/School/school/" method="GET" module="Common/Index" action="index" />
 
         <!-- TEACHER INDEX MODULE -->
-        <route url="/school/school/teacher/" method="GET" module="Teacher/Index" action="index" />
+        <route url="/School/school/teacher/" method="GET" module="Teacher/Index" action="index" />
         <!-- TEACHER ACTIVITY MODULE -->
-        <route url="/school/school/teacher/activities" method="GET" module="Teacher/Activity" action="index" />
-        <route url="/school/school/teacher/activities/create" method="GET" module="Teacher/Activity" action="create" />
-        <route url="/school/school/teacher/activities/create" method="POST" module="Teacher/Activity" action="store" />
-        <route url="/school/school/teacher/activities/edit/([0-9]+)" method="GET" module="Teacher/Activity" action="edit" />
-        <route url="/school/school/teacher/activities/edit/([0-9]+)" method="PUT" module="Teacher/Activity" action="update" vars="activityId" />
-        <route url="/school/school/teacher/activities/delete/([0-9]+)" method="DELETE" module="Teacher/Activity" action="destroy" vars="activityId" />
+        <route url="/School/school/teacher/activities" method="GET" module="Teacher/Activity" action="index" />
+        <route url="/School/school/teacher/activities/create" method="GET" module="Teacher/Activity" action="create" />
+        <route url="/School/school/teacher/activities/create" method="POST" module="Teacher/Activity" action="store" />
+        <route url="/School/school/teacher/activities/edit/([0-9]+)" method="GET" module="Teacher/Activity" action="edit" />
+        <route url="/School/school/teacher/activities/edit/([0-9]+)" method="PUT" module="Teacher/Activity" action="update" vars="activityId" />
+        <route url="/School/school/teacher/activities/delete/([0-9]+)" method="DELETE" module="Teacher/Activity" action="destroy" vars="activityId" />
+        <!-- TEACHER STUDENT MODULE -->
+        <route url="/School/school/teacher/students" method="GET" module="Teacher/Student" action="index" />
+        <route url="/School/school/teacher/students/create" method="GET" module="Teacher/Student" action="create" />
+        <route url="/School/school/teacher/students/create" method="POST" module="Teacher/Student" action="store" />
+        <route url="/School/school/teacher/students/edit/([0-9]+)" method="GET" module="Teacher/Student" action="edit" />
+        <route url="/School/school/teacher/students/edit/([0-9]+)" method="PUT" module="Teacher/Student" action="update" vars="studentId" />
+        <route url="/School/school/teacher/students/delete/([0-9]+)" method="DELETE" module="Teacher/Student" action="destroy" vars="studentId" />
 
         <!-- STUDENT INDEX MODULE -->
-        <route url="/school/school/student/" method="GET" module="Student/Index" action="index" />
+        <route url="/School/school/student/" method="GET" module="Student/Index" action="index" />
     </application>
 
     <application name="Backend">

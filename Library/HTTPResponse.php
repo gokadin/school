@@ -21,7 +21,7 @@ class HTTPResponse extends ApplicationComponent
 
     public function toAction($location, $args = null)
     {
-        $this->redirect($this->app->router()->getUrlFromAction($location), $args);
+        $this->redirect($this->app->router()->actionToPath($location), $args);
     }
 
     public function back()

@@ -1,6 +1,6 @@
 <?php namespace Library\Shao;
 
-use Library\Facades\App;
+use Library\Facades\Router;
 
 class ShaoFunctions
 {
@@ -25,7 +25,7 @@ class ShaoFunctions
 
     public static function path($action, $var = null)
     {
-        $url = App::router()->getUrlFromAction($action);
+        $url = Router::actionToPath($action);
 
         if ($var != null)
             return $url.$var;

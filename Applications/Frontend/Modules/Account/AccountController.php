@@ -28,7 +28,7 @@ class AccountController extends BackController
         if ($user != null)
         {
             Session::login($user->id);
-            Response::toAction('School#Index#index');
+            Response::toAction('School#Teacher/Index#index');
         }
         else
         {

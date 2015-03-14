@@ -419,6 +419,7 @@ Sidebar toggler
 .sidebar-toggler {
     background-image: url(/School/Web/images/icons/sidebar-toggler.jpg);
     background-color: #242424;
+    margin-bottom: 15px;
 }
 /* search box bg color on expanded */
 .page-sidebar-closed .page-sidebar .sidebar-search.open .form-container {

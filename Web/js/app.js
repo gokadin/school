@@ -186,7 +186,7 @@ var App = function () {
             var menu = $('.page-sidebar-menu');
             var sub = jQuery(this).next();
 
-            var autoScroll = menu.data("auto-scroll") ? menu.data("auto-scroll") : true;
+            var autoScroll = false;//menu.data("auto-scroll") ? menu.data("auto-scroll") : true;
             var slideSpeed = menu.data("slide-speed") ? parseInt(menu.data("slide-speed")) : 200;
 
             parent.children('li.open').children('a').children('.arrow').removeClass('open');

@@ -28,6 +28,7 @@ abstract class Application extends Container
         $this->instance('app', $this);
         $this->instance('response', $this->httpResponse);
         $this->instance('request', $this->httpRequest);
+        $this->instance('router', $this->router);
         $this->instance('config', $this->config);
         $this->instance('session', $this->session);
         $this->instance('database', new Database(PDOFactory::conn()));

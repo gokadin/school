@@ -39,7 +39,7 @@ class Router
         throw new RuntimeException('No routes found corresponding to the URL', self::NO_ROUTE);
     }
 
-    public function getUrlFromAction($string)
+    public function actionToPath($string)
     {
         $arr = explode('#', $string);
         $app = $arr[0];
@@ -77,6 +77,6 @@ class Router
             }
         }
 
-        throw new RuntimeException('Router.getRouteFromAction : route '.$string.' not found.');
+        throw new RuntimeException('Router.actionToPath : route '.$string.' not found.');
     }
 }
