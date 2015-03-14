@@ -74,7 +74,9 @@ abstract class Application extends Container {
 
         $_GET = array_merge($_GET, $matchedRoute->vars());
 
-        $controllerPrefix = strstr($matchedRoute->module(), '\\');
+        $controllerPrefix = $matchedRoute->module();
+        if (strpos($controllerPrefix, '\\'))
+            $controllerPrefix = strstr($matchedRoute->module(), '\\');
         if (substr($controllerPrefix, 0, 1) == '\\')
             $controllerPrefix = substr($controllerPrefix, 1);
         $controllerClass = 'Applications\\'.$this->name.'\\Modules\\'.$matchedRoute->module().'\\'.$controllerPrefix.'Controller';

@@ -77,6 +77,6 @@ class Router
             }
         }
 
-        throw new RuntimeException('Router.getRouteFromAction : route not found.');
+        throw new RuntimeException('Router.getRouteFromAction : route '.$string.' not found.');
     }
 }

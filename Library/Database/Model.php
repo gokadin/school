@@ -466,7 +466,9 @@ class Model implements ModelQueryContract
             throw new RuntimeException('Model '.$metaType.' does not exist,');
 
         $metaModel = new $metaType();
-        return $metaModel::where($metaModel->primaryKey(), '=', $this->$metaIdField)->get()->first();
+        $metaModel = $metaType::where($metaModel->primaryKey(), '=', $this->$metaIdField)->get()->first();
+        $metaModel->hydrateBaseModel();
+        return $metaModel;
     }
 
     public function morphOne($modelName, $metaIdField = Table::META_ID, $metaTypeField = Table::META_TYPE, $typeName = null)
