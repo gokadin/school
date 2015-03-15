@@ -81,6 +81,7 @@ class Tables
         $t->string('name');
         $t->decimal('rate');
         $t->integer('period');
+        $t->string('location')->nullable();
         $t->boolean('active')->default('1');
         $t->timestamps();
 

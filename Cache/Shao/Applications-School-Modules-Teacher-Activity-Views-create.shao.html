@@ -1,1 +1,104 @@
-School teacher activity create
+<div class="row">
+    <div class="col-md-7">
+        <div class="create-form">
+            <form id="create-activity-form" action="" method="POST">
+                <div class="create-form-title">Create an activity</div>
+                <div class="create-form-body">
+
+                    <div class="row create-form-input-row">
+                        <div class="col-md-4 create-form-label">Name<span class="required">*</span></div>
+                        <div class="col-md-7 create-form-input">
+                            <div class="input-icon">
+                                <i class="fa fa-warning"></i>
+                                <input type="text" class="form-control" id="name" name="name" placeholder="Name" />
+                            </div>
+                            <span class="input-message">Activity name is required.</span>
+                        </div>
+                        <div class="col-md-1"></div>
+                    </div>
+
+                    <div class="row create-form-input-row">
+                        <div class="col-md-4 create-form-label">Default rate<span class="required">*</span></div>
+                        <div class="col-md-7 create-form-input">
+                            <div class="input-icon">
+                                <i class="fa fa-warning"></i>
+                                <input type="text" class="form-control" id="defaultRate" name="defaultRate" placeholder="Default rate" />
+                            </div>
+                            <span class="input-message">Default rate is required.</span>
+                            <span class="input-message">Must be numeric.</span>
+                        </div>
+                        <div class="col-md-1"></div>
+                    </div>
+
+                    <div class="row create-form-input-row">
+                        <div class="col-md-4 create-form-label">Per<span class="required">*</span></div>
+                        <div class="col-md-7 create-form-input">
+                            <select class="form-control" id="period" name="period">
+                                <option value="100">Lesson</option>
+                                <option value="15">15 mins</option>
+                                <option value="30">30 mins</option>
+                                <option value="45">45 mins</option>
+                                <option value="100">1 hour</option>
+                                <option value="115">1 hour 15 mins</option>
+                                <option value="130">1 hour 30 mins</option>
+                                <option value="200">2 hours</option>
+                                <option value="1">month</option>
+                                <option value="2">2 months</option>
+                                <option value="3">3 months</option>
+                                <option value="4">4 months</option>
+                                <option value="5">5 months</option>
+                                <option value="6">6 months</option>
+                                <option value="7">7 months</option>
+                                <option value="8">8 months</option>
+                                <option value="9">9 months</option>
+                                <option value="10">10 months</option>
+                                <option value="11">11 months</option>
+                                <option value="12">12 months</option>
+                            </select>
+                        </div>
+                        <div class="col-md-1"></div>
+                    </div>
+
+                    <div class="row create-form-input-row">
+                        <div class="col-md-4 create-form-label">Location</div>
+                        <div class="col-md-7 create-form-input">
+                            <input type="text" class="form-control" id="location" name="location" placeholder="Ex: studio B" />
+                        </div>
+                        <div class="col-md-1"></div>
+                    </div>
+
+                </div>
+                <div class="create-form-footer">
+                    <div class="col-md-7">
+                        <div class="checkbox create-another">
+                            <label for="createAnother">
+                                <input type="checkbox" id="createAnother" name="createAnother" value="1" />Create another
+                            </label>
+                        </div>
+                    </div>
+                    <div class="col-md-5">
+                        <button id="create-activity-submit-button" class="btn btn-success" type="submit">Create</button>
+                        <button class="btn btn-danger" type="button">Cancel</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="col-md-5">
+        <div class="side-info">
+            <div class="side-info-title">
+                <span class="fa fa-question-circle"></span>
+                Creating an activity
+            </div>
+            <div class="side-info-body">
+                Activities can be used for categorizing students and managing their recurring schedules
+                and payment plans with your school.<br /><br />
+                Each activity has a <b>default rate</b> which can be overriden by a student's
+                <b>custom rate</b> for that activity.<br /><br />
+                <b>Deleting</b> and activity will remove all associated future events and pending payments.
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript" src="/School/Applications/School/Modules/Teacher/Activity/Views/js/activityValidation.js"></script>

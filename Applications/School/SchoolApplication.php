@@ -1,5 +1,4 @@
-<?php
-namespace Applications\School;
+<?php namespace Applications\School;
 
 use Library\Application;
 use Library\Facades\Session;
@@ -30,6 +29,7 @@ class SchoolApplication extends Application
         if ($currentUser == null || !Session::get('authenticated'))
             Response::toAction('Frontend#Account#index');
 
+        $controller->add(['currentUser' => $currentUser]);
         $controller->page()->add(['currentUser' => $currentUser]);
 
         if ($currentUser->meta_type == 'Teacher')

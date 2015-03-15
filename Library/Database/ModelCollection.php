@@ -1,14 +1,21 @@
 <?php namespace Library\Database;
 
 use Symfony\Component\Yaml\Exception\RuntimeException;
+use IteratorAggregate;
+use ArrayIterator;
 
-class ModelCollection
+class ModelCollection implements IteratorAggregate
 {
     protected $models;
 
     public function __construct($models = array())
     {
         $this->models = $models;
+    }
+
+    public function getIterator()
+    {
+        return new ArrayIterator($this->models);
     }
 
     public function add($model)

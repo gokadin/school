@@ -1,1 +1,9 @@
-School teacher activity index
+<?php  use Library\Facades\Session;  ?>
+
+<?php if (Session::hasFlash()) { ?>
+    <?php echo  Session::getFlash() ; ?>
+<?php } ?>
+
+<?php foreach ($activities as $activity) { ?>
+    <?php echo  $activity->name.' + '.$activity->teacher_id.'<br />' ; ?>
+<?php } ?>

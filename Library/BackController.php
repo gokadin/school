@@ -2,7 +2,9 @@
 
 use Library\Shao\Shao;
 
-abstract class BackController extends ApplicationComponent {
+abstract class BackController extends ApplicationComponent
+{
+    protected $vars = array();
     protected $action = '';
     protected $module = '';
     protected $method = '';
@@ -10,7 +12,8 @@ abstract class BackController extends ApplicationComponent {
     protected $view = '';
     protected $lang = null;
 	
-    public function __construct(Application $app, $module, $method, $action) {
+    public function __construct(Application $app, $module, $method, $action)
+    {
         parent::__construct($app);
 
         $this->page = new Page($app);
@@ -21,13 +24,36 @@ abstract class BackController extends ApplicationComponent {
         $this->setView($action);
     }
 
+    public function add($var, $value = null)
+    {
+        if ($value != null)
+        {
+            if (!is_string($var))
+                return;
+
+            $this->vars[$var] = $value;
+            return;
+        }
+
+        if (!is_array($var))
+            return;
+
+        foreach ($var as $key => $v)
+            $this->vars[$key] = $v;
+    }
+
+    public function __get($var)
+    {
+        if (isset($this->vars[$var]))
+            return $this->vars[$var];
+    }
+
     public function execute()
     {
         $function_name = $this->action;
 
-        if (!is_callable(array($this, $function_name))) {
+        if (!is_callable(array($this, $function_name)))
             throw new \RuntimeException('The action '.$this->action.' is not defined on this module');
-        }
 
         $this->$function_name();
     }

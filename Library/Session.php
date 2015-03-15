@@ -8,6 +8,8 @@ class Session
 {
     const ERRORS_KEY = 'errors';
     const SHOULD_CLEAR_ERRORS_KEY = 'shouldClearErrors';
+    const FLASH_KEY = 'flash';
+    const SHOULD_CLEAR_FLASH_KEY = 'shouldClearFlash';
 
     public function __construct()
     {
@@ -15,6 +17,11 @@ class Session
             $_SESSION[self::SHOULD_CLEAR_ERRORS_KEY] = true;
         else
             $this->clearErrors();
+
+        if (!$this->shouldClearFlash())
+            $_SESSION[self::SHOULD_CLEAR_FLASH_KEY] = true;
+        else
+            $this->clearFlash();
     }
 
     public function set($var, $value)
@@ -56,10 +63,24 @@ class Session
         $_SESSION[self::SHOULD_CLEAR_ERRORS_KEY] = false;
     }
 
+    public function setFlash($string)
+    {
+        $_SESSION[self::FLASH_KEY] = $string;
+        $_SESSION[self::SHOULD_CLEAR_FLASH_KEY] = false;
+    }
+
     public function getErrors()
     {
         if (isset($_SESSION[self::ERRORS_KEY]))
             return $_SESSION[self::ERRORS_KEY];
+
+        return null;
+    }
+
+    public function getFlash()
+    {
+        if (isset($_SESSION[self::FLASH_KEY]))
+            return $_SESSION[self::FLASH_KEY];
 
         return null;
     }
@@ -69,16 +90,34 @@ class Session
         return isset($_SESSION[self::ERRORS_KEY]);
     }
 
+    public function hasFlash()
+    {
+        return isset($_SESSION[self::FLASH_KEY]);
+    }
+
     public function clearErrors()
     {
         $this->remove(self::ERRORS_KEY);
     }
 
-    public function shouldClearErrors()
+    public function clearFlash()
+    {
+        $this->remove(self::FLASH_KEY);
+    }
+
+    protected function shouldClearErrors()
     {
         if (!isset($_SESSION[self::SHOULD_CLEAR_ERRORS_KEY]))
             return false;
 
         return $_SESSION[self::SHOULD_CLEAR_ERRORS_KEY];
+    }
+
+    protected function shouldClearFlash()
+    {
+        if (!isset($_SESSION[self::SHOULD_CLEAR_FLASH_KEY]))
+            return false;
+
+        return $_SESSION[self::SHOULD_CLEAR_FLASH_KEY];
     }
 }

@@ -1,6 +1,7 @@
 <?php namespace Library;
 
-class Page extends ApplicationComponent  {
+class Page extends ApplicationComponent
+{
     protected $contentFile;
     protected $layoutFile;
     protected $vars = array();
@@ -22,7 +23,7 @@ class Page extends ApplicationComponent  {
         foreach ($var as $key => $v)
             $this->vars[$key] = $v;
     }
-    
+
     public function getGeneratedPage() {
         if (!file_exists($this->contentFile))
             throw new \RuntimeException('Content file does not exist');

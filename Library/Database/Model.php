@@ -291,10 +291,7 @@ class Model implements ModelQueryContract
         $instance = new static;
         $query = new Query($instance);
         $all = $query->get();
-        if ($all != null && $all->count() > 0)
-        {
-            // *
-        }
+        return $all;
     }
 
     public static function where($var, $operator, $value, $link = 'AND')
