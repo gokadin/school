@@ -61,12 +61,33 @@
                     <a href="@path('School#Teacher/Index#index')">
                         <i class="fa fa-home"></i>
                         <span class="title">Home</span>
+                        @if ($module == 'Teacher/Index')
+                            <span class="selected"></span>
+                        @endif
                     </a>
+                </li>
+                <li>
+                    <a href="javascript:;">
+                        <i class="fa fa-university"></i>
+                        <span class="title">School</span>
+                        <span class="arrow"></span>
+                    </a>
+                    <ul class="sub-menu">
+                        <li>
+                            <a href="#">About</a>
+                        </li>
+                        <li>
+                            <a href="#">Blog</a>
+                        </li>
+                    </ul>
                 </li>
                 <li class="@if ($module == 'Teacher/Activity') active @endif">
                     <a href="javascript:;">
                         <i class="fa fa-gear"></i>
                         <span class="title">Activities</span>
+                        @if ($module == 'Teacher/Activity')
+                            <span class="selected"></span>
+                        @endif
                         <span class="arrow"></span>
                     </a>
                     <ul class="sub-menu">
@@ -86,6 +107,9 @@
                     <a href="javascript:;">
                         <i class="fa fa-group"></i>
                         <span class="title">Students</span>
+                        @if ($module == 'Teacher/Student')
+                            <span class="selected"></span>
+                        @endif
                         <span class="arrow"></span>
                     </a>
                     <ul class="sub-menu">
@@ -94,6 +118,81 @@
                         </li>
                         <li @if ($module == 'Teacher/Student' && $action == 'create') class="active" @endif>
                             <a href="@path('School#Teacher/Student#create')">Add a student</a>
+                        </li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="javascript:;">
+                        <i class="fa fa-calendar"></i>
+                        <span class="title">Calendar</span>
+                        <span class="arrow"></span>
+                    </a>
+                    <ul class="sub-menu">
+                        <li>
+                            <a href="#">Example</a>
+                        </li>
+                        <li>
+                            <a href="#">Example</a>
+                        </li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="javascript:;">
+                        <i class="fa fa-archive"></i>
+                        <span class="title">Inventory</span>
+                        <span class="arrow"></span>
+                    </a>
+                    <ul class="sub-menu">
+                        <li>
+                            <a href="#">Example</a>
+                        </li>
+                        <li>
+                            <a href="#">Example</a>
+                        </li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="javascript:;">
+                        <i class="fa fa-money"></i>
+                        <span class="title">Payments</span>
+                        <span class="arrow"></span>
+                    </a>
+                    <ul class="sub-menu">
+                        <li>
+                            <a href="#">Example</a>
+                        </li>
+                        <li>
+                            <a href="#">Example</a>
+                        </li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="javascript:;">
+                        <i class="fa fa-file-text-o"></i>
+                        <span class="title">Reports</span>
+                        <span class="arrow"></span>
+                    </a>
+                    <ul class="sub-menu">
+                        <li>
+                            <a href="#">Example</a>
+                        </li>
+                        <li>
+                            <a href="#">Example</a>
+                        </li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="javascript:;">
+                        <i class="fa fa-user"></i>
+                        <span class="title">My Account</span>
+                        <span class="arrow"></span>
+                    </a>
+                    <ul class="sub-menu">
+                        <li>
+                            <a href="#">Example</a>
+                        </li>
+                        <li>
+                            <a href="#">Example</a>
                         </li>
                     </ul>
                 </li>

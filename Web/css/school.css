@@ -181,17 +181,11 @@ body {
     display: block;
     width: 8px;
     height: 25px;
-    background-image: url("../img/sidebar-menu-arrow.png");
+    background-image: url("/School/Web/images/icons/sidebar-menu-arrow.png");
     float: right;
     position: absolute;
     right:0px;
     top:8px;
-}
-
-.page-sidebar-reversed .page-sidebar-menu > li.active > a .selected {
-    background-image: url("../img/sidebar-menu-arrow-reverse.png");
-    right: auto;
-    left:0;
 }
 
 .page-sidebar ul > li > a > .arrow:before {
