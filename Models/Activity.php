@@ -4,9 +4,9 @@ use Library\Database\Model;
 
 class Activity extends Model
 {
-    public function activities()
+    public function students()
     {
-        return $this->hasMany('Student');
+        return $this->belongsToMany('Student');
     }
 
     public function teacher()

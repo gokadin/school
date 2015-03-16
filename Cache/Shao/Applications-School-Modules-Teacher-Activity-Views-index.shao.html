@@ -1,9 +1,86 @@
-<?php  use Library\Facades\Session;  ?>
+<?php  use Library\Facades\HTML;  ?>
 
-<?php if (Session::hasFlash()) { ?>
-    <?php echo  Session::getFlash() ; ?>
-<?php } ?>
+<div class="row data-table">
+    <div class="col-md-12">
+        <div class="data-table-header">
+            <div class="data-table-header-title">Activities (<?php echo  $activities->count() ; ?>)</div>
+            <div class="data-table-header-search">
+                <form role="search">
+                    <div class="form-group search">
+                        <input type="text" placeholder="Search" class="form-control">
+                        <span class="fa fa-search"></span>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-12">
+        <div class="data-table-body table-responsive">
+            <table class="table-hover">
+                <thead>
+                <tr>
+                    <th width="25%">Name</th>
+                    <th width="15%">Default rate</th>
+                    <th width="15%">Period</th>
+                    <th width="15%"># of students</th>
+                    <th width="20%">Date created</th>
+                    <th width="10%"></th>
+                </tr>
+                </thead>
+                <?php foreach ($activities as $activity) { ?>
+                    <tbody>
+                    <tr>
+                        <td><?php echo  $activity->name ; ?></td>
+                        <td><?php echo  $activity->rate ; ?></td>
+                        <td><?php echo  $activity->period ; ?></td>
+                        <td><?php echo  $activity->students()->count() ; ?></td>
+                        <td><?php echo  $activity->created_at ; ?></td>
+                        <td>
+                            <span class="data-table-action">
+                                <a href="<?php echo  HTML::path('School#Teacher/Activity#edit', $activity->id) ; ?>">
+                                    <img src="/School/Web/images/icons/edit.png" width="20" height="20" />
+                                </a>
+                            </span>
+                            <span class="data-table-action">
+                                <form action="<?php  HTML::path('School#Teacher/Activity#destroy');  ?>" method="POST">
+                                    <input type="hidden" name="_method" valud="DELETE" />
+                                    <input type="hidden" name="activityId" value="<?php echo  $activity->id ; ?>" />
+                                    <a href="<?php echo  HTML::path('School#Teacher/Activity#destroy') ; ?>" data-toggle="modal" data-target="#confirm-delete">
+                                        <img src="/School/Web/images/icons/delete.png" width="20" height="20" />
+                                    </a>
+                                </form>
+                            </span>
+                        </td>
+                    </tr>
+                    </tbody>
+                <?php } ?>
+            </table>
+        </div>
+    </div>
+</div>
 
-<?php foreach ($activities as $activity) { ?>
-    <?php echo  $activity->name.' + '.$activity->teacher_id.'<br />' ; ?>
-<?php } ?>
+<div class="modal fade" id="confirm-delete" tabindex="-1" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                Confirm delete
+            </div>
+            <div class="modal-body">
+                Deleting an <b>activity</b> will also remove all associated events.
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                <form id="confirm-delete-form" action="" method="POST">
+                    <input type="hidden" name="_method" value="DELETE" />
+                    <button type="submit" class="btn btn-danger btn-ok">Delete</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $('#confirm-delete').on('show.bs.modal', function(e) {
+        $(this).find('#confirm-delete-form').attr('action', $(e.relatedTarget).attr('href'));
+    })
+</script>

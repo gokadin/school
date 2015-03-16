@@ -422,9 +422,6 @@ class Model implements ModelQueryContract
         if ($thisForeignKey == null)
             $thisForeignKey = $this->camelCaseToUnderscore($this->modelName) . '_id';
 
-        if (!isset($this->vars[$thisForeignKey]))
-            throw new RuntimeException('Relationship foreign key not found.');
-
         if ($targetForeignKey == null)
             $targetForeignKey = $this->camelCaseToUnderscore($modelName) . '_id';
 
@@ -438,7 +435,12 @@ class Model implements ModelQueryContract
                 throw new RuntimeException($this->modelName . ' cannot belong to the same table');
         }
 
-        $targetIds = $pivotName::where($thisForeignKey, '=', $this->vars[$this->primaryKey])->get($targetForeignKey);
+        $targetIds = DB::query('SELECT '.$thisForeignKey.' FROM '.$pivotName.' WHERE '.
+            $thisForeignKey.'='.$this->vars[$this->primaryKey])->fetchAll(\PDO::FETCH_COLUMN, 0);
+
+        if (sizeof($targetIds) == 0)
+            return new ModelCollection();
+
         $targetIds = '(' . implode(', ', $targetIds) . ')';
 
         $model = new $modelName();

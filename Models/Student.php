@@ -11,7 +11,7 @@ class Student extends Model
 
     public function activities()
     {
-        return $this->hasMany('Activity');
+        return $this->belongsToMany('Activity');
     }
 
     public function school()

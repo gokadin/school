@@ -24,6 +24,20 @@ class HTTPRequest extends ApplicationComponent
 
     public function method()
     {
+        if ($this->postExists('_method'))
+        {
+            $method = $this->postData('_method');
+            switch (strtoupper($method))
+            {
+                case 'PUT':
+                    return 'PUT';
+                case 'PATCH':
+                    return 'PATCH';
+                case 'DELETE':
+                    return 'DELETE';
+            }
+        }
+
         return $_SERVER['REQUEST_METHOD'];
     }
 

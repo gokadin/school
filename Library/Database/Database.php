@@ -36,6 +36,8 @@ class Database
 
     public function query($sql)
     {
-        return $this->dao->query($sql);
+        $query = $this->dao->prepare($sql);
+        $query->execute();
+        return $query;
     }
 }

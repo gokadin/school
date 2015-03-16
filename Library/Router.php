@@ -39,7 +39,7 @@ class Router
         throw new RuntimeException('No routes found corresponding to the URL', self::NO_ROUTE);
     }
 
-    public function actionToPath($string)
+    public function actionToPath($string, $args = null)
     {
         $arr = explode('#', $string);
         $app = $arr[0];
@@ -72,7 +72,7 @@ class Router
                     return $route->getAttribute('url');
                 else
                 {
-                    return preg_replace('/\/\(.+\)$/', '/', $route->getAttribute('url'));
+                    return preg_replace('/\/\(.+\)\/*/', $args, $route->getAttribute('url'));
                 }
             }
         }

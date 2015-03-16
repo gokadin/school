@@ -794,3 +794,56 @@ Footer Layouts (new in v1.3)
     color: #e02222;
     padding-left: 2px;
 }
+
+/* DATA TABLE */
+
+.data-table-header
+{
+    color: white;
+    font-size: 20px;
+    line-height: 30px;
+    height: 30px;
+    padding-left: 10px;
+    border: 1px solid #77e588;
+    background-color: #35aa47;
+    margin-bottom: 10px;
+}
+
+.data-table-body
+{
+    clear: both;
+}
+
+.data-table-body table
+{
+    width: 100%;
+    border-collapse: collapse;
+    border-spacing: 0px;
+}
+
+.data-table-body table tr th
+{
+    font-family: "Open Sans",sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    padding-left: 8px;
+    height: 40px;
+}
+
+.data-table-body table tr td
+{
+    border-top: 1px solid #ddd;
+    padding-left: 8px;
+    height: 40px;
+}
+
+.data-table-action a
+{
+    margin-right: 10px;
+    display: none;
+}
+
+.data-table-body table tr:hover .data-table-action a
+{
+    display: inline-block;
+}

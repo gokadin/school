@@ -32,6 +32,7 @@ abstract class Application extends Container
         $this->instance('config', $this->config);
         $this->instance('session', $this->session);
         $this->instance('database', new Database(PDOFactory::conn()));
+        $this->instance('html', new HTML());
     }
 
     public function getController()

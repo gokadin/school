@@ -152,7 +152,7 @@ class Query extends QueryBuilder implements QueryContract
         $result->closeCursor();
 
         if (sizeof($list) == 0)
-            return null;
+            return new ModelCollection();
 
         if ($this->selectValues == null)
             return new ModelCollection($list);
