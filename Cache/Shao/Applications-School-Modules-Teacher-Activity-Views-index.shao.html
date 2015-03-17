@@ -33,7 +33,7 @@
                     <tr>
                         <td><?php echo  $activity->name ; ?></td>
                         <td><?php echo  $activity->rate ; ?></td>
-                        <td><?php echo  $activity->period ; ?></td>
+                        <td><?php echo  $activity->periodToString() ; ?></td>
                         <td><?php echo  $activity->students()->count() ; ?></td>
                         <td><?php echo  $activity->created_at ; ?></td>
                         <td>

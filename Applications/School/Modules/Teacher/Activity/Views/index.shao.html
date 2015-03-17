@@ -33,7 +33,7 @@
                     <tr>
                         <td>{{ $activity->name }}</td>
                         <td>{{ $activity->rate }}</td>
-                        <td>{{ $activity->period }}</td>
+                        <td>{{ $activity->periodToString() }}</td>
                         <td>{{ $activity->students()->count() }}</td>
                         <td>{{ $activity->created_at }}</td>
                         <td>
