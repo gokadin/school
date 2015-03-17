@@ -841,6 +841,7 @@ Footer Layouts (new in v1.3)
 {
     margin-right: 10px;
     display: none;
+    cursor: pointer;
 }
 
 .data-table-body table tr:hover .data-table-action a

@@ -51,14 +51,14 @@ class Table
 
     public function timestamps()
     {
-        $this->columns[] = new Column('updated_at', 'datetime');
-        $this->columns[] = new Column('created_at', 'datetime');
+        $this->columns[] = new Column(self::UPDATED_AT, 'datetime');
+        $this->columns[] = new Column(self::CREATED_AT, 'datetime');
     }
 
     public function meta()
     {
-        $this->columns[] = new Column('meta_id', 'integer');
-        $this->columns[] = new Column('meta_type', 'string', 32);
+        $this->columns[] = new Column(self::META_ID, 'integer');
+        $this->columns[] = new Column(self::META_TYPE, 'string', 32);
     }
 
     /* ACCESSORS */
@@ -99,6 +99,6 @@ class Table
 
     public function hasTimestamps()
     {
-        return $this->hasColumn('updated_at') && $this->hasColumn(('created_at'));
+        return $this->hasColumn(self::UPDATED_AT) && $this->hasColumn((self::CREATED_AT));
     }
 }

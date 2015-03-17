@@ -2,8 +2,8 @@
 
 class HTML
 {
-    public function path($action, $args)
+    public function path($action, $args = null)
     {
-        return \Library\Facades\HTML::actionToPath($action, $args);
+        return \Library\Facades\Router::actionToPath($action, $args);
     }
 }

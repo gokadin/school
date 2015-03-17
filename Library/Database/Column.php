@@ -80,20 +80,25 @@ class Column
 
     public function isRequired()
     {
-        if ($this->name != QueryBuilder::UPDATED_AT ||
-            $this->name != QueryBuilder::CREATED_AT)
+        if ($this->name === QueryBuilder::UPDATED_AT ||
+            $this->name === QueryBuilder::CREATED_AT)
             return false;
 
-        if ($this->name != Table::META_TYPE ||
-            $this->name != Table::META_ID)
+        if ($this->name === Table::META_TYPE ||
+            $this->name === Table::META_ID)
             return false;
 
-        return !$this->canBeNull && $this->default == null;
+        return !$this->isNullable() && !$this->isDefault();
     }
 
     public function isUnique()
     {
         return $this->isUnique;
+    }
+
+    public function isDefault()
+    {
+        return $this->default != null;
     }
 
     public function getDefault()

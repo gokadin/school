@@ -21,14 +21,14 @@
         <route url="/School/school/teacher/activities" method="GET" module="Teacher/Activity" action="index" />
         <route url="/School/school/teacher/activities/create" method="GET" module="Teacher/Activity" action="create" />
         <route url="/School/school/teacher/activities/create" method="POST" module="Teacher/Activity" action="store" />
-        <route url="/School/school/teacher/activities/edit/([0-9]+)" method="GET" module="Teacher/Activity" action="edit" />
+        <route url="/School/school/teacher/activities/edit/([0-9]+)" method="GET" module="Teacher/Activity" action="edit" vars="activityId" />
         <route url="/School/school/teacher/activities/edit" method="PUT" module="Teacher/Activity" action="update" />
         <route url="/School/school/teacher/activities/delete" method="DELETE" module="Teacher/Activity" action="destroy" />
         <!-- TEACHER STUDENT MODULE -->
         <route url="/School/school/teacher/students" method="GET" module="Teacher/Student" action="index" />
         <route url="/School/school/teacher/students/create" method="GET" module="Teacher/Student" action="create" />
         <route url="/School/school/teacher/students/create" method="POST" module="Teacher/Student" action="store" />
-        <route url="/School/school/teacher/students/edit/([0-9]+)" method="GET" module="Teacher/Student" action="edit" />
+        <route url="/School/school/teacher/students/edit/([0-9]+)" method="GET" module="Teacher/Student" action="edit" vars="studentId" />
         <route url="/School/school/teacher/students/edit" method="PUT" module="Teacher/Student" action="update" />
         <route url="/School/school/teacher/students/delete" method="DELETE" module="Teacher/Student" action="destroy" />
 

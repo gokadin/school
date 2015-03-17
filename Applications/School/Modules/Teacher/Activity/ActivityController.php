@@ -52,6 +52,6 @@ class ActivityController extends BackController
 
     public function destroy()
     {
-
+        
     }
 }

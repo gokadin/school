@@ -5,12 +5,13 @@
         <div class="data-table-header">
             <div class="data-table-header-title">Activities (<?php echo  $activities->count() ; ?>)</div>
             <div class="data-table-header-search">
+                <!--
                 <form role="search">
                     <div class="form-group search">
-                        <input type="text" placeholder="Search" class="form-control">
-                        <span class="fa fa-search"></span>
+                        <input type="text" placeholder="Search" class="form-control" />
                     </div>
                 </form>
+                -->
             </div>
         </div>
     </div>
@@ -42,13 +43,13 @@
                                 </a>
                             </span>
                             <span class="data-table-action">
-                                <form action="<?php  HTML::path('School#Teacher/Activity#destroy');  ?>" method="POST">
-                                    <input type="hidden" name="_method" valud="DELETE" />
-                                    <input type="hidden" name="activityId" value="<?php echo  $activity->id ; ?>" />
-                                    <a href="<?php echo  HTML::path('School#Teacher/Activity#destroy') ; ?>" data-toggle="modal" data-target="#confirm-delete">
-                                        <img src="/School/Web/images/icons/delete.png" width="20" height="20" />
-                                    </a>
-                                </form>
+                                <a onclick="return showConfirmModal(this)">
+                                    <form id="delete-form" action="<?php echo  HTML::path('School#Teacher/Activity#destroy') ; ?>" method="POST">
+                                        <input type="hidden" name="_method" value="DELETE" />
+                                        <input type="hidden" name="activityId" value="<?php echo  $activity->id ; ?>" />
+                                    </form>
+                                    <img src="/School/Web/images/icons/delete.png" width="20" height="20" />
+                                </a>
                             </span>
                         </td>
                     </tr>
@@ -69,18 +70,28 @@
                 Deleting an <b>activity</b> will also remove all associated events.
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-                <form id="confirm-delete-form" action="" method="POST">
-                    <input type="hidden" name="_method" value="DELETE" />
-                    <button type="submit" class="btn btn-danger btn-ok">Delete</button>
-                </form>
+                <button type="button" class="btn btn-default" data-dismiss="modal">
+                    Cancel
+                </button>
+                <button type="button" class="btn btn-primary" data-dismiss="modal" onclick="confirmCallBack()">
+                    Save changes
+                </button>
             </div>
         </div>
     </div>
 </div>
 
 <script>
-    $('#confirm-delete').on('show.bs.modal', function(e) {
-        $(this).find('#confirm-delete-form').attr('action', $(e.relatedTarget).attr('href'));
-    })
+var currentForm = '';
+
+function showConfirmModal(e) {
+    currentForm = e.children[0];
+
+    $('#confirm-delete').modal('show');
+    return false;
+}
+
+function confirmCallBack() {
+    currentForm.submit();
+}
 </script>

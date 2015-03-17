@@ -72,7 +72,17 @@ class Router
                     return $route->getAttribute('url');
                 else
                 {
-                    return preg_replace('/\/\(.+\)\/*/', $args, $route->getAttribute('url'));
+                    if ($args == null)
+                        throw new RuntimeException('Router.actionToPath : route '.$route->getAttribute('url').' requires arguments.');
+
+                    if (!is_array($args))
+                    {
+                        return preg_replace('/\(.+\)/', $args, $route->getAttribute('url'));
+                    }
+
+                    return preg_replace_callback('/\(.+\)/', function($matches) use (&$args) {
+                        return array_shift($args);
+                    }, $route->getAttribute('url'));
                 }
             }
         }
