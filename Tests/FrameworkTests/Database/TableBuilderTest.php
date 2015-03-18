@@ -4,16 +4,16 @@ use Library\Database\Column;
 use Library\Database\Table;
 use Tests\FrameworkTests\BaseTest;
 
-class ExampleTests extends BaseTest
+class TableBuilderTest extends BaseTest
 {
     public function testIfIReturnColumnInstanceThenModifyingItShouldChangeTheInstanceInTableArray()
     {
         // Arrange
-        $blueprint = new Table('test');
+        $t = new Table('test');
 
         // Act
-        $blueprint->integer('col1')->unique();
-        $columns = $blueprint->columns();
+        $t->integer('col1')->unique();
+        $columns = $t->columns();
 
         // Assert
         $this->assertTrue($columns[0]->isUnique());

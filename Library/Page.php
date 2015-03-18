@@ -24,7 +24,19 @@ class Page
             $this->vars[$key] = $v;
     }
 
-    public function getGeneratedPage() {
+    public function exists($var)
+    {
+        return isset($this->vars[$var]);
+    }
+
+    public function get($var)
+    {
+        if (isset($this->vars[$var]))
+            return $this->vars[$var];
+    }
+
+    public function getGeneratedPage()
+    {
         if (!file_exists($this->contentFile))
             throw new \RuntimeException('Content file does not exist');
 

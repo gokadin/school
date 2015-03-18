@@ -8,7 +8,6 @@ abstract class BackController
     protected $action = '';
     protected $module = '';
     protected $method = '';
-    protected $page = null;
     protected $view = '';
     protected $lang = null;
 	

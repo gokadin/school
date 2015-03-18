@@ -6,8 +6,6 @@ use Library\Facades\Request;
 use Library\Facades\Response;
 use Library\Facades\Router;
 use Library\Facades\Facade;
-use Library\Session;
-use Library\Database\Database;
 
 class Application
 {

@@ -52,6 +52,12 @@ class ActivityController extends BackController
 
     public function destroy()
     {
+        if (!is_int(Request::postData('activityId')))
+        {
+            Session::setFlash('An error occurred. Could not delete activity.');
+            Response::toAction('School#Teacher/Activity#index');
+        }
+
         $activity = Activity::find(Request::postData('activityId'));
         if ($activity->delete())
             Session::setFlash('Deleted activity <b>'.$activity->name.'</b>.');

@@ -63,6 +63,6 @@ class Request
 
     public function requestURI()
     {
-            return $_SERVER['REQUEST_URI'];
+        return $_SERVER['REQUEST_URI'];
     }
 }
