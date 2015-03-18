@@ -1,9 +1,9 @@
 <?php namespace Library;
 
-class HTTPResponse extends ApplicationComponent
+use Library\Facades\Page;
+
+class Response
 {
-    protected $page;
-    
     public function addHeader($header)
     {
         header($header);
@@ -21,7 +21,7 @@ class HTTPResponse extends ApplicationComponent
 
     public function toAction($location, $args = null)
     {
-        $this->redirect($this->app->router()->actionToPath($location), $args);
+        $this->redirect(\Library\Facades\Router::actionToPath($location), $args);
     }
 
     public function back()
@@ -32,8 +32,7 @@ class HTTPResponse extends ApplicationComponent
 
     public function redirect404()
     {
-        $this->page = new Page($this->app);
-        $this->page->setContentFile(__DIR__.'/../Errors/404.html');
+        \Library\Facades\Page::setContentFile(__DIR__.'/../Errors/404.html');
 
         $this->addHeader('HTTP/1.0 404 Not Found');
 
@@ -42,12 +41,7 @@ class HTTPResponse extends ApplicationComponent
 
     public function send()
     {
-        exit($this->page->getGeneratedPage());
-    }
-
-    public function setPage(Page $page)
-    {
-        $this->page = $page;
+        exit(Page::getGeneratedPage());
     }
 
     public function setCookie($name, $value = '', $expire = 0, $path = null, $domain = null, $secure = false, $http_only = true)

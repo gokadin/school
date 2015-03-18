@@ -2,7 +2,7 @@
 
 use Library\Shao\Shao;
 
-abstract class BackController extends ApplicationComponent
+abstract class BackController
 {
     protected $vars = array();
     protected $action = '';
@@ -14,10 +14,6 @@ abstract class BackController extends ApplicationComponent
 	
     public function __construct(Application $app, $module, $method, $action)
     {
-        parent::__construct($app);
-
-        $this->page = new Page($app);
-        $this->app()->instance('page', $this->page);
         $this->setModule($module);
         $this->setMethod($method);
         $this->setAction($action);
@@ -97,7 +93,7 @@ abstract class BackController extends ApplicationComponent
 
         $this->view = $view;
 
-        $viewPrefix = 'Applications/' . $this->app->name() . '/Modules/' . $this->module . '/Views/';
+        $viewPrefix = 'Applications/' . \Library\Facades\App::name() . '/Modules/' . $this->module . '/Views/';
         $contentFile = null;
         if (file_exists($viewPrefix . $this->view . '.shao.html')) // change later for in_array based on config
         {
@@ -112,7 +108,7 @@ abstract class BackController extends ApplicationComponent
             $contentFile = $viewPrefix . $this->view . '.html';
         }
 
-        $layoutPrefix = 'Applications/'.$this->app->name().'/Templates/';
+        $layoutPrefix = 'Applications/'.\Library\Facades\App::name().'/Templates/';
         $layoutFile = null;
         if (file_exists($layoutPrefix.'layout.shao.html')) // change later for in_array based on configs
         {
@@ -127,15 +123,16 @@ abstract class BackController extends ApplicationComponent
             $layoutFile = $layoutPrefix.'layout.html';
         }
 
-        $this->page->setContentFile($contentFile);
-        $this->page->setLayoutFile($layoutFile);
+        \Library\Facades\Page::setContentFile($contentFile);
+        \Library\Facades\Page::setLayoutFile($layoutFile);
 
         require 'Web/lang/common.php';
         $this->setLang($lang);
-        $this->page->add('lang', $lang);
+        \Library\Facades\Page::add('lang', $lang);
     }
     
-    public function module() {
+    public function module()
+    {
         return $this->module;
     }
 
@@ -144,11 +141,13 @@ abstract class BackController extends ApplicationComponent
         return $this->method;
     }
     
-    public function action() {
+    public function action()
+    {
         return $this->action;
     }
     
-    public function setLang($lang) {
+    public function setLang($lang)
+    {
         $this->lang = $lang;
     }
 }

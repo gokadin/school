@@ -1,14 +1,11 @@
-<?php
-namespace Applications\Backend;
+<?php namespace Applications\Backend;
 
-class BackendApplication extends \Library\Application {
-    public function __construct() {
-        parent::__construct($this);
-        
-        $this->name = 'Backend';
-    }
-    
-    public function run() {
+use Library\Application;
+
+class BackendApplication extends Application
+{
+    public function run()
+    {
         $controller = $this->getController();
 
         // SETTING RESTRICTIONS

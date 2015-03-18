@@ -1,6 +1,5 @@
 <?php namespace Tests\FrameworkTests\Database;
 
-use Library\Database\Blueprint;
 use Library\Database\Column;
 use Library\Database\Table;
 use Tests\FrameworkTests\BaseTest;

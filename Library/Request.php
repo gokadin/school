@@ -1,6 +1,6 @@
 <?php namespace Library;
 
-class HTTPRequest extends ApplicationComponent
+class Request
 {
     public function cookieData($key)
     {

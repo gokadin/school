@@ -1,6 +1,7 @@
 <?php namespace Library\Container;
 
 use ArrayAccess;
+use Symfony\Component\Yaml\Exception\RuntimeException;
 
 class Container implements ArrayAccess
 {
@@ -18,6 +19,8 @@ class Container implements ArrayAccess
         {
             return $this->instances[$abstract];
         }
+
+        throw new RuntimeException('Could not resolve '.$abstract.'.');
     }
 
     public function resolved($abstract)

@@ -1,6 +1,6 @@
 <?php namespace Library\Shao;
 
-use Library\Facades\Config;
+use Library\Config;
 
 class Shao
 {

@@ -8,18 +8,14 @@ use Models\User;
 
 class SchoolApplication extends Application
 {
-    public function __construct()
-    {
-        parent::__construct($this);
-        
-        $this->name = 'School';
-    }
-    
     public function run()
     {
         $controller = $this->getController();
 
         /* ASSIGNING CURRENT USER */
+
+        if (!Session::exists('id'))
+            Response::toAction('Frontend#Account#index');
 
         $currentUser = User::find(Session::get('id'));
         $currentUser = $currentUser->morph();
@@ -30,7 +26,7 @@ class SchoolApplication extends Application
             Response::toAction('Frontend#Account#index');
 
         $controller->add(['currentUser' => $currentUser]);
-        $controller->page()->add(['currentUser' => $currentUser]);
+        \Library\Facades\Page::add(['currentUser' => $currentUser]);
 
         if ($currentUser->meta_type == 'Teacher')
         {
@@ -50,12 +46,11 @@ class SchoolApplication extends Application
         /* BREADCRUMBS */
 
         $breadcrumbs = $this->buildBreadcrumbs($controller, $currentUser->meta_type);
-        $controller->page()->add(['breadcrumbs' => $breadcrumbs]);
-        $controller->page()->add(['module' => $controller->module(), 'action' => $controller->action()]);
+        \Library\Facades\Page::add(['breadcrumbs' => $breadcrumbs]);
+        \Library\Facades\Page::add(['module' => $controller->module(), 'action' => $controller->action()]);
         
         $controller->execute();
-        $this->httpResponse->setPage($controller->page());
-        $this->httpResponse->send();
+        Response::send();
     }
 
     private function buildBreadcrumbs($controller, $userType)

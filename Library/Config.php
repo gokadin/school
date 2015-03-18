@@ -1,24 +1,32 @@
 <?php namespace Library;
 
-class Config extends ApplicationComponent {
-    protected $vars = array();
+use DOMDocument;
+
+class Config
+{
+    protected static $vars = array();
     
-    public function get($var) {
-        if (!$this->vars) {
-            $xml = new \DOMDocument;
+    public static function get($var)
+    {
+        if (!self::$vars)
+        {
+            $xml = new DOMDocument;
             $xml->load(__DIR__.'/../Config/app.xml');
             
             $elements = $xml->getElementsByTagName('define');
             
-            foreach ($elements as $element) {
-                $this->vars[$element->getAttribute('var')] = $element->getAttribute('value');
-            }
+            foreach ($elements as $element)
+                self::$vars[$element->getAttribute('var')] = $element->getAttribute('value');
         }
         
-        if (isset($this->vars[$var])) {
-            return $this->vars[$var];
-        }
-        
+        if (isset(self::$vars[$var]))
+            return self::$vars[$var];
+
         return null;
+    }
+
+    public static function temporary($var, $value)
+    {
+        self::$vars['testing'] = true;
     }
 }

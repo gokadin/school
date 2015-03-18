@@ -17,11 +17,6 @@ abstract class Facade
         static::$app = $app;
     }
 
-    public static function getFacadeRoot()
-    {
-        return static::resolveFacadeInstance(static::getFacadeAccessor());
-    }
-
     public static function resolveFacadeInstance($name)
     {
         if (is_object($name))
@@ -30,12 +25,12 @@ abstract class Facade
         if (isset(static::$resolvedInstance[$name]))
             return static::$resolvedInstance[$name];
 
-        return static::$resolvedInstance[$name] = static::$app[$name];
+        return static::$resolvedInstance[$name] = static::$app->container()->make($name);
     }
 
     public static function __callStatic($method, $args)
     {
-        $instance = static::getFacadeRoot();
+        $instance = static::resolveFacadeInstance(static::getFacadeAccessor());
 
         switch (count($args))
         {

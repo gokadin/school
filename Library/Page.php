@@ -1,6 +1,6 @@
 <?php namespace Library;
 
-class Page extends ApplicationComponent
+class Page
 {
     protected $contentFile;
     protected $layoutFile;

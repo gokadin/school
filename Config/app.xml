@@ -2,6 +2,7 @@
 <definitions>
     /* ENV variable can be set to "local" or "production" */
     <define var="env" value="local" />
+    <define var="testing" value="false" />
 
     <define var="testType" value="5" />
 </definitions>

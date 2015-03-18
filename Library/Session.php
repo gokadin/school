@@ -1,6 +1,7 @@
 <?php namespace Library;
 
-if(!isset($_SESSION)){
+if(Config::get('testing') != 'true')
+{
     session_start();
 }
 

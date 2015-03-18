@@ -1,38 +1,52 @@
 <?php namespace Library;
 
 use Library\Container\Container;
-use Library\Router;
+use Library\Container\ContainerConfiguration;
+use Library\Facades\Request;
+use Library\Facades\Response;
+use Library\Facades\Router;
 use Library\Facades\Facade;
 use Library\Session;
 use Library\Database\Database;
 
-abstract class Application extends Container
+class Application
 {
-    protected $httpRequest;
-    protected $httpResponse;
-    protected $router;
+    private $container;
     protected $name;
-    protected $session;
-    protected $config;
 
-    public function __construct()
+    public function __construct($name)
     {
-        $this->httpRequest = new HTTPRequest($this);
-        $this->httpResponse = new HTTPResponse($this);
-        $this->router = new Router();
-        $this->name = '';
-        $this->session = new Session();
-        $this->config = new Config($this);
-
         Facade::setFacadeApplication($this);
-        $this->instance('app', $this);
-        $this->instance('response', $this->httpResponse);
-        $this->instance('request', $this->httpRequest);
-        $this->instance('router', $this->router);
-        $this->instance('config', $this->config);
-        $this->instance('session', $this->session);
-        $this->instance('database', new Database(PDOFactory::conn()));
-        $this->instance('html', new HTML());
+
+        $this->name = $name;
+
+        $this->container = new Container();
+        $this->ConfigureContainer();
+
+        $this->container()->instance('session', new Session());
+    }
+
+    protected function ConfigureContainer()
+    {
+        $this->container->instance('app', $this);
+        $containerConfiguration = new ContainerConfiguration($this->container);
+        $containerConfiguration->configureContainer();
+    }
+
+    public function container()
+    {
+        if ($this->container == null)
+        {
+            $this->container = new Container();
+            $this->ConfigureContainer();
+        }
+
+        return $this->container;
+    }
+
+    public function name()
+    {
+        return $this->name;
     }
 
     public function getController()
@@ -61,17 +75,17 @@ abstract class Application extends Container
             if ($route->hasAttribute('vars'))
                 $vars = explode(',', $route->getAttribute('vars'));
 
-            $this->router->addRoute(new Route($route->getAttribute('url'), $route->getAttribute('module'), $route->getAttribute('method'), $route->getAttribute('action'), $vars));
+            Router::addRoute(new Route($route->getAttribute('url'), $route->getAttribute('module'), $route->getAttribute('method'), $route->getAttribute('action'), $vars));
         }
 
         try
         {
-            $matchedRoute = $this->router->getRoute($this->httpRequest->requestURI(), $this->httpRequest->method());
+            $matchedRoute = Router::getRoute(Request::requestURI(), Request::method());
         }
         catch (\RuntimeException $e)
         {
             if ($e->getCode() == Router::NO_ROUTE) {
-                $this->httpResponse->redirect404();
+                Request::redirect404();
             }
         }
 
@@ -92,20 +106,16 @@ abstract class Application extends Container
         return new $controllerClass($this, str_replace('\\', '/', $matchedRoute->module()), $matchedRoute->method(), $matchedRoute->action());
     }	
     
-    abstract public function run();
-
-    public function name()
+    public function run()
     {
-        return $this->name;
+        $controller = $this->getController();
+
+        $controller->execute();
+        Response::send();
     }
 
     public function router()
     {
         return $this->router;
-    }
-
-    public function make($abstract, $parameters = [])
-    {
-        return parent::make($abstract, $parameters);
     }
 }	
