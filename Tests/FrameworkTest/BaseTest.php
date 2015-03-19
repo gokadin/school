@@ -1,4 +1,4 @@
-<?php namespace Tests\FrameworkTests;
+<?php namespace Tests\FrameworkTest;
 
 use PHPUnit_Framework_TestCase;
 use Library\Application;

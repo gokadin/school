@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="iso-8859-1" ?>
+<routes>
+    <application name="test">
+        <route url="/test" method="GET" module="Index" action="index" />
+        <route url="/test" method="POST" module="Index" action="create" />
+        <route url="/test" method="PUT" module="Index" action="update" />
+        <route url="/test" method="DELETE" module="Index" action="destroy" />
+        <route url="/test/{0}/{1}" method="GET" module="Index" action="index" vars="one,two" />
+    </application>
+</routes>

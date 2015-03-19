@@ -1,4 +1,4 @@
-<?php namespace Tests\FrontendTests;
+<?php namespace Tests\FrontendTest;
 
 class ExampleTest extends BaseTest
 {

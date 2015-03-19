@@ -4,36 +4,55 @@ use Symfony\Component\Yaml\Exception\RuntimeException;
 
 class Router
 {
-    protected $routes = array();
-
+    const ROUTES_CONFIG_PATH = 'Config/routes.xml';
+    const TEST_ROUTES_CONFIG_PATH = 'Tests/FrameworkTest/Config/routes.xml';
     const NO_ROUTE = 1;
 
-    public function addRoute(Route $route)
+    protected $routes = array();
+
+    protected function populateRoutes()
     {
-        if (!in_array($route, $this->routes))
-            $this->routes[] = $route;
+        if ($this->routes != null)
+            return;
+
+        $xml = new \DOMDocument;
+        if (Config::get('testing') == 'true')
+            $xml->load(self::TEST_ROUTES_CONFIG_PATH);
+        else
+            $xml->load(self::ROUTES_CONFIG_PATH);
+
+        $applications = $xml->getElementsByTagName('application');
+        foreach ($applications as $application)
+        {
+            $appName = $application->getAttribute('name');
+            $routes = $application->getElementsByTagName('route');
+            foreach ($routes as $route)
+            {
+                $vars = array();
+
+                if ($route->hasAttribute('vars'))
+                    $vars = explode(',', $route->getAttribute('vars'));
+
+                $vars = array_map('trim', $vars);
+                $this->routes[] = (new Route(
+                    $appName,
+                    $route->getAttribute('module'),
+                    $route->getAttribute('action'),
+                    $route->getAttribute('url'),
+                    $route->getAttribute('method'),
+                    $vars));
+            }
+        }
     }
 
-    public function getRoute($url, $method)
+    public function getRoute($appName, $url, $method)
     {
+        $this->populateRoutes();
+
         foreach ($this->routes as $route)
         {
-            if (($varsValues = $route->match($url, $method)) !== false)
-            {
-                if ($route->hasVars())
-                {
-                    $varsNames = $route->varsNames();
-                    $listVars = array();
-
-                    foreach ($varsValues as $key => $match)
-                    {
-                        if ($key !== 0)
-                            $listVars[$varsNames[$key - 1]] = $match;
-                    }
-                    $route->setVars($listVars);
-                }
+            if ($route->match($appName, $url, $method))
                 return $route;
-            }
         }
 
         throw new RuntimeException('No routes found corresponding to the URL', self::NO_ROUTE);
@@ -46,43 +65,20 @@ class Router
         $module = $arr[1];
         $action = $arr[2];
 
-        $xml = new \DOMDocument;
-        $xml->load(__DIR__.'/../Config/routes.xml');
+        $this->populateRoutes();
 
-        $applications = $xml->getElementsByTagName('application');
-        $routes = array();
-        foreach ($applications as $application)
+        foreach ($this->routes as $route)
         {
-            if ($application->getAttribute('name') == $app)
+            if ($route->matchAction($app, $module, $action))
             {
-                $routes = $application->getElementsByTagName('route');
-                break;
-            }
-        }
-
-        if ($routes == null)
-            throw new RuntimeException('Route not found: '.$string.'.');
-
-        foreach ($routes as $route)
-        {
-            if ($route->getAttribute('module') == $module &&
-                $route->getAttribute('action') == $action)
-            {
-                if (!$route->hasAttribute('vars'))
-                    return $route->getAttribute('url');
+                if (!$route->hasVars())
+                    return $route->url();
                 else
                 {
                     if ($args == null)
-                        throw new RuntimeException('Router.actionToPath : route '.$route->getAttribute('url').' requires arguments.');
+                        throw new RuntimeException('Router.actionToPath : route '.$route->url().' requires arguments.');
 
-                    if (!is_array($args))
-                    {
-                        return preg_replace('/\(.+\)/', $args, $route->getAttribute('url'));
-                    }
-
-                    return preg_replace_callback('/\(.+\)/', function($matches) use (&$args) {
-                        return array_shift($args);
-                    }, $route->getAttribute('url'));
+                    return $route->resolveUrl($args);
                 }
             }
         }

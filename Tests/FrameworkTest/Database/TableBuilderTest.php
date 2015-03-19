@@ -1,8 +1,8 @@
-<?php namespace Tests\FrameworkTests\Database;
+<?php namespace Tests\FrameworkTest\Database;
 
 use Library\Database\Column;
 use Library\Database\Table;
-use Tests\FrameworkTests\BaseTest;
+use Tests\FrameworkTest\BaseTest;
 
 class TableBuilderTest extends BaseTest
 {

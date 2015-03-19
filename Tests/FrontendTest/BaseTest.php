@@ -1,4 +1,4 @@
-<?php namespace Tests\FrontendTests;
+<?php namespace Tests\FrontendTest;
 
 use PHPUnit_Framework_TestCase;
 use Applications\Frontend\FrontendApplication;

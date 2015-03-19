@@ -7,6 +7,7 @@ use Library\Database\Database;
 use Library\PDOFactory;
 use Library\HTML;
 use Library\Page;
+use Library\Session;
 
 class ContainerConfiguration
 {
@@ -25,5 +26,6 @@ class ContainerConfiguration
         $this->container->instance('database', new Database(PDOFactory::conn()));
         $this->container->instance('html', new HTML());
         $this->container->instance('page', new Page());
+        $this->container->instance('session', new Session());
     }
 }

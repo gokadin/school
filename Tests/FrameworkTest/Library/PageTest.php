@@ -1,6 +1,6 @@
-<?php namespace Tests\FrameworkTests\Library;
+<?php namespace Tests\FrameworkTest\Library;
 
-use Tests\FrameworkTests\BaseTest;
+use Tests\FrameworkTest\BaseTest;
 use Library\Facades\Page;
 
 class PageTest extends BaseTest

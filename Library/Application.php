@@ -20,8 +20,6 @@ class Application
 
         $this->container = new Container();
         $this->ConfigureContainer();
-
-        $this->container()->instance('session', new Session());
     }
 
     protected function ConfigureContainer()
@@ -49,42 +47,15 @@ class Application
 
     public function getController()
     {
-        $xml = new \DOMDocument;
-        $xml->load(__DIR__.'/../Config/routes.xml');
-
-        $applications = $xml->getElementsByTagName('application');
-        $routes = array();
-        foreach ($applications as $application)
-        {
-            if ($application->getAttribute('name') == $this->name)
-            {
-                $routes = $application->getElementsByTagName('route');
-                break;
-            }
-        }
-
-        if ($routes == null)
-            throw new \Exception("Application.getController : could not find routes.");
-
-        foreach ($routes as $route)
-        {
-            $vars = array();
-
-            if ($route->hasAttribute('vars'))
-                $vars = explode(',', $route->getAttribute('vars'));
-
-            Router::addRoute(new Route($route->getAttribute('url'), $route->getAttribute('module'), $route->getAttribute('method'), $route->getAttribute('action'), $vars));
-        }
-
+        $matchedRoute = null;
         try
         {
-            $matchedRoute = Router::getRoute(Request::requestURI(), Request::method());
+            $matchedRoute = Router::getRoute($this->name, Request::requestURI(), Request::method());
         }
         catch (\RuntimeException $e)
         {
-            if ($e->getCode() == Router::NO_ROUTE) {
-                Request::redirect404();
-            }
+            if ($e->getCode() == \Library\Router::NO_ROUTE)
+                Response::redirect404();
         }
 
         $_GET = array_merge($_GET, $matchedRoute->vars());
@@ -110,10 +81,5 @@ class Application
 
         $controller->execute();
         Response::send();
-    }
-
-    public function router()
-    {
-        return $this->router;
     }
 }	
