@@ -20,11 +20,12 @@
             <table class="table-hover">
                 <thead>
                 <tr>
-                    <th width="25%">Name</th>
+                    <th width="20%">Name</th>
                     <th width="15%">Default rate</th>
                     <th width="15%">Period</th>
-                    <th width="15%"># of students</th>
-                    <th width="20%">Date created</th>
+                    <th width="10%">Students</th>
+                    <th width="15%">Location</th>
+                    <th width="15%">Created</th>
                     <th width="10%"></th>
                 </tr>
                 </thead>
@@ -35,6 +36,7 @@
                         <td><?php echo  $activity->rate ; ?></td>
                         <td><?php echo  $activity->periodToString() ; ?></td>
                         <td><?php echo  $activity->students()->count() ; ?></td>
+                        <td><?php echo  $activity->location ; ?></td>
                         <td><?php echo  $activity->created_at ; ?></td>
                         <td>
                             <span class="data-table-action">
