@@ -17,7 +17,7 @@
     </div>
     <div class="col-md-12">
         <div class="data-table-body table-responsive">
-            <table class="table-hover">
+            <table id="activity-tabl" class="table-hover sortable">
                 <thead>
                 <tr>
                     <th width="20%">Name</th>
@@ -26,11 +26,11 @@
                     <th width="10%">Students</th>
                     <th width="15%">Location</th>
                     <th width="15%">Created</th>
-                    <th width="10%"></th>
+                    <th width="10%" class="sorttable_nosort"></th>
                 </tr>
                 </thead>
+                <tbody>
                 <?php foreach ($activities as $activity) { ?>
-                    <tbody>
                     <tr>
                         <td><?php echo  $activity->name ; ?></td>
                         <td><?php echo  $activity->rate ; ?></td>
@@ -55,8 +55,8 @@
                             </span>
                         </td>
                     </tr>
-                    </tbody>
                 <?php } ?>
+                </tbody>
             </table>
         </div>
     </div>
@@ -82,6 +82,8 @@
         </div>
     </div>
 </div>
+
+<script type="text/javascript" src="/School/Web/tools/sorttable/sorttable.js"></script>
 
 <script>
 var currentForm = '';
