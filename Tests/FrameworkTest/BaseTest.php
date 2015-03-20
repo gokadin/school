@@ -5,7 +5,7 @@ use Library\Application;
 
 abstract class BaseTest extends PHPUnit_Framework_TestCase
 {
-    protected $app;
+    protected $app; // do I need this? app facade?
 
     public function setUp()
     {

@@ -802,11 +802,34 @@ Footer Layouts (new in v1.3)
     color: white;
     font-size: 20px;
     line-height: 30px;
-    height: 30px;
+    height: 32px;
     padding-left: 10px;
     border: 1px solid #77e588;
     background-color: #35aa47;
     margin-bottom: 10px;
+}
+
+.data-table-header-search
+{
+    float: right;
+    padding-right: 10px;
+    height: 30px;
+}
+
+.data-table-header-search form
+{
+    display: inline-block;
+}
+
+.data-table-header-search form input
+{
+    height: 24px;
+    font-size: 14px;
+    color: black;
+    border-radius: 0px;
+    border: 1px solid grey;
+    vertical-align: middle !important;
+    margin-top: -5px;
 }
 
 .data-table-body

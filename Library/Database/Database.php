@@ -1,15 +1,21 @@
 <?php namespace Library\Database;
 
 use Symfony\Component\Yaml\Exception\RuntimeException;
+use Library\PDOFactory;
+use Library\Config;
 
 class Database
 {
     protected $dao;
     protected $tables;
 
-    public function __construct($dao)
+    public function __construct()
     {
-        $this->dao = $dao;
+        if (Config::get('testing') == 'true')
+            $this->dao = PDOFactory::testConn();
+        else
+            $this->dao = PDOFactory::conn();
+
         $this->tables = new TableBuilder($this);
     }
 
@@ -29,7 +35,10 @@ class Database
             throw new RuntimeException('Invalid module');
 
         $table = strtolower($table);
-        $className = '\\Models\\'.ucfirst($table);
+        if (Config::get('testing') == 'true')
+            $className = '\\Tests\\FrameworkTest\\Database\\Models\\'.ucfirst($table);
+        else
+            $className = '\\Models\\'.ucfirst($table);
 
         return new $className();
     }

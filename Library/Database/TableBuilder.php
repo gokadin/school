@@ -1,6 +1,7 @@
 <?php namespace Library\Database;
 
 use Database\Tables;
+use Library\Config;
 use Symfony\Component\Yaml\Exception\RuntimeException;
 
 class TableBuilder extends Tables
@@ -12,7 +13,10 @@ class TableBuilder extends Tables
     {
         $this->db = $db;
 
-        $functions = get_class_methods('Database\Tables');
+        if (Config::get('testing') == 'true')
+            $functions = get_class_methods('\\Tests\\FrameworkTest\\Database\\Tables');
+        else
+            $functions = get_class_methods('Database\\Tables');
 
         foreach ($functions as $function)
         {
