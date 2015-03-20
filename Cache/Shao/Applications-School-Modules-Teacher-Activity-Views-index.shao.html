@@ -32,7 +32,7 @@
                         <td><?php echo  $activity->rate ; ?></td>
                         <td><?php echo  $activity->periodToString() ; ?></td>
                         <td><?php echo  $activity->students()->count() ; ?></td>
-                        <td><?php echo  $activity->location ; ?></td>
+                        <td><?php echo  empty($activity->location) ? 'n/a' : $activity->location ; ?></td>
                         <td><?php echo  $activity->created_at ; ?></td>
                         <td>
                             <span class="data-table-action">
@@ -71,7 +71,7 @@
                 <button type="button" class="btn btn-default" data-dismiss="modal">
                     Cancel
                 </button>
-                <button type="button" class="btn btn-primary" data-dismiss="modal" onclick="confirmCallBack()">
+                <button type="button" class="btn btn-primary" onclick="confirmCallBack()">
                     Save changes
                 </button>
             </div>

@@ -11,7 +11,7 @@ class ActivityController extends BackController
 {
     public function index()
     {
-        Page::add('activities', Activity::all());
+        Page::add('activities', $this->currentUser->activities());
     }
 
     public function create()
@@ -52,9 +52,9 @@ class ActivityController extends BackController
 
     public function destroy()
     {
-        if (!is_int(Request::postData('activityId')))
+        if (!is_numeric(Request::postData('activityId')) || !Activity::exists('id', Request::postData('activityId')))
         {
-            Session::setFlash('An error occurred. Could not delete activity.');
+            Session::setFlash('An error occurred. Activity is not valid.');
             Response::toAction('School#Teacher/Activity#index');
         }
 
