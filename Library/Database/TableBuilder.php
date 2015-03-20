@@ -18,11 +18,25 @@ class TableBuilder extends Tables
         else
             $functions = get_class_methods('Database\\Tables');
 
-        foreach ($functions as $function)
+        if (Config::get('testing') == 'true')
         {
-            $table = $this->$function();
-            $table->setTable($function);
-            $this->tables[] = $table;
+            $testTablesName = '\\Tests\\FrameworkTest\\Database\\Tables';
+            $testTables = new $testTablesName();
+            foreach ($functions as $function)
+            {
+                $table = $testTables->$function();
+                $table->setTable($function);
+                $this->tables[] = $table;
+            }
+        }
+        else
+        {
+            foreach ($functions as $function)
+            {
+                $table = $this->$function();
+                $table->setTable($function);
+                $this->tables[] = $table;
+            }
         }
 
         $this->buildTables();

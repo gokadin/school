@@ -13,7 +13,7 @@
     </div>
     <div class="col-md-12">
         <div class="data-table-body table-responsive">
-            <table id="activity-tabl" class="table-hover sortable">
+            <table id="activity-table" class="table-hover sortable">
                 <thead>
                 <tr>
                     <th width="20%">Name</th>
@@ -98,23 +98,12 @@
 <script type="text/javascript" src="/School/Web/tools/sorttable/sorttable.js"></script>
 
 <script>
-    $("#search").keyup(function() {
-        var value = this.value;
-
-        $("table").find("tr").each(function(index) {
-            if (index === 0) return;
-            var id = $(this).find("td").first().text();
-            $(this).toggle(id.indexOf(value) !== -1);
-        });
-    });
-
-
-    $('#table-search').on('keyup', function() {
+$('#table-search').keyup(function() {
     var value = this.value;
 
-    $('#activity-table').find('tr').each(function(index) {
+    $("table").find("tr").each(function(index) {
         if (index === 0) return;
-        var id = $(this).find('td').first().text();
+        var id = $(this).find("td").first().text();
         $(this).toggle(id.indexOf(value) !== -1);
     });
 });

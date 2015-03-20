@@ -8,11 +8,18 @@ class DatabaseTest extends BaseTest
     public function testThatTablesAreProperlyFound()
     {
         // Arrange
-        $test = DB::table('activity');
-
-        // Act
+        $test = DB::table('test');
 
         // Assert
         $this->assertNotNull($test);
+    }
+
+    public function testThatTableColumnsCanProperlyBeAccessed()
+    {
+        // Arrange
+        $test = DB::table('test');
+
+        // Assert
+        $this->assertTrue(false);
     }
 }
