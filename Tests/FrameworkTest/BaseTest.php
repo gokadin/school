@@ -12,4 +12,9 @@ abstract class BaseTest extends PHPUnit_Framework_TestCase
         \Library\Config::temporary('testing', 'true');
         $this->app = new Application('test');
     }
+
+    public function tearDown()
+    {
+        \Library\Facades\DB::dropAllTables();
+    }
 }

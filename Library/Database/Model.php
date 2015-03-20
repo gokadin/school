@@ -10,6 +10,7 @@ class Model implements ModelQueryContract
     protected $vars = array();
     protected $tableName;
     protected $modelName;
+    protected $modelDirectory;
     protected $primaryKey;
     private $columns;
     protected $columnNames;
@@ -20,6 +21,11 @@ class Model implements ModelQueryContract
 
     public function __construct(array $data = array())
     {
+        if (\Library\Config::get('testing') == 'true')
+            $this->modelDirectory = '\\Tests\\FrameworkTest\\Database\\Models\\';
+        else
+            $this->modelDirectory = '\\Models\\';
+
         $this->modelName = get_called_class();
         $this->modelName = substr($this->modelName, strrpos($this->modelName, '\\') + 1);
         $table = DB::getTable($this->modelName);
@@ -38,7 +44,7 @@ class Model implements ModelQueryContract
 
         if ($this->inheritsFrom != null)
         {
-            $baseModelName = Query::MODEL_DIRECTORY.ucfirst($this->inheritsFrom);
+            $baseModelName = $this->modelDirectory.ucfirst($this->inheritsFrom);
             $this->baseModel = new $baseModelName();
         }
 
@@ -56,6 +62,11 @@ class Model implements ModelQueryContract
     public function modelName()
     {
         return $this->modelName;
+    }
+
+    public function modelDirectory()
+    {
+        return $this->modelDirectory;
     }
 
     public function columnNames()
@@ -177,7 +188,7 @@ class Model implements ModelQueryContract
 
         if ($this->hasTimestamps)
         {
-            $this->vars[QueryBuilder::UPDATED_AT] = Carbon::now();
+            $this->vars[QueryBuilder::UPDATED_AT] = Carbon::now()->toDateTimeString();
             if ($this->update() == 0)
                 return false;
         }
@@ -276,7 +287,7 @@ class Model implements ModelQueryContract
         {
             if ($instance->hasBaseModel())
             {
-                $baseModelName = Query::MODEL_DIRECTORY.$instance->baseModel()->modelName();
+                $baseModelName = $instance->modelDirectory.$instance->baseModel()->modelName();
                 return $baseModelName::exists($var, $value);
             }
             else
@@ -362,7 +373,7 @@ class Model implements ModelQueryContract
         if ($this->isMissingPrimaryKey())
             throw new RuntimeException('Primary key not found in table ' . $this->tableName . '.');
 
-        $modelName = Query::MODEL_DIRECTORY . $modelName;
+        $modelName = $this->modelDirectory . $modelName;
         return $modelName::find($this->vars[$foreignKey]);
     }
 
@@ -374,7 +385,7 @@ class Model implements ModelQueryContract
         if ($foreignKey == null)
             $foreignKey = $this->camelCaseToUnderscore($this->modelName) . '_id';
 
-        $modelName = Query::MODEL_DIRECTORY . $modelName;
+        $modelName = $this->modelDirectory . $modelName;
         return $modelName::where($foreignKey, '=', $this->vars[$this->primaryKey])->get()->first();
     }
 
@@ -386,7 +397,7 @@ class Model implements ModelQueryContract
         if ($foreignKey == null)
             $foreignKey = $this->camelCaseToUnderscore($this->modelName) . '_id';
 
-        $modelName = Query::MODEL_DIRECTORY . $modelName;
+        $modelName = $this->modelDirectory . $modelName;
         return $modelName::where($foreignKey, '=', $this->vars[$this->primaryKey])->get();
     }
 
@@ -401,8 +412,8 @@ class Model implements ModelQueryContract
         if ($throughForeignKey == null)
             $throughForeignKey = $this->camelCaseToUnderscore($throughModelName);
 
-        $modelName = Query::MODEL_DIRECTORY . $modelName;
-        $throughModelName = Query::MODEL_DIRECTORY . $throughModelName;
+        $modelName = $this->modelDirectory . $modelName;
+        $throughModelName = $this->modelDirectory . $throughModelName;
 
         $throughModels = $throughModelName::where($foreignKey, '=', $this->vars[$this->primaryKey])->get();
 
@@ -460,7 +471,7 @@ class Model implements ModelQueryContract
         if ($metaType == null || !is_string($metaType))
             throw new RuntimeException('Meta type is invalid or is not defined.');
 
-        $metaType = Query::MODEL_DIRECTORY.$metaType;
+        $metaType = $this->modelDirectory.$metaType;
         if (!class_exists($metaType))
             throw new RuntimeException('Model '.$metaType.' does not exist,');
 
@@ -482,7 +493,7 @@ class Model implements ModelQueryContract
 
     public function morphMany($modelName, $metaIdField = Table::META_ID, $metaTypeField = Table::META_TYPE, $typeName = null)
     {
-        $modelName = Query::MODEL_DIRECTORY . ucfirst($modelName);
+        $modelName = $this->modelDirectory . ucfirst($modelName);
         $model = new $modelName();
 
         if ($typeName == null)

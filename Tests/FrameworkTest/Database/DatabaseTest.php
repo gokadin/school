@@ -13,13 +13,4 @@ class DatabaseTest extends BaseTest
         // Assert
         $this->assertNotNull($test);
     }
-
-    public function testThatTableColumnsCanProperlyBeAccessed()
-    {
-        // Arrange
-        $test = DB::table('test');
-
-        // Assert
-        $this->assertTrue(false);
-    }
 }

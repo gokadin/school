@@ -79,32 +79,16 @@
     </div>
 </div>
 
-<input type="text" id="search" placeholder="Search...">
-<br>
-<table>
-    <thead>
-    <tr><th>Unique ID</th><th>Random ID</th></tr>
-    </thead>
-    <tbody>
-    <tr><td>214215</td><td>442</td></tr>
-    <tr><td>1252512</td><td>556</td></tr>
-    <tr><td>2114</td><td>4666</td></tr>
-    <tr><td>3245466</td><td>334</td></tr>
-    <tr><td>24111</td><td>54364</td></tr>
-    </tbody>
-</table>
-
-
 <script type="text/javascript" src="/School/Web/tools/sorttable/sorttable.js"></script>
 
 <script>
 $('#table-search').keyup(function() {
     var value = this.value;
 
-    $("table").find("tr").each(function(index) {
+    $('#activity-table').find('tr').each(function(index) {
         if (index === 0) return;
-        var id = $(this).find("td").first().text();
-        $(this).toggle(id.indexOf(value) !== -1);
+        var id = $(this).find('td').first().text();
+        $(this).toggle(id.toLowerCase().indexOf(value.toLowerCase()) !== -1);
     });
 });
 

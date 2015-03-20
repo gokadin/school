@@ -135,4 +135,21 @@ class TableBuilder extends Tables
         if ($column->isPrimaryKey() && $column->getType() != 'integer')
             throw new RuntimeException('Primary key '.$column->getName().' must be of integer type');
     }
+
+    public function dropAllTables()
+    {
+        $result = false;
+        foreach ($this->tables as $table)
+        {
+            $result = $this->dropTable($table->tableName()) && $result;
+        }
+
+        return $result;
+    }
+
+    public function dropTable($tableName)
+    {
+        $sql = 'DROP TABLE '.$tableName;
+        return $this->db->exec($sql) > 0;
+    }
 }

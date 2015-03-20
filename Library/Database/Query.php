@@ -6,8 +6,6 @@ use PDO;
 
 class Query extends QueryBuilder implements QueryContract
 {
-    const MODEL_DIRECTORY = '\\Models\\';
-
     protected $dao;
     protected $model;
     protected $command;
@@ -69,7 +67,7 @@ class Query extends QueryBuilder implements QueryContract
     {
         $q = $this->dao->prepare('SELECT '.$this->model->primaryKey().' FROM '.$this->model->tableName().' WHERE '.$var.' = :value');
         if ($q->execute(array(':value' => $value)))
-            return $q->rowCount();
+            return $q->rowCount() > 0;
 
         return false;
     }
@@ -141,7 +139,7 @@ class Query extends QueryBuilder implements QueryContract
 
         if ($this->selectValues == null)
         {
-            $result->setFetchMode(PDO::FETCH_CLASS | PDO::FETCH_PROPS_LATE, self::MODEL_DIRECTORY.$this->model->modelName());
+            $result->setFetchMode(PDO::FETCH_CLASS | PDO::FETCH_PROPS_LATE, $this->model->modelDirectory().$this->model->modelName());
             $list = $result->fetchAll();
         }
         else if (sizeof($this->selectValues) > 1)

@@ -49,4 +49,19 @@ class Database
         $query->execute();
         return $query;
     }
+
+    public function exec($sql)
+    {
+        return $this->dao->exec($sql);
+    }
+
+    public function dropAllTables()
+    {
+        return $this->tables->dropAllTables();
+    }
+
+    public function dropTable($tableName)
+    {
+        return $this->tables->dropTable($tableName);
+    }
 }
