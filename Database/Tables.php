@@ -79,7 +79,7 @@ class Tables
         $t->increments('id');
         $t->integer('teacher_id');
         $t->string('name');
-        $t->decimal('rate');
+        $t->decimal('rate', 6, 2);
         $t->integer('period');
         $t->string('location')->nullable();
         $t->boolean('active')->default('1');

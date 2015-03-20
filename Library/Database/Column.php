@@ -6,6 +6,7 @@ class Column
     protected $isPrimaryKey;
     protected $type;
     protected $size;
+    protected $precision;
     protected $canBeNull;
     protected $isUnique;
     protected $default;
@@ -16,6 +17,7 @@ class Column
         $this->type = $type;
         $this->canBeNull = false;
         $this->size = $size;
+        $this->precision = 2;
         $this->isPrimaryKey = false;
         $this->isUnique = false;
         $this->default = null;
@@ -42,6 +44,12 @@ class Column
     public function _default($value)
     {
         $this->default = $value;
+        return $this;
+    }
+
+    public function precision($precision)
+    {
+        $this->precision = $precision;
         return $this;
     }
 

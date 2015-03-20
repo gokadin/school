@@ -34,9 +34,10 @@ class Table
         return $this->columns[] = new Column($name, 'integer', $size);
     }
 
-    public function decimal($name, $size = 11)
+    public function decimal($name, $size = 11, $precision = 2)
     {
-        return $this->columns[] = new Column($name, 'decimal', $size);
+        $column = new Column($name, 'decimal', $size);
+        return $this->columns[] = $column->precision($precision);
     }
 
     public function string($name, $size = 50)
