@@ -40,14 +40,26 @@ class ActivityController extends BackController
         Response::toAction('School#Teacher/Activity#index');
     }
 
-    public function edit()
-    {
-
-    }
-
     public function update()
     {
+        if (!is_numeric(Request::postData('activityId')) || !Activity::exists('id', Request::postData('activityId')))
+        {
+            Session::setFlash('An error occurred. Activity is not valid.');
+            Response::toAction('School#Teacher/Activity#index');
+        }
 
+        $activity = Activity::find(Request::postData('activityId'));
+        $activity->name = Request::postData('name');
+        $activity->rate = Request::postData('defaultRate');
+        $activity->period = Request::postData('period');
+        $activity->location = Request::postData('location');
+
+        if ($activity->save())
+            Session::setFlash('Updated activity <b>'.$activity->name.'</b>.');
+        else
+            Session::setFlash('An error occurred. Could not update activity.');
+
+        Response::toAction('School#Teacher/Activity#index');
     }
 
     public function destroy()
