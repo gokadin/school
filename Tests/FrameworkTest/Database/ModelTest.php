@@ -2,6 +2,8 @@
 
 use Tests\FrameworkTest\BaseTest;
 use Tests\FrameworkTest\Database\Models\Test;
+use Tests\FrameworkTest\Database\Models\Teacher;
+use Tests\FrameworkTest\Database\Models\Student;
 
 class ModelTest extends BaseTest
 {
@@ -135,5 +137,86 @@ class ModelTest extends BaseTest
 
         // Assert
         $this->assertTrue($result);
+    }
+
+    public function testThatExistingModelsCanProperlyBeFound()
+    {
+        // Arrange
+        $test = Test::create(['col1' => 'str', 'col2' => 10]);
+        $id = $test->id;
+
+        // Act
+        $test = Test::find($id);
+
+        // Assert
+        $this->assertNotNull($test);
+    }
+
+    public function testThatWhereClauseIsWorkingProperly()
+    {
+        // Arrange
+        $test = Test::create(['col1' => 'str', 'col2' => 10]);
+        $id = $test->id;
+
+        // Act
+        $test = Test::where('id', '=', $id)->get();
+
+        // Assert
+        $this->assertNotNull($test);
+        $test = $test->first();
+        $this->assertEquals($id, $test->id);
+    }
+
+    public function testThatWhereClauseCanBeUsedInSuccession()
+    {
+        // Arrange
+        $test = Test::create(['col1' => 'str', 'col2' => 10]);
+        $id = $test->id;
+
+        // Act
+        $test = Test::where('id', '=', $id)
+            ->where('col1', '=', 'str')
+            ->where('col2', '>=', 10)->get();
+
+        // Assert
+        $this->assertNotNull($test);
+        $test = $test->first();
+        $this->assertEquals($id, $test->id);
+    }
+
+    /* RELATIONSHIPS */
+
+    public function testThatHasOneRelationshipIsWorkingCorrectly()
+    {
+        // Arrange
+        $teacher = Teacher::create(['name' => 'teacherName']);
+        $teacher_id = $teacher->id;
+        $student = Student::create(['name' => 'studentName', 'teacher_id' => $teacher_id]);
+
+        // Act
+        $resolvedTeacher = $student->teacher();
+
+        // Assert
+        $this->assertNotNull($resolvedTeacher);
+        $this->assertEquals($teacher_id, $resolvedTeacher->id);
+    }
+
+    public function testThatHasManyRelationshipIsWorkingCorrectly()
+    {
+        // Arrange
+        $teacher = Teacher::create(['name' => 'teacherName']);
+        $student1 = Student::create(['name' => 'studentName1', 'teacher_id' => $teacher->id]);
+        $student2 = Student::create(['name' => 'studentName2', 'teacher_id' => $teacher->id]);
+        $student3 = Student::create(['name' => 'studentName3', 'teacher_id' => $teacher->id]);
+
+        // Act
+        $students = $teacher->students();
+
+        // Assert
+        $this->assertNotNull($students);
+        $this->assertEquals(3, $students->count());
+        $this->assertEquals('studentName1', $students->first()->name);
+        $this->assertEquals('studentName2', $students->at(1)->name);
+        $this->assertEquals('studentName3', $students->last()->name);
     }
 }

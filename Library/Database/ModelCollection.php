@@ -33,6 +33,11 @@ class ModelCollection implements IteratorAggregate
         return $this->count() > 0 ? end($this->models) : $default;
     }
 
+    public function at($index, $default = null)
+    {
+        return $this->count() > $index ? $this->models[$index] : $default;
+    }
+
     public function count()
     {
         return count($this->models);
@@ -49,10 +54,7 @@ class ModelCollection implements IteratorAggregate
             return null;
 
         if (!$this->models[0]->hasColumn($var))
-        {
             throw new RuntimeException('Model '.$this->models[0]->modelName().' has no field named '.$var);
-            return null;
-        }
 
         $operator = trim($operator);
         $results = new ModelCollection();
