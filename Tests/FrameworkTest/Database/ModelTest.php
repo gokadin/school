@@ -1,9 +1,12 @@
 <?php namespace Tests\FrameworkTest\Database;
 
 use Tests\FrameworkTest\BaseTest;
+use Tests\FrameworkTest\Database\Models\Activity;
 use Tests\FrameworkTest\Database\Models\Test;
 use Tests\FrameworkTest\Database\Models\Teacher;
 use Tests\FrameworkTest\Database\Models\Student;
+use Tests\FrameworkTest\Database\Models\Address;
+use Tests\FrameworkTest\Database\Models\ActivityStudent;
 
 class ModelTest extends BaseTest
 {
@@ -205,9 +208,9 @@ class ModelTest extends BaseTest
     {
         // Arrange
         $teacher = Teacher::create(['name' => 'teacherName']);
-        $student1 = Student::create(['name' => 'studentName1', 'teacher_id' => $teacher->id]);
-        $student2 = Student::create(['name' => 'studentName2', 'teacher_id' => $teacher->id]);
-        $student3 = Student::create(['name' => 'studentName3', 'teacher_id' => $teacher->id]);
+        Student::create(['name' => 'studentName1', 'teacher_id' => $teacher->id]);
+        Student::create(['name' => 'studentName2', 'teacher_id' => $teacher->id]);
+        Student::create(['name' => 'studentName3', 'teacher_id' => $teacher->id]);
 
         // Act
         $students = $teacher->students();
@@ -218,5 +221,44 @@ class ModelTest extends BaseTest
         $this->assertEquals('studentName1', $students->first()->name);
         $this->assertEquals('studentName2', $students->at(1)->name);
         $this->assertEquals('studentName3', $students->last()->name);
+    }
+
+    public function testThatBelongsToRelationshipIsWorkingCorrectly()
+    {
+        // Arrange
+        $address = Address::create(['country' => 'Canada']);
+        $teacher = Teacher::create(['address_id' => $address->id, 'name' => 'teacherName']);
+
+        // Act
+        $resolvedTeacher = $address->teacher();
+
+        // Assert
+        $this->assertNotNull($resolvedTeacher);
+        $this->assertEquals($teacher->id, $resolvedTeacher->id);
+    }
+
+    public function testThatManyToManyRelationshipsAreWorkingCorrectly()
+    {
+        // Arrange
+        $teacher_id = Teacher::create(['name' => 'teacherName'])->id;
+        $student1 = Student::create(['teacher_id' => $teacher_id, 'name' => 'name1']);
+        $student2 = Student::create(['teacher_id' => $teacher_id, 'name' => 'name2']);
+        $student3 = Student::create(['teacher_id' => $teacher_id, 'name' => 'name3']);
+        $activity1 = Activity::create(['name' => 'name1']);
+        $activity2 = Activity::create(['name' => 'name2']);
+        $activity3 = Activity::create(['name' => 'name3']);
+
+        // Act
+        ActivityStudent::create(['activity_id' => $activity1->id, 'student_id' => $student1->id]);
+        ActivityStudent::create(['activity_id' => $activity1->id, 'student_id' => $student2->id]);
+        ActivityStudent::create(['activity_id' => $activity1->id, 'student_id' => $student3->id]);
+
+        $resolvedStudents = $activity1->students();
+
+        // Assert
+        $this->assertNotNull($resolvedStudents);
+        $this->assertEquals($student1->id, $resolvedStudents->first()->id);
+        $this->assertEquals($student2->id, $resolvedStudents->at(1)->id);
+        $this->assertEquals($student3->id, $resolvedStudents->last()->id);
     }
 }

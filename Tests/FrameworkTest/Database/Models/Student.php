@@ -8,4 +8,14 @@ class Student extends Model
     {
         return $this->hasOne('Teacher');
     }
+
+    public function address()
+    {
+        return $this->hasOne('Address');
+    }
+
+    public function activities()
+    {
+        return $this->belongsToMany('Activity');
+    }
 }
