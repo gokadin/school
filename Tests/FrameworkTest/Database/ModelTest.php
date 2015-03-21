@@ -252,13 +252,19 @@ class ModelTest extends BaseTest
         ActivityStudent::create(['activity_id' => $activity1->id, 'student_id' => $student1->id]);
         ActivityStudent::create(['activity_id' => $activity1->id, 'student_id' => $student2->id]);
         ActivityStudent::create(['activity_id' => $activity1->id, 'student_id' => $student3->id]);
+        ActivityStudent::create(['activity_id' => $activity2->id, 'student_id' => $student1->id]);
+        ActivityStudent::create(['activity_id' => $activity3->id, 'student_id' => $student1->id]);
 
         $resolvedStudents = $activity1->students();
+        $resolvedActivities = $student1->activities();
 
         // Assert
         $this->assertNotNull($resolvedStudents);
         $this->assertEquals($student1->id, $resolvedStudents->first()->id);
         $this->assertEquals($student2->id, $resolvedStudents->at(1)->id);
         $this->assertEquals($student3->id, $resolvedStudents->last()->id);
+        $this->assertEquals($activity1->id, $resolvedActivities->first()->id);
+        $this->assertEquals($activity2->id, $resolvedActivities->at(1)->id);
+        $this->assertEquals($activity3->id, $resolvedActivities->last()->id);
     }
 }

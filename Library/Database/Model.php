@@ -446,7 +446,7 @@ class Model implements ModelQueryContract
                 throw new RuntimeException($this->modelName . ' cannot belong to the same table');
         }
 
-        $targetIds = DB::query('SELECT '.$thisForeignKey.' FROM '.$pivotName.' WHERE '.
+        $targetIds = DB::query('SELECT '.$targetForeignKey.' FROM '.$pivotName.' WHERE '.
             $thisForeignKey.'='.$this->vars[$this->primaryKey])->fetchAll(\PDO::FETCH_COLUMN, 0);
 
         if (sizeof($targetIds) == 0)
@@ -454,8 +454,10 @@ class Model implements ModelQueryContract
 
         $targetIds = '(' . implode(', ', $targetIds) . ')';
 
+        $modelName = $this->modelDirectory.ucfirst($modelName);
         $model = new $modelName();
-        return $modelName::where($model->primaryKey(), 'in', $targetIds)->get()->first();
+        $results = $modelName::where($model->primaryKey(), 'in', $targetIds)->get();
+        return $results;
     }
 
     public function morphTo($metaIdField = Table::META_ID, $metaTypeField = Table::META_TYPE)

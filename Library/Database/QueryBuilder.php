@@ -108,10 +108,10 @@ class QueryBuilder
 
     protected function buildWhere($wheres)
     {
-        $str = ' WHERE '.$wheres[0]['var'].$wheres[0]['operator'].$this->addQuotes($wheres[0]['value']);
+        $str = ' WHERE '.$wheres[0]['var'].' '.$wheres[0]['operator'].' '.$wheres[0]['value'];
 
         for ($i = 1; $i < sizeof($wheres); $i++)
-            $str .= ' '.$wheres[$i]['link'].' '.$wheres[$i]['var'].$wheres[$i]['operator'].$this->addQuotes($wheres[$i]['value']);
+            $str .= ' '.$wheres[$i]['link'].' '.$wheres[$i]['var'].' '.$wheres[$i]['operator'].' '.$wheres[$i]['value'];
 
         return $str;
     }

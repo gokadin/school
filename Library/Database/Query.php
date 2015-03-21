@@ -77,6 +77,9 @@ class Query extends QueryBuilder implements QueryContract
         if (!$this->columnExists($var))
             throw new RuntimeException('Column '.$var.' does not exist in table '.$this->model->tableName);
 
+        if (trim($operator) != 'in')
+            $value = '\''.$value.'\'';
+
         $this->wheres[] = compact('var', 'operator', 'value', 'link');
         return $this;
     }
