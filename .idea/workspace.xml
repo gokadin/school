@@ -75,10 +75,10 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="StudentController.php" pinned="false" current-in-tab="true">
+      <file leaf-file-name="StudentController.php" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Applications/School/Modules/Teacher/Student/StudentController.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.3360161" vertical-offset="121" max-vertical-offset="1494">
+            <state vertical-scroll-proportion="-8.666667" vertical-offset="54" max-vertical-offset="1494">
               <caret line="16" column="59" selection-start-line="16" selection-start-column="59" selection-end-line="16" selection-end-column="59" />
               <folding />
             </state>
@@ -95,11 +95,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="index.shao.html" pinned="false" current-in-tab="false">
+      <file leaf-file-name="index.shao.html" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/Applications/School/Modules/Teacher/Activity/Views/index.shao.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="-10.0" vertical-offset="0" max-vertical-offset="4158">
-              <caret line="15" column="10" selection-start-line="0" selection-start-column="0" selection-end-line="225" selection-end-column="0" />
+            <state vertical-scroll-proportion="0.6533575" vertical-offset="2592" max-vertical-offset="4158">
+              <caret line="164" column="88" selection-start-line="164" selection-start-column="88" selection-end-line="164" selection-end-column="88" />
               <folding />
             </state>
           </provider>
@@ -156,7 +156,6 @@
         <option value="$PROJECT_DIR$/Applications/School/Modules/Teacher/Activity/Views/js/editActivityValidation.js" />
         <option value="$PROJECT_DIR$/Library/Database/Column.php" />
         <option value="$PROJECT_DIR$/Database/Tables.php" />
-        <option value="$PROJECT_DIR$/Applications/School/Modules/Teacher/Activity/Views/index.shao.html" />
         <option value="$PROJECT_DIR$/Library/Page.php" />
         <option value="$PROJECT_DIR$/Library/Database/ModelCollection.php" />
         <option value="$PROJECT_DIR$/Tests/FrameworkTest/Database/Models/Teacher.php" />
@@ -181,6 +180,7 @@
         <option value="$PROJECT_DIR$/Applications/School/Modules/Teacher/Student/StudentController.php" />
         <option value="$PROJECT_DIR$/Applications/School/Modules/Teacher/Student/Views/index.shao.html" />
         <option value="$PROJECT_DIR$/Models/Teacher.php" />
+        <option value="$PROJECT_DIR$/Applications/School/Modules/Teacher/Activity/Views/index.shao.html" />
       </list>
     </option>
   </component>
@@ -956,14 +956,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Applications/School/Modules/Teacher/Student/Views/create.shao.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-54.666668" vertical-offset="0" max-vertical-offset="1998">
-          <caret line="82" column="31" selection-start-line="82" selection-start-column="31" selection-end-line="82" selection-end-column="31" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/Models/Student.php">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="-4.0" vertical-offset="0" max-vertical-offset="504">
@@ -976,14 +968,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="6.0" vertical-offset="432" max-vertical-offset="1548">
           <caret line="15" column="0" selection-start-line="15" selection-start-column="0" selection-end-line="15" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Applications/School/Modules/Teacher/Activity/Views/index.shao.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-10.0" vertical-offset="0" max-vertical-offset="4158">
-          <caret line="15" column="10" selection-start-line="0" selection-start-column="0" selection-end-line="225" selection-end-column="0" />
           <folding />
         </state>
       </provider>
@@ -1006,8 +990,24 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/Applications/School/Modules/Teacher/Student/StudentController.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.3360161" vertical-offset="121" max-vertical-offset="1494">
+        <state vertical-scroll-proportion="-8.666667" vertical-offset="54" max-vertical-offset="1494">
           <caret line="16" column="59" selection-start-line="16" selection-start-column="59" selection-end-line="16" selection-end-column="59" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Applications/School/Modules/Teacher/Student/Views/create.shao.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="-54.666668" vertical-offset="0" max-vertical-offset="1998">
+          <caret line="82" column="31" selection-start-line="82" selection-start-column="31" selection-end-line="82" selection-end-column="31" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Applications/School/Modules/Teacher/Activity/Views/index.shao.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.6533575" vertical-offset="2592" max-vertical-offset="4158">
+          <caret line="164" column="88" selection-start-line="164" selection-start-column="88" selection-end-line="164" selection-end-column="88" />
           <folding />
         </state>
       </provider>
