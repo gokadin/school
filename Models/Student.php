@@ -4,6 +4,8 @@ use Library\Database\Model;
 
 class Student extends Model
 {
+    protected $inheritsFrom = 'User';
+
     public function user()
     {
         return $this->morphOne('User');

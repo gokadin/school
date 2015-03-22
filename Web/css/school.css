@@ -649,17 +649,21 @@ Footer Layouts (new in v1.3)
 
 .create-form
 {
-    border: 1px solid #77e588;
-    background-color: #35aa47;
+    /*border: 1px solid #77e588;*/
+    border: 1px solid #e5e5e5;
+    /*background-color: #35aa47;*/
+    background-color: #f9f9f9;
 }
 
 .create-form-title
 {
-    color: white;
+    /*color: white;*/
+    color: #8aac3a;
     font-size: 20px;
-    line-height: 30px;
-    height: 30px;
+    line-height: 40px;
+    height: 40px;
     padding-left: 10px;
+    border-bottom: 1px solid #e5e5e5;
 }
 
 .create-form-body

@@ -1,0 +1,52 @@
+{{{ use Library\Facades\HTML; }}}
+
+<div class="row data-table">
+    <div class="col-md-12">
+        <div class="data-table-header">
+            <span class="data-table-header-title">Students ({{ $students->count() }})</span>
+            <span class="data-table-header-search">
+                <form role="search">
+                    <input type="text" id="table-search" placeholder="Search" />
+                </form>
+            </span>
+        </div>
+    </div>
+    <div class="col-md-12">
+        <div class="data-table-body table-responsive">
+            <table id="student-table" class="table-hover sortable">
+                <thead>
+                <tr>
+                    <th width="20%">Name</th>
+                    <th width="15%">Added</th>
+                    <th width="10%" class="sorttable_nosort"></th>
+                </tr>
+                </thead>
+                <tbody>
+                @foreach ($students as $student)
+                <tr>
+                    <td>{{ $student->name() }}</td>
+                    <td>{{ $student->created_at }}</td>
+                    <td>
+                        n/a
+                    </td>
+                </tr>
+                @endforeach
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript" src="/School/Web/tools/sorttable/sorttable.js"></script>
+
+<script>
+$('#table-search').keyup(function() {
+    var value = this.value;
+
+    $('#student-table').find('tr').each(function(index) {
+        if (index === 0) return;
+        var id = $(this).find('td').first().text();
+        $(this).toggle(id.toLowerCase().indexOf(value.toLowerCase()) !== -1);
+    });
+});
+</script>
