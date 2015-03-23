@@ -156,7 +156,12 @@ class Query extends QueryBuilder implements QueryContract
             return new ModelCollection();
 
         if ($this->selectValues == null)
+        {
+            foreach ($list as $model)
+                $model->hydrateBaseModel();
+
             return new ModelCollection($list);
+        }
 
         return $list;
     }

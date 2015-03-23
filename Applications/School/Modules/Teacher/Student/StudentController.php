@@ -14,7 +14,7 @@ class StudentController extends BackController
 {
     public function index()
     {
-       Page::add('students', $this->currentUser->students());
+        Page::add('students', $this->currentUser->students());
     }
 
     public function create()
@@ -72,6 +72,18 @@ class StudentController extends BackController
 
     public function destroy()
     {
+        if (!is_numeric(Request::postData('studentId')) || !Student::exists('id', Request::postData('studentId')))
+        {
+            Session::setFlash('An error occurred. Student is not valid.');
+            Response::toAction('School#Teacher/Student#index');
+        }
 
+        $student = Student::find(Request::postData('studentId'));
+        if ($student->delete())
+            Session::setFlash('Deleted student <b>'.$student->name().'</b>.');
+        else
+            Session::setFlash('An error occurred. Could not delete student.');
+
+        Response::toAction('School#Teacher/Student#index');
     }
 }

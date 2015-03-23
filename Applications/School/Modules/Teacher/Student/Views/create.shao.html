@@ -44,7 +44,7 @@
                     <div class="row create-form-input-row">
                         <div class="col-md-4 create-form-label">Activity<span class="required">*</span></div>
                         <div class="col-md-3 create-form-input">
-                            <select class="form-control" id="activity" name="activity">
+                            <select class="form-control" id="activity" name="activity" onchange="setDefaultRate()">
                                 @foreach ($activities as $activity)
                                     <option value="{{ $activity->id }}">{{ $activity->name }}</option>
                                 @endforeach
@@ -104,3 +104,18 @@
 </div>
 
 <script type="text/javascript" src="/School/Applications/School/Modules/Teacher/Student/Views/js/studentValidation.js"></script>
+
+<script type="text/javascript">
+function setDefaultRate() {
+    var selectedId = $('#activity').val();
+
+    <?php foreach ($activities as $activity) { ?>
+        var id = "<?php echo $activity->id; ?>";
+
+        if (id == selectedId) {
+            var name = "<?php echo $activity->rate; ?>";
+            $('#rate').val(name);
+        }
+    <?php } ?>
+}
+</script>
