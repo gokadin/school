@@ -27,7 +27,6 @@
         <route url="/School/school/teacher/students" method="GET" module="Teacher/Student" action="index" />
         <route url="/School/school/teacher/students/create" method="GET" module="Teacher/Student" action="create" />
         <route url="/School/school/teacher/students/create" method="POST" module="Teacher/Student" action="store" />
-        <route url="/School/school/teacher/students/edit/{0}" method="GET" module="Teacher/Student" action="edit" vars="studentId" />
         <route url="/School/school/teacher/students/edit" method="PUT" module="Teacher/Student" action="update" />
         <route url="/School/school/teacher/students/delete" method="DELETE" module="Teacher/Student" action="destroy" />
         <!-- TEACHER AJAX MODULE -->

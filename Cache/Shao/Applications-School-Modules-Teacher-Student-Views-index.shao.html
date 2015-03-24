@@ -1,4 +1,6 @@
 <?php  use Library\Facades\HTML;  ?>
+<?php  use Library\Facades\Session;  ?>
+<?php echo  Session::getFlash() ; ?>
 
 <div class="row data-table">
     <div class="col-md-12">
@@ -31,6 +33,17 @@
                     <td><?php echo  $student->phone ; ?></td>
                     <td><?php echo  $student->created_at ; ?></td>
                     <td>
+                        <span class="data-table-action">
+                                <a onclick="return showEditModal(this)">
+                                    <form id="edit-form" action="<?php echo  HTML::path('School#Teacher/Student#update') ; ?>" method="POST">
+                                        <input type="hidden" name="_method" value="PUT" />
+                                        <input type="hidden" name="studentId" value="<?php echo  $student->id ; ?>" />
+                                        <input type="hidden" name="firstName" value="<?php echo  $student->first_name ; ?>" />
+                                        <input type="hidden" name="lastName" value="<?php echo  $student->last_name ; ?>" />
+                                    </form>
+                                    <img src="/School/Web/images/icons/edit.png" width="20" height="20" />
+                                </a>
+                            </span>
                         <span class="data-table-action">
                             <a onclick="return showConfirmModal(this)">
                                 <form id="delete-form" action="<?php echo  HTML::path('School#Teacher/Student#destroy') ; ?>" method="POST">
@@ -70,6 +83,53 @@
     </div>
 </div>
 
+<div class="modal fade" id="edit-modal" tabindex="-1" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                Edit Student
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="row create-form-input-row">
+                        <div class="col-md-4 create-form-label">First name<span class="required">*</span></div>
+                        <div class="col-md-7 create-form-input">
+                            <div class="input-icon">
+                                <i class="fa fa-warning"></i>
+                                <input type="text" class="form-control" id="edit-modal-firstName" />
+                            </div>
+                            <span class="input-message">First name is required.</span>
+                        </div>
+                        <div class="col-md-1"></div>
+                    </div>
+
+                    <div class="row create-form-input-row">
+                        <div class="col-md-4 create-form-label">Last name<span class="required">*</span></div>
+                        <div class="col-md-7 create-form-input">
+                            <div class="input-icon">
+                                <i class="fa fa-warning"></i>
+                                <input type="text" class="form-control" id="edit-modal-lastName" />
+                            </div>
+                            <span class="input-message">Last name is required.</span>
+                        </div>
+                        <div class="col-md-1"></div>
+                    </div>
+
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">
+                    Cancel
+                </button>
+                <button id="edit-modal-save-button" type="button" class="btn btn-success">
+                    Save changes
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript" src="/School/Applications/School/Modules/Teacher/Student/Views/js/editStudentValidation.js"></script>
 <script type="text/javascript" src="/School/Web/tools/sorttable/sorttable.js"></script>
 
 <script>
@@ -95,4 +155,26 @@ $('#table-search').keyup(function() {
         $(this).toggle(id.toLowerCase().indexOf(value.toLowerCase()) !== -1);
     });
 });
+
+function showEditModal(e) {
+    currentForm = e.children[0];
+    var editModal = $('#edit-modal');
+
+    editModal.find('input').removeClass('valid').removeClass('invalid');
+    editModal.find('input').parent().removeClass('show');
+    editModal.find('input').parent().nextAll('span').removeClass('show');
+
+    $('#edit-modal-firstName').val(currentForm.elements['firstName'].value);
+    $('#edit-modal-lastName').val(currentForm.elements['lastName'].value);
+
+    editModal.modal('show');
+    return false;
+}
+
+function editCallBack() {
+    currentForm.elements['firstName'].value = $('#edit-modal-firstName').val();
+    currentForm.elements['lastName'].value = $('#edit-modal-lastName').val();
+
+    currentForm.submit();
+}
 </script>

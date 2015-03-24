@@ -2,6 +2,7 @@
 
 use Tests\FrameworkTest\BaseTest;
 use Tests\FrameworkTest\Database\Models\Activity;
+use Tests\FrameworkTest\Database\Models\School;
 use Tests\FrameworkTest\Database\Models\Test;
 use Tests\FrameworkTest\Database\Models\Teacher;
 use Tests\FrameworkTest\Database\Models\Student;
@@ -235,6 +236,22 @@ class ModelTest extends BaseTest
         // Assert
         $this->assertNotNull($resolvedTeacher);
         $this->assertEquals($teacher->id, $resolvedTeacher->id);
+    }
+
+    // NOT WORKING *****************************************************************
+    public function testThatHasManyThroughRelationshipIsWorkingCorrectly()
+    {
+        // Arrange
+        $school = School::create(['name' => 'schoolName']);
+        $teacher = Teacher::create(['school_id' => $school->id, 'name' => 'teacherName']);
+        $student = Student::create(['teacher_id' => $teacher->id, 'name' => 'studentName']);
+
+        // Act
+        $resolvedSchools = $student->schools();
+
+        // Assert
+        $this->assertEquals(1, $resolvedSchools->count());
+        $this->assertEquals('schoolName', $resolvedSchools->first()->name);
     }
 
     public function testThatManyToManyRelationshipsAreWorkingCorrectly()

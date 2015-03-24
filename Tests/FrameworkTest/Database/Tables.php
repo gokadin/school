@@ -21,6 +21,7 @@ class Tables
         $t = new Table('Teacher');
 
         $t->increments('id');
+        $t->integer('school_id')->nullable();
         $t->integer('address_id')->nullable();
         $t->string('name', 32);
         $t->timestamps();
@@ -36,6 +37,18 @@ class Tables
         $t->integer('address_id')->nullable();
         $t->integer('teacher_id');
         $t->string('name', 32);
+        $t->timestamps();
+
+        return $t;
+    }
+
+    public function schools()
+    {
+        $t = new Table('School');
+
+        $t->increments('id');
+        $t->integer('address_id')->nullable();
+        $t->string('name');
         $t->timestamps();
 
         return $t;

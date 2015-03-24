@@ -12,9 +12,9 @@ interface ModelQueryContract
 
     public static function exists($var, $value);
 
-    public static function all(); // base model not supported
+    public static function all();
 
-    public static function where($var, $operator, $value, $link = 'AND'); // base model not supported
+    public static function where($var, $operator, $value, $link = 'AND');
 
     public static function find($id);
 
