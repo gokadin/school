@@ -2,6 +2,7 @@
 
 use Tests\FrameworkTest\BaseTest;
 use Tests\FrameworkTest\Database\Models\Activity;
+use Tests\FrameworkTest\Database\Models\Post;
 use Tests\FrameworkTest\Database\Models\School;
 use Tests\FrameworkTest\Database\Models\Test;
 use Tests\FrameworkTest\Database\Models\Teacher;
@@ -238,20 +239,26 @@ class ModelTest extends BaseTest
         $this->assertEquals($teacher->id, $resolvedTeacher->id);
     }
 
-    // NOT WORKING *****************************************************************
+    /**
+     * @group failing
+     */
     public function testThatHasManyThroughRelationshipIsWorkingCorrectly()
     {
         // Arrange
         $school = School::create(['name' => 'schoolName']);
-        $teacher = Teacher::create(['school_id' => $school->id, 'name' => 'teacherName']);
-        $student = Student::create(['teacher_id' => $teacher->id, 'name' => 'studentName']);
+        $student = Student::create(['teacher_id' => 0, 'school_id' => $school->id, 'name' => 'studentName']);
+        Post::create(['student_id' => $student->id, 'title' => 'title1']);
+        Post::create(['student_id' => $student->id, 'title' => 'title2']);
+        Post::create(['student_id' => $student->id, 'title' => 'title3']);
 
         // Act
-        $resolvedSchools = $student->schools();
+        $resolvedPosts = $school->posts();
 
         // Assert
-        $this->assertEquals(1, $resolvedSchools->count());
-        $this->assertEquals('schoolName', $resolvedSchools->first()->name);
+        $this->assertEquals(3, $resolvedPosts->count());
+        $this->assertEquals('title1', $resolvedPosts->first()->title);
+        $this->assertEquals('title2', $resolvedPosts->at(1)->title);
+        $this->assertEquals('title3', $resolvedPosts->last()->title);
     }
 
     public function testThatManyToManyRelationshipsAreWorkingCorrectly()

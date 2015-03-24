@@ -35,6 +35,7 @@ class Tables
 
         $t->increments('id');
         $t->integer('address_id')->nullable();
+        $t->integer('school_id')->nullable();
         $t->integer('teacher_id');
         $t->string('name', 32);
         $t->timestamps();
@@ -49,6 +50,19 @@ class Tables
         $t->increments('id');
         $t->integer('address_id')->nullable();
         $t->string('name');
+        $t->timestamps();
+
+        return $t;
+    }
+
+    public function posts()
+    {
+        $t = new Table('Post');
+
+        $t->increments('id');
+        $t->integer('student_id');
+        $t->string('title');
+        $t->string('content', 254)->nullable();
         $t->timestamps();
 
         return $t;

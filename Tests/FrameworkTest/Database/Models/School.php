@@ -8,4 +8,9 @@ class School extends Model
     {
         return $this->belongsTo('Teacher');
     }
+
+    public function posts()
+    {
+        return $this->hasManyThrough('Post', 'Student');
+    }
 }

@@ -18,9 +18,4 @@ class Student extends Model
     {
         return $this->belongsToMany('Activity');
     }
-
-    public function schools()
-    {
-        return $this->hasManyThrough('School', 'Teacher');
-    }
 }

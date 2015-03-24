@@ -409,20 +409,10 @@ class Model implements ModelQueryContract
         if ($foreignKey == null)
             $foreignKey = $this->camelCaseToUnderscore($this->modelName) . '_id';
 
-        if ($throughForeignKey == null)
-            $throughForeignKey = $this->camelCaseToUnderscore($throughModelName);
-
-        $modelName = $this->modelDirectory . $modelName;
         $throughModelName = $this->modelDirectory . $throughModelName;
+        $throughModel = $throughModelName::where($foreignKey, '=', $this->vars[$this->primaryKey])->get()->first();
 
-        $throughModels = $throughModelName::where($foreignKey, '=', $this->vars[$this->primaryKey])->get();
-
-        $throughModelNameIds = array();
-        foreach ($throughModels as $throughModel)
-            $throughModelNameIds[] = $throughModel->id;
-        $throughModelNameIds = '(' . implode(', ', $throughModelNameIds) . ')';
-
-        return $modelName::where($throughForeignKey, 'in', $throughModelNameIds)->get();
+        return $throughModel->hasMany(ucfirst($modelName), $throughForeignKey);
     }
 
     public function belongsToMany($modelName, $pivotName = null, $thisForeignKey = null, $targetForeignKey = null)
