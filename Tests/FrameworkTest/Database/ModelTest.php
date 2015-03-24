@@ -239,9 +239,6 @@ class ModelTest extends BaseTest
         $this->assertEquals($teacher->id, $resolvedTeacher->id);
     }
 
-    /**
-     * @group failing
-     */
     public function testThatHasManyThroughRelationshipIsWorkingCorrectly()
     {
         // Arrange
@@ -290,5 +287,157 @@ class ModelTest extends BaseTest
         $this->assertEquals($activity1->id, $resolvedActivities->first()->id);
         $this->assertEquals($activity2->id, $resolvedActivities->at(1)->id);
         $this->assertEquals($activity3->id, $resolvedActivities->last()->id);
+    }
+
+    /**
+     * @group polymorphism
+     */
+    public function testThatWhenCreatingAPolymorphicModelThenBaseModelIsAlsoCreated()
+    {
+        $this->assertTrue(false);
+    }
+
+    /**
+     * @group polymorphism
+     */
+    public function testThatWhenCreatingAPolymorphicModelTheMetaIdAndMetaTypeFieldsAreCorrectlySaved()
+    {
+        $this->assertTrue(false);
+    }
+
+    /**
+     * @group polymorphism
+     */
+    public function testThatAPolymorphicModelCannotBeCreatedIfARequiredFieldIsMissingOnlyInThatModel()
+    {
+        $this->assertTrue(false);
+    }
+
+    /**
+     * @group polymorphism
+     */
+    public function testThatAPolymorphicModelCannotBeCreatedIfARequiredFieldIsMissingInTheBaseModel()
+    {
+        $this->assertTrue(false);
+    }
+
+    /**
+     * @group polymorphism
+     */
+    public function testThatThePolymorhicModelPropertiesCanBeProperlyAccessed()
+    {
+        $this->assertTrue(false);
+    }
+
+    /**
+     * @group polymorphism
+     */
+    public function testThatTheBaseModelPropertiesCanBeProperlyAccessed()
+    {
+        $this->assertTrue(false);
+    }
+
+    /**
+     * @group polymorphism
+     */
+    public function testThatThePolymorhicModelPropertiesCanBeProperlySet()
+    {
+        $this->assertTrue(false);
+    }
+
+    /**
+     * @group polymorphism
+     */
+    public function testThatTheBaseModelPropertiesCanBeProperlySet()
+    {
+        $this->assertTrue(false);
+    }
+
+    /**
+     * @group polymorphism
+     */
+    public function testThatWhenSavingANewPolymorphicModelThenBaseModelIsAlsoSaved()
+    {
+        $this->assertTrue(false);
+    }
+
+    /**
+     * @group polymorphism
+     */
+    public function testThatWhenSavingACreatedPolymorphicModelThenBaseModelIsAlsoSaved()
+    {
+        $this->assertTrue(false);
+    }
+
+    /**
+     * @group polymorphism
+     */
+    public function testThatWhenDeletingAPolymorphicModelThenBaseModelIsAlsoDeleted()
+    {
+        $this->assertTrue(false);
+    }
+
+    /**
+     * @group polymorphism
+     */
+    public function testThatWhenTouchingAPolymorphicModelThenBaseModelIsAlsoTouched()
+    {
+        $this->assertTrue(false);
+    }
+
+    /**
+     * @group polymorphism
+     */
+    public function testThatExistsMethodFindsAPolymorphicModelColumn()
+    {
+        $this->assertTrue(false);
+    }
+
+    /**
+     * @group polymorphism
+     */
+    public function testThatExistsMethodFindsABaseModelColumn()
+    {
+        $this->assertTrue(false);
+    }
+
+    /**
+     * @group polymorphism
+     */
+    public function testThatFindMethodAlsoFindsAndPopulatesTheBaseModel()
+    {
+        $this->assertTrue(false);
+    }
+
+    /**
+     * @group polymorphism
+     */
+    public function testThatCustomBaseModelFunctionsAreAccessibleFromThePolymorphicModel()
+    {
+        $this->assertTrue(false);
+    }
+
+    /**
+     * @group polymorphism
+     */
+    public function testThatWhereMethodAlsoCorrectlyFindsAndPopulatesBaseModels()
+    {
+        $this->assertTrue(false);
+    }
+
+    /**
+     * @group polymorphism
+     */
+    public function testThatWhereMethodWorksWithBaseMethodFields()
+    {
+        $this->assertTrue(false);
+    }
+
+    /**
+     * @group polymorphism
+     */
+    public function testThatAllMethodAlsoCorrectlyFindsAndPopulatesBaseModels()
+    {
+        $this->assertTrue(false);
     }
 }

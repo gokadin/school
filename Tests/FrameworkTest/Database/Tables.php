@@ -107,4 +107,41 @@ class Tables
 
         return $t;
     }
+
+    /* FOR POLYMORPHISM */
+
+    public function animals()
+    {
+        $t = new Table('Animal');
+
+        $t->increments('id');
+        $t->string('animalCol1');
+        $t->string('animalCol2')->nullable();
+        $t->isMeta();
+        $t->timestamps();
+
+        return $t;
+    }
+
+    public function lions()
+    {
+        $t = new Table('Lion');
+
+        $t->increments('id');
+        $t->string('lionCol1');
+        $t->string('lionCol2')->nullable();
+
+        return $t;
+    }
+
+    public function parrots()
+    {
+        $t = new Table('Parrot');
+
+        $t->increments('id');
+        $t->string('parrotCol1');
+        $t->string('parrotCol2')->nullable();
+
+        return $t;
+    }
 }
