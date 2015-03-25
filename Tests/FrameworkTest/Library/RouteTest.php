@@ -1,5 +1,6 @@
 <?php namespace Tests\FrameworkTest\Library;
 
+use Library\Facades\App;
 use Tests\FrameworkTest\BaseTest;
 use Library\Route;
 
@@ -26,7 +27,7 @@ class RouteTest extends BaseTest
         $route = new Route('test', 'Index', 'index', '/test', 'GET');
 
         // Act
-        $matches = $route->matchAction($this->app->name(), 'Index', 'index');
+        $matches = $route->matchAction(App::name(), 'Index', 'index');
 
         // Assert
         $this->assertTrue($matches);

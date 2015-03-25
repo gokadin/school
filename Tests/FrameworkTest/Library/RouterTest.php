@@ -1,5 +1,6 @@
 <?php namespace Tests\FrameworkTest\Library;
 
+use Library\Facades\App;
 use Tests\FrameworkTest\BaseTest;
 use Library\Facades\Router;
 use Library\Route;
@@ -27,8 +28,8 @@ class RouterTest extends BaseTest
         $method2 = 'GET';
 
         // Act
-        $route1 = Router::getRoute($this->app->name(), $url1, $method1);
-        $route2 = Router::getRoute($this->app->name(), $url2, $method2);
+        $route1 = Router::getRoute(App::name(), $url1, $method1);
+        $route2 = Router::getRoute(App::name(), $url2, $method2);
 
         // Assert
         $this->assertEquals($url1, $route1->url());
@@ -42,7 +43,7 @@ class RouterTest extends BaseTest
         $method = 'POST';
 
         // Act
-        $route = Router::getRoute($this->app->name(), $url, $method);
+        $route = Router::getRoute(App::name(), $url, $method);
 
         // Assert
         $this->assertEquals($url, $route->url());
@@ -55,7 +56,7 @@ class RouterTest extends BaseTest
         $method = 'PUT';
 
         // Act
-        $route = Router::getRoute($this->app->name(), $url, $method);
+        $route = Router::getRoute(App::name(), $url, $method);
 
         // Assert
         $this->assertEquals($url, $route->url());
@@ -68,7 +69,7 @@ class RouterTest extends BaseTest
         $method = 'DELETE';
 
         // Act
-        $route = Router::getRoute($this->app->name(), $url, $method);
+        $route = Router::getRoute(App::name(), $url, $method);
 
         // Assert
         $this->assertEquals($url, $route->url());
@@ -81,7 +82,7 @@ class RouterTest extends BaseTest
         $method = 'get';
 
         // Act
-        $route = Router::getRoute($this->app->name(), $url, $method);
+        $route = Router::getRoute(App::name(), $url, $method);
 
         // Assert
         $this->assertEquals($url, $route->url());

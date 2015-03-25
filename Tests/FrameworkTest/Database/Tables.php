@@ -117,7 +117,7 @@ class Tables
         $t->increments('id');
         $t->string('animalCol1');
         $t->string('animalCol2')->nullable();
-        $t->isMeta();
+        $t->meta();
         $t->timestamps();
 
         return $t;

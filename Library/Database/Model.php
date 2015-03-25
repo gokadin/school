@@ -115,9 +115,12 @@ class Model implements ModelQueryContract
 
     public function __get($var)
     {
+        if ($this->hasBaseModel() && $var == $this->primaryKey)
+            return $this->baseModel->$var;
+
         if (isset($this->vars[$var]))
             return $this->vars[$var];
-        else if ($this->hasBaseModel() && $var != $this->primaryKey)
+        else if ($this->hasBaseModel())
         {
             return $this->baseModel->$var;
         }
