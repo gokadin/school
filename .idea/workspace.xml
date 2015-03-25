@@ -43,10 +43,10 @@
       <file leaf-file-name="BaseTest.php" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/Tests/FrameworkTest/BaseTest.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.64893615" vertical-offset="84" max-vertical-offset="738">
-              <caret line="25" column="0" selection-start-line="25" selection-start-column="0" selection-end-line="25" selection-end-column="0" />
+            <state vertical-scroll-proportion="0.26595744" vertical-offset="48" max-vertical-offset="702">
+              <caret line="11" column="8" selection-start-line="11" selection-start-column="8" selection-end-line="11" selection-end-column="8" />
               <folding>
-                <marker date="1427251550999" expanded="true" signature="670:691" placeholder="SELECT COUNT..." />
+                <marker date="1427252077854" expanded="true" signature="598:619" placeholder="SELECT COUNT..." />
               </folding>
             </state>
           </provider>
@@ -187,9 +187,9 @@
         <option value="$PROJECT_DIR$/Library/Database/Model.php" />
         <option value="$PROJECT_DIR$/Tests/FrameworkTest/Database/Tables.php" />
         <option value="$PROJECT_DIR$/Tests/FrameworkTest/Database/ModelTest.php" />
-        <option value="$PROJECT_DIR$/Tests/FrameworkTest/BaseTest.php" />
         <option value="$PROJECT_DIR$/Tests/FrameworkTest/Library/RouterTest.php" />
         <option value="$PROJECT_DIR$/Tests/FrameworkTest/Library/RouteTest.php" />
+        <option value="$PROJECT_DIR$/Tests/FrameworkTest/BaseTest.php" />
       </list>
     </option>
   </component>
@@ -894,10 +894,10 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/Tests/FrameworkTest/BaseTest.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.64893615" vertical-offset="84" max-vertical-offset="738">
-          <caret line="25" column="0" selection-start-line="25" selection-start-column="0" selection-end-line="25" selection-end-column="0" />
+        <state vertical-scroll-proportion="0.26595744" vertical-offset="48" max-vertical-offset="702">
+          <caret line="11" column="8" selection-start-line="11" selection-start-column="8" selection-end-line="11" selection-end-column="8" />
           <folding>
-            <marker date="1427251550999" expanded="true" signature="670:691" placeholder="SELECT COUNT..." />
+            <marker date="1427252077854" expanded="true" signature="598:619" placeholder="SELECT COUNT..." />
           </folding>
         </state>
       </provider>

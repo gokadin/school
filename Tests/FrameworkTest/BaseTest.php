@@ -6,12 +6,10 @@ use Library\Application;
 
 abstract class BaseTest extends PHPUnit_Framework_TestCase
 {
-    protected static $app; // do I need this? app facade?
-
     public static function setUpBeforeClass()
     {
         \Library\Config::temporary('testing', 'true');
-        self::$app = new Application('test');
+        new Application('test');
     }
 
     public static function tearDownAfterClass()
