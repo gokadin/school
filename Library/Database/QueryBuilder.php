@@ -16,7 +16,7 @@ class QueryBuilder
         $this->model = $model;
     }
 
-    protected function buildSelect($selectValues, $wheres = null)
+    protected function buildSelect($selectValues)
     {
         if ($selectValues == null || sizeof($selectValues) == 0)
             $selectValues = '*';
@@ -31,11 +31,6 @@ class QueryBuilder
             $str .= $selectValues;
 
         $str .= ' FROM '.$this->model->tableName();
-
-        if ($wheres == null || sizeof($wheres) == 0)
-            return $str;
-
-        $str .= $this->buildWhere($wheres);
 
         return $str;
     }
@@ -106,12 +101,35 @@ class QueryBuilder
         return 'DELETE FROM '.$this->model->tableName();
     }
 
-    protected function buildWhere($wheres)
+    protected function buildWheres($wheres)
     {
         $str = ' WHERE '.$wheres[0]['var'].' '.$wheres[0]['operator'].' '.$wheres[0]['value'];
 
         for ($i = 1; $i < sizeof($wheres); $i++)
             $str .= ' '.$wheres[$i]['link'].' '.$wheres[$i]['var'].' '.$wheres[$i]['operator'].' '.$wheres[$i]['value'];
+
+        return $str;
+    }
+
+    protected function buildJoins($joins)
+    {
+        $str = '';
+        for ($i = 0; $i < sizeof($joins); $i++)
+        {
+            $str = ' JOIN ' . $joins[$i]['joinTableName'] . ' ON ';
+
+            if ($joins[$i]['on'] != null)
+                $str .= $joins[$i]['on'];
+            else
+                $str .= $this->model->tableName() . '.' . $this->model->primaryKey();
+
+            $str .= ' ' . $joins[$i]['operator'] . ' ';
+
+            if ($joins[$i]['to'] != null)
+                $str .= $joins[$i]['to'];
+            else
+                $str .= $joins[$i]['joinTableName'] . '.' . $this->model->defaultForeignKey();
+        }
 
         return $str;
     }

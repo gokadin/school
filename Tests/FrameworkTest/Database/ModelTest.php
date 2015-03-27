@@ -192,8 +192,42 @@ class ModelTest extends BaseTest
         $this->assertEquals($id, $test->id);
     }
 
-    /* RELATIONSHIPS */
+    public function testThatJoinClauseIsWorkingProperlyWhenReturningModels()
+    {
+        // Arrange
+        $school = School::create(['name' => 'schoolName']);
+        Teacher::create(['school_id' => $school->id, 'name' => 'teacherName']);
 
+        // Act
+        $results = School::join('teachers')
+            ->where('teachers.school_id', '=', $school->id)
+            ->get();
+
+        // Assert
+        $this->assertEquals(1, $results->count());
+        $this->assertEquals($school->id, $results->first()->school_id);
+    }
+
+    public function testThatJoinClauseIsWorkingProperlyWhenReturningArrays()
+    {
+        // Arrange
+        $school = School::create(['name' => 'schoolName']);
+        Teacher::create(['school_id' => $school->id, 'name' => 'teacherName']);
+
+        // Act
+        $results = School::join('teachers')
+            ->where('teachers.school_id', '=', $school->id)
+            ->get(['schools.name as name', 'teachers.school_id']);
+
+        // Assert
+        $this->assertEquals(1, sizeof($results));
+        $this->assertEquals($school->id, $results[0]['school_id']);
+        $this->assertEquals('schoolName', $results[0]['name']);
+    }
+
+    /**
+     * @group relationships
+     */
     public function testThatHasOneRelationshipIsWorkingCorrectly()
     {
         // Arrange
@@ -209,6 +243,9 @@ class ModelTest extends BaseTest
         $this->assertEquals($teacher_id, $resolvedTeacher->id);
     }
 
+    /**
+     * @group relationships
+     */
     public function testThatHasManyRelationshipIsWorkingCorrectly()
     {
         // Arrange
@@ -228,6 +265,9 @@ class ModelTest extends BaseTest
         $this->assertEquals('studentName3', $students->last()->name);
     }
 
+    /**
+     * @group relationships
+     */
     public function testThatBelongsToRelationshipIsWorkingCorrectly()
     {
         // Arrange
@@ -242,6 +282,9 @@ class ModelTest extends BaseTest
         $this->assertEquals($teacher->id, $resolvedTeacher->id);
     }
 
+    /**
+     * @group relationships
+     */
     public function testThatHasManyThroughRelationshipIsWorkingCorrectly()
     {
         // Arrange
@@ -261,6 +304,9 @@ class ModelTest extends BaseTest
         $this->assertEquals('title3', $resolvedPosts->last()->title);
     }
 
+    /**
+     * @group relationships
+     */
     public function testThatManyToManyRelationshipsAreWorkingCorrectly()
     {
         // Arrange
@@ -298,10 +344,12 @@ class ModelTest extends BaseTest
     public function testThatWhenCreatingAPolymorphicModelThenBaseModelIsAlsoCreated()
     {
         // Arrange
-        $id = Lion::create(['lionCol1' => 'pstr', 'animalCol1' => 'bstr'])->id;
+        $animalRowCountBefore = $this->getRowCount('animals');
+        Lion::create(['lionCol1' => 'pstr', 'animalCol1' => 'bstr']);
+        $animalRowCountAfter = $this->getRowCount('animals');
 
         // Assert
-        $this->assertTrue(Animal::exists('id', $id));
+        $this->assertEquals($animalRowCountBefore + 1, $animalRowCountAfter);
     }
 
     /**
@@ -319,8 +367,9 @@ class ModelTest extends BaseTest
 
     /**
      * @group polymorphism
+     * @group x
      */
-    public function testThatWhenAccessingIdOfPolymorphicModelThenTheBaseModelIdIsReturned()
+    public function testThatWhenAccessingIdOfPolymorphicModelThenThePolymorphicModelIdIsReturned()
     {
         // Arrange
         $lion = Lion::create(['lionCol1' => 'pstr', 'animalCol1' => 'bstr']);
@@ -329,7 +378,7 @@ class ModelTest extends BaseTest
         $lion->baseModel()->id = 'nonIntegerId';
 
         // Assert
-        $this->assertEquals('nonIntegerId', $lion->id);
+        $this->assertNotEquals('nonIntegerId', $lion->id);
     }
 
     /**
@@ -441,10 +490,16 @@ class ModelTest extends BaseTest
         $lion->animalCol1 = 'bstr';
 
         // Act
+        $lionRowCountBefore = $this->getRowCount('lions');
+        $animalRowCountBefore = $this->getRowCount('animals');
         $lion->save();
-        $id = $lion->id;
+        $id = $lion->baseModel()->id;
+        $lionRowCountAfter = $this->getRowCount('lions');
+        $animalRowCountAfter = $this->getRowCount('animals');
 
         // Assert
+        $this->assertEquals($lionRowCountBefore + 1, $lionRowCountAfter);
+        $this->assertEquals($animalRowCountBefore + 1, $animalRowCountAfter);
         $this->assertTrue(Animal::exists('id', $id));
     }
 
@@ -463,10 +518,11 @@ class ModelTest extends BaseTest
         $lion->lionCol1 = 'different';
         $lion->animalCol1 = 'different';
         $lion->animalCol2 = 20;
-        $lion->save();
+        $updateResult = $lion->save();
         $newLion = Lion::find($lion->id);
 
         // Assert
+        $this->assertTrue($updateResult);
         $this->assertEquals('different', $newLion->lionCol1);
         $this->assertEquals('different', $newLion->animalCol1);
         $this->assertEquals(20, $newLion->animalCol2);
@@ -521,15 +577,15 @@ class ModelTest extends BaseTest
     public function testThatFindMethodAlsoFindsAndPopulatesTheBaseModel()
     {
         // Arrange
-        $id = Lion::create(['lionCol1' => 'pstr', 'animalCol1' => 'bstr'])->id;
+        $lion = Lion::create(['lionCol1' => 'pstr', 'animalCol1' => 'bstr']);
 
         // Act
-        $lion = Lion::find($id);
+        $newLion = Lion::find($lion->id);
 
         // Assert
         $this->assertNotNull($lion);
-        $this->assertEquals('pstr', $lion->lionCol1);
-        $this->assertEquals('bstr', $lion->animalCol1);
+        $this->assertEquals('pstr', $newLion->lionCol1);
+        $this->assertEquals('bstr', $newLion->animalCol1);
     }
 
     /**
@@ -547,43 +603,6 @@ class ModelTest extends BaseTest
     /**
      * @group polymorphism
      */
-    public function testThatWhereMethodAlsoCorrectlyFindsAndPopulatesBaseModels()
-    {
-        // Arrange
-        Lion::create(['lionCol1' => 'pstr', 'lionCol2' => 34, 'animalCol1' => 'bstr']);
-
-        // Act
-        $lions = Lion::where('lionCol2', '=', 34)->get();
-
-        // Assert
-        $this->assertTrue($lions->count() > 0);
-        $this->assertNotNull($lions->first()->animalCol1);
-    }
-
-    /**
-     * @group polymorphism
-     * @group failing
-     */
-    public function testThatWhereMethodWorksWithBaseMethodFields()
-    {
-        // Arrange
-        Lion::create(['lionCol1' => 'pstr', 'lionCol2' => 36, 'animalCol1' => 'bstr']);
-
-        // Act
-        $lions = Lion::where('lionCol2', '=', 36)
-            ->where('animalCol1', '=', 'bstr')
-            ->get();
-
-        // Assert
-        $this->assertTrue($lions->count() > 0);
-        $this->assertNotNull($lions->first()->animalCol1);
-        $this->assertEquals('bstr', $lions->first()->animalCol1);
-    }
-
-    /**
-     * @group polymorphism
-     * @group failing
-     */
     public function testThatAllMethodAlsoCorrectlyFindsAndPopulatesBaseModels()
     {
         // Arrange
@@ -596,5 +615,131 @@ class ModelTest extends BaseTest
         $this->assertTrue($lions->count() > 0);
         $this->assertNotNull($lions->first()->animalCol1);
         $this->assertNotEmpty($lions->first()->meta_id);
+    }
+
+    /**
+     * @group polymorphism
+     */
+    public function testWhereMethodForPolymorphicFieldsOnlyWhenReturningModels()
+    {
+        // Arrange
+        $id = Lion::create(['lionCol1' => 'pstr', 'lionCol2' => 32, 'animalCol1' => 'bstr'])->id;
+
+        // Act
+        $lions = Lion::where('lionCol2', '=', 32)
+            ->where('lionCol1', '=', 'pstr')
+            ->where('lionCol2', '=', 32)
+            ->where('id', '=', $id)
+            ->get();
+
+        // Assert
+        $this->assertEquals(1, $lions->count());
+        $this->assertEquals($id, $lions->first()->id);
+        $this->assertEquals('pstr', $lions->first()->lionCol1);
+        $this->assertEquals(32, $lions->first()->lionCol2);
+        $this->assertEquals('bstr', $lions->first()->animalCol1);
+    }
+
+    /**
+     * @group polymorphism
+     */
+    public function testWhereMethodForPolymorphicFieldsWhenReturningArray()
+    {
+        // Arrange
+        Lion::create(['lionCol1' => 'pstr', 'lionCol2' => 44, 'animalCol1' => 'bstr']);
+
+        // Act
+        $lions = Lion::where('lionCol2', '=', 44)->get('lionCol1');
+
+        // Assert
+        $this->assertEquals(1, sizeof($lions));
+        $this->assertEquals('pstr', $lions[0]['lionCol1']);
+    }
+
+    /**
+     * @group polymorphism
+     */
+    public function testWhereMethodForBaseFieldsWhenReturningModels()
+    {
+        // Arrange
+        $id = Lion::create(['lionCol1' => 'pstr', 'lionCol2' => 32, 'animalCol1' => 'bstr', 'animalCol2' => 89])->id;
+
+        // Act
+        $lions = Lion::where('animalCol1', '=', 'bstr')
+            ->where('animalCol2', '=', 89)
+            ->get();
+
+        // Assert
+        $this->assertEquals(1, $lions->count());
+        $this->assertEquals($id, $lions->first()->id);
+        $this->assertEquals('pstr', $lions->first()->lionCol1);
+        $this->assertEquals(32, $lions->first()->lionCol2);
+        $this->assertEquals('bstr', $lions->first()->animalCol1);
+        $this->assertEquals(89, $lions->first()->animalCol2);
+    }
+
+    /**
+     * @group polymorphism
+     */
+    public function testWhereMethodForBaseFieldsWhenReturningArray()
+    {
+        // Arrange
+        Lion::create(['lionCol1' => 'pstr', 'lionCol2' => 32, 'animalCol1' => 'bstr', 'animalCol2' => 94]);
+
+        // Act
+        $lions = Lion::where('animalCol1', '=', 'bstr')
+            ->where('animalCol2', '=', 94)
+            ->get('animalCol2');
+
+        // Assert
+        $this->assertEquals(1, sizeof($lions));
+        $this->assertEquals(94, $lions[0]['animalCol2']);
+    }
+
+    /**
+     * @group polymorphism
+     */
+    public function testWhereMethodForPolymorphicAndBaseFieldsWhenReturningModels()
+    {
+        // Arrange
+        $id1 = Lion::create(['lionCol1' => 'pstr', 'lionCol2' => 61, 'animalCol1' => 'bstr', 'animalCol2' => 108])->id;
+        $id2 = Lion::create(['lionCol1' => 'pstr', 'lionCol2' => 62, 'animalCol1' => 'bstr', 'animalCol2' => 109])->id;
+
+        // Act
+        $lions = Lion::where('lionCol2', '=', 61)
+            ->where('animalCol2', '=', 109)
+            ->get();
+
+        // Assert
+        $this->assertEquals(2, $lions->count());
+        $this->assertEquals($id1, $lions->first()->id);
+        $this->assertEquals('pstr', $lions->first()->lionCol1);
+        $this->assertEquals(61, $lions->first()->lionCol2);
+        $this->assertEquals('bstr', $lions->first()->animalCol1);
+        $this->assertEquals(108, $lions->first()->animalCol2);
+        $this->assertEquals($id2, $lions->last()->id);
+        $this->assertEquals('pstr', $lions->last()->lionCol1);
+        $this->assertEquals(62, $lions->last()->lionCol2);
+        $this->assertEquals('bstr', $lions->last()->animalCol1);
+        $this->assertEquals(109, $lions->last()->animalCol2);
+    }
+
+    /**
+     * @group polymorphism
+     * @group failing
+     */
+    public function testWhereMethodForPolymorphicAndBaseFieldsWhenReturningArray()
+    {
+        // Arrange
+        $id1 = Lion::create(['lionCol1' => 'pstr', 'lionCol2' => 71, 'animalCol1' => 'bstr', 'animalCol2' => 128])->id;
+        $id2 = Lion::create(['lionCol1' => 'pstr', 'lionCol2' => 72, 'animalCol1' => 'bstr', 'animalCol2' => 129])->id;
+
+        // Act
+        $lions = Lion::where('lionCol2', '=', 71)
+            ->where('animalCol2', '=', 129)
+            ->get(['lionCol1', 'animalCol1']); // add id
+
+        // Assert
+        $this->assertEquals(2, sizeof($lions));
     }
 }

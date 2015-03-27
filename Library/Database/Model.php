@@ -79,6 +79,11 @@ class Model implements ModelQueryContract
         return $this->primaryKey;
     }
 
+    public function defaultForeignKey()
+    {
+        return $this->camelCaseToUnderscore($this->modelName) . '_id';
+    }
+
     public function hasTimestamps()
     {
         return $this->hasTimestamps;
@@ -115,15 +120,10 @@ class Model implements ModelQueryContract
 
     public function __get($var)
     {
-        if ($this->hasBaseModel() && $var == $this->primaryKey)
-            return $this->baseModel->$var;
-
         if (isset($this->vars[$var]))
             return $this->vars[$var];
-        else if ($this->hasBaseModel())
-        {
+        else if ($this->hasBaseModel() && $var != $this->primaryKey)
             return $this->baseModel->$var;
-        }
     }
 
     public function __isset($var)
@@ -174,12 +174,16 @@ class Model implements ModelQueryContract
 
         foreach ($this->vars as $key => $var)
         {
+            if ($key == $this->primaryKey) continue;
+
             if ($this->hasColumn($key))
                 $values[$key] = $var;
         }
 
         if ($this->hasBaseModel())
+        {
             return $this->query->update($values) > 0 && $this->baseModel->update();
+        }
 
         return $this->query->update($values) > 0;
     }
@@ -313,6 +317,13 @@ class Model implements ModelQueryContract
         $instance = new static;
         $query = new Query($instance);
         return $query->where($var, $operator, $value, $link);
+    }
+
+    public static function join($joinTableName, $on = null, $operator = '=', $to = null)
+    {
+        $instance = new static;
+        $query = new Query($instance);
+        return $query->join($joinTableName, $on, $operator, $to);
     }
 
     public static function find($id)
@@ -470,10 +481,7 @@ class Model implements ModelQueryContract
         if (!class_exists($metaType))
             throw new RuntimeException('Model '.$metaType.' does not exist,');
 
-        $metaModel = new $metaType();
-        $metaModel = $metaType::where($metaModel->primaryKey(), '=', $this->$metaIdField)->get()->first();
-        $metaModel->hydrateBaseModel();
-        return $metaModel;
+        return $metaType::find($this->$metaIdField);
     }
 
     public function morphOne($modelName, $metaIdField = Table::META_ID, $metaTypeField = Table::META_TYPE, $typeName = null)
