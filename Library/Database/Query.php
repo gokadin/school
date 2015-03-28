@@ -2,6 +2,7 @@
 
 use Library\Facades\DB;
 use PDO;
+use Symfony\Component\Yaml\Exception\RuntimeException;
 
 class Query extends QueryBuilder implements QueryContract
 {
@@ -9,17 +10,18 @@ class Query extends QueryBuilder implements QueryContract
     protected $model;
     protected $baseQuery;
     protected $selectValues = array();
-
-    protected $wheres;
-    protected $joins;
+    protected $baseSelectValues = array();
+    protected $wheres = array();
+    protected $baseWheres = array();
+    protected $polymorphicQueryLink;
+    protected $joins = array();
 
     public function __construct($model)
     {
         $this->dao = DB::dao();
         parent::__construct($this->dao, $model);
         $this->model = $model;
-        $this->wheres = array();
-        $this->joins = array();
+        $this->polymorphicQueryLink = null;
     }
 
     public function lastInsertId()
@@ -99,126 +101,126 @@ class Query extends QueryBuilder implements QueryContract
 
     public function addValues($values)
     {
+        if ($values == null)
+            return;
+
         if (is_array($values))
         {
-            $this->selectValues = $values;
+            $this->selectValues = array_merge($this->selectValues, $values);
             return;
         }
 
-        if (trim($values) == '*')
+        $this->selectValues[] = $values;
+    }
+
+    public function splitWheres()
+    {
+        $tempWheres = array();
+        foreach ($this->wheres as $where)
+        {
+            if ($this->model->hasColumn($where['var']))
+            {
+                $tempWheres[] = $where;
+                continue;
+            }
+
+            if ($this->model->baseModel()->hasColumn($where['var']))
+                $this->baseWheres[] = $where;
+        }
+
+        $this->wheres = $tempWheres;
+
+        if (sizeof($this->baseWheres) > 0)
+            $this->polymorphicQueryLink = $this->baseWheres[0]['link'];
+    }
+
+    public function splitValues($values)
+    {
+        if ($values == null)
             return;
 
-        $this->selectValues[] = $values;
+        if (!is_array($values))
+        {
+            if ($this->model->hasColumn($values))
+                $this->selectValues[] = $values;
+            else if ($this->model->baseModel()->hasColumn($values))
+                $this->baseSelectValues[] = $values;
+
+            return;
+        }
+
+        foreach ($values as $value)
+        {
+            if ($this->model->hasColumn($value))
+                $this->selectValues[] = $value;
+            else if ($this->model->baseModel()->hasColumn($value))
+                $this->baseSelectValues[] = $value;
+        }
     }
 
     public function get($values = null)
     {
         if (!$this->model->hasBaseModel() || sizeof($this->wheres) == 0)
-            return $this->select($values);
-
-        $pWheres = array();
-        $bWheres = array();
-        foreach ($this->wheres as $where)
         {
-            if ($this->model->hasColumn($where['var']))
-            {
-                $pWheres[] = $where;
-                continue;
-            }
-
-            if ($this->model->baseModel()->hasColumn($where['var']))
-                $bWheres[] = $where;
+            $this->addValues($values);
+            return $this->select();
         }
 
-        $pValues = array();
-        $bValues = array();
         if ($values != null)
-        {
-            if (!is_array($values))
-            {
-                if ($this->model->hasColumn($values))
-                    $pValues[] = $values;
-                else if ($this->model->baseModel->hasColumn($values))
-                    $bValues[] = $values;
-            }
-            else
-            {
-                foreach ($values as $value)
-                {
-                    if ($this->model->hasColumn($value))
-                        $pValues[] = $value;
-                    else if ($this->model->baseModel()->hasColumn($value))
-                        $bValues[] = $value;
-                }
-            }
+            $this->doPolymorphicJoin($values);
 
-            if (sizeof($pValues) == 0)
-                $pValues = null;
-            if (sizeof($bValues) == 0)
-                $bValues = null;
+        $this->splitWheres();
+
+        $pResults = null;
+        if (sizeof($this->wheres) > 0 && sizeof($this->baseWheres) == 0)
+            return $this->select();
+
+        $this->baseWheres[] = [
+            'var' => Table::META_TYPE,
+            'operator' => '=',
+            'value' => $this->model->modelName(),
+            'link' => 'AND'
+        ];
+
+        $baseQuery = $this->model->baseModel()->where($this->baseWheres[0]['var'],
+            $this->baseWheres[0]['operator'],
+            $this->baseWheres[0]['value'],
+            $this->baseWheres[0]['link']);
+        for ($i = 1; $i < sizeof($this->baseWheres); $i++)
+            $baseQuery->where($this->baseWheres[$i]['var'],
+                $this->baseWheres[$i]['operator'],
+                $this->baseWheres[$i]['value'],
+                $this->baseWheres[$i]['link']);
+
+        $bResults = $baseQuery->get($this->baseSelectValues);
+
+        if (sizeof($this->baseWheres) > 0 && sizeof($this->wheres) == 0)
+        {
+            $collection = new ModelCollection();
+            foreach ($bResults as $bResult)
+                $collection->add($bResult->morphTo());
+
+            return $collection;
         }
 
-        $keepPrimaryKey = false;
-        if ($pValues != null && !in_array($this->model->primaryKey(), $pValues))
-            $pValues[] = $this->model->primaryKey();
-        else if ($pValues != null)
-            $keepPrimaryKey = true;
-
-        $this->wheres = $pWheres;
-        $pResults = sizeof($pWheres) > 0
-            ? $this->select($pValues)
-            : null;
-
-        $bResults = null;
-        $keepMetaId = false;
-        if (sizeof($bWheres) > 0)
-        {
-            $bWheres[] = [
-                'var' => Table::META_TYPE,
-                'operator' => '=',
-                'value' => $this->model->modelName(),
-                'link' => 'AND'
-            ];
-
-            $keepMetaId = false;
-            if ($bValues != null && !in_array(Table::META_ID, $bValues))
-                $bValues[] = Table::META_ID;
-            else if ($bValues != null)
-                $keepMetaId = true;
-
-            $baseQuery = $this->model->baseModel()->where($bWheres[0]['var'],
-                $bWheres[0]['operator'],
-                $bWheres[0]['value'],
-                $bWheres[0]['link']);
-            for ($i = 1; $i < sizeof($bWheres); $i++)
-                $baseQuery->where($bWheres[$i]['var'],
-                    $bWheres[$i]['operator'],
-                    $bWheres[$i]['value'],
-                    $bWheres[$i]['link']);
-
-            $bResults = $baseQuery->get($bValues);
-        }
-
-        return $this->merge($pResults, $bResults, $keepPrimaryKey, $keepMetaId);
+        $pResults = $this->select();
+        return $this->mergeModels($pResults, $bResults);
     }
 
-    private function select($values = null)
+    private function select()
     {
-        if ($values != null)
-            $this->addValues($values);
-
         $str = $this->buildSelect($this->selectValues);
 
-        if ($this->joins != null && sizeof($this->joins) > 0)
+        if (sizeof($this->joins) > 0)
             $str .= $this->buildJoins($this->joins);
 
-        if ($this->wheres != null && sizeof($this->wheres) > 0)
+        if (sizeof($this->wheres) > 0)
             $str .= $this->buildWheres($this->wheres);
 
         $result = $this->dao->prepare($str);
         $result->execute();
 
-        if ($this->selectValues == null)
+        if (sizeof($this->selectValues) == 0)
         {
             $result->setFetchMode(PDO::FETCH_CLASS | PDO::FETCH_PROPS_LATE, $this->model->modelDirectory().$this->model->modelName());
             $list = $result->fetchAll();
@@ -230,10 +232,7 @@ class Query extends QueryBuilder implements QueryContract
 
         $result->closeCursor();
 
-        if (sizeof($list) == 0)
-            return new ModelCollection();
-
-        if ($this->selectValues == null)
+        if (sizeof($this->selectValues) == 0)
         {
             foreach ($list as $model)
                 $model->hydrateBaseModel();
@@ -244,68 +243,53 @@ class Query extends QueryBuilder implements QueryContract
         return $list;
     }
 
-    private function merge($pResults, $bResults, $keepPrimaryKey = false, $keepMetaId = false)
+    private function mergeModels($pResults, $bResults)
     {
-        if ($bResults == null)
+        if ($pResults->count() == 0)
+            return $bResults;
+
+        if ($bResults->count() == 0)
             return $pResults;
 
-        if ($bResults instanceof ModelCollection)
+        if (strtoupper($this->polymorphicQueryLink) == 'AND')
         {
-            if ($pResults == null)
-            {
-                $resultCollection = new ModelCollection();
-                foreach ($bResults as $bResult)
-                    $resultCollection->add($bResult->morphTo());
-
-                return $resultCollection;
-            }
-
+            $metaIdField = Table::META_ID;
             $resultCollection = new ModelCollection();
-            foreach ($pResults as $pResult)
-                $resultCollection->add($pResult);
-
-            foreach ($bResults as $bResult)
+            foreach ($pResults as $pModel)
             {
-                foreach ($resultCollection as $model)
+                foreach ($bResults as $bModel)
                 {
-                    if ($model->baseModel()->meta_id == $bResult->meta_id) continue;
-                    $resultCollection->add($bResult->morphTo());
+                    if ($pModel->getPrimaryKey() == $bModel->$metaIdField)
+                        $resultCollection->add($pModel);
                 }
             }
 
             return $resultCollection;
         }
 
-        if ($pResults == null)
-            return $bResults;
-
-        $mergedArray = array();
-        foreach ($pResults as $pResult)
+        if (strtoupper($this->polymorphicQueryLink) == 'OR')
         {
-            foreach ($bResults as $bResult)
+            $metaIdField = Table::META_ID;
+            $resultCollection = new ModelCollection();
+            foreach ($pResults as $pModel)
             {
-                if ($pResult[$this->model->primaryKey()] == $bResult[Table::META_ID])
-                {
-                    $pTempArray = array();
-                    foreach ($pResult as $field)
-                    {
-                        if (!$keepPrimaryKey && $field == $this->model->primaryKey()) continue;
-                        $pTempArray[] = $field;
-                    }
-
-                    $bTempArray = array();
-                    foreach ($bResult as $field)
-                    {
-                        if (!$keepMetaId && $field == Table::META_ID) continue;
-                        $bTempArray[] = $field;
-                    }
-
-                    $mergedArray[] = array_merge($pTempArray, $bTempArray);
-                    break;
-                }
+                $resultCollection->add($pModel);
             }
+
+            foreach ($bResults as $bModel)
+            {
+                if (!$resultCollection->hasPrimaryKey($bModel->$metaIdField))
+                    $resultCollection->add($bModel->morphTo());
+            }
+
+            return $resultCollection;
         }
 
-        return $mergedArray;
+        return new ModelCollection();
+    }
+
+    private function doPolymorphicJoin($values)
+    {
+        throw new RuntimeException('Polymorphic selects with custom values are not supported at this time.');
     }
 }

@@ -38,6 +38,28 @@ class ModelCollection implements IteratorAggregate
         return $this->count() > $index ? $this->models[$index] : $default;
     }
 
+    public function hasPrimaryKey($key)
+    {
+        foreach ($this->models as $model)
+        {
+            if ($model->getPrimaryKey() == $key)
+                return true;
+        }
+
+        return false;
+    }
+
+    public function getPrimaryKey($key)
+    {
+        foreach ($this->models as $model)
+        {
+            if ($model->getPrimaryKey() == $key)
+                return $model;
+        }
+
+        return null;
+    }
+
     public function count()
     {
         return count($this->models);
@@ -84,7 +106,6 @@ class ModelCollection implements IteratorAggregate
                     break;
                 default:
                     throw new RuntimeException('Operator '.$operator.' is invalid.');
-                    return $this;
             }
         }
 
@@ -97,10 +118,7 @@ class ModelCollection implements IteratorAggregate
             return null;
 
         if (!$this->models[0]->hasColumn($field))
-        {
             throw new RuntimeException('Model '.$this->models[0]->modelName().' has no field named '.$field);
-            return null;
-        }
 
         $results = array();
         foreach ($this->models as $model)
@@ -120,10 +138,7 @@ class ModelCollection implements IteratorAggregate
             return null;
 
         if (!$this->models[0]->hasColumn($field))
-        {
             throw new RuntimeException('Model '.$this->models[0]->modelName().' has no field named '.$field);
-            return null;
-        }
 
         if (!$descending)
         {

@@ -83,4 +83,32 @@ class ModelCollectionTest extends BaseTest
         $this->assertEquals(10, $collection->last(10));
         $this->assertEquals($testModel, $collection->last($testModel));
     }
+
+    public function testThatPrimaryKeyCanBeFoundInCollection()
+    {
+        // Arrange
+        $test = new Test(['col1' => 'str1', 'col2' => 10]);
+        $id = $test->id;
+        $collection = new ModelCollection([$test]);
+
+        // Assert
+        $this->assertTrue($collection->hasPrimaryKey($id));
+    }
+
+    public function testThatModelCanBeFoundByPrimaryKey()
+    {
+        // Arrange
+        $test1 = new Test(['col1' => 'str1', 'col2' => 10]);
+        $test2 = new Test(['col1' => 'str1', 'col2' => 10]);
+        $id = $test2->id;
+        $test3 = new Test(['col1' => 'str1', 'col2' => 10]);
+        $collection = new ModelCollection([$test1, $test2, $test3]);
+
+        // Act
+        $model = $collection->getPrimaryKey($id);
+
+        // Assert
+        $this->assertNotNull($model);
+        $this->assertEquals($id, $model->id);
+    }
 }

@@ -79,6 +79,12 @@ class Model implements ModelQueryContract
         return $this->primaryKey;
     }
 
+    public function getPrimaryKey()
+    {
+        if (isset($this->vars[$this->primaryKey]))
+            return $this->vars[$this->primaryKey];
+    }
+
     public function defaultForeignKey()
     {
         return $this->camelCaseToUnderscore($this->modelName) . '_id';
