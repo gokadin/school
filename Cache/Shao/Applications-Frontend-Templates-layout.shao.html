@@ -2,20 +2,21 @@
 <html>
   <head>
     <title>School</title>
-    <meta http-equiv="Content-type" content="text/html; charset=UTF-8" />
+    <meta charset="utf-8" />
+    <meta name="author" content="Givi Odikadze" />
+    <meta name="dc.created" content="2015-02-12" />
         <!-- <link rel="shortcut icon" href="/images/favicon.ico" > -->
     <link rel="stylesheet" href="/School/Web/css/default.css" type="text/css" />
     <link rel="stylesheet" href="/School/Web/css/frontend.css" type="text/css" />
     <script src="/School/Web/js/jquery.js"></script>
   </head>
   <body>
-    <nav>
-        <a href="/School/">Home</a>
-        <a href="/School/account/login">Login</a>
-        <a href="/School/account/signup">Sign up</a>
-    </nav>
-    <div id="content">
-        <?php echo  $content ; ?>
+    <div id="container">
+        <?php  include __DIR__.'/../../Applications/Frontend/Templates/topNav.shao.html';  ?>
+        <?php  include __DIR__.'/../../Applications/Frontend/Templates/mainNav.shao.html';  ?>
+        <div id="content">
+            <?php echo  $content ; ?>
+        </div>
     </div>
   </body>
 </html>

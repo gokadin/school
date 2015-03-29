@@ -2,20 +2,21 @@
 <html>
   <head>
     <title>School</title>
-    <meta http-equiv="Content-type" content="text/html; charset=UTF-8" />
+    <meta charset="utf-8" />
+    <meta name="author" content="Givi Odikadze" />
+    <meta name="dc.created" content="2015-02-12" />
         <!-- <link rel="shortcut icon" href="/images/favicon.ico" > -->
     <link rel="stylesheet" href="/School/Web/css/default.css" type="text/css" />
     <link rel="stylesheet" href="/School/Web/css/frontend.css" type="text/css" />
     <script src="/School/Web/js/jquery.js"></script>
   </head>
   <body>
-    <nav>
-        <a href="@path('Frontend#Index#index')">Home</a>
-        <a href="@path('Frontend#Account#index')">Login</a>
-        <a href="@path('Frontend#Account#signUp')">Sign up</a>
-    </nav>
-    <div id="content">
-        {{ $content }}
+    <div id="container">
+        {{{ include __DIR__.'/../../Applications/Frontend/Templates/topNav.shao.html'; }}}
+        {{{ include __DIR__.'/../../Applications/Frontend/Templates/mainNav.shao.html'; }}}
+        <div id="content">
+            {{ $content }}
+        </div>
     </div>
   </body>
 </html>
