@@ -154,15 +154,15 @@
                         </li>
                     </ul>
                 </li>
-                <li>
+                <li class="<?php if ($module == 'Teacher/Payment') { ?> active <?php } ?>">
                     <a href="javascript:;">
                         <i class="fa fa-money"></i>
                         <span class="title">Payments</span>
                         <span class="arrow"></span>
                     </a>
                     <ul class="sub-menu">
-                        <li>
-                            <a href="#">Example</a>
+                        <li <?php if ($module == 'Teacher/Payment' && $action == 'index') { ?> class="active" <?php } ?>>
+                            <a href="/School/school/teacher/payment">Stripe test</a>
                         </li>
                         <li>
                             <a href="#">Example</a>

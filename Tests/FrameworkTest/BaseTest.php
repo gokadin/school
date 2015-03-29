@@ -4,6 +4,8 @@ use Library\Facades\DB;
 use PHPUnit_Framework_TestCase;
 use Library\Application;
 
+require __DIR__.'/../../bootstrap/autoload.php';
+
 abstract class BaseTest extends PHPUnit_Framework_TestCase
 {
     public static function setUpBeforeClass()

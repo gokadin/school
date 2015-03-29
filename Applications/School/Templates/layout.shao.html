@@ -154,15 +154,15 @@
                         </li>
                     </ul>
                 </li>
-                <li>
+                <li class="@if ($module == 'Teacher/Payment') active @endif">
                     <a href="javascript:;">
                         <i class="fa fa-money"></i>
                         <span class="title">Payments</span>
                         <span class="arrow"></span>
                     </a>
                     <ul class="sub-menu">
-                        <li>
-                            <a href="#">Example</a>
+                        <li @if ($module == 'Teacher/Payment' && $action == 'index') class="active" @endif>
+                            <a href="@path('School#Teacher/Payment#index')">Stripe test</a>
                         </li>
                         <li>
                             <a href="#">Example</a>
