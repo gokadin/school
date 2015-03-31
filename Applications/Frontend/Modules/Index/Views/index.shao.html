@@ -1,3 +1,102 @@
-<div class="main-banner">
-
+<div class="main-banner-container">
+    <div class="main-banner-images-container">
+        <div class="banner-images">
+            <img class="banner-image1 active" src="/School/Web/images/slideshow1.png" width="600" height="300" />
+            <img class="banner-image2" src="/School/Web/images/slideshow2.png" width="600" height="300" />
+            <img class="banner-image3" src="/School/Web/images/slideshow3.png" width="600" height="300" />
+        </div>
+        <div class="banner-arrows">
+            <a href="#" class="previous-arrow">&lt;</a>
+            <a href="#" class="next-arrow">&gt;</a>
+        </div>
+    </div>
+    <div class="banner-bullets">
+        <a href="javascript: changeImage(1)" class="banner-bullet1"><span>Bullet</span></a>
+        <a href="javascript: changeImage(2)" class="banner-bullet2"><span>Bullet</span></a>
+        <a href="javascript: changeImage(3)" class="banner-bullet3"><span>Bullet</span></a>
+    </div>
 </div>
+
+<script type="text/javascript">
+var bannerTimer = 0;
+var imagesTotal = 3;
+var currentImage = 1;
+
+$('a.banner-bullet' + currentImage).addClass('active');
+
+$('a.previous-arrow').click(function() {
+    resetBannerTimer(bannerTimer);
+    removeActiveBannerImage();
+
+    currentImage--;
+    if (currentImage == 0) {
+        currentImage = imagesTotal;
+    }
+
+    addActiveBannerImage();
+
+    return false;
+});
+
+$('a.next-arrow').click(function() {
+    resetBannerTimer(bannerTimer);
+    removeActiveBannerImage();
+
+    currentImage++;
+    if (currentImage == imagesTotal + 1) {
+        currentImage = 1;
+    }
+
+    addActiveBannerImage();
+
+    return false;
+});
+
+function changeImage(imageNumber) {
+    if (imageNumber == currentImage) {
+        return;
+    }
+
+    resetBannerTimer(bannerTimer);
+    removeActiveBannerImage();
+
+    currentImage = imageNumber;
+
+    addActiveBannerImage();
+}
+
+function autoChangeImage() {
+    removeActiveBannerImage();
+
+    currentImage++;
+    if (currentImage == imagesTotal + 1) {
+        currentImage = 1;
+    }
+
+    addActiveBannerImage();
+}
+
+function removeActiveBannerImage()
+{
+    $('img.banner-image' + currentImage).removeClass('active');
+    $('a.banner-bullet' + currentImage).removeClass('active');
+    $('img.banner-image' + currentImage).fadeOut(1000);
+}
+
+function addActiveBannerImage()
+{
+    $('img.banner-image' + currentImage).addClass('active');
+    $('a.banner-bullet' + currentImage).addClass('active');
+    $('img.banner-image' + currentImage).fadeIn(1000);
+}
+
+function resetBannerTimer()
+{
+    clearInterval(bannerTimer);
+    bannerTimer = setInterval(function() { autoChangeImage(); }, 5000);
+}
+
+$(document).ready(function() {
+    resetBannerTimer();
+});
+</script>

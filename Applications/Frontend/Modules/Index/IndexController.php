@@ -8,4 +8,9 @@ class IndexController extends BackController
     {
 
     }
+
+    public function features()
+    {
+
+    }
 }
