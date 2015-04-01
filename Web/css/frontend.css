@@ -306,7 +306,7 @@ a.next-arrow
     list-style-type: none;
     margin: 0 auto;
     padding: 0;
-    padding-top: 20px;
+    padding-top: 30px;
     display: table;
 }
 
@@ -335,6 +335,29 @@ a.next-arrow
     border: 1px solid #999999;
 }
 
+.feature-title-in-icon
+{
+    font-size: 14px;
+    position: absolute;
+    margin-left: -34px; /* change */
+    opacity: 0;
+}
+
+.features-icons a:hover .feature-title-in-icon,
+.features-icons ul > li.active a .feature-title-in-icon
+{
+    text-decoration: none;
+    opacity: 1;
+    transition: opacity 0.5s;
+}
+
+.features-icons a:hover .fa,
+.features-icons ul > li.active a .fa
+{
+    opacity: 0;
+    transition: opacity 0.5s;
+}
+
 .feature-title
 {
     font-size: 14px;
@@ -342,15 +365,24 @@ a.next-arrow
 }
 
 .features-icons a:hover,
-.features-icons a.active
+.features-icons ul > li.active a
 {
-    background-color: #CCE6FF;
-    box-shadow: 0 0 0 8px red;
-    -webkit-box-shadow: 0 0 0 10px red;
-    -moz-box-shadow: 0 0 0 10px red;
+    border: none;
+    box-shadow: 0 0 0 20px lightgray;
+    -webkit-box-shadow: 0 0 0 10px lightgray;
+    -moz-box-shadow: 0 0 0 10px lightgray;
     transition: box-shadow 0.5s;
     -webkit-transition: box-shadow 0.5s;
     -moz-transition: box-shadow 0.5s;
+}
+
+.features-icons ul > li.active div.feature-title,
+.feature-title.active
+{
+    opacity: 0;
+    transition: opacity 0.5s;
+    -webkit-transition: opacity 0.5s;
+    -moz-transition: opacity 0.5s;
 }
 
 .feature

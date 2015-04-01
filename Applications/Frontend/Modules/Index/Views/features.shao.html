@@ -1,18 +1,19 @@
 <div class="features-icons">
     <ul>
-        <li>
+        <li id="feature-icon1">
             <div>
-                <a href="#" id="feature-icon1">
+                <a href="#">
                     <span class="fa fa-home"></span>
+                    <span class="feature-title-in-icon">Students</span>
                 </a>
             </div>
             <div class="feature-title">
                 Students
             </div>
         </li>
-        <li>
+        <li id="feature-icon2">
             <div>
-                <a href="#" id="feature-icon2">
+                <a href="#">
                     <span class="fa fa-home"></span>
                 </a>
             </div>
@@ -20,9 +21,9 @@
                 Blog
             </div>
         </li>
-        <li>
+        <li id="feature-icon3">
             <div>
-                <a href="#" id="feature-icon3">
+                <a href="#">
                     <span class="fa fa-home"></span>
                 </a>
             </div>
@@ -30,9 +31,9 @@
                 Students
             </div>
         </li>
-        <li>
+        <li id="feature-icon4">
             <div>
-                <a href="#" id="feature-icon4">
+                <a href="#">
                     <span class="fa fa-home"></span>
                 </a>
             </div>
@@ -42,9 +43,9 @@
         </li>
     </ul>
     <ul>
-        <li>
+        <li id="feature-icon5">
             <div>
-                <a href="#" id="feature-icon5">
+                <a href="#">
                     <span class="fa fa-home"></span>
                 </a>
             </div>
@@ -52,9 +53,9 @@
                 Students
             </div>
         </li>
-        <li>
+        <li id="feature-icon6">
             <div>
-                <a href="#" id="feature-icon6">
+                <a href="#">
                     <span class="fa fa-home"></span>
                 </a>
             </div>
@@ -62,9 +63,9 @@
                 Students
             </div>
         </li>
-        <li>
+        <li id="feature-icon7">
             <div>
-                <a href="#" id="feature-icon7">
+                <a href="#">
                     <span class="fa fa-home"></span>
                 </a>
             </div>
@@ -72,9 +73,9 @@
                 Students
             </div>
         </li>
-        <li>
+        <li id="feature-icon8">
             <div>
-                <a href="#" id="feature-icon8">
+                <a href="#">
                     <span class="fa fa-home"></span>
                 </a>
             </div>
@@ -118,9 +119,18 @@ var currentFeature = 0;
 $("[id^=feature-icon]").each(function () {
     var featureNumber = this.id.substr(this.id.length - 1);
 
+    // Feature description show/hide effect
     $(this).on('click', function() {
         showFeature(featureNumber);
         return false;
+    });
+
+    // Feature title hover animation effect
+    $('#feature-icon' + featureNumber + ' a').on('mouseover', function() {
+        $('#feature-icon' + featureNumber + ' .feature-title').addClass('active');
+    });
+    $('#feature-icon' + featureNumber + ' a').on('mouseout', function() {
+        $('#feature-icon' + featureNumber + ' .feature-title').removeClass('active');
     });
 });
 
