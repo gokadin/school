@@ -1,17 +1,151 @@
 <div class="features-icons">
     <ul>
-        <li><a href="#"><span class="fa fa-home"></span></a></li>
-        <li><a href="#"><span class="fa fa-home"></span></a></li>
-        <li><a href="#"><span class="fa fa-home"></span></a></li>
-        <li><a href="#"><span class="fa fa-home"></span></a></li>
+        <li>
+            <div>
+                <a href="#" id="feature-icon1">
+                    <span class="fa fa-home"></span>
+                </a>
+            </div>
+            <div class="feature-title">
+                Students
+            </div>
+        </li>
+        <li>
+            <div>
+                <a href="#" id="feature-icon2">
+                    <span class="fa fa-home"></span>
+                </a>
+            </div>
+            <div class="feature-title">
+                Blog
+            </div>
+        </li>
+        <li>
+            <div>
+                <a href="#" id="feature-icon3">
+                    <span class="fa fa-home"></span>
+                </a>
+            </div>
+            <div class="feature-title">
+                Students
+            </div>
+        </li>
+        <li>
+            <div>
+                <a href="#" id="feature-icon4">
+                    <span class="fa fa-home"></span>
+                </a>
+            </div>
+            <div class="feature-title">
+                Students
+            </div>
+        </li>
     </ul>
     <ul>
-        <li><a href="#"><span class="fa fa-home"></span></a></li>
-        <li><a href="#"><span class="fa fa-home"></span></a></li>
-        <li><a href="#"><span class="fa fa-home"></span></a></li>
-        <li><a href="#"><span class="fa fa-home"></span></a></li>
+        <li>
+            <div>
+                <a href="#" id="feature-icon5">
+                    <span class="fa fa-home"></span>
+                </a>
+            </div>
+            <div class="feature-title">
+                Students
+            </div>
+        </li>
+        <li>
+            <div>
+                <a href="#" id="feature-icon6">
+                    <span class="fa fa-home"></span>
+                </a>
+            </div>
+            <div class="feature-title">
+                Students
+            </div>
+        </li>
+        <li>
+            <div>
+                <a href="#" id="feature-icon7">
+                    <span class="fa fa-home"></span>
+                </a>
+            </div>
+            <div class="feature-title">
+                Students
+            </div>
+        </li>
+        <li>
+            <div>
+                <a href="#" id="feature-icon8">
+                    <span class="fa fa-home"></span>
+                </a>
+            </div>
+            <div class="feature-title">
+                Students
+            </div>
+        </li>
     </ul>
 </div>
-<div class="features-description">
-
+<div class="feature feature0 active">
+    DEFAULT
 </div>
+<div class="feature feature1">
+    TEST1
+</div>
+<div class="feature feature2">
+    TEST2
+</div>
+<div class="feature feature3">
+    TEST3
+</div>
+<div class="feature feature4">
+    TEST4
+</div>
+<div class="feature feature5">
+    TEST5
+</div>
+<div class="feature feature6">
+    TEST6
+</div>
+<div class="feature feature7">
+    TEST7
+</div>
+<div class="feature feature8">
+    TEST8
+</div>
+
+<script type="text/javascript">
+var currentFeature = 0;
+
+$("[id^=feature-icon]").each(function () {
+    var featureNumber = this.id.substr(this.id.length - 1);
+
+    $(this).on('click', function() {
+        showFeature(featureNumber);
+        return false;
+    });
+});
+
+function showFeature(featureNumber) {
+    if (featureNumber == currentFeature) {
+        $('div.feature' + currentFeature).toggleClass('active');
+        $('#feature-icon' + currentFeature).toggleClass('active');
+
+        if (!$('div.feature' + currentFeature).hasClass('active')) {
+            featureNumber = 0;
+        } else {
+            return;
+        }
+    }
+
+    $('div.feature' + currentFeature).removeClass('active');
+    $('#feature-icon' + currentFeature).removeClass('active');
+
+    currentFeature = featureNumber;
+
+    $('div.feature' + currentFeature).addClass('active');
+    if (currentFeature == 0) {
+        return;
+    }
+    $('#feature-icon' + currentFeature).addClass('active');
+
+}
+</script>
