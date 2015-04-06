@@ -5,14 +5,17 @@
         <route url="/School/" method="GET" module="Index" action="index" />
         <route url="/School/features" method="GET" module="Index" action="features" />
         <route url="/School/testimonials" method="GET" module="Index" action="testimonials" />
+        <route url="/School/faq" method="GET" module="Index" action="faq" />
         <route url="/School/contact-us" method="GET" module="Index" action="contactUs" />
         <route url="/School/about" method="GET" module="Index" action="about" />
         <!-- ACCOUNT MODULE -->
         <route url="/School/account/login" method="GET" module="Account" action="index" />
         <route url="/School/account/login" method="POST" module="Account" action="login" />
         <route url="/School/account/logout" method="GET" module="Account" action="logout" />
+        <route url="/School/account/reset-password" method="GET" module="Account" action="resetPassword" />
         <route url="/School/account/signup" method="GET" module="Account" action="signUp" />
         <route url="/School/account/signup" method="POST" module="Account" action="registerUser" />
+        <route url="/School/account/signup-land" method="GET" module="Account" action="signUpLand" />
     </application>
 
     <application name="School">

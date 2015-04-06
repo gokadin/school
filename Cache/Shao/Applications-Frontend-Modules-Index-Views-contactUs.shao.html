@@ -1,0 +1,48 @@
+<div class="contact-us">
+    <form id="contact-us-form" method="POST" action="">
+        <div class="g-form-header">
+            Contact us
+        </div>
+
+        <div class="g-form-body">
+            <div class="g-form-input-row">
+                <label class="g-form-label">Your name</label>
+                <div class="g-form-input">
+                    <input type="text" id="name" name="name" placeholder="Name" />
+                </div>
+            </div>
+
+            <div class="g-form-input-row">
+                <label class="g-form-label">Your email<span class="required">*</span></label>
+                <div class="g-form-input">
+                    <div class="input-icon">
+                        <i class="fa fa-warning"></i>
+                        <input type="email" id="email" name="email" placeholder="Email" />
+                    </div>
+                    <span class="input-message">Email is required.</span>
+                </div>
+            </div>
+
+            <div class="g-form-input-row">
+                <label class="g-form-label">Subject</label>
+                <div class="g-form-input">
+                    <input type="text" id="subject" name="subject" placeholder="Subject" />
+                </div>
+            </div>
+
+            <div class="g-form-input-row">
+                <label class="g-form-label">Message<span class="required">*</span></label>
+                <div class="g-form-input">
+                    <textarea id="message" name="message" placeholder="Your message" maxlength="256"></textarea>
+                    <span class="input-message">Message is required.</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="g-form-footer">
+            <button type="submit">Submit</button>
+        </div>
+    </form>
+</div>
+
+<script src="/School/Applications/Frontend/Modules/Index/Views/js/contactUsValidation.js"></script>

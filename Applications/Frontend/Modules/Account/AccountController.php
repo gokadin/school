@@ -15,8 +15,7 @@ class AccountController extends BackController
 {
     public function index()
     {
-        if (Session::hasErrors())
-            Page::add('errors', Session::getErrors());
+
     }
 
     public function login()
@@ -41,6 +40,11 @@ class AccountController extends BackController
     {
         Session::logout();
         Response::toAction('Frontend#Index#index');
+    }
+
+    public function resetPassword()
+    {
+
     }
 
     public function signUp()
@@ -78,6 +82,11 @@ class AccountController extends BackController
         $user->password = md5(Request::postData('password'));
         $user->save();
 
-        Response::toAction('Frontend#Account#index');
+        Response::toAction('Frontend#Account#signUpLand');
+    }
+
+    public function signUpLand()
+    {
+
     }
 }

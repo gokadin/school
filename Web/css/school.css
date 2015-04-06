@@ -702,7 +702,7 @@ Footer Layouts (new in v1.3)
 .create-form-input input:focus
 {
     border-color: #999;
-    outline: 0px none;
+    outline: 0 none;
     box-shadow: none !important;
 }
 

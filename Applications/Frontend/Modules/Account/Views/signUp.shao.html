@@ -1,16 +1,164 @@
-<h3>Sign Up</h3>
+<div class="memberships">
+    <div class="membership membership0 active">
+        <div class="membership-header">
+            Basic
+        </div>
+        <div class="membership-body">
+            <div class="membership-pricing">FREE</div>
+            <div class="membership-description">
+                <table>
+                    <tr>
+                        <td><span class="fa fa-group"></span></td>
+                        <td>Students:</td>
+                        <td>5</td>
+                    </tr>
+                    <tr>
+                        <td><span class="fa fa-server"></span></td>
+                        <td>Storage space:</td>
+                        <td>1GB</td>
+                    </tr>
+                    <tr>
+                        <td><span class="fa fa-lock"></span></td>
+                        <td>SSL encryption:</td>
+                        <td>Yes</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+        <div class="membership-footer">
+            <a href="#" onclick="selectMembership(0);return false;">
+                <button type="button">Select</button>
+            </a>
+        </div>
+    </div>
+    <div class="membership membership1">
+        <div class="membership-header">
+            Silver
+        </div>
+        <div class="membership-body">
+            <div class="membership-pricing">$20.00 / month</div>
+            <div class="membership-description">
+                <table>
+                    <tr>
+                        <td><span class="fa fa-group"></span></td>
+                        <td>Students:</td>
+                        <td>20</td>
+                    </tr>
+                    <tr>
+                        <td><span class="fa fa-server"></span></td>
+                        <td>Storage space:</td>
+                        <td>5GB</td>
+                    </tr>
+                    <tr>
+                        <td><span class="fa fa-lock"></span></td>
+                        <td>SSL encryption:</td>
+                        <td>Yes</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+        <div class="membership-footer">
+            <a href="#" onclick="selectMembership(1);return false;">
+                <button type="button">Select</button>
+            </a>
+        </div>
+    </div>
+    <div class="membership membership2">
+        <div class="membership-header">
+            Gold
+        </div>
+        <div class="membership-body">
+            <div class="membership-pricing">$35.00 / month</div>
+            <div class="membership-description">
+                <table>
+                    <tr>
+                        <td><span class="fa fa-group"></span></td>
+                        <td>Students:</td>
+                        <td>50</td>
+                    </tr>
+                    <tr>
+                        <td><span class="fa fa-server"></span></td>
+                        <td>Storage space:</td>
+                        <td>7GB</td>
+                    </tr>
+                    <tr>
+                        <td><span class="fa fa-lock"></span></td>
+                        <td>SSL encryption:</td>
+                        <td>Yes</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+        <div class="membership-footer">
+            <a href="#" onclick="selectMembership(2);return false;">
+                <button type="button">Select</button>
+            </a>
+        </div>
+    </div>
+</div>
 
-<form method="POST" action="">
-    First name<br /><input type="text" name="firstName" /><br />
-    Last name<br /><input type="text" name="lastName" /><br />
-    Email<br /><input type="email" name="email" /><br />
-    Password<br /><input type="password" name="password" /><br />
-    Confirm password<br /><input type="password" name="confirmPassword" /><br />
-    <input type="submit" value="Sign Up" />
-</form>
-<br />
-@if (isset($errors))
-    @foreach ($errors as $key => $error)
-        {{ $key.': '.$error.'<br />' }}
-    @endforeach
-@endif
+<div class="signup">
+    <form id="signup-form" method="POST" action="">
+        <input type="hidden" id="membership" value="1" />
+        <div class="g-form-header">
+            Sign up
+        </div>
+
+        <div class="g-form-body">
+            <div class="g-form-input-row">
+                <label class="g-form-label">First name<span class="required">*</span></label>
+                <div class="g-form-input">
+                    <div class="input-icon">
+                        <i class="fa fa-warning"></i>
+                        <input type="text" id="firstName" name="firstName" placeholder="First name" />
+                    </div>
+                    <span class="input-message">First name is required.</span>
+                </div>
+            </div>
+
+            <div class="g-form-input-row">
+                <label class="g-form-label">Last name<span class="required">*</span></label>
+                <div class="g-form-input">
+                    <div class="input-icon">
+                        <i class="fa fa-warning"></i>
+                        <input type="text" id="lastName" name="lastName" placeholder="Last name" />
+                    </div>
+                    <span class="input-message">Last name is required.</span>
+                </div>
+            </div>
+
+            <div class="g-form-input-row">
+                <label class="g-form-label">Email<span class="required">*</span></label>
+                <div class="g-form-input">
+                    <div class="input-icon">
+                        <i class="fa fa-warning"></i>
+                        <input type="email" id="email" name="email" placeholder="Email" />
+                    </div>
+                    <span class="input-message">Email is required.</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="g-form-footer">
+            <button type="submit">Sign up</button>
+        </div>
+    </form>
+</div>
+
+<script src="/School/Applications/Frontend/Modules/Account/Views/js/signUpValidation.js"></script>
+
+<script type="text/javascript">
+currentMembership = 0;
+
+function selectMembership(membershipNumber) {
+    if (membershipNumber < 0 || membershipNumber > 2) {
+        membershipNumber = 0;
+    }
+
+    $('.membership' + currentMembership).removeClass('active');
+    currentMembership = membershipNumber;
+    $('.membership' + currentMembership).addClass('active');
+
+    $('#membership').val(currentMembership);
+}
+</script>

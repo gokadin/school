@@ -13,4 +13,19 @@ class IndexController extends BackController
     {
 
     }
+
+    public function testimonials()
+    {
+
+    }
+
+    public function faq()
+    {
+
+    }
+
+    public function contactUs()
+    {
+
+    }
 }
