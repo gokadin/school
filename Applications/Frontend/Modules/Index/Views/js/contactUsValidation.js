@@ -50,6 +50,16 @@ $(document).ready(function() {
             isValid = value('#' + key) && isValid;
         });
 
-        return isValid;
+        //return isValid;
+
+        // In reality the email would be processed and sent via PHP
+        // or other server side language.
+        // Therefore, we will simply print a message to the user for now.
+
+        if (isValid) {
+            alert('Thank you, your message was successfully sent!');
+        }
+
+        return false; // preventing form submission in all cases
     });
 });

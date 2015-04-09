@@ -213,30 +213,28 @@ footer .copyright
 
 .main-banner-images-container
 {
-    position: relative;
     text-align: center;
 }
 
-.banner-images img
+.banner-images div
 {
-    display: none;
-    position: absolute;
-    z-index: -1;
+    opacity: 1;
     top: 0;
     left: auto;
     max-width: 100%;
     height: auto;
+    transition: opacity 1s;
 }
 
-.banner-images img.active
+.banner-images div.active
 {
-    position: relative;
-    z-index: 0;
+    opacity: 1;
+    transition: opacity 1s;
 }
 
-img.banner-image1
+.banner-image1
 {
-    display: block;
+    background-image: url("/School/Web/images/slideshow1.png");
 }
 
 .banner-arrows a
@@ -307,6 +305,32 @@ a.next-arrow
 .banner-bullets a.active
 {
     background: #555;
+}
+
+.supported
+{
+    text-align: center;
+}
+
+.supported table
+{
+    border-collapse: collapse;
+}
+
+.supported table tr td
+{
+    border: 1px solid black;
+    width: 100px;
+    height: 100px;
+}
+
+.supported .name
+{
+    position: absolute;
+    display: inline-block;
+    width: 100px;
+    margin-left: -100px;
+    margin-top: 45px;
 }
 
 /* FEATURES */
@@ -1048,3 +1072,6 @@ a.next-arrow
         width: 500px;
     }
 }
+
+/* ABOUT US */
+

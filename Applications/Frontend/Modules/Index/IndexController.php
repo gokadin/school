@@ -24,6 +24,11 @@ class IndexController extends BackController
 
     }
 
+    public function about()
+    {
+
+    }
+
     public function contactUs()
     {
 

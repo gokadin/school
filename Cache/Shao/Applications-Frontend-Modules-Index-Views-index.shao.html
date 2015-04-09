@@ -1,9 +1,14 @@
 <div class="main-banner-container">
     <div class="main-banner-images-container">
         <div class="banner-images">
+            <!--
             <img class="banner-image1 active" src="/School/Web/images/slideshow1.png" />
             <img class="banner-image2" src="/School/Web/images/slideshow2.png" />
             <img class="banner-image3" src="/School/Web/images/slideshow3.png" />
+            -->
+            <div class="banner-image1 active"></div>
+            <div class="banner-image2"></div>
+            <div class="banner-image3"></div>
         </div>
         <div class="banner-arrows">
             <a href="#" onclick="showPreviousImage();return false;" class="previous-arrow">&lt;</a>
@@ -17,7 +22,47 @@
     </div>
 </div>
 
-Add SUPPORTED school types table
+<div class="supported">
+    <table cellspacing="0">
+    <tbody>
+        <tr>
+            <td>
+                <img src="" width="100" height="100" />
+                <div class="name">Name1</div>
+            </td>
+            <td>
+                <img src="" width="100" height="100" />
+                <div class="name">Name2</div>
+            </td>
+            <td>
+
+            </td>
+        </tr>
+        <tr>
+            <td>
+
+            </td>
+            <td>
+
+            </td>
+            <td>
+
+            </td>
+        </tr>
+        <tr>
+            <td>
+
+            </td>
+            <td>
+
+            </td>
+            <td>
+
+            </td>
+        </tr>
+    </tbody>
+    </table>
+</div>
 
 <script type="text/javascript">
 var bannerTimer = 0;
@@ -48,7 +93,7 @@ function showNextImage() {
     addActiveBannerImage();
 }
 
-function changeImage(imageNumber) {alert('fsa');
+function changeImage(imageNumber) {
     if (imageNumber == currentImage) {
         return;
     }
@@ -78,7 +123,7 @@ function addActiveBannerImage()
 function resetBannerTimer()
 {
     clearInterval(bannerTimer);
-    bannerTimer = setInterval(function() { showNextImage(); }, 1000);
+    //bannerTimer = setInterval(function() { showNextImage(); }, 1000);
 }
 
 $(function() {
