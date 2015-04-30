@@ -42,8 +42,37 @@ class Tables
 
         $t->increments('id');
         $t->integer('school_id');
-        $t->integer('plan', 5)->default(1);
+        $t->integer('subscription_id');
         $t->integer('type', 5)->default(1);
+
+        return $t;
+    }
+
+    public function temp_users()
+    {
+        $t = new Table('TempUser');
+
+        $t->increments('id');
+        $t->integer('subscription_id');
+        $t->integer('type', 5)->default(1);
+        $t->string('first_name');
+        $t->string('last_name');
+        $t->string('email');
+        $t->string('confirmation_code');
+        $t->timestamps();
+
+        return $t;
+    }
+
+    protected function subscriptions()
+    {
+        $t = new Table('Subscription');
+
+        $t->increments('id');
+        $t->integer('type', 5)->default(1);
+        $t->decimal('custom_rate', 6, 2)->default(-1.0);
+        $t->integer('period', 5)->default(1);
+        $t->timestamps();
 
         return $t;
     }

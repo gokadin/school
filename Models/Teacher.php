@@ -11,6 +11,11 @@ class Teacher extends Model
         return $this->morphOne('User');
     }
 
+    public function subscription()
+    {
+        return $this->hasOne('Subscription');
+    }
+
     public function students()
     {
         return $this->hasMany('Student');

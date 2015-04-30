@@ -8,8 +8,10 @@ use Library\Facades\Session;
 use Models\Address;
 use Models\School;
 use Models\Teacher;
+use Models\TempUser;
 use Models\User;
 use Models\UserSetting;
+use Models\Subscription;
 
 class AccountController extends BackController
 {
@@ -61,19 +63,61 @@ class AccountController extends BackController
             Response::back();
         }
 
+        $subscription = Subscription::create(['type' => Request::postData('subscriptionType')]);
+
+
+
+        Response::toAction('Frontend#Account#signUpLand');
+    }
+
+    public function signUpLand()
+    {
+
+    }
+
+    public function emailConfirmation()
+    {
+        $error = null;
+
+        if (!TempUser::exists('id', Request::postData('id')))
+            $error = 'Your account no longer exists in our database.';
+
+        $tempUser = TempUser::find(Request::getData('id'));
+
+        if ($tempUser->code !== Request::getData('code'))
+            $error = 'The confirmation code is invalid.';
+
+        if ($error != null)
+            Page::add('error', $error);
+        else
+            Page::add('tempUser', $tempUser);
+    }
+
+    public function completeRegistration()
+    {
+        if (!TempUser::exists('id', Request::postData('tempUserId')))
+        {
+            Session::setErrors(['Your account no longer exists in our database.']);
+            Response::back();
+        }
+
         if (Request::postData('password') != Request::postData('confirmPassword'))
         {
             Session::setErrors(['Passwords don\'t match.']);
             Response::back();
         }
 
+        $tempUser = TempUser::find(Request::postData('tempUserId'));
+
         $schoolAddress = Address::create();
         $school = School::create(['name' => 'Your School', 'address_id' => $schoolAddress->id]);
         $userAddress = Address::create();
         $userSetting = UserSetting::create();
+        $subscription = Subscription::find($tempUser->subscription_id);
 
         $user = new Teacher();
         $user->school_id = $school->id;
+        $user->subscription_id = $subscription->id;
         $user->address_id = $userAddress->id;
         $user->user_setting_id = $userSetting->id;
         $user->first_name = Request::postData('firstName');
@@ -82,11 +126,6 @@ class AccountController extends BackController
         $user->password = md5(Request::postData('password'));
         $user->save();
 
-        Response::toAction('Frontend#Account#signUpLand');
-    }
-
-    public function signUpLand()
-    {
-
+        Response::toAction('Frontend#Account#login');
     }
 }

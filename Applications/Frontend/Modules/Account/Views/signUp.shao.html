@@ -26,7 +26,7 @@
             </div>
         </div>
         <div class="membership-footer">
-            <a href="#" onclick="selectMembership(0);return false;">
+            <a href="#" onclick="selectSubscription(0);return false;">
                 <button type="button">Select</button>
             </a>
         </div>
@@ -58,7 +58,7 @@
             </div>
         </div>
         <div class="membership-footer">
-            <a href="#" onclick="selectMembership(1);return false;">
+            <a href="#" onclick="selectSubscription(1);return false;">
                 <button type="button">Select</button>
             </a>
         </div>
@@ -90,7 +90,7 @@
             </div>
         </div>
         <div class="membership-footer">
-            <a href="#" onclick="selectMembership(2);return false;">
+            <a href="#" onclick="selectSubscription(2);return false;">
                 <button type="button">Select</button>
             </a>
         </div>
@@ -99,7 +99,7 @@
 
 <div class="signup">
     <form id="signup-form" method="POST" action="">
-        <input type="hidden" id="membership" value="1" />
+        <input type="hidden" id="subscription" name="subscriptionType" value="1" />
         <div class="g-form-header">
             Sign up
         </div>
@@ -148,17 +148,17 @@
 <script src="/School/Applications/Frontend/Modules/Account/Views/js/signUpValidation.js"></script>
 
 <script type="text/javascript">
-currentMembership = 0;
+currentSubscription = 0;
 
-function selectMembership(membershipNumber) {
-    if (membershipNumber < 0 || membershipNumber > 2) {
-        membershipNumber = 0;
+function selectSubscription(subscriptionNumber) {
+    if (subscriptionNumber < 0 || subscriptionNumber > 2) {
+        subscriptionNumber = 0;
     }
 
-    $('.membership' + currentMembership).removeClass('active');
-    currentMembership = membershipNumber;
-    $('.membership' + currentMembership).addClass('active');
+    $('.membership' + currentSubscription).removeClass('active');
+    currentSubscription = subscriptionNumber;
+    $('.membership' + currentSubscription).addClass('active');
 
-    $('#membership').val(currentMembership);
+    $('#subscription').val(currentSubscription);
 }
 </script>
