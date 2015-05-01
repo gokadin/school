@@ -18,6 +18,8 @@
         <route url="/School/account/signup-land" method="GET" module="Account" action="signUpLand" />
         <route url="/School/account/confirm" method="GET" module="Account" action="emailConfirmation" vars="code" />
         <route url="/School/account/confirm" method="POST" module="Account" action="completeRegistration" />
+        <!-- AJAX MODULE -->
+        <route url="/School/ajax/email-exists" method="POST" module="Ajax" action="emailExists" />
     </application>
 
     <application name="School">

@@ -65,7 +65,7 @@ class AccountController extends BackController
 
         $subscription = Subscription::create(['type' => Request::postData('subscriptionType')]);
 
-
+        // ...
 
         Response::toAction('Frontend#Account#signUpLand');
     }

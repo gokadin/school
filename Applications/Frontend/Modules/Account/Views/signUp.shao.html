@@ -135,6 +135,7 @@
                         <input type="email" id="email" name="email" placeholder="Email" />
                     </div>
                     <span class="input-message">Email is required.</span>
+                    <span class="input-message">Email is already registered.</span>
                 </div>
             </div>
         </div>
@@ -148,7 +149,7 @@
 <script src="/School/Applications/Frontend/Modules/Account/Views/js/signUpValidation.js"></script>
 
 <script type="text/javascript">
-currentSubscription = 0;
+var currentSubscription = 0;
 
 function selectSubscription(subscriptionNumber) {
     if (subscriptionNumber < 0 || subscriptionNumber > 2) {
