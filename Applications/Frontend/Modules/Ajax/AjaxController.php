@@ -10,6 +10,10 @@ class AjaxController extends BackController
 {
     public function emailExists()
     {
-        echo User::exists('email', Request::postData('email'));
+        if (Request::postData('csrfToken') == '1234')
+        echo true;
+        else
+        echo false;
+        //echo User::exists('email', Request::postData('email'));
     }
 }

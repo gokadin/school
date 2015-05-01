@@ -11,9 +11,14 @@ class Session
     const SHOULD_CLEAR_ERRORS_KEY = 'shouldClearErrors';
     const FLASH_KEY = 'flash';
     const SHOULD_CLEAR_FLASH_KEY = 'shouldClearFlash';
+    const CURRENT_CSRF_KEY = 'currentCsrfToken';
+    const NEXT_CSRF_KEY = 'nextCsrfToken';
+    const SHOULD_CLEAR_CSRF_TOKEN_KEY = 'shouldClearCsrfToken';
 
     public function __construct()
     {
+        $this->rotateCsrf();
+        
         if (!$this->shouldClearErrors())
             $_SESSION[self::SHOULD_CLEAR_ERRORS_KEY] = true;
         else
@@ -120,5 +125,33 @@ class Session
             return false;
 
         return $_SESSION[self::SHOULD_CLEAR_FLASH_KEY];
+    }
+    
+    private function shouldClearCsrfToken()
+    {
+        if (!isset($_SESSION[self::SHOULD_CLEAR_CSRF_TOKEN]))
+            return false;
+
+        return $_SESSION[self::SHOULD_CLEAR_CSRF_TOKEN];
+    }
+    
+    private function rotateCsrf()
+    {
+        if (isset($_SESSION[self::NEXT_CSRF_KEY]))
+            $_SESSION[self::CURRENT_CSRF_KEY] = $_SESSION[self::NEXT_CSRF_KEY];
+            
+        $_SESSION[self::NEXT_CSRF_KEY] = md5(uniqid(rand(), true));
+    }
+    
+    public function currentCsrfToken()
+    {
+        if (isset($_SESSION[self::CURRENT_CSRF_KEY]))
+            return $_SESSION[self::CURRENT_CSRF_KEY];
+    }
+    
+    public function nextCsrfToken()
+    {
+        if (isset($_SESSION[self::NEXT_CSRF_KEY]))
+            return $_SESSION[self::NEXT_CSRF_KEY];
     }
 }

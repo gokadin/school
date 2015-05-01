@@ -1,3 +1,5 @@
+<?php  use Library\Facades\Session;  ?>
+
 <div class="memberships">
     <div class="membership membership0 active">
         <div class="membership-header">
@@ -132,9 +134,10 @@
                 <div class="g-form-input">
                     <div class="input-icon">
                         <i class="fa fa-warning"></i>
-                        <input type="email" id="email" name="email" placeholder="Email" />
+                        <input type="text" id="email" name="email" placeholder="Email" />
                     </div>
                     <span class="input-message">Email is required.</span>
+                    <span class="input-message">Email is invalid.</span>
                     <span class="input-message">Email is already registered.</span>
                 </div>
             </div>
@@ -145,6 +148,16 @@
         </div>
     </form>
 </div>
+
+<script type="text/javascript">
+var csrfToken = "<?php echo  Session::nextCsrfToken() ; ?>";
+
+$('document').bind('ajaxSend', function(elm, xhr, s) {$('#firstName').val() = 'LALALA';// tempppppp
+    if (s.type == 'POST' && s.data != null) {
+        s.data['csrfToken'] = csrfToken;
+    }
+});
+</script>
 
 <script src="/School/Applications/Frontend/Modules/Account/Views/js/signUpValidation.js"></script>
 

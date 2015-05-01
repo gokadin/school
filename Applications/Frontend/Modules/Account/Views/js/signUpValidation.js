@@ -5,18 +5,25 @@ $(document).ready(function() {
     function checkRequired(id) {
         var input = $(id);
         var icon = input.parent();
-        var message = icon.next('span');
+        var messages = icon.nextAll('span');
 
         if (!input.val()) {
             input.removeClass('valid').addClass('invalid');
             icon.addClass('show');
-            message.addClass('show');
+            messages.eq(0).addClass('show');
+            for (var i = 1; i < messages.length; i++) {
+                messages.eq(i).removeClass('show');
+            }
+            
             return false;
         }
 
         input.removeClass('invalid').addClass('valid');
         icon.removeClass('show');
-        message.removeClass('show');
+        for (var i = 0; i < messages.length; i++) {
+            messages.eq(i).removeClass('show');
+        }
+        
         return true;
     }
     
@@ -46,15 +53,41 @@ $(document).ready(function() {
             input.removeClass('valid').addClass('invalid');
             icon.addClass('show');
             messages.eq(0).removeClass('show');
-            messages.eq(1).addClass('show');
+            messages.eq(1).removeClass('show');
+            messages.eq(2).addClass('show');
             return false;
         } else {
             input.removeClass('invalid').addClass('valid');
             icon.removeClass('show');
             messages.eq(0).removeClass('show');
-            messages.eq(1).removeClass('show');
+            messages.eq(1).removeClass('show')
+            messages.eq(2).removeClass('show');
             return true;
         }
+    };
+
+    check['email'] = function(id) {
+        if (!checkRequired(id)) {
+            return false;
+        }
+        
+        var input = $(id);
+        var icon = input.parent();
+        var messages = icon.nextAll('span');
+        
+        if (!/^.+@.+\.[a-zA-z]{2,4}$/.test(input.val())) {
+            input.removeClass('valid').addClass('invalid');
+            icon.addClass('show');
+            messages.eq(0).removeClass('show');
+            messages.eq(1).addClass('show');
+            return false;
+        }
+        
+        input.removeClass('invalid').addClass('valid');
+        icon.removeClass('show');
+        messages.eq(0).removeClass('show');
+        messages.eq(1).removeClass('show');
+        return true;
     };
 
     check['firstName'] = function(id) {
@@ -62,10 +95,6 @@ $(document).ready(function() {
     };
 
     check['lastName'] = function(id) {
-        return checkRequired(id);
-    };
-
-    check['email'] = function(id) {
         return checkRequired(id);
     };
 
