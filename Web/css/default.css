@@ -12,3 +12,25 @@ a:hover, a:active, a:focus {
 {
     z-index: 1050;
 }
+
+input[type="file"]:focus, 
+input[type="radio"]:focus, 
+input[type="checkbox"]:focus
+{
+    outline: none;
+}
+
+/* DEFAULT LAYOUTS */
+
+.default-center
+{
+    margin-left: 2%;
+    margin-right: 2%;
+    margin-top: 20px;
+}
+
+@media (min-width: 768px)
+{
+    margin-left: 20%;
+    margin-right: 20%;
+}

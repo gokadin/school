@@ -891,3 +891,32 @@ Footer Layouts (new in v1.3)
 {
     display: inline-block;
 }
+
+/* TEACHER ACCOUNT SUBSCRIPTION */
+
+.subscription-option
+{
+    border: 1px solid black;
+    height: 100px;
+    width: 100%;
+    margin-bottom: 15px;
+    border-radius: 6px;
+    clear: both;
+}
+
+.subscription-option label
+{
+    height: 100px;
+    width: 100%;
+}
+
+.subscription-option label:hover
+{
+    cursor: pointer;
+}
+
+.subscription-option label input
+{
+    height: 100px;
+    margin-left: 20px;
+}
