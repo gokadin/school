@@ -41,6 +41,12 @@ body {
     padding: 0px;
 }
 
+.navbar-inverse .navbar-brand, 
+.navbar-inverse .navbar-nav > li > a 
+{
+    color: #B8B8B8;
+}
+
 .navbar-nav > li > a
 {
     padding: 0px;
@@ -62,7 +68,7 @@ body {
 {
     .navbar-nav > li > a
     {
-        ;
+        
     }
 }
 

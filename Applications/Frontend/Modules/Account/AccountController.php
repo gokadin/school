@@ -64,33 +64,41 @@ class AccountController extends BackController
         }
 
         $subscription = Subscription::create(['type' => Request::postData('subscriptionType')]);
+        $confirmationCode = md5(rand(999, 999999));
 
-        // ...
-
+        $tempUser = new TempUser();
+        $tempUser->subscription_id = $subscription->id;
+        $tempUser->first_name = Request::postData('firstName');
+        $tempUser->last_name = Request::postData('lastName');
+        $tempUser->email = Request::postData('email');
+        $tempUser->confirmation_code = $confirmationCode;
+        $tempUser->save();
+Session::setFlash($confirmationCode); // TEMP**************
         Response::toAction('Frontend#Account#signUpLand');
     }
 
     public function signUpLand()
     {
-
+        Page::add('confn', Session::getFlash()); // TEMP
     }
 
     public function emailConfirmation()
     {
-        $error = null;
-
-        if (!TempUser::exists('id', Request::postData('id')))
-            $error = 'Your account no longer exists in our database.';
+        if (!TempUser::exists('id', Request::getData('id')))
+        {
+            Page::add('error', 'Your account no longer exists in our database.');
+            return;   
+        }
 
         $tempUser = TempUser::find(Request::getData('id'));
 
-        if ($tempUser->code !== Request::getData('code'))
-            $error = 'The confirmation code is invalid.';
+        if ($tempUser->confirmation_code !== Request::getData('code'))
+        {
+            Page::add('error', 'The confirmation code is invalid.');
+            return;
+        }
 
-        if ($error != null)
-            Page::add('error', $error);
-        else
-            Page::add('tempUser', $tempUser);
+        Page::add('tempUser', $tempUser);
     }
 
     public function completeRegistration()
@@ -115,17 +123,27 @@ class AccountController extends BackController
         $userSetting = UserSetting::create();
         $subscription = Subscription::find($tempUser->subscription_id);
 
-        $user = new Teacher();
-        $user->school_id = $school->id;
-        $user->subscription_id = $subscription->id;
-        $user->address_id = $userAddress->id;
-        $user->user_setting_id = $userSetting->id;
-        $user->first_name = Request::postData('firstName');
-        $user->last_name = Request::postData('lastName');
-        $user->email = Request::postData('email');
-        $user->password = md5(Request::postData('password'));
-        $user->save();
+        $teacher = new Teacher();
+        $teacher->school_id = $school->id;
+        $teacher->subscription_id = $subscription->id;
+        $teacher->address_id = $userAddress->id;
+        $teacher->user_setting_id = $userSetting->id;
+        $teacher->first_name = $tempUser->first_name;
+        $teacher->last_name = $tempUser->last_name;
+        $teacher->email = $tempUser->email;
+        $teacher->password = md5(Request::postData('password'));
+        $teacher->save();
 
-        Response::toAction('Frontend#Account#login');
+        $user = User::where('email', '=', $teacher->email)
+            ->where('password', '=', $teacher->password)
+            ->get()->first();
+
+        if ($user != null)
+        {
+            Session::login($user->id);
+            Response::toAction('School#Teacher/Index#index');
+        }
+        else
+            Response::toAction('Frontend#Account#index');
     }
 }

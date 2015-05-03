@@ -154,4 +154,9 @@ class Session
         if (isset($_SESSION[self::NEXT_CSRF_KEY]))
             return $_SESSION[self::NEXT_CSRF_KEY];
     }
+    
+    public function validateCsrfToken($token)
+    {
+        return $token === $_SESSION[self::CURRENT_CSRF_KEY];
+    }
 }

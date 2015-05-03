@@ -34,7 +34,7 @@ $(document).ready(function() {
             messages.eq(0).addClass('show');
             messages.eq(1).removeClass('show');
             return false;
-        } else if (input.val() == $('#password').val()) {
+        } else if (input.val() != $('#password').val()) {
             input.removeClass('valid').addClass('invalid');
             icon.addClass('show');
             messages.eq(0).removeClass('show');

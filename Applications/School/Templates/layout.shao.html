@@ -40,9 +40,8 @@
                             {{ $currentUser->name() }}&nbsp;<b class="caret"></b>
                         </a>
                         <ul class="dropdown-menu">
-                            <li><a href="#">Action</a></li>
-                            <li><a href="#">Another action</a></li>
-                            <li><a href="#">Something else here</a></li>
+                            <li><a href="@path('School#Teacher/Account#index')">My Account</a></li>
+                            <li><a href="#">Settings</a></li>
                             <li class="divider"></li>
                             <li><a href="@path('Frontend#Account#logout')">Log out</a></li>
                         </ul>
@@ -184,20 +183,14 @@
                         </li>
                     </ul>
                 </li>
-                <li>
-                    <a href="javascript:;">
+                <li class="@if ($module == 'Teacher/Account') active @endif">
+                    <a href="@path('School#Teacher/Account#index')">
                         <i class="fa fa-user"></i>
                         <span class="title">My Account</span>
-                        <span class="arrow"></span>
+                        @if ($module == 'Teacher/Account')
+                            <span class="selected"></span>
+                        @endif
                     </a>
-                    <ul class="sub-menu">
-                        <li>
-                            <a href="#">Example</a>
-                        </li>
-                        <li>
-                            <a href="#">Example</a>
-                        </li>
-                    </ul>
                 </li>
                 <li class="last @if ($module == 'Teacher/Setting') active @endif">
                     <a href="#">

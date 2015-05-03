@@ -4,16 +4,13 @@ error_reporting(0);
 
 use Library\BackController;
 use Library\Facades\Request;
+use Library\Facades\Session;
 use Models\User;
 
 class AjaxController extends BackController
 {
     public function emailExists()
     {
-        if (Request::postData('csrfToken') == '1234')
-        echo true;
-        else
-        echo false;
-        //echo User::exists('email', Request::postData('email'));
+        echo User::exists('email', Request::postData('email'));
     }
 }

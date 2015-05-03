@@ -727,6 +727,19 @@ a.next-arrow
     }
 }
 
+.g-form-text
+{
+    display: inline-block;
+    clear: both;
+    display: none;
+    text-align: left;
+    font-size: 22px;
+    line-height: 40px;
+    width: 160px;
+    margin-left: 10px;
+    color: #999;
+}
+
 .g-form-input
 {
     display: inline-block;
@@ -1075,3 +1088,26 @@ a.next-arrow
 
 /* ABOUT US */
 
+/* confirm */
+
+.emailConfirmation
+{
+    width: 300px;
+    margin: 0 auto;
+    margin-top: 40px;
+    border: 5px solid #ccc;
+    border-radius: 20px;
+}
+
+@media (min-width: 768px)
+{
+    .emailConfirmation
+    {
+        width: 550px;
+    }
+}
+
+.emailConfirmation .g-form-label
+{
+    width: 200px;
+}

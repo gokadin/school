@@ -57,7 +57,7 @@ class Application
             if ($e->getCode() == \Library\Router::NO_ROUTE)
                 Response::redirect404();
         }
-
+        
         $_GET = array_merge($_GET, $matchedRoute->vars());
 
         $controllerPrefix = $matchedRoute->module();

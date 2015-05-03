@@ -19,6 +19,7 @@ class RouteTest extends BaseTest
         // Assert
         $this->assertTrue($matches1);
         $this->assertTrue($matches2);
+        $this->assertEquals(10, $route2->vars()['one']);
     }
 
     public function testThatActionsAreCorrectlyMatched()

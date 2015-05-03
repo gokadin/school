@@ -40,9 +40,8 @@
                             <?php echo  $currentUser->name() ; ?>&nbsp;<b class="caret"></b>
                         </a>
                         <ul class="dropdown-menu">
-                            <li><a href="#">Action</a></li>
-                            <li><a href="#">Another action</a></li>
-                            <li><a href="#">Something else here</a></li>
+                            <li><a href="/School/school/teacher/account">My Account</a></li>
+                            <li><a href="#">Settings</a></li>
                             <li class="divider"></li>
                             <li><a href="/School/account/logout">Log out</a></li>
                         </ul>
@@ -184,20 +183,14 @@
                         </li>
                     </ul>
                 </li>
-                <li>
-                    <a href="javascript:;">
+                <li class="<?php if ($module == 'Teacher/Account') { ?> active <?php } ?>">
+                    <a href="/School/school/teacher/account">
                         <i class="fa fa-user"></i>
                         <span class="title">My Account</span>
-                        <span class="arrow"></span>
+                        <?php if ($module == 'Teacher/Account') { ?>
+                            <span class="selected"></span>
+                        <?php } ?>
                     </a>
-                    <ul class="sub-menu">
-                        <li>
-                            <a href="#">Example</a>
-                        </li>
-                        <li>
-                            <a href="#">Example</a>
-                        </li>
-                    </ul>
                 </li>
                 <li class="last <?php if ($module == 'Teacher/Setting') { ?> active <?php } ?>">
                     <a href="#">

@@ -26,16 +26,37 @@ class Route
     }
 
     public function match($appName, $url, $method)
-    {
+    {   
+        if (strcasecmp($method, $this->method) != 0 || strcasecmp($appName, $this->appName) != 0)
+        {
+            return false;
+        }
+        
         $substituteUrl = $this->url;
         if ($this->hasVars())
         {
-            $substituteUrl = preg_replace('/({[0-9]})/', '(.+)', $this->url);
+            
+            
+            $substituteUrl = preg_replace('({[0-9]+})', '(.+)', $this->url);
+        }
+        
+        if (preg_match('`^' . strtolower($substituteUrl) . '$`', strtolower($url), $matches) != 1)
+        {
+            return false;
         }
 
-        return preg_match('`^' . strtolower($substituteUrl) . '$`', strtolower($url), $matches) == 1 &&
-            strcasecmp($method, $this->method) == 0 &&
-            strcasecmp($appName, $this->appName) == 0;
+        preg_match_all('{([0-9]+)}', $this->url, $seqMatches);
+        for ($i = 0; $i < sizeof($seqMatches[1]); $i++)
+        {
+            $varSequence[] = $seqMatches[1][$i];
+        }
+
+        for ($i = 1; $i < sizeof($matches); $i++)
+        {
+            $this->vars[$this->varsNames[$varSequence[$i - 1]]] = $matches[$i];
+        }
+        
+        return true;
     }
 
     public function matchAction($appName, $module, $action)
@@ -49,7 +70,7 @@ class Route
     {
         if (!$this->hasVars())
             return $this->url;
-
+            
         if (!is_array($args))
         {
             return preg_replace('/({[0-9]+})/', $args, $this->url);

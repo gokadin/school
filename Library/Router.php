@@ -32,7 +32,7 @@ class Router
 
                 if ($route->hasAttribute('vars'))
                     $vars = explode(',', $route->getAttribute('vars'));
-
+                    
                 $vars = array_map('trim', $vars);
                 $this->routes[] = (new Route(
                     $appName,
@@ -52,7 +52,10 @@ class Router
         foreach ($this->routes as $route)
         {
             if ($route->match($appName, $url, $method))
+            {
+                $route->resolveUrl($_SERVER['REQUEST_URI']);
                 return $route;
+            }
         }
 
         throw new RuntimeException('No routes found corresponding to the URL', self::NO_ROUTE);

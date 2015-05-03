@@ -1,7 +1,5 @@
-{{{ use Library\Facades\Session; }}}
-
 <div class="memberships">
-    <div class="membership membership0 active">
+    <div class="membership membership1 active">
         <div class="membership-header">
             Basic
         </div>
@@ -28,12 +26,12 @@
             </div>
         </div>
         <div class="membership-footer">
-            <a href="#" onclick="selectSubscription(0);return false;">
+            <a href="#" onclick="selectSubscription(1);return false;">
                 <button type="button">Select</button>
             </a>
         </div>
     </div>
-    <div class="membership membership1">
+    <div class="membership membership2">
         <div class="membership-header">
             Silver
         </div>
@@ -60,12 +58,12 @@
             </div>
         </div>
         <div class="membership-footer">
-            <a href="#" onclick="selectSubscription(1);return false;">
+            <a href="#" onclick="selectSubscription(2);return false;">
                 <button type="button">Select</button>
             </a>
         </div>
     </div>
-    <div class="membership membership2">
+    <div class="membership membership3">
         <div class="membership-header">
             Gold
         </div>
@@ -92,7 +90,7 @@
             </div>
         </div>
         <div class="membership-footer">
-            <a href="#" onclick="selectSubscription(2);return false;">
+            <a href="#" onclick="selectSubscription(3);return false;">
                 <button type="button">Select</button>
             </a>
         </div>
@@ -149,24 +147,14 @@
     </form>
 </div>
 
-<script type="text/javascript">
-var csrfToken = "{{ Session::nextCsrfToken() }}";
-
-$('document').bind('ajaxSend', function(elm, xhr, s) {$('#firstName').val() = 'LALALA';// tempppppp
-    if (s.type == 'POST' && s.data != null) {
-        s.data['csrfToken'] = csrfToken;
-    }
-});
-</script>
-
 <script src="/School/Applications/Frontend/Modules/Account/Views/js/signUpValidation.js"></script>
 
 <script type="text/javascript">
-var currentSubscription = 0;
+var currentSubscription = 1;
 
 function selectSubscription(subscriptionNumber) {
-    if (subscriptionNumber < 0 || subscriptionNumber > 2) {
-        subscriptionNumber = 0;
+    if (subscriptionNumber < 1 || subscriptionNumber > 3) {
+        subscriptionNumber = 1;
     }
 
     $('.membership' + currentSubscription).removeClass('active');

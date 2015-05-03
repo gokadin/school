@@ -364,7 +364,7 @@ class Model implements ModelQueryContract
     {
         foreach ($this->columns as $column) {
             if ($column->isRequired() && !isset($this->vars[$column->getName()]))
-                return true;
+                return true;   
         }
 
         return false;

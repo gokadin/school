@@ -16,7 +16,7 @@
         <route url="/School/account/signup" method="GET" module="Account" action="signUp" />
         <route url="/School/account/signup" method="POST" module="Account" action="registerUser" />
         <route url="/School/account/signup-land" method="GET" module="Account" action="signUpLand" />
-        <route url="/School/account/confirm" method="GET" module="Account" action="emailConfirmation" vars="code" />
+        <route url="/School/account/confirm/{0}-{1}" method="GET" module="Account" action="emailConfirmation" vars="id,code" />
         <route url="/School/account/confirm" method="POST" module="Account" action="completeRegistration" />
         <!-- AJAX MODULE -->
         <route url="/School/ajax/email-exists" method="POST" module="Ajax" action="emailExists" />
@@ -43,6 +43,8 @@
         <!-- TEACHER PAYMENT MODULE -->
         <route url="/School/school/teacher/payment" method="GET" module="Teacher/Payment" action="index" />
         <route url="/School/school/teacher/payment" method="POST" module="Teacher/Payment" action="test" />
+        <!-- TEACHER ACCOUNT MODULE -->
+        <route url="/School/school/teacher/account" method="GET" module="Teacher/Account" action="index" />
         <!-- TEACHER AJAX MODULE -->
         <route url="/School/school/teacher/ajax/email-exists" method="POST" module="Teacher/Ajax" action="emailExists" />
 
