@@ -47,6 +47,16 @@ body {
     color: #B8B8B8;
 }
 
+.top-nav-subscription
+{
+    color: #35AA47 !important;
+}
+
+.top-nav-subscription:hover
+{
+    color: #FFF !important;
+}
+
 .navbar-nav > li > a
 {
     padding: 0px;

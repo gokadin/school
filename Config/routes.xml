@@ -45,6 +45,7 @@
         <route url="/School/school/teacher/payment" method="POST" module="Teacher/Payment" action="test" />
         <!-- TEACHER ACCOUNT MODULE -->
         <route url="/School/school/teacher/account" method="GET" module="Teacher/Account" action="index" />
+        <route url="/School/school/teacher/account/subscription" method="GET" module="Teacher/Account" action="subscription" />
         <!-- TEACHER AJAX MODULE -->
         <route url="/School/school/teacher/ajax/email-exists" method="POST" module="Teacher/Ajax" action="emailExists" />
 

@@ -8,4 +8,9 @@ class AccountController extends BackController
 	{
 		
 	}
+	
+	public function subscription()
+	{
+		
+	}
 }

@@ -76,7 +76,8 @@ class Subscription extends Model
         if ($this->trialLength() == null) return null;
         if ($this->trialLength() === -1) return -1;
 
-        $daysLeft = self::TRIAL_DURATION_DAYS - $this->created_at->diff(Carbon::now())->days;
+        $created_at = new Carbon($this->created_at);
+        $daysLeft = self::TRIAL_DURATION_DAYS - $created_at->diff(Carbon::now())->days;
 
         if ($daysLeft < 0)
             $daysLeft = 0;
