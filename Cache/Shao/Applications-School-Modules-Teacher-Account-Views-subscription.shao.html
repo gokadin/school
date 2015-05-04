@@ -1,25 +1,59 @@
+<?php  use Models\Subscription;  ?>
+
 <div class="default-center">
-	<form action="" method="POST">
-		<div class="subscription-option">
-			<label>
-				<span>
-					<input type="radio" name="subscriptionType" value="1" />
-				</span>
-			</label>
-		</div>
-		<div class="subscription-option">
-			<label>
-				<span>
-					<input type="radio" name="subscriptionType" value="1" />
-				</span>
-			</label>
-		</div>
-		<div class="subscription-option">
-			<label>
-				<span>
-					<input type="radio" name="subscriptionType" value="1" />
-				</span>
-			</label>
-		</div>
+	<form id="subscription-form" action="" method="POST">
+		<?php for ($i = 1; $i < Subscription::SUBSCRIPTION_COUNT + 1; $i++) { ?>
+			<div class="subscription-option subscription-option-<?php echo  $i ; ?>">
+				<label>
+					<span>
+						<input type="radio" name="subscriptionType" value="<?php echo  $i ; ?>" <?php if ($subscription->type == $i) { ?> checked <?php } ?>/>
+					</span>
+					<span>
+						<?php echo  $subscription->name($i) ; ?>
+					</span>
+					<span>
+						ds
+					</span>
+					<span>
+						ds
+					</span>
+				</label>
+			</div>
+		<?php } ?>
 	</form>
 </div>
+
+<script type="text/javascript">
+$(function() {
+	$('#subscription-form :input[name="subscriptionType"]:checked')
+		.parent().parent().parent().addClass('active');
+})
+	
+$('.subscription-option-1').on('click', function(e) {
+	removeActiveClasses();
+	$('.subscription-option-1').addClass('active');
+});
+
+$('.subscription-option-2').on('click', function(e) {
+	removeActiveClasses();
+	$('.subscription-option-2').addClass('active');
+});
+
+$('.subscription-option-3').on('click', function(e) {
+	removeActiveClasses();
+	$('.subscription-option-3').addClass('active');
+});
+
+$('.subscription-option-4').on('click', function(e) {
+	removeActiveClasses();
+	$('.subscription-option-4').addClass('active');
+});
+
+function removeActiveClasses()
+{
+	for (var i = 1; i <= 4; i++)
+	{
+		$('.subscription-option-' + i).removeClass('active');
+	}
+}
+</script>

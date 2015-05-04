@@ -902,6 +902,13 @@ Footer Layouts (new in v1.3)
     margin-bottom: 15px;
     border-radius: 6px;
     clear: both;
+    background-color: #E2FFC6;
+}
+
+.subscription-option:hover, 
+.subscription-option.active
+{
+    background-color: #B8E68A
 }
 
 .subscription-option label
@@ -919,4 +926,34 @@ Footer Layouts (new in v1.3)
 {
     height: 100px;
     margin-left: 20px;
+    margin-right: 20px;
+}
+
+.subscription-option span
+{
+    float: left;
+    height: 100px;
+}
+
+.subscription-option span:first-child
+{
+    width: 50px;
+}
+
+.subscription-option span:nth-child(2)
+{
+    width: 100px;
+    line-height: 100px;
+    margin-left: 10px;
+    font-size: 27px;
+}
+
+.subscription-option span:nth-child(3)
+{
+    width: 50px;
+}
+
+.subscription-option span:last-child
+{
+    width: 50px;
 }
