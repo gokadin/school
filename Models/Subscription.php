@@ -12,15 +12,15 @@ class Subscription extends Model
     const SUB_1_NUM_STUDENTS = 5;
     const SUB_1_STORAGE = 1;
     const SUB_2_NAME = 'Silver';
-    const SUB_2_DEFAULT_RATE = 15.0;
+    const SUB_2_DEFAULT_RATE = 14.99;
     const SUB_2_NUM_STUDENTS = 20;
-    const SUB_2_STORAGE = 4;
+    const SUB_2_STORAGE = 5;
     const SUB_3_NAME = 'Gold';
-    const SUB_3_DEFAULT_RATE = 25.0;
+    const SUB_3_DEFAULT_RATE = 24.99;
     const SUB_3_NUM_STUDENTS = 50;
     const SUB_3_STORAGE = 7;
     const SUB_4_NAME = 'Platinum';
-    const SUB_4_DEFAULT_RATE = 25.0;
+    const SUB_4_DEFAULT_RATE = 39.99;
     const SUB_4_NUM_STUDENTS = -1;
     const SUB_4_STORAGE = 10;
 
@@ -114,6 +114,33 @@ class Subscription extends Model
                 return self::SUB_3_STORAGE;
             case 4:
                 return self::SUB_4_STORAGE;
+        }
+
+        return null;
+    }
+    
+    public function students($type = null)
+    {
+        if ($type == null)
+        {
+            if (isset($this->type))
+                $type = $this->type;
+            else
+                return null;
+        }
+        
+        if ($type < 1 || $type > self::SUBSCRIPTION_COUNT) return null;
+
+        switch ($type)
+        {
+            case 1:
+                return self::SUB_1_NUM_STUDENTS;
+            case 2:
+                return self::SUB_2_NUM_STUDENTS;
+            case 3:
+                return self::SUB_3_NUM_STUDENTS;
+            case 4:
+                return self::SUB_4_NUM_STUDENTS;
         }
 
         return null;

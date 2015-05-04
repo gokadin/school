@@ -12,14 +12,40 @@
 						<?php echo  $subscription->name($i) ; ?>
 					</span>
 					<span>
-						ds
+						<?php if ($subscription->defaultRate($i) == 0) { ?>
+							FREE
+						<?php } else { ?>
+							<?php echo  $subscription->defaultRate($i) ; ?>
+							/ month
+						<?php } ?>
 					</span>
 					<span>
-						ds
+						<table>
+							<tr>
+								<td>
+									<?php if ($subscription->students($i) == -1) { ?>
+										Unlimited
+									<?php } else { ?>
+										<?php echo  $subscription->students($i) ; ?>
+									<?php } ?>
+									students
+								</td>
+							</tr>
+							<tr>
+								<td>
+									<?php echo  $subscription->storage($i) ; ?>
+									GB storage
+								</td>
+							</tr>
+						</table>
 					</span>
 				</label>
 			</div>
 		<?php } ?>
+		
+		<div class="payment-method">
+			<label>Payment method</label>
+		</div>
 	</form>
 </div>
 

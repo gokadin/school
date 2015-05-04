@@ -12,14 +12,40 @@
 						{{ $subscription->name($i) }}
 					</span>
 					<span>
-						ds
+						@if ($subscription->defaultRate($i) == 0)
+							FREE
+						@else
+							{{ $subscription->defaultRate($i) }}
+							/ month
+						@endif
 					</span>
 					<span>
-						ds
+						<table>
+							<tr>
+								<td>
+									@if ($subscription->students($i) == -1)
+										Unlimited
+									@else
+										{{ $subscription->students($i) }}
+									@endif
+									students
+								</td>
+							</tr>
+							<tr>
+								<td>
+									{{ $subscription->storage($i) }}
+									GB storage
+								</td>
+							</tr>
+						</table>
 					</span>
 				</label>
 			</div>
 		@endfor
+		
+		<div class="payment-method">
+			<label>Payment method</label>
+		</div>
 	</form>
 </div>
 
