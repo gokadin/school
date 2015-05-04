@@ -898,7 +898,7 @@ Footer Layouts (new in v1.3)
 {
     border: 1px solid #35AA47;
     height: 100px;
-    width: 100%;
+    width: 800px;
     margin-bottom: 15px;
     border-radius: 6px;
     clear: both;
@@ -979,5 +979,26 @@ Footer Layouts (new in v1.3)
 
 .payment-method
 {
+    font-size: 22px;
+    margin-top: 30px;
+}
+
+.payment-method select
+{
+    height: 40px;
+    width: 300px;
     font-size: 20px;
+}
+
+.subscription-form-submit
+{
+    margin-top: 40px;
+    text-align: center;
+}
+
+.subscription-form-submit button
+{
+    width: 200px;
+    height: 50px;
+    font-size: 24px;
 }

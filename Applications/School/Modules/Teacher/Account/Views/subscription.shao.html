@@ -23,6 +23,7 @@
 						<table>
 							<tr>
 								<td>
+									<i class="fa fa-group"></i>
 									@if ($subscription->students($i) == -1)
 										Unlimited
 									@else
@@ -33,6 +34,7 @@
 							</tr>
 							<tr>
 								<td>
+									<i class="fa fa-server"></i>
 									{{ $subscription->storage($i) }}
 									GB storage
 								</td>
@@ -45,6 +47,14 @@
 		
 		<div class="payment-method">
 			<label>Payment method</label>
+			<select name="paymentMethod">
+				<option value="1">Credit card</option>
+				<option value="2">Paypal</option>
+			</select>
+		</div>
+		
+		<div class="subscription-form-submit">
+			<button class="btn btn-success" type="submit">Continue</button>
 		</div>
 	</form>
 </div>
