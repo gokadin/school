@@ -34,3 +34,10 @@ input[type="checkbox"]:focus
     margin-left: 20%;
     margin-right: 20%;
 }
+
+.default-wide
+{
+    margin-left: 2%;
+    margin-right: 2%;
+    margin-top: 20px;
+}
