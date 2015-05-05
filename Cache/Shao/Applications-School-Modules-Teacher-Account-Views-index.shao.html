@@ -18,7 +18,36 @@
 			</div>
 		</div>
 		<div id="tabs-2">
-			
+			<div class="col-md-4 account-edit-options">
+				<ul>
+					<li id="personal-info" class="active" onclick="displayEditOption(this)">
+						Personal info
+					</li>
+					<li id="profile-picture" onclick="displayEditOption(this)">
+						Profile picture
+					</li>
+					<li id="change-password" onclick="displayEditOption(this)">
+						Change password
+					</li>
+					<li id="settings" onclick="displayEditOption(this)">
+						Settings
+					</li>
+				</ul>
+			</div>
+			<div class="col-md-8 account-edit-options-content">
+				<div id="personal-info-content" class="active">
+					personal
+				</div>
+				<div id="profile-picture-content">
+					pic
+				</div>
+				<div id="change-password-content">
+					pass
+				</div>
+				<div id="settings-content">
+					settings
+				</div>
+			</div>
 		</div>
 		<div id="tabs-3">
 			
@@ -28,4 +57,18 @@
 
 <script type="text/javascript">
 $('#tabs').tabs();
+
+function displayEditOption(optionId) {alert($('#personal-info'));
+	$('#personal-info').removeClass('active');
+	$('#profile-picture').removeClass('active');
+	$('#change-password').removeClass('active');
+	$('#settings').removeClass('active');
+	$('#personal-info-content').removeClass('active');
+	$('#profile-picture-content').removeClass('active');
+	$('#change-password-content').removeClass('active');
+	$('#settings-content').removeClass('active');
+
+	$('#' + optionId).addClass('active');
+	$('#' + optionId + '-content').addClass('active');
+}
 </script>

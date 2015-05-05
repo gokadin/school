@@ -1002,3 +1002,39 @@ Footer Layouts (new in v1.3)
     height: 50px;
     font-size: 24px;
 }
+
+/* PROFILE */
+
+/* PROFILE EDIT */
+
+.account-edit-options ul
+{
+    list-style: none;
+}
+
+.account-edit-options ul li
+{
+    width: 200px;
+    height: 50px;
+}
+
+.account-edit-options ul li:hover
+{
+    background-color: red;
+    cursor: pointer;
+}
+
+.account-edit-options ul li.active
+{
+    background-color: blue;
+}
+
+.account-edit-options-content div
+{
+    display: none;
+}
+
+.account-edit-options-content div.active
+{
+    display: block;
+}
