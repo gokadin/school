@@ -5,13 +5,13 @@
 			<li><a href="#tabs-2">Account</a></li>
 			<li><a href="#tabs-3">Subscription</a></li>
 		</ul>
-		<div id="tabs-1">
-			<div class="col-md-4">
+		<div id="tabs-2">
+			<div class="col-4">
 				<div class="profile-picture">
 					
 				</div>
 			</div>
-			<div class="col-md-8">
+			<div class="col-8">
 				<div class="profile-name">
 					
 				</div>
@@ -20,26 +20,83 @@
 				</div>
 			</div>
 		</div>
-		<div id="tabs-2">
+		<div id="tabs-1">
 			<div class="col-4 account-edit-options">
 				<ul>
 					<li id="personal-info" class="active" onclick="displayEditOption(this)">
-						personal
+						<i class="fa fa-user"></i>
+						Personal
+						<span class="selected"></span>
 					</li>
 					<li id="profile-picture" onclick="displayEditOption(this)">
+						<i class="fa fa-picture"></i>
 						Profile picture
+						<span class="selected"></span>
 					</li>
 					<li id="change-password" onclick="displayEditOption(this)">
+						<i class="fa fa-lock"></i>
 						Change password
+						<span class="selected"></span>
 					</li>
 					<li id="settings" onclick="displayEditOption(this)">
+						<i class="fa fa-gear"></i>
 						Settings
+						<span class="selected"></span>
 					</li>
 				</ul>
 			</div>
 			<div class="col-8 account-edit-options-content">
 				<div id="personal-info-content" class="active">
-					personal
+					<form id="personal-info-form" action="" method="POST">
+		                <div class="create-form-body">
+		                    <div class="row create-form-input-row">
+		                        <div class="col-md-4 create-form-label">Name<span class="required">*</span></div>
+		                        <div class="col-md-7 create-form-input">
+		                            <div class="input-icon">
+		                                <i class="fa fa-warning"></i>
+		                                <input type="text" class="form-control" id="name" name="name" placeholder="Name" />
+		                            </div>
+		                            <span class="input-message">Activity name is required.</span>
+		                        </div>
+		                        <div class="col-md-1"></div>
+		                    </div>
+		
+		                    <div class="row create-form-input-row">
+		                        <div class="col-md-4 create-form-label">Default rate<span class="required">*</span></div>
+		                        <div class="col-md-7 create-form-input">
+		                            <div class="input-icon">
+		                                <i class="fa fa-warning"></i>
+		                                <input type="text" class="form-control" id="defaultRate" name="defaultRate" placeholder="Default rate" />
+		                            </div>
+		                            <span class="input-message">Default rate is required.</span>
+		                            <span class="input-message">Must be numeric.</span>
+		                        </div>
+		                        <div class="col-md-1"></div>
+		                    </div>
+		
+		                    <div class="row create-form-input-row">
+		                        <div class="col-md-4 create-form-label">Location</div>
+		                        <div class="col-md-7 create-form-input">
+		                            <input type="text" class="form-control" id="location" name="location" placeholder="Ex: studio B" />
+		                        </div>
+		                        <div class="col-md-1"></div>
+		                    </div>
+		
+		                </div>
+		                <div class="create-form-footer">
+		                    <div class="col-md-7">
+		                        <div class="checkbox create-another">
+		                            <label for="createAnother">
+		                                <input type="checkbox" id="createAnother" name="createAnother" value="1" />Create another
+		                            </label>
+		                        </div>
+		                    </div>
+		                    <div class="col-md-5">
+		                        <a href="/School/school/teacher/activities"><button class="btn btn-default" type="button">Cancel</button></a>
+		                        <button id="create-activity-submit-button" class="btn btn-success" type="submit">Create</button>
+		                    </div>
+		                </div>
+		            </form>
 				</div>
 				<div id="profile-picture-content">
 					pic

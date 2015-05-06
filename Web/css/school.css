@@ -1011,24 +1011,63 @@ Footer Layouts (new in v1.3)
 {
     list-style: none;
     padding-left: 0px;
+    padding-right: 0px;
+    border-left: 3px solid #35AA47;
 }
 
 .account-edit-options ul li
 {
     width: 300px;
     height: 50px;
-    background-color: #ccc;
+    line-height: 50px;
+    background-color: #E2FFC6;
+    font-size: 18px;
+    font-weight: bold;
+    color: gray;
+    padding-left: 15px;
+}
+
+.account-edit-options ul li:not(:first-child)
+{
+    border-top: 1px solid white;
+}
+
+.account-edit-options ul li i
+{
+    width: 10px;
+    margin-right: 15px;
+}
+
+.account-edit-options ul li .selected
+{
+    display: none;
+    width: 8px;
+    height: 25px;
+    background-image: url("/School/Web/images/icons/sidebar-menu-arrow.png");
+    float: right;
+    margin-top: 12.5px;
+}
+
+.account-edit-options ul li.active .selected
+{
+    display: block;
 }
 
 .account-edit-options ul li:hover
 {
-    background-color: red;
+    background-color: #B8E68A;
     cursor: pointer;
+}
+
+.account-edit-options ul li:hover i
+{
+    color: white;
 }
 
 .account-edit-options ul li.active
 {
-    background-color: blue;
+    background-color: #35AA47;
+    color: white;
 }
 
 .account-edit-options-content div
@@ -1039,4 +1078,9 @@ Footer Layouts (new in v1.3)
 .account-edit-options-content div.active
 {
     display: block;
+}
+
+#personal-info-form
+{
+    width: 100%;
 }
