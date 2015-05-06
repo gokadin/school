@@ -41,3 +41,80 @@ input[type="checkbox"]:focus
     margin-right: 2%;
     margin-top: 20px;
 }
+
+.col-1 { width: 8.3%; }
+.col-2 { width: 16.6%; }
+.col-3 { width: 25%; }
+.col-4 { width: 33.3%; }
+.col-5 { width: 41.6%; }
+.col-6 { width: 50%; }
+.col-7 { width: 58.3%; }
+.col-8 { width: 66.6%; }
+.col-9 { width: 75%; }
+.col-10 { width: 83.3%; }
+.col-11 { width: 91.6%; }
+.col-12 { width: 100%; }
+
+col-1, col-2, col-3, .col-4,
+col-5, col-6, col-7, .col-8, 
+col-9, col-10, col-11, col-12
+{
+    float: left;
+}
+
+/* JQUERY UI TABS */
+
+.tabs-styled
+{
+    border: none;
+    padding: 0;
+}
+
+.tabs-styled .ui-tabs-nav
+{
+    background: none;
+    border: none;
+    border-bottom: 1px solid #ccc;
+    border-radius: 0px;
+    padding-left: 0px;
+}
+
+.tabs-styled .ui-tabs-nav li
+{
+    border-radius: 0px;
+    width: 120px;
+    height: 40px;
+    padding-bottom: 40px !important;
+    background: white !important;
+}
+
+.tabs-styled .ui-tabs-nav li:hover
+{
+    border: 1px solid #ccc;
+    border-bottom: none;
+}
+
+.tabs-styled .ui-tabs-nav li.ui-tabs-active
+{
+    padding-bottom: 40px;
+    border: none;
+    border-top: 3px solid #D11919;
+    border-left: 1px solid #ccc;
+    border-right: 1px solid #ccc;
+}
+
+.tabs-styled .ui-tabs-nav .ui-tabs-anchor
+{
+    width: 120px;
+    padding: 0;
+    line-height: 35px;
+    text-align: center;
+    font-size: 18px;
+    font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+}
+
+.tabs-styled.ui-tabs div.ui-tabs-panel
+{
+    padding: 0 !important;
+    padding-top: 20px !important;
+}

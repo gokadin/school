@@ -1,7 +1,10 @@
-<a href="@path('School#Teacher/Account#subscription')">AAAAAAAAAA</a>
-	
 <div class="default-large">
-	<div id="tabs">
+	<div id="tabs" class="tabs-styled">
+		<ul>
+			<li><a href="#tabs-1">Overview</a></li>
+			<li><a href="#tabs-2">Account</a></li>
+			<li><a href="#tabs-3">Subscription</a></li>
+		</ul>
 		<div id="tabs-1">
 			<div class="col-md-4">
 				<div class="profile-picture">
@@ -18,10 +21,10 @@
 			</div>
 		</div>
 		<div id="tabs-2">
-			<div class="col-md-4 account-edit-options">
+			<div class="col-4 account-edit-options">
 				<ul>
 					<li id="personal-info" class="active" onclick="displayEditOption(this)">
-						Personal info
+						personal
 					</li>
 					<li id="profile-picture" onclick="displayEditOption(this)">
 						Profile picture
@@ -34,7 +37,7 @@
 					</li>
 				</ul>
 			</div>
-			<div class="col-md-8 account-edit-options-content">
+			<div class="col-8 account-edit-options-content">
 				<div id="personal-info-content" class="active">
 					personal
 				</div>
@@ -50,13 +53,15 @@
 			</div>
 		</div>
 		<div id="tabs-3">
-			
+			<a href="@path('School#Teacher/Account#subscription')">AAAAAAAAAA</a>
 		</div>
 	</div>
 </div>
 
 <script type="text/javascript">
-$('#tabs').tabs();
+$(function() {
+	$('#tabs').tabs();
+});
 
 function displayEditOption(optionId) {
 	$('#personal-info').removeClass('active');
@@ -68,7 +73,7 @@ function displayEditOption(optionId) {
 	$('#change-password-content').removeClass('active');
 	$('#settings-content').removeClass('active');
 
-	$('#' + optionId).addClass('active');
-	$('#' + optionId + '-content').addClass('active');
+	$(optionId).addClass('active');
+	$('#' + $(optionId).attr('id') + '-content').addClass('active');
 }
 </script>

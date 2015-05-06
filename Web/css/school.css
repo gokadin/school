@@ -1010,12 +1010,14 @@ Footer Layouts (new in v1.3)
 .account-edit-options ul
 {
     list-style: none;
+    padding-left: 0px;
 }
 
 .account-edit-options ul li
 {
-    width: 200px;
+    width: 300px;
     height: 50px;
+    background-color: #ccc;
 }
 
 .account-edit-options ul li:hover
