@@ -1038,19 +1038,17 @@ Footer Layouts (new in v1.3)
     margin-right: 15px;
 }
 
-.account-edit-options ul li .selected
+.account-edit-options ul li.active::after
 {
-    display: none;
-    width: 8px;
-    height: 25px;
-    background-image: url("/School/Web/images/icons/sidebar-menu-arrow.png");
+    content: "";
+    display: inline-block;
+    border-bottom: 10px solid transparent;
+    border-top: 10px solid transparent;
+    border-left: 10px solid #35AA47;
+    position: relative;
     float: right;
-    margin-top: 12.5px;
-}
-
-.account-edit-options ul li.active .selected
-{
-    display: block;
+    margin-right: -8px;
+    margin-top: 16px;
 }
 
 .account-edit-options ul li:hover
