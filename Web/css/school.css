@@ -1012,6 +1012,7 @@ Footer Layouts (new in v1.3)
     list-style: none;
     padding-left: 0px;
     padding-right: 0px;
+    margin-right: 0px;
     border-left: 3px solid #35AA47;
 }
 
@@ -1070,7 +1071,7 @@ Footer Layouts (new in v1.3)
 
 .account-edit-options-content div
 {
-    display: none;
+    margin-left: 10px;
 }
 
 .account-edit-options-content div.active
@@ -1078,7 +1079,12 @@ Footer Layouts (new in v1.3)
     display: block;
 }
 
-#personal-info-form
+#personal-info-form .create-form-label
 {
-    width: 100%;
+    text-align: left;
+}
+
+#personal-info-form .create-form-input
+{
+    margin-left: 0px;
 }

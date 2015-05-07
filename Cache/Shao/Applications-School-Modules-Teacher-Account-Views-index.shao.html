@@ -21,7 +21,7 @@
 			</div>
 		</div>
 		<div id="tabs-1">
-			<div class="col-4 account-edit-options">
+			<div class="col-3 account-edit-options">
 				<ul>
 					<li id="personal-info" class="active" onclick="displayEditOption(this)">
 						<i class="fa fa-user"></i>
@@ -41,55 +41,50 @@
 					</li>
 				</ul>
 			</div>
-			<div class="col-8 account-edit-options-content">
+			<div class="col-9 account-edit-options-content">
 				<div id="personal-info-content" class="active">
 					<form id="personal-info-form" action="" method="POST">
 		                <div class="create-form-body">
 		                    <div class="row create-form-input-row">
-		                        <div class="col-md-4 create-form-label">Name<span class="required">*</span></div>
-		                        <div class="col-md-7 create-form-input">
+		                        <div class="col-md-12 create-form-label">First name<span class="required">*</span></div>
+		                        <div class="col-md-12 create-form-input">
 		                            <div class="input-icon">
 		                                <i class="fa fa-warning"></i>
-		                                <input type="text" class="form-control" id="name" name="name" placeholder="Name" />
+		                                <input type="text" class="form-control" id="firstName" name="firstName" value="<?php echo  $currentUser->first_name ; ?>" placeholder="First name" />
 		                            </div>
-		                            <span class="input-message">Activity name is required.</span>
+		                            <span class="input-message">First name is required.</span>
 		                        </div>
-		                        <div class="col-md-1"></div>
 		                    </div>
 		
 		                    <div class="row create-form-input-row">
-		                        <div class="col-md-4 create-form-label">Default rate<span class="required">*</span></div>
-		                        <div class="col-md-7 create-form-input">
+		                        <div class="col-md-12 create-form-label">Last name<span class="required">*</span></div>
+		                        <div class="col-md-12 create-form-input">
 		                            <div class="input-icon">
 		                                <i class="fa fa-warning"></i>
-		                                <input type="text" class="form-control" id="defaultRate" name="defaultRate" placeholder="Default rate" />
+		                                <input type="text" class="form-control" id="lastName" name="lastName" value="<?php echo  $currentUser->last_name ; ?>" placeholder="Last name" />
 		                            </div>
-		                            <span class="input-message">Default rate is required.</span>
-		                            <span class="input-message">Must be numeric.</span>
+		                            <span class="input-message">Last name is required.</span>
 		                        </div>
-		                        <div class="col-md-1"></div>
 		                    </div>
 		
 		                    <div class="row create-form-input-row">
-		                        <div class="col-md-4 create-form-label">Location</div>
-		                        <div class="col-md-7 create-form-input">
-		                            <input type="text" class="form-control" id="location" name="location" placeholder="Ex: studio B" />
-		                        </div>
-		                        <div class="col-md-1"></div>
+		                        <div class="col-md-12 create-form-label">Email<span class="required">*</span></div>
+		                        <div class="col-md-12 create-form-input">
+									<div class="input-icon">
+		                                <i class="fa fa-warning"></i>
+			                            <input type="text" class="form-control" id="email" name="email" value="<?php echo  $currentUser->email ; ?>" placeholder="Email" />
+		                        	</div>
+									<span class="input-message">Email is required.</span>
+									<span class="input-message">Email is invalid.</span>
+									<span class="input-message">Email is already taken.</span>
+								</div>
 		                    </div>
 		
 		                </div>
 		                <div class="create-form-footer">
-		                    <div class="col-md-7">
-		                        <div class="checkbox create-another">
-		                            <label for="createAnother">
-		                                <input type="checkbox" id="createAnother" name="createAnother" value="1" />Create another
-		                            </label>
-		                        </div>
-		                    </div>
-		                    <div class="col-md-5">
-		                        <a href="/School/school/teacher/activities"><button class="btn btn-default" type="button">Cancel</button></a>
-		                        <button id="create-activity-submit-button" class="btn btn-success" type="submit">Create</button>
+							<div class="col-md-2"></div>
+		                    <div class="col-md-10">
+		                        <button id="create-activity-submit-button" class="btn btn-success" type="submit">Save changes</button>
 		                    </div>
 		                </div>
 		            </form>
