@@ -62,76 +62,53 @@
 	    <div class="create-form-body">
 	
 	        <div class="row create-form-input-row">
-	            <div class="col-md-4 create-form-label">Name<span class="required">*</span></div>
-	            <div class="col-md-7 create-form-input">
+	            <div class="col-md-3 create-form-label">Card number<span class="required">*</span></div>
+	            <div class="col-md-9 create-form-input">
 	                <div class="input-icon">
 	                    <i class="fa fa-warning"></i>
-	                    <input type="text" class="form-control" id="name" name="name" placeholder="Name" />
+	                    <input type="text" class="form-control" id="card-number" name="cardNumber" placeholder="Card Number" />
 	                </div>
-	                <span class="input-message">Activity name is required.</span>
+	                <span class="input-message">Card number is required.</span>
 	            </div>
-	            <div class="col-md-1"></div>
 	        </div>
 	
 	        <div class="row create-form-input-row">
-	            <div class="col-md-4 create-form-label">Default rate<span class="required">*</span></div>
-	            <div class="col-md-7 create-form-input">
+	            <div class="col-md-3 create-form-label">Expires<span class="required">*</span></div>
+	            <div class="col-md-3 create-form-input">
 	                <div class="input-icon">
 	                    <i class="fa fa-warning"></i>
-	                    <input type="text" class="form-control" id="defaultRate" name="defaultRate" placeholder="Default rate" />
+	                    <input type="text" class="form-control" id="expires" name="expires" placeholder="MM/YY" />
 	                </div>
-	                <span class="input-message">Default rate is required.</span>
+	                <span class="input-message">Expiration date is required.</span>
 	                <span class="input-message">Must be numeric.</span>
 	            </div>
-	            <div class="col-md-1"></div>
 	        </div>
 	
 	        <div class="row create-form-input-row">
-	            <div class="col-md-4 create-form-label">Per<span class="required">*</span></div>
-	            <div class="col-md-7 create-form-input">
-	                <select class="form-control" id="period" name="period">
-	                    <option value="999">Lesson</option>
-	                    <option value="15">15 mins</option>
-	                    <option value="30">30 mins</option>
-	                    <option value="45">45 mins</option>
-	                    <option value="100">1 hour</option>
-	                    <option value="115">1 hour 15 mins</option>
-	                    <option value="130">1 hour 30 mins</option>
-	                    <option value="200">2 hours</option>
-	                    <option value="1">month</option>
-	                    <option value="2">2 months</option>
-	                    <option value="3">3 months</option>
-	                    <option value="4">4 months</option>
-	                    <option value="5">5 months</option>
-	                    <option value="6">6 months</option>
-	                    <option value="7">7 months</option>
-	                    <option value="8">8 months</option>
-	                    <option value="9">9 months</option>
-	                    <option value="10">10 months</option>
-	                    <option value="11">11 months</option>
-	                    <option value="12">12 months</option>
-	                </select>
+	            <div class="col-md-3 create-form-label">Name on card<span class="required">*</span></div>
+	            <div class="col-md-9 create-form-input">
+	                <div class="input-icon">
+	                    <i class="fa fa-warning"></i>
+	                    <input type="text" class="form-control" id="card-name" name="cardName" placeholder="Name on card" />
+	                </div>
+	                <span class="input-message">Name on card is required.</span>
 	            </div>
-	            <div class="col-md-1"></div>
 	        </div>
 	
 	        <div class="row create-form-input-row">
-	            <div class="col-md-4 create-form-label">Location</div>
-	            <div class="col-md-7 create-form-input">
-	                <input type="text" class="form-control" id="location" name="location" placeholder="Ex: studio B" />
+	            <div class="col-md-3 create-form-label">Card code<span class="required">*</span></div>
+	            <div class="col-md-3 create-form-input">
+	                <div class="input-icon">
+	                    <i class="fa fa-warning"></i>
+	                    <input type="text" class="form-control" id="card-code" name="cardCode" placeholder="CVC" />
+	                </div>
+	                <span class="input-message">Card code is required.</span>
 	            </div>
-	            <div class="col-md-1"></div>
 	        </div>
 	
 	    </div>
 	    <div class="create-form-footer">
-	        <div class="col-md-7">
-	            <div class="checkbox create-another">
-	                <label for="createAnother">
-	                    <input type="checkbox" id="createAnother" name="createAnother" value="1" />Create another
-	                </label>
-	            </div>
-	        </div>
+	        <div class="col-md-7"></div>
 	        <div class="col-md-5">
 	            <a href="@path('School#Teacher/Activity#index')"><button class="btn btn-default" type="button">Cancel</button></a>
 	            <button id="create-activity-submit-button" class="btn btn-success" type="submit">Create</button>

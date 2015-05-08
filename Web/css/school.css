@@ -1003,6 +1003,11 @@ Footer Layouts (new in v1.3)
     font-size: 24px;
 }
 
+#subscription-credit-card-form
+{
+    width: 700px;
+}
+
 /* PROFILE */
 
 /* PROFILE EDIT */
