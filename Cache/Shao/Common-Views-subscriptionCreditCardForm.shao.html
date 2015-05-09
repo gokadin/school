@@ -1,0 +1,57 @@
+<form id="subscription-credit-card-form" action="" method="POST">
+    <div class="create-form-body">
+
+        <div class="row create-form-input-row">
+            <div class="col-md-3 create-form-label">Card number<span class="required">*</span></div>
+            <div class="col-md-9 create-form-input">
+                <div class="input-icon">
+                    <i class="fa fa-warning"></i>
+                    <input type="text" class="form-control" id="card-number" name="cardNumber" placeholder="Card Number" />
+                </div>
+                <span class="input-message">Card number is required.</span>
+            </div>
+        </div>
+
+        <div class="row create-form-input-row">
+            <div class="col-md-3 create-form-label">Expires<span class="required">*</span></div>
+            <div class="col-md-3 create-form-input">
+                <div class="input-icon">
+                    <i class="fa fa-warning"></i>
+                    <input type="text" class="form-control" id="expires" name="expires" placeholder="MM/YY" />
+                </div>
+                <span class="input-message">Expiration date is required.</span>
+                <span class="input-message">Must be numeric.</span>
+            </div>
+        </div>
+
+        <div class="row create-form-input-row">
+            <div class="col-md-3 create-form-label">Name on card<span class="required">*</span></div>
+            <div class="col-md-9 create-form-input">
+                <div class="input-icon">
+                    <i class="fa fa-warning"></i>
+                    <input type="text" class="form-control" id="card-name" name="cardName" placeholder="Name on card" />
+                </div>
+                <span class="input-message">Name on card is required.</span>
+            </div>
+        </div>
+
+        <div class="row create-form-input-row">
+            <div class="col-md-3 create-form-label">Card code<span class="required">*</span></div>
+            <div class="col-md-3 create-form-input">
+                <div class="input-icon">
+                    <i class="fa fa-warning"></i>
+                    <input type="text" class="form-control" id="card-code" name="cardCode" placeholder="CVC" />
+                </div>
+                <span class="input-message">Card code is required.</span>
+            </div>
+        </div>
+
+    </div>
+    <div class="create-form-footer">
+        <div class="col-md-7"></div>
+        <div class="col-md-5">
+            <a href="/School/school/teacher/activities"><button class="btn btn-default" type="button">Cancel</button></a>
+            <button id="create-activity-submit-button" class="btn btn-success" type="submit">Create</button>
+        </div>
+    </div>
+</form>

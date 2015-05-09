@@ -1,7 +1,7 @@
 <?php  use Models\Subscription;  ?>
 
 <div class="default-center">
-	<form id="subscription-form" action="" method="POST">
+	<form id="subscription-form" action="/School/school/teacher/account/subscription/payment" method="POST">
 		<?php for ($i = 1; $i < Subscription::SUBSCRIPTION_COUNT + 1; $i++) { ?>
 			<div id="subscription-option-<?php echo  $i ; ?>" class="subscription-option">
 				<label>
@@ -48,7 +48,7 @@
 		<div class="payment-method">
 			<label>Payment method</label>
 			<select name="paymentMethod">
-				<option value="1">Credit card</option>
+				<option value="1">VISA</option>
 				<option value="2">Paypal</option>
 			</select>
 		</div>
@@ -57,77 +57,7 @@
 			<button class="btn btn-success" type="submit">Continue</button>
 		</div>
 	</form>
-	
-	<form id="subscription-credit-card-form" action="" method="POST">
-	    <div class="create-form-body">
-	
-	        <div class="row create-form-input-row">
-	            <div class="col-md-3 create-form-label">Card number<span class="required">*</span></div>
-	            <div class="col-md-9 create-form-input">
-	                <div class="input-icon">
-	                    <i class="fa fa-warning"></i>
-	                    <input type="text" class="form-control" id="card-number" name="cardNumber" placeholder="Card Number" />
-	                </div>
-	                <span class="input-message">Card number is required.</span>
-	            </div>
-	        </div>
-	
-	        <div class="row create-form-input-row">
-	            <div class="col-md-3 create-form-label">Expires<span class="required">*</span></div>
-	            <div class="col-md-3 create-form-input">
-	                <div class="input-icon">
-	                    <i class="fa fa-warning"></i>
-	                    <input type="text" class="form-control" id="expires" name="expires" placeholder="MM/YY" />
-	                </div>
-	                <span class="input-message">Expiration date is required.</span>
-	                <span class="input-message">Must be numeric.</span>
-	            </div>
-	        </div>
-	
-	        <div class="row create-form-input-row">
-	            <div class="col-md-3 create-form-label">Name on card<span class="required">*</span></div>
-	            <div class="col-md-9 create-form-input">
-	                <div class="input-icon">
-	                    <i class="fa fa-warning"></i>
-	                    <input type="text" class="form-control" id="card-name" name="cardName" placeholder="Name on card" />
-	                </div>
-	                <span class="input-message">Name on card is required.</span>
-	            </div>
-	        </div>
-	
-	        <div class="row create-form-input-row">
-	            <div class="col-md-3 create-form-label">Card code<span class="required">*</span></div>
-	            <div class="col-md-3 create-form-input">
-	                <div class="input-icon">
-	                    <i class="fa fa-warning"></i>
-	                    <input type="text" class="form-control" id="card-code" name="cardCode" placeholder="CVC" />
-	                </div>
-	                <span class="input-message">Card code is required.</span>
-	            </div>
-	        </div>
-	
-	    </div>
-	    <div class="create-form-footer">
-	        <div class="col-md-7"></div>
-	        <div class="col-md-5">
-	            <a href="/School/school/teacher/activities"><button class="btn btn-default" type="button">Cancel</button></a>
-	            <button id="create-activity-submit-button" class="btn btn-success" type="submit">Create</button>
-	        </div>
-	    </div>
-	</form>
-	
-	<form id="subscription-paypal-form">
-		paypal
-	</form>
 </div>
-
-<script type="text/javascript">
-var subscriptionCount = parseInt('<?php echo  Subscription::SUBSCRIPTION_COUNT ; ?>');
-if (!$.isNumeric(subscriptionCount)) {
-	subscriptionCount = 4;
-}
-</script>
-<script src="/School/Applications/School/Modules/Teacher/Account/Views/js/handleSubscription.js"></script>
 
 <script type="text/javascript">
 $(function() {

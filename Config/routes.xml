@@ -45,7 +45,12 @@
         <route url="/School/school/teacher/payment" method="POST" module="Teacher/Payment" action="test" />
         <!-- TEACHER ACCOUNT MODULE -->
         <route url="/School/school/teacher/account" method="GET" module="Teacher/Account" action="index" />
+        <route url="/School/school/teacher/account/edit-personal-info" method="PUT" module="Teacher/Account" action="editPersonalInfo" />
         <route url="/School/school/teacher/account/subscription" method="GET" module="Teacher/Account" action="subscription" />
+        <route url="/School/school/teacher/account/subscription/payment" method="POST" module="Teacher/Account" action="subscriptionPayment" />
+        <route url="/School/school/teacher/account/subscription/payment/credit-card/{0}" method="GET" module="Teacher/Account" action="creditCardPayment" vars="subscriptionType" />
+        <route url="/School/school/teacher/account/subscription/payment/paypal/{0}" method="GET" module="Teacher/Account" action="paypalPayment" vars="subscriptionType" />
+        <route url="/School/school/teacher/account/subscription/payment/credit-card" method="POST" module="Teacher/Account" action="processCreditCardPayment" />
         <!-- TEACHER AJAX MODULE -->
         <route url="/School/school/teacher/ajax/email-exists" method="POST" module="Teacher/Ajax" action="emailExists" />
 

@@ -1,0 +1,58 @@
+<?php  use Models\Subscription;  ?>
+
+<form id="subscription-form" action="/School/school/teacher/account/subscription/payment" method="POST">
+	<?php for ($i = 1; $i < Subscription::SUBSCRIPTION_COUNT + 1; $i++) { ?>
+		<div id="subscription-option-<?php echo  $i ; ?>" class="subscription-option">
+			<label>
+				<span>
+					<input type="radio" name="subscriptionType" value="<?php echo  $i ; ?>" <?php if ($subscription->type == $i) { ?> checked <?php } ?>/>
+				</span>
+				<span>
+					<?php echo  $subscription->name($i) ; ?>
+				</span>
+				<span>
+					<?php if ($subscription->defaultRate($i) == 0) { ?>
+						FREE
+					<?php } else { ?>
+						<?php echo  $subscription->defaultRate($i) ; ?>
+						/ month
+					<?php } ?>
+				</span>
+				<span>
+					<table>
+						<tr>
+							<td>
+								<i class="fa fa-group"></i>
+								<?php if ($subscription->students($i) == -1) { ?>
+									Unlimited
+								<?php } else { ?>
+									<?php echo  $subscription->students($i) ; ?>
+								<?php } ?>
+								students
+							</td>
+						</tr>
+						<tr>
+							<td>
+								<i class="fa fa-server"></i>
+								<?php echo  $subscription->storage($i) ; ?>
+								GB storage
+							</td>
+						</tr>
+					</table>
+				</span>
+			</label>
+		</div>
+	<?php } ?>
+	
+	<div class="payment-method">
+		<label>Payment method</label>
+		<select name="paymentMethod">
+			<option value="1">Credit card</option>
+			<option value="2">Paypal</option>
+		</select>
+	</div>
+	
+	<div class="subscription-form-submit">
+		<button class="btn btn-success" type="submit">Continue</button>
+	</div>
+</form>

@@ -1008,6 +1008,60 @@ Footer Layouts (new in v1.3)
     width: 700px;
 }
 
+#subscription-credit-card-form-div
+{
+    display: none;
+}
+
+#subscription-paypal-form-div
+{
+    display: none;
+}
+
+/* CREDIT CARD PAYMENT */
+
+#subscription-credit-card-form
+{
+    margin-left: 50px;
+}
+
+#subscription-credit-card-form .create-form-footer
+{
+    height: 60px;
+}
+
+.subscription-description-row
+{
+    margin-bottom: 20px;
+}
+
+.subscription-description-row .col-md-9
+{
+    font-size: 18px;
+}
+
+#credit-card-payment-cancel-button, 
+#credit-card-payment-submit-button
+{
+    width: 100px;
+    height: 40px;
+    font-size: 18px; 
+}
+
+#expirationMonth, 
+#expirationYear
+{
+    width: 100px;
+    float: left;
+    margin-right: 10px;
+}
+
+#expirationMonth.invalid, 
+#expirationYear.invalid
+{
+    border-color: #B94A48;
+}
+
 /* PROFILE */
 
 /* PROFILE EDIT */
@@ -1092,4 +1146,9 @@ Footer Layouts (new in v1.3)
 #personal-info-form .create-form-input
 {
     margin-left: 0px;
+}
+
+#personal-info-form button
+{
+    margin-left: 10px;
 }

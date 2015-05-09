@@ -9,19 +9,15 @@ class Response
         header($header);
     }
 
-    public function redirect($location, $args = null)
+    public function redirect($location)
     {
-        if ($args != null)
-            header('Location: '.$location.  $args);
-        else
-            header('Location: '.$location);
-
+        header('Location: '.$location);
         exit();
     }
 
     public function toAction($location, $args = null)
     {
-        $this->redirect(\Library\Facades\Router::actionToPath($location), $args);
+        $this->redirect(\Library\Facades\Router::actionToPath($location, $args));
     }
 
     public function back()

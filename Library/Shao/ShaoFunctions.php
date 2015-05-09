@@ -20,7 +20,7 @@ class ShaoFunctions
             return '<?php require \''.Shao::parseFile($commonViewsPath.$string.'.shao.html').'\' ?>';
         }
 
-        throw new \Exception('Shao.includeView : could not find common view');
+        throw new \Exception('Shao.includeView : could not find common view: '.$commonViewsPath.$string);
     }
 
     public static function path($action, $var = null)
