@@ -77,18 +77,22 @@ class AccountController extends BackController
 	
 	public function processCreditCardPayment()
 	{
-		$cardNumber = Request::postData('cardNumber');
-		$cardName = Request::postData('cardName');
-		$cardCode = Request::postData('cardCode');
-		$expirationMonth = Request::postData('expirationMonth');
-		$expirationYear = Request::postData('expirationYear');
-		echo $cardNumber;
-		if (!ctype_digit($cardNumber) || $cardNumber > 99999999999999999999 || $cardNumber < 1111111)
+		\Stripe\Stripe::setApiKey("sk_test_dVsKknKBGTxmMO87Aah9MBzn");
+
+		$token = Request::postData('stripeToken');
+		$subscriptionType = Request::postData('subscriptionType');
+		if ($subscriptionType < 1 || $subscriptionType > 4)
 		{
-			Session::setFlash('Card number is not valid.');
+			Session::setFlash('An error has occured. Your card was not charged.');
 			Response::back();
 		}
-		
-		
+
+		$customer = \Stripe\Customer::create(array(
+		  "source" => $token,
+		  "plan" => $subscriptionType,
+		  "email" => $this->currentUser->email));
+		  
+	  	Session::setFlash('Thank you for subscribing. blablabla.');
+		Response::toAction('School#Teacher/Index#index');
 	}
 }
