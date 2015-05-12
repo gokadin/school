@@ -1,0 +1,54 @@
+<form id="personal-info-form" action="/School/school/teacher/account/edit-personal-info" method="POST">
+	<input type="hidden" name="_method" value="PUT" />
+    <div class="create-form-body">
+        <div class="row create-form-input-row">
+            <div class="col-md-12 create-form-label">First name<span class="required">*</span></div>
+            <div class="col-md-12 create-form-input">
+                <div class="input-icon">
+                    <i class="fa fa-warning"></i>
+                    <input type="text" class="form-control" id="firstName" name="firstName" value="<?php echo  $currentUser->first_name ; ?>" placeholder="First name" />
+                </div>
+                <span class="input-message">First name is required.</span>
+            </div>
+        </div>
+
+        <div class="row create-form-input-row">
+            <div class="col-md-12 create-form-label">Last name<span class="required">*</span></div>
+            <div class="col-md-12 create-form-input">
+                <div class="input-icon">
+                    <i class="fa fa-warning"></i>
+                    <input type="text" class="form-control" id="lastName" name="lastName" value="<?php echo  $currentUser->last_name ; ?>" placeholder="Last name" />
+                </div>
+                <span class="input-message">Last name is required.</span>
+            </div>
+        </div>
+
+        <div class="row create-form-input-row">
+            <div class="col-md-12 create-form-label">Email<span class="required">*</span></div>
+            <div class="col-md-12 create-form-input">
+				<div class="input-icon">
+                    <i class="fa fa-warning"></i>
+                    <input type="text" class="form-control" id="email" name="email" value="<?php echo  $currentUser->email ; ?>" placeholder="Email" />
+            	</div>
+				<span class="input-message">Email is required.</span>
+				<span class="input-message">Email is invalid.</span>
+				<span class="input-message">Email is already taken.</span>
+			</div>
+        </div>
+
+    </div>
+    <div class="create-form-footer">
+		<div class="col-md-1"></div>
+        <div class="col-md-1">
+            <button class="btn btn-default" type="reset">Reset</button>
+        </div>
+        <div class="col-md-1">
+            <button id="create-activity-submit-button" class="btn btn-success" type="submit">Save changes</button>
+        </div>
+    </div>
+</form>
+
+<script type="text/javascript">
+var currentEmail = '<?php echo  $currentUser->email ; ?>';
+</script>
+<script type="text/javascript" src="/School/Applications/School/Modules/Teacher/Account/Views/js/validatePersonalInfo.js"></script>

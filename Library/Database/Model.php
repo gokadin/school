@@ -188,10 +188,15 @@ class Model implements ModelQueryContract
 
         if ($this->hasBaseModel())
         {
-            return $this->query->update($values) > 0 && $this->baseModel->update();
+            $this->query->update($values);
+            $this->baseModel->update();
+            return true; // TODO: change this
         }
 
-        return $this->query->update($values) > 0;
+        $this->query->update($values); // TODO: change this
+            //throw new RuntimeException('Update failed.');
+        
+        return true;
     }
 
     public function touch()

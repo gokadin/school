@@ -263,15 +263,15 @@
 <script src="/School/Web/js/app.js"></script>
 
 <script>
-    jQuery(document).ready(function() {
-        App.init();
+jQuery(document).ready(function() {
+    App.init();
+});
+
+function closeFlash() {
+    $('#flash').fadeOut('fast', function() {
+        $('#flash').removeClass('active');
     });
-    
-    function closeFlash() {
-        $('#flash').fadeOut('fast', function() {
-            $('#flash').removeClass('active');
-        });
-    }
+}
 </script>
 
 </body>

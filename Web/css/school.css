@@ -1148,7 +1148,12 @@ Footer Layouts (new in v1.3)
     margin-left: 0px;
 }
 
-#personal-info-form button
+#personal-info-form .input-message
 {
     margin-left: 10px;
+}
+
+#personal-info-form .create-form-footer
+{
+    height: 55px;
 }
