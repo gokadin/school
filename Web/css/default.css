@@ -119,3 +119,34 @@ input[type="checkbox"]:focus
     padding: 0 !important;
     padding-top: 20px !important;
 }
+
+/* FLASH */
+
+#flash
+{
+    display: none;
+}
+
+#flash.active
+{
+    display: block;
+    height: 50px;
+    background-color: #ccc;
+    font-size: 22px;
+    text-align: left;
+    line-height: 50px;
+    padding-right: 15px;
+    padding-left: 15px;
+    margin-bottom: 10px;
+    border-radius: 3px;
+}
+
+#flash.active span
+{
+    float: right;
+}
+
+.flash-close
+{
+    
+}

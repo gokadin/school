@@ -21,6 +21,7 @@ class AccountController extends BackController
 		$this->currentUser->email = Request::postData('email');
 		$this->currentUser->save();
 		
+		Session::setFlash('Personal info updated.');
 		Response::toAction('School#Teacher/Account#index');
 	}
 	

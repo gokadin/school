@@ -237,6 +237,17 @@
                     </div>
                 </div>
                 <div class="row content">
+                    <?php  use Library\Facades\Session;  ?>
+                    <div class="col-md-12">
+                        <div id="flash" class="<?php if (Session::hasFlash()) { ?> active <?php } ?>">
+                            <?php if (Session::hasFlash()) { ?>
+                                <?php echo  Session::getFlash() ; ?>
+                            <?php } ?>
+                            <span>
+                                <button class="flash-close" onclick="closeFlash()">X</button>
+                            </span>
+                        </div>
+                    </div>
                     <div class="col-md-12">
                         <?php echo  $content ; ?>
                     </div>
@@ -255,6 +266,12 @@
     jQuery(document).ready(function() {
         App.init();
     });
+    
+    function closeFlash() {
+        $('#flash').fadeOut('fast', function() {
+            $('#flash').removeClass('active');
+        });
+    }
 </script>
 
 </body>
