@@ -28,6 +28,30 @@ class AccountController extends BackController
 		Response::toAction('School#Teacher/Account#index');
 	}
 	
+	public function changePassword()
+	{
+		$currentPassword = Request::postData('currentPassword');
+		$password = Request::postData('password');
+		$confirmPassword = Request::postData('confirmPassword');
+		
+		if (empty($currentPassword) || empty($password) || empty($confirmPassword))
+			Session::setFlash('One or more fields are empty.');	
+		
+		if ($password != $confirmPassword)
+			Session::setFlash('Confirmation password does not match.');
+			
+		if (md5($currentPassword) != $this->currentUser->password)
+			Session::setFlash('Invalid password. Please try again.');
+			
+		$this->currentUser->password = md5($password);
+		if ($this->currentUser->save())
+			Session::setFlash('Password changed successfully.');
+		else
+			Session::setFlash('An error occured while processing your request.');	
+		
+		Response::toAction('School#Teacher/Account#index');
+	}
+	
 	public function subscription()
 	{
 		Page::add('subscription', $this->currentUser->subscription());

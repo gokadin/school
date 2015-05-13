@@ -42,16 +42,16 @@
 				</ul>
 			</div>
 			<div class="col-9 account-edit-options-content">
-				<div id="personal-info-content" class="active">
+				<div id="personal-info-content" class="account-edit-content active">
 					@includeView('personalInfoForm')
 				</div>
-				<div id="profile-picture-content">
+				<div id="profile-picture-content" class="account-edit-content">
 					pic
 				</div>
-				<div id="change-password-content">
-					pass
+				<div id="change-password-content" class="account-edit-content">
+					@includeView('changePasswordForm')
 				</div>
-				<div id="settings-content">
+				<div id="settings-content" class="account-edit-content">
 					settings
 				</div>
 			</div>

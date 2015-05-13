@@ -1128,32 +1128,33 @@ Footer Layouts (new in v1.3)
     color: white;
 }
 
-.account-edit-options-content div
+.account-edit-options-content .account-edit-content
 {
     margin-left: 10px;
+    display: none;
 }
 
-.account-edit-options-content div.active
+.account-edit-options-content .account-edit-content.active
 {
     display: block;
 }
 
-#personal-info-form .create-form-label
+.custom-account-form .create-form-body
+{
+    padding-top: 0px;
+}
+
+.custom-account-form .create-form-label
 {
     text-align: left;
 }
 
-#personal-info-form .create-form-input
+.custom-account-form .create-form-input
 {
     margin-left: 0px;
 }
 
-#personal-info-form .input-message
-{
-    margin-left: 10px;
-}
-
-#personal-info-form .create-form-footer
+.custom-account-form .create-form-footer
 {
     height: 55px;
 }
