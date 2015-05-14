@@ -146,6 +146,16 @@ input[type="checkbox"]:focus
     float: right;
 }
 
+#flash.success
+{
+    background-color: green;
+}
+
+#flash.error
+{
+    
+}
+
 .flash-close
 {
     

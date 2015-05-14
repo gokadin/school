@@ -21,9 +21,9 @@ class AccountController extends BackController
 		$this->currentUser->email = Request::postData('email');
 		
 		if ($this->currentUser->save())
-			Session::setFlash('Personal info updated successfully.');
+			Session::setFlash('Personal info updated successfully.', 'success', 5);
 		else
-			Session::setFlash('There was an error processing your request.');
+			Session::setFlash('There was an error processing your request.', 'error');
 			
 		Response::toAction('School#Teacher/Account#index');
 	}
@@ -45,9 +45,9 @@ class AccountController extends BackController
 			
 		$this->currentUser->password = md5($password);
 		if ($this->currentUser->save())
-			Session::setFlash('Password changed successfully.');
+			Session::setFlash('Password changed successfully.', 'success', 5);
 		else
-			Session::setFlash('An error occured while processing your request.');	
+			Session::setFlash('An error occured while processing your request.', 'error');	
 		
 		Response::toAction('School#Teacher/Account#index');
 	}
@@ -71,7 +71,7 @@ class AccountController extends BackController
 				Response::toAction('School#Teacher/Account#paypalPayment', $subscriptionType);
 				break;
 			default:
-				Session::setFlash('There was an error processing your request.');
+				Session::setFlash('There was an error processing your request.', 'error');
 				Response::toAction('School#Teacher/Account#subscription');
 				break;	
 		}
@@ -83,7 +83,7 @@ class AccountController extends BackController
 		
 		if ($subscriptionType < 1 || $subscriptionType > Subscription::SUBSCRIPTION_COUNT)
 		{
-			Session::setFlash('There was an error processing your request.');
+			Session::setFlash('There was an error processing your request.', 'error');
 			Response::toAction('School#Teacher/Account#subscription');
 		}
 		
@@ -98,7 +98,7 @@ class AccountController extends BackController
 		
 		if ($subscriptionType < 1 || $subscriptionType > Subscription::SUBSCRIPTION_COUNT)
 		{
-			Session::setFlash('There was an error processing your request.');
+			Session::setFlash('There was an error processing your request.', 'error');
 			Response::toAction('School#Teacher/Account#subscription');
 		}
 	}
@@ -111,7 +111,7 @@ class AccountController extends BackController
 		$subscriptionType = Request::postData('subscriptionType');
 		if ($subscriptionType < 1 || $subscriptionType > 4)
 		{
-			Session::setFlash('An error has occured. Your card was not charged.');
+			Session::setFlash('An error has occured. Your card was not charged.', 'error');
 			Response::back();
 		}
 
@@ -120,7 +120,7 @@ class AccountController extends BackController
 		  "plan" => $subscriptionType,
 		  "email" => $this->currentUser->email));
 		  
-	  	Session::setFlash('Thank you for subscribing. blablabla.');
+	  	Session::setFlash('Thank you for subscribing. blablabla.', 'success', 5);
 		Response::toAction('School#Teacher/Index#index');
 	}
 }

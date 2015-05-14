@@ -10,6 +10,8 @@ class Session
     const ERRORS_KEY = 'errors';
     const SHOULD_CLEAR_ERRORS_KEY = 'shouldClearErrors';
     const FLASH_KEY = 'flash';
+    const FLASH_TYPE_KEY = 'flashType';
+    const FLASH_DURATION_KEY = 'flashDuration';
     const SHOULD_CLEAR_FLASH_KEY = 'shouldClearFlash';
     const CURRENT_CSRF_KEY = 'currentCsrfToken';
     const NEXT_CSRF_KEY = 'nextCsrfToken';
@@ -69,9 +71,17 @@ class Session
         $_SESSION[self::SHOULD_CLEAR_ERRORS_KEY] = false;
     }
 
-    public function setFlash($string)
+    public function setFlash($string, $type = "success", $duration = 0)
     {
+        if ($type != "success" || $type != "error")
+            $type = "success";
+            
+        if (!is_int($duration) || $duration < 0)
+            $duration = 0;
+        
         $_SESSION[self::FLASH_KEY] = $string;
+        $_SESSION[self::FLASH_TYPE_KEY] = $type;
+        $_SESSION[self::FLASH_DURATION_KEY] = $duration;
         $_SESSION[self::SHOULD_CLEAR_FLASH_KEY] = false;
     }
 
@@ -87,6 +97,22 @@ class Session
     {
         if (isset($_SESSION[self::FLASH_KEY]))
             return $_SESSION[self::FLASH_KEY];
+
+        return null;
+    }
+    
+    public function getFlashType()
+    {
+        if (isset($_SESSION[self::FLASH_TYPE_KEY]))
+            return $_SESSION[self::FLASH_TYPE_KEY];
+
+        return null;
+    }
+    
+    public function getFlashDuration()
+    {
+        if (isset($_SESSION[self::FLASH_DURATION_KEY]))
+            return $_SESSION[self::FLASH_DURATION_KEY];
 
         return null;
     }
@@ -109,6 +135,8 @@ class Session
     public function clearFlash()
     {
         $this->remove(self::FLASH_KEY);
+        $this->remove(self::FLASH_TYPE_KEY);
+        $this->remove(self::FLASH_DURATION_KEY);
     }
 
     protected function shouldClearErrors()

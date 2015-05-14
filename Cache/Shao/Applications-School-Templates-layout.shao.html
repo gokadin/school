@@ -239,14 +239,14 @@
                 <div class="row content">
                     <?php  use Library\Facades\Session;  ?>
                     <div class="col-md-12">
-                        <div id="flash" class="<?php if (Session::hasFlash()) { ?> active <?php } ?>">
-                            <?php if (Session::hasFlash()) { ?>
+                        <?php if (Session::hasFlash()) { ?>
+                            <div id="flash" class="active <?php echo  Session::getFlashType() ; ?>">
                                 <?php echo  Session::getFlash() ; ?>
-                            <?php } ?>
-                            <span>
-                                <button class="flash-close" onclick="closeFlash()">X</button>
-                            </span>
-                        </div>
+                                <span>
+                                    <button class="flash-close" onclick="closeFlash()">X</button>
+                                </span>
+                            </div>
+                        <?php } ?>
                     </div>
                     <div class="col-md-12">
                         <?php echo  $content ; ?>
@@ -265,6 +265,16 @@
 <script>
 jQuery(document).ready(function() {
     App.init();
+});
+
+$(function() {
+    var flashDuration = parseInt('<?php echo  Session::getFlashDuration() ; ?>');
+    
+    if (flashDuration == 0) {
+        return;
+    }
+    
+    setTimeout(closeFlash, flashDuration * 1000);
 });
 
 function closeFlash() {
