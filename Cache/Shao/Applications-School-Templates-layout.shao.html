@@ -92,6 +92,15 @@
                         </li>
                     </ul>
                 </li>
+                <li class="<?php if ($module == 'Teacher/Messaging') { ?> active <?php } ?>">
+                    <a href="/School/school/teacher/messaging">
+                        <i class="fa fa-home"></i>
+                        <span class="title">Messaging</span>
+                        <?php if ($module == 'Teacher/Messaging') { ?>
+                            <span class="selected"></span>
+                        <?php } ?>
+                    </a>
+                </li>
                 <li class="<?php if ($module == 'Teacher/Activity') { ?> active <?php } ?>">
                     <a href="javascript:;">
                         <i class="fa fa-gear"></i>
