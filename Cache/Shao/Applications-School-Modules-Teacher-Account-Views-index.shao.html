@@ -5,7 +5,7 @@
 			<li><a href="#tabs-2">Account</a></li>
 			<li><a href="#tabs-3">Subscription</a></li>
 		</ul>
-		<div id="tabs-2">
+		<div id="tabs-1">
 			<div class="col-4">
 				<div class="profile-picture">
 					
@@ -13,14 +13,14 @@
 			</div>
 			<div class="col-8">
 				<div class="profile-name">
-					
+					<?php echo  $currentUser->name() ; ?>
 				</div>
 				<div class="profile-description">
 					
 				</div>
 			</div>
 		</div>
-		<div id="tabs-1">
+		<div id="tabs-2">
 			<div class="col-3 account-edit-options">
 				<ul>
 					<li id="personal-info" class="active" onclick="displayEditOption(this)">
@@ -46,7 +46,7 @@
 					<?php require 'Cache/Shao/Common-Views-personalInfoForm.shao.html' ?>
 				</div>
 				<div id="profile-picture-content" class="account-edit-content">
-					pic
+					<?php require 'Cache/Shao/Common-Views-profilePictureForm.shao.html' ?>
 				</div>
 				<div id="change-password-content" class="account-edit-content">
 					<?php require 'Cache/Shao/Common-Views-changePasswordForm.shao.html' ?>

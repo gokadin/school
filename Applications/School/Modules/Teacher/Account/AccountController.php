@@ -52,6 +52,11 @@ class AccountController extends BackController
 		Response::toAction('School#Teacher/Account#index');
 	}
 	
+	public function editProfilePicture()
+	{
+		
+	}
+	
 	public function subscription()
 	{
 		Page::add('subscription', $this->currentUser->subscription());
