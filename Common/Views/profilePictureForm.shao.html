@@ -1,11 +1,7 @@
 <form id="profile-picture-form" enctype="multipart/form-data" action="/School/school/teacher/account/edit-profile-picture" method="POST">
     <input type="hidden" name="_method" value="PUT" />
 	<span class="btn btn-default btn-file">
-        @if ($currentUser->hasProfilePicture())
-            <img id="profile-picture-preview" src="{{ $currentUser->profile_picture }}" width="200" />
-        @else
-            <img id="profile-picture-preview" width="200" />
-        @endif
+        <img id="profile-picture-preview" src="{{ $currentUser->profile_picture }}" width="200" />
 		<input id="profile-picture-input" type="file" name="profilePicture" />
 	</span>
 	<button type="submit">Upload</button>

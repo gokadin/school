@@ -168,3 +168,12 @@ button:disabled
     pointer-events: auto !important;
     cursor: not-allowed;
 }
+
+/* PROFILE PICTURES */
+
+.profile-picture-small
+{
+    max-width: 30px !important;
+    max-height: 30px;
+    width: 100%;
+}

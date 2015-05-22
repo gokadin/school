@@ -132,6 +132,7 @@ class AccountController extends BackController
         $teacher->last_name = $tempUser->last_name;
         $teacher->email = $tempUser->email;
         $teacher->password = md5(Request::postData('password'));
+        $teacher->profile_picture = Config::get('defaultProfilePicturePath');
         $teacher->save();
 
         $user = User::where('email', '=', $teacher->email)

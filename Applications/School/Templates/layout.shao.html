@@ -46,6 +46,7 @@
                     @endif
                     <li class="dropdown">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                            <img class="profile-picture-small" src="{{ $currentUser->profile_picture }}" />
                             {{ $currentUser->name() }}&nbsp;<b class="caret"></b>
                         </a>
                         <ul class="dropdown-menu">
