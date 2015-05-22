@@ -54,7 +54,60 @@ class AccountController extends BackController
 	
 	public function editProfilePicture()
 	{
+		$target_dir = "/var/www/html/School/Web/uploads/";
+		$extension = pathinfo($_FILES["profilePicture"]["name"], PATHINFO_EXTENSION);
+		$targetFile = $target_dir.'profilePicture_'.$this->currentUser->id.'.'.$extension;
+		$databaseLink = '/School/Web/uploads/profilePicture_'.$this->currentUser->id.'.'.$extension;
 		
+	    if(!getimagesize($_FILES["profilePicture"]["tmp_name"])) 
+		{
+			Session::setFlash('File is not an image.', 'error');
+			Response::toAction('School#Teacher/Account#index');
+	    }
+
+		if ($_FILES["profilePicture"]["size"] > 200000) 
+		{
+			Session::setFlash('File size cannot be greater than 2MB.', 'error');
+			Response::toAction('School#Teacher/Account#index');
+		}
+
+		if($extension != "jpg" && $extension != "png" && $extension != "jpeg"
+			&& $extension != "gif" ) 
+		{
+		    $uploadOk = false;
+			Session::setFlash('Only JPG, JPEG, PNG and GIF files are allowed.', 'error');
+			Response::toAction('School#Teacher/Account#index');
+		}
+		
+		if (file_exists($targetFile))
+		{
+			rename($targetFile, $targetFile.'.temp');
+		}
+		
+	    if (!move_uploaded_file($_FILES["profilePicture"]["tmp_name"], $targetFile)) 
+		{
+			rename($targetFile.'.temp', $targetFile);
+			
+			Session::setFlash('There was an error while uploading your picture.', 'error');
+			Response::toAction('School#Teacher/Account#index');
+	    }
+		
+		$this->currentUser->profile_picture = $databaseLink;
+
+		if (!$this->currentUser->save())
+		{
+			if (file_exists($targetFile.'.temp'))
+				rename($targetFile.'.temp', $targetFile);
+			
+			Session::setFlash('There was an error while uploading your picture.', 'error');
+			Response::toAction('School#Teacher/Account#index');
+		}
+		
+		if (file_exists($targetFile.'.temp'))
+			unlink($targetFile.'.temp');
+		
+		Session::setFlash('Profile picture uploaded successfully.', 'success', 5);
+        Response::toAction('School#Teacher/Account#index');
 	}
 	
 	public function subscription()

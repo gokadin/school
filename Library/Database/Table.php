@@ -50,6 +50,11 @@ class Table
     {
         return $this->columns[] = new Column($name, 'boolean', 1);
     }
+    
+    public function datetime($name)
+    {
+        return $this->columns[] = new Column($name, 'datetime', 0);
+    }
 
     public function timestamps()
     {

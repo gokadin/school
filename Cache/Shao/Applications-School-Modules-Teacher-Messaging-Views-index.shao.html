@@ -1,1 +1,15 @@
-msging
+<button id="new-message-button" class="btn btn-success" onclick="openNewMessage()">New message...</button>
+
+<div id="new-message-div">
+	<form id="new-message-form" action="" method="POST">
+		<textarea></textarea>
+		<button type="submit">Send</button>
+	</form>
+</div>
+	
+<script type="text/javascript">
+function openNewMessage() {
+	$('#new-message-button').prop('disabled', true);
+	$('#new-message-div').slideDown();
+}
+</script>

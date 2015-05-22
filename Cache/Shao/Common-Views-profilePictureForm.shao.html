@@ -1,3 +1,30 @@
-<form id="profile-picture-form" action="/School/school/teacher/account/edit-profile-picture" method="POST">
-	<!-- dont forget multipart blabla -->
+<form id="profile-picture-form" enctype="multipart/form-data" action="/School/school/teacher/account/edit-profile-picture" method="POST">
+    <input type="hidden" name="_method" value="PUT" />
+	<span class="btn btn-default btn-file">
+        <?php if ($currentUser->hasProfilePicture()) { ?>
+            <img id="profile-picture-preview" src="<?php echo  $currentUser->profile_picture ; ?>" width="200" />
+        <?php } else { ?>
+            <img id="profile-picture-preview" width="200" />
+        <?php } ?>
+		<input id="profile-picture-input" type="file" name="profilePicture" />
+	</span>
+	<button type="submit">Upload</button>
 </form>
+
+<script type="text/javascript">
+function readURL(input) {
+    if (input.files && input.files[0]) {
+        var reader = new FileReader();
+        
+        reader.onload = function (e) {
+            $('#profile-picture-preview').attr('src', e.target.result);
+        }
+        
+        reader.readAsDataURL(input.files[0]);
+    }
+}
+
+$("#profile-picture-input").change(function(){
+    readURL(this);
+});
+</script>

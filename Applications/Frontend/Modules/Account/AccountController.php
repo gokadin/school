@@ -73,7 +73,7 @@ class AccountController extends BackController
         $tempUser->email = Request::postData('email');
         $tempUser->confirmation_code = $confirmationCode;
         $tempUser->save();
-Session::setFlash($confirmationCode); // TEMP**************
+
         Response::toAction('Frontend#Account#signUpLand');
     }
 

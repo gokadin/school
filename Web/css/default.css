@@ -160,3 +160,11 @@ input[type="checkbox"]:focus
 {
     
 }
+
+/* DISABLED BUTTON */
+
+button:disabled
+{
+    pointer-events: auto !important;
+    cursor: not-allowed;
+}

@@ -1158,3 +1158,44 @@ Footer Layouts (new in v1.3)
 {
     height: 55px;
 }
+
+.btn-file {
+    position: relative;
+    overflow: hidden;
+    width: 200px;
+    height: 250px;
+    padding: 0px;
+    border: 3px solid #ccc;
+    display: table-cell;
+}
+.btn-file input[type=file] {
+    position: absolute;
+    top: 0;
+    right: 0;
+    min-width: 100%;
+    min-height: 100%;
+    font-size: 100px;
+    text-align: right;
+    filter: alpha(opacity=0);
+    opacity: 0;
+    outline: none;
+    background: white;
+    cursor: inherit;
+    display: block;
+}
+
+#profile-picture-preview
+{
+    max-width: 200px;
+    max-height: 250px;
+    width: 100%;
+}
+
+/* MESSAGING */
+
+/* MESSAGING INDEX */
+
+#new-message-div
+{
+    display: none;
+}

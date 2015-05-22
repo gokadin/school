@@ -17,6 +17,7 @@ class Tables
         $t->string('password');
         $t->string('phone', 32)->nullable();
         $t->boolean('active')->default(1);
+        $t->string('profile_picture', 200)->nullable();
         $t->meta();
         $t->timestamps();
 
@@ -143,6 +144,20 @@ class Tables
         $t->string('app_number', 10)->nullable();
         $t->timestamps();
 
+        return $t;
+    }
+    
+    protected function messages()
+    {
+        $t = new Table('Message');
+        
+        $t->increments('id');
+        $t->integer('user_id');
+        $t->integer('to_user_id');
+        $t->boolean('is_read')->default(0);
+        $t->datetime('time_read')->nullable();
+        $t->timestamps();
+        
         return $t;
     }
 }
