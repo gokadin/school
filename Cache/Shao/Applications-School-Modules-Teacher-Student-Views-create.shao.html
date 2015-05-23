@@ -106,6 +106,8 @@
 <script type="text/javascript" src="/School/Applications/School/Modules/Teacher/Student/Views/js/studentValidation.js"></script>
 
 <script type="text/javascript">
+setDefaultRate();
+    
 function setDefaultRate() {
     var selectedId = $('#activity').val();
 
@@ -113,8 +115,8 @@ function setDefaultRate() {
         var id = "<?php echo $activity->id; ?>";
 
         if (id == selectedId) {
-            var name = "<?php echo $activity->rate; ?>";
-            $('#rate').val(name);
+            var rate = "<?php echo $activity->rate; ?>";
+            $('#rate').val(rate);
         }
     <?php } ?>
 }

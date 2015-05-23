@@ -1,9 +1,9 @@
-<form id="subscription-credit-card-form" action="@path('School#Teacher/Account#processCreditCardPayment')" method="POST">
+<form id="subscription-credit-card-form" action="/School/school/teacher/account/subscription/payment/credit-card" method="POST">
     <div class="create-form-body">
 
         <span class="payment-errors"></span>
 
-        <input type="hidden" value="{{ $subscription->type }}" />
+        <input type="hidden" name="subscriptionType" value="{{ $subscription->type }}" />
 
         <div class="row create-form-input-row subscription-description-row">
             <div class="col-md-3 create-form-label"><b>Subscription</b></div>
@@ -67,36 +67,92 @@
     </div>
 </form>
 
+<script type="text/javascript">
+var waitingDialog = (function ($) {
 
+// Creating modal dialog's DOM
+var $dialog = $(
+	'<div class="modal fade" data-backdrop="static" data-keyboard="false" tabindex="-1" role="dialog" aria-hidden="true" style="padding-top:15%; overflow-y:visible;">' +
+	'<div class="modal-dialog modal-m">' +
+	'<div class="modal-content">' +
+		'<div class="modal-header"><h3 style="margin:0;"></h3></div>' +
+		'<div class="modal-body">' +
+			'<div class="progress progress-striped active" style="margin-bottom:0;"><div class="progress-bar" style="width: 100%"></div></div>' +
+		'</div>' +
+	'</div></div></div>');
+
+return {
+	/**
+	 * Opens our dialog
+	 * @param message Custom message
+	 * @param options Custom options:
+	 * 				  options.dialogSize - bootstrap postfix for dialog size, e.g. "sm", "m";
+	 * 				  options.progressType - bootstrap postfix for progress bar type, e.g. "success", "warning".
+	 */
+	show: function (message, options) {
+		// Assigning defaults
+		var settings = $.extend({
+			dialogSize: 'sm',
+			progressType: ''
+		}, options);
+		if (typeof message === 'undefined') {
+			message = 'Loading';
+		}
+		if (typeof options === 'undefined') {
+			options = {};
+		}
+		// Configuring dialog
+		$dialog.find('.modal-dialog').attr('class', 'modal-dialog').addClass('modal-' + settings.dialogSize);
+		$dialog.find('.progress-bar').attr('class', 'progress-bar');
+		if (settings.progressType) {
+			$dialog.find('.progress-bar').addClass('progress-bar-' + settings.progressType);
+		}
+		$dialog.find('h3').text(message);
+		// Opening dialog
+		$dialog.modal();
+	},
+
+	hide: function () {
+		$dialog.modal('hide');
+	}
+}
+})(jQuery);
+</script>
 
 <script type="text/javascript" src="https://js.stripe.com/v2/"></script>
+    
+<script type="text/javascript" src="/School/Applications/School/Modules/Teacher/Account/Views/js/validateCreditCardPayment.js"></script>
+    
 <script type="text/javascript">
 Stripe.setPublishableKey('pk_test_TYrTrbmk26Ycou9fkd7U81Ol');
 
-jQuery(function($) {
-  $('#subscription-credit-card-form').submit(function(event) {
-    var $form = $(this);
-
-    $('#credit-card-payment-submit-button').prop('disabled', true);
-
-    Stripe.card.createToken($form, stripeResponseHandler);
-
-    return false;
-  });
-});
-
-function stripeResponseHandler(status, response) {
-  var $form = $('#subscription-credit-card-form');
-
-  if (response.error) {
-    $form.find('.payment-errors').text(response.error.message);
-    $('#credit-card-payment-submit-button').prop('disabled', false);
-  } else {
-    var token = response.id;
-    $form.append($('<input type="hidden" name="stripeToken" />').val(token));
-    $form.get(0).submit();
-  }
+var stripeResponseHandler = function(status, response) {
+    waitingDialog.hide();
+    
+    var $form = $('#subscription-credit-card-form');
+    
+    if (response.error) {
+        $form.find('.payment-errors').text(response.error.message);
+        $form.find('button').prop('disabled', false);
+    } else {
+        var token = response.id;
+        
+        $form.append($('<input type="hidden" name="stripeToken" />').val(token));
+        $form.get(0).submit();
+    }
 };
-</script>
 
-<script type="text/javascript" src="/School/Applications/School/Modules/Teacher/Account/Views/js/validateCreditCardPayment.js"></script>
+jQuery(function($) {
+    $('#subscription-credit-card-form').submit(function(e) {
+        waitingDialog.show();
+        
+        var $form = $(this);
+
+        $form.find('button').prop('disabled', true);
+        
+        Stripe.card.createToken($form, stripeResponseHandler);
+
+        return false;
+    });
+});
+</script> 

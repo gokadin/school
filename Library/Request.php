@@ -29,12 +29,16 @@ class Request
             $method = $this->postData('_method');
             switch (strtoupper($method))
             {
+                case 'GET':
+                    return 'GET';
                 case 'PUT':
                     return 'PUT';
                 case 'PATCH':
                     return 'PATCH';
                 case 'DELETE':
                     return 'DELETE';
+                default:
+                    return 'POST';
             }
         }
 

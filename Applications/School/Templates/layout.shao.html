@@ -142,7 +142,7 @@
                         </li>
                     </ul>
                 </li>
-                <li>
+                <li @if ($module == 'Teacher/Calendar') active @endif>
                     <a href="javascript:;">
                         <i class="fa fa-calendar"></i>
                         <span class="title">Calendar</span>
@@ -150,7 +150,7 @@
                     </a>
                     <ul class="sub-menu">
                         <li>
-                            <a href="#">Example</a>
+                            <a href="@path('School#Teacher/Calendar#index')">Example</a>
                         </li>
                         <li>
                             <a href="#">Example</a>

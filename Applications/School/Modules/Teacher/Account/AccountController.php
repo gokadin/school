@@ -170,7 +170,7 @@ class AccountController extends BackController
 		if ($subscriptionType < 1 || $subscriptionType > 4)
 		{
 			Session::setFlash('An error has occured. Your card was not charged.', 'error');
-			Response::back();
+			Response::toAction('School#Teacher/Account#subscription');
 		}
 
 		$customer = \Stripe\Customer::create(array(
