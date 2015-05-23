@@ -13,16 +13,27 @@
 	padding-left: 15px;
 }
 
+.calendar-top-controls
+{
+	float: right;
+	width: 50%;
+}
+
+.calendar-top-controls-date
+{
+	float: left;
+}
+
+.calendar-top-controls-arrows
+{
+	float: left;
+}
+
 #calendar-side-div
 {
 	float: left;
 	margin-top: 20px;
 	width: 15%;
-}
-
-#mini-calendar-div
-{
-	
 }
 
 .mini-calendar-top
@@ -99,8 +110,76 @@
 	text-align: center;
 }
 
+/* CALENDAR TABLE */
+
 #calendar-div
 {
 	float: left;
-	clear: both;	
+	margin-top: 20px;
+	margin-left: 3%;
+	width: 82%;
+}
+
+.calendar-body
+{
+	border: 1px solid #4082E6;
+}
+
+.calendar-table
+{
+	width: 100%;
+}
+
+.calendar-table tr td
+{
+	border: 1px solid #9C9C9C;
+}
+
+.calendar-table-current-day
+{
+	
+}
+
+.calendar-table-not-current-month
+{
+	
+}
+
+.calendar-table-cell-header
+{
+	background-color: #E3E3E3;
+	overflow: auto;
+}
+
+.calendar-table-cell-header-left
+{
+	float: left;
+	padding-left: 8px;
+	font-size: 16px;
+}
+
+.calendar-table-not-current-month .calendar-table-cell-header-left
+{
+	color: #999;
+}
+
+.calendar-table-current-day .calendar-table-cell-header-left
+{
+	font-weight: bold;
+}
+
+.calendar-table-cell-header-right
+{
+	float: right;
+	padding-right: 8px;
+}
+
+.calendar-table-cell-header-right a
+{
+	font-size: 17px;
+}
+
+.calendar-table-cell-body
+{
+	height: 80px;
 }

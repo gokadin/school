@@ -5,6 +5,10 @@
 	<div id="calendar-container">
 		<div id="calendar-top-div">
 			Calendar
+			<span class="calendar-top-controls">
+				<span class="calendar-top-controls-date"></span>
+				<span class="calendar-top-controls-arrows"></span>
+			</span>
 		</div>
 		<div id="calendar-side-div">
 			<div id="mini-calendar-div">
@@ -19,7 +23,9 @@
 			</div>
 		</div>
 		<div id="calendar-div">
-			
+			<div class="calendar-body">
+				
+			</div>
 		</div>
 	</div>
 </div>
@@ -27,6 +33,7 @@
 <script type="text/javascript">
 	var currentDate = new Date();
 	var selectedMiniDate = new Date();
+	var selectedDate = new Date();
 	
 	$(function() {
 		displayMiniCalendarMonth(currentDate.getMonth(), currentDate.getFullYear());
@@ -38,6 +45,8 @@
 		$('.mini-calendar-top-arrow-right').on('click', function() {
 			displayNextMiniCalendarMonth();
 		});
+		
+		displayCalendarDate(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDay());
 	});
 	
 	function displayPreviousMiniCalendarMonth() {
@@ -104,7 +113,7 @@
 		var str = '';
 		
 		if (isForCurrentMonth 
-				&& currentDate.getDay() == day
+				&& currentDate.getDate() == day
 				&& selectedMiniDate.getMonth() == currentDate.getMonth()
 				&& selectedMiniDate.getFullYear() == currentDate.getFullYear()) {
 			str += '<td class="mini-calendar-table-current-day">';	
@@ -114,7 +123,83 @@
 			str += '<td>';
 		}
 		
-		str += '<a href="#">' + day + '</a>';	
+		str += '<a href="#" onclick="displayCalendarDate(' + selectedMiniDate.getFullYear() + ', ' + selectedMiniDate.getMonth() + ', ' + day + ')">' + day + '</a>';	
+		
+		str += '</td>';
+		
+		return str;
+	}
+	
+	function displayCalendarDate(year, month, day) {
+		selectedDate = new Date(year, month, day);;
+		
+		$('.calendar-top-controls-date').html(getMonthNameFromNumber(month) + '&nbsp;&nbsp;' + year);
+		
+		var tempDate = new Date(year, month, 1);
+		var dayOfWeek = tempDate.getDay();
+		var daysInMonth = getNumberOfDaysInMonth(month, year);
+		var daysInLastMonth = getNumberOfDaysInMonth(month - 1, year);
+		
+		var totalCells = dayOfWeek + daysInMonth;
+		if (totalCells % 7 != 0) {
+			totalCells = (Math.floor(totalCells / 7) + 1) * 7;
+		}
+		var totalRows = totalCells / 7;
+		
+		var str = '<table class="calendar-table">';
+		
+		for (var i = 0; i < totalRows; i++) {
+			str += '<tr>';
+			
+			var nextMonthDayCounter = 0;
+			for (var j = 0; j < 7; j++) {				
+				var cellNumber = i * 7 + j;
+				
+				if (cellNumber < dayOfWeek) {
+					str += buildCalendarCell(daysInLastMonth - dayOfWeek + j + 1, false);
+				} else if (cellNumber >= dayOfWeek + daysInMonth) {
+					nextMonthDayCounter++;
+					str += buildCalendarCell(nextMonthDayCounter, false);
+				} else {
+					str += buildCalendarCell(cellNumber - dayOfWeek + 1, true);
+				}
+			}
+			
+			str += '</tr>';
+		}
+		
+		str += '</table>';
+		
+		$('.calendar-body').html(str);
+	}
+	
+	function buildCalendarCell(day, isForCurrentMonth) {
+		var str = '';
+		
+		if (isForCurrentMonth 
+				&& currentDate.getDate() == day
+				&& selectedMiniDate.getMonth() == currentDate.getMonth()
+				&& selectedMiniDate.getFullYear() == currentDate.getFullYear()) {
+			str += '<td class="calendar-table-current-day">';
+		} else if (!isForCurrentMonth) {
+			str += '<td class="calendar-table-not-current-month">';
+		} else {
+			str += '<td>';
+		}
+		
+		// Cell header
+		str += '<div class="calendar-table-cell-header">';
+		str += '<span class="calendar-table-cell-header-left">';
+		str += day;
+		str += '</span>';
+		str += '<span class="calendar-table-cell-header-right">';
+		str += '<a href="#"><i class="fa fa-plus-circle"></i>';
+		str += '</span>';
+		str += '</div>';
+		
+		// Cell body
+		str += '<div class="calendar-table-cell-body"';
+		str += '</div>';
 		
 		str += '</td>';
 		
