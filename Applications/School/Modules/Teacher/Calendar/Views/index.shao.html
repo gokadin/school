@@ -25,44 +25,137 @@
 </div>
 
 <script type="text/javascript">
-	$(function() {
-		var currentDate = new Date();
+	var currentDate = new Date();
+	var selectedMiniDate = new Date();
 	
-		displayMiniCalendarMonth(currentDate.getMonth() + 1);
+	$(function() {
+		displayMiniCalendarMonth(currentDate.getMonth(), currentDate.getFullYear());
+		
+		$('.mini-calendar-top-arrow-left').on('click', function() {
+			displayPreviousMiniCalendarMonth();
+		});
+		
+		$('.mini-calendar-top-arrow-right').on('click', function() {
+			displayNextMiniCalendarMonth();
+		});
 	});
 	
-	function displayMiniCalendarMonth(monthNumber) {
-		$('.mini-calendar-top-month-name').html(getMonthNameFromNumber(monthNumber));
+	function displayPreviousMiniCalendarMonth() {
+		selectedMiniDate.setMonth(selectedMiniDate.getMonth() - 1);
+		displayMiniCalendarMonth(selectedMiniDate.getMonth(), selectedMiniDate.getFullYear());
+		return false;
+	} 
+	
+	function displayNextMiniCalendarMonth() {
+		selectedMiniDate.setMonth(selectedMiniDate.getMonth() + 1);
+		displayMiniCalendarMonth(selectedMiniDate.getMonth(), selectedMiniDate.getFullYear());
+		return false;
+	} 
+	
+	function displayMiniCalendarMonth(monthNumber, year) {
+		if (monthNumber < 0 || monthNumber > 11) {
+			monthNumber = currentDate.getMonth();
+			year = currentDate.getFullYear();
+		}
+		
+		var date = new Date(year, monthNumber, 1);
+		selectedMiniDate = date;
+		
+		var dayOfWeek = date.getDay();
+		var daysInMonth = getNumberOfDaysInMonth(monthNumber, year);
+		var daysInLastMonth = getNumberOfDaysInMonth(monthNumber - 1, year);
+		
+		$('.mini-calendar-top-month-name').html(getMonthNameFromNumber(monthNumber) + '&nbsp;&nbsp;' + year);
+		
+		var totalCells = dayOfWeek + daysInMonth;
+		if (totalCells % 7 != 0) {
+			totalCells = (Math.floor(totalCells / 7) + 1) * 7;
+		}
+		var totalRows = totalCells / 7;
+		
+		var str = '<table class="mini-calendar-table">';
+		
+		for (var i = 0; i < totalRows; i++) {
+			str += '<tr>';
+			
+			var nextMonthDayCounter = 0;
+			for (var j = 0; j < 7; j++) {				
+				var cellNumber = i * 7 + j;
+				
+				if (cellNumber < dayOfWeek) {
+					str += buildMiniCalendarCell(daysInLastMonth - dayOfWeek + j + 1, false);
+				} else if (cellNumber >= dayOfWeek + daysInMonth) {
+					nextMonthDayCounter++;
+					str += buildMiniCalendarCell(nextMonthDayCounter, false);
+				} else {
+					str += buildMiniCalendarCell(cellNumber - dayOfWeek + 1, true);
+				}
+			}
+			
+			str += '</tr>';
+		}
+		
+		str += '</table>';
+		
+		$('.mini-calendar-body').html(str);
+	}
+	
+	function buildMiniCalendarCell(day, isForCurrentMonth) {
+		var str = '';
+		
+		if (isForCurrentMonth 
+				&& currentDate.getDay() == day
+				&& selectedMiniDate.getMonth() == currentDate.getMonth()
+				&& selectedMiniDate.getFullYear() == currentDate.getFullYear()) {
+			str += '<td class="mini-calendar-table-current-day">';	
+		} else if (!isForCurrentMonth) {
+			str += '<td class="mini-calendar-table-not-current-month">';
+		} else {
+			str += '<td>';
+		}
+		
+		str += '<a href="#">' + day + '</a>';	
+		
+		str += '</td>';
+		
+		return str;
 	}
 	
 	function getMonthNameFromNumber(monthNumber) {
 		switch (monthNumber) {
-			case 1:
+			case 0:
 				return 'January';
-			case 2:
+			case 1:
 				return 'February';
-			case 3:
+			case 2:
 				return 'March';
-			case 4:
+			case 3:
 				return 'April';
-			case 5:
+			case 4:
 				return 'May';
-			case 6:
+			case 5:
 				return 'June';
-			case 7:
+			case 6:
 				return 'July';
-			case 8:
+			case 7:
 				return 'August';
-			case 9:
+			case 8:
 				return 'September';
-			case 10:
+			case 9:
 				return 'October';
-			case 11:
+			case 10:
 				return 'November';
-			case 12:
+			case 11:
 				return 'December';
 			default:
 				return 'n/a';
 		}
+	}
+	
+	function getNumberOfDaysInMonth(month, year)
+	{
+		var monthStart = new Date(year, month, 1);
+		var monthEnd = new Date(year, month + 1, 1);
+		return Math.floor((monthEnd - monthStart) / (1000 * 60 * 60 * 24));
 	}
 </script>

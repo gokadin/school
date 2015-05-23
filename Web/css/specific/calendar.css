@@ -45,13 +45,58 @@
 
 .mini-calendar-top-month-name
 {
-	padding-right: 20px;
-	padding-left: 20px;
+	width: 100%;
+}
+
+.mini-calendar-top-arrow-left
+{
+	float: left;
+}
+
+.mini-calendar-top-arrow-right
+{
+	float: right;
+}
+
+.mini-calendar-top-arrow-left, 
+.mini-calendar-top-arrow-right
+{
+	width: 10%;
 }
 
 .mini-calendar-body
 {
-	
+	border: 1px solid #4082E6;
+}
+
+.mini-calendar-table
+{
+	width: 100%;
+}
+
+.mini-calendar-table a
+{
+	color: black;
+}
+
+.mini-calendar-table a:hover
+{
+	color: #4082E6;
+}
+
+.mini-calendar-table-not-current-month a
+{
+	color: #707070;
+}
+
+.mini-calendar-table-current-day
+{
+	font-weight: bold;
+}
+
+.mini-calendar-table tr td
+{
+	text-align: center;
 }
 
 #calendar-div
