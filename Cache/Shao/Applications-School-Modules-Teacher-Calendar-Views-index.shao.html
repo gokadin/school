@@ -1,10 +1,68 @@
+<link rel="stylesheet" href="/School/Web/css/specific/calendar.css" type="text/css" />
+<link rel="stylesheet" href="/School/Web/css/specific/calendarResponsive.css" type="text/css" />
+
 <div class="col-md-12">
 	<div id="calendar-container">
+		<div id="calendar-top-div">
+			Calendar
+		</div>
 		<div id="calendar-side-div">
-			
+			<div id="mini-calendar-div">
+				<div class="mini-calendar-top">
+					<span class="mini-calendar-top-arrow-left"><a href="#"><</a></span>
+					<span class="mini-calendar-top-month-name">May</span>
+					<span class="mini-calendar-top-arrow-right"><a href="#">></a></span>
+				</div>
+				<div class="mini-calendar-body">
+					
+				</div>
+			</div>
 		</div>
 		<div id="calendar-div">
 			
 		</div>
 	</div>
 </div>
+
+<script type="text/javascript">
+	$(function() {
+		var currentDate = new Date();
+	
+		displayMiniCalendarMonth(currentDate.getMonth() + 1);
+	});
+	
+	function displayMiniCalendarMonth(monthNumber) {
+		$('.mini-calendar-top-month-name').html(getMonthNameFromNumber(monthNumber));
+	}
+	
+	function getMonthNameFromNumber(monthNumber) {
+		switch (monthNumber) {
+			case 1:
+				return 'January';
+			case 2:
+				return 'February';
+			case 3:
+				return 'March';
+			case 4:
+				return 'April';
+			case 5:
+				return 'May';
+			case 6:
+				return 'June';
+			case 7:
+				return 'July';
+			case 8:
+				return 'August';
+			case 9:
+				return 'September';
+			case 10:
+				return 'October';
+			case 11:
+				return 'November';
+			case 12:
+				return 'December';
+			default:
+				return 'n/a';
+		}
+	}
+</script>

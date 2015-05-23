@@ -142,20 +142,14 @@
                         </li>
                     </ul>
                 </li>
-                <li <?php if ($module == 'Teacher/Calendar') { ?> active <?php } ?>>
-                    <a href="javascript:;">
+                <li class="<?php if ($module == 'Teacher/Calendar') { ?> active <?php } ?>">
+                    <a href="/School/school/teacher/calendar">
                         <i class="fa fa-calendar"></i>
                         <span class="title">Calendar</span>
-                        <span class="arrow"></span>
+                        <?php if ($module == 'Teacher/Calendar') { ?>
+                            <span class="selected"></span>
+                        <?php } ?>
                     </a>
-                    <ul class="sub-menu">
-                        <li>
-                            <a href="/School/school/teacher/calendar">Example</a>
-                        </li>
-                        <li>
-                            <a href="#">Example</a>
-                        </li>
-                    </ul>
                 </li>
                 <li>
                     <a href="javascript:;">
