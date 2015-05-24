@@ -7,15 +7,23 @@
 			Calendar
 			<span class="calendar-top-controls">
 				<span class="calendar-top-controls-date"></span>
-				<span class="calendar-top-controls-arrows"></span>
+				<span class="calendar-top-controls-arrow-left">
+					<a href="#"><i class="fa fa-arrow-circle-left"></i></a>
+				</span>
+				<span class="calendar-top-controls-arrow-right">
+					<a href="#"><i class="fa fa-arrow-circle-right"></i></a>
+				</span>
+				<span class="calendar-top-controls-today">
+					<a href="#">Today</a>
+				</span>
 			</span>
 		</div>
 		<div id="calendar-side-div">
 			<div id="mini-calendar-div">
 				<div class="mini-calendar-top">
-					<span class="mini-calendar-top-arrow-left"><a href="#"><</a></span>
+					<span class="mini-calendar-top-arrow-left"><a href="#"><i class="fa fa-arrow-circle-left"></i></a></span>
 					<span class="mini-calendar-top-month-name">May</span>
-					<span class="mini-calendar-top-arrow-right"><a href="#">></a></span>
+					<span class="mini-calendar-top-arrow-right"><a href="#"><i class="fa fa-arrow-circle-right"></i></a></span>
 				</div>
 				<div class="mini-calendar-body">
 					
@@ -37,6 +45,7 @@
 	
 	$(function() {
 		displayMiniCalendarMonth(currentDate.getMonth(), currentDate.getFullYear());
+		displayCalendarDate(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate());
 		
 		$('.mini-calendar-top-arrow-left').on('click', function() {
 			displayPreviousMiniCalendarMonth();
@@ -46,7 +55,17 @@
 			displayNextMiniCalendarMonth();
 		});
 		
-		displayCalendarDate(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDay());
+		$('.calendar-top-controls-arrow-left').on('click', function() {
+			displayPreviousCalendarMonth();
+		});
+		
+		$('.calendar-top-controls-arrow-right').on('click', function() {
+			displayNextCalendarMonth();
+		});
+		
+		$('.calendar-top-controls-today').on('click', function() {
+			displayCalendarDate(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate());
+		});
 	});
 	
 	function displayPreviousMiniCalendarMonth() {
@@ -130,8 +149,20 @@
 		return str;
 	}
 	
+	function displayPreviousCalendarMonth() {
+		selectedDate.setMonth(selectedDate.getMonth() - 1);
+		displayCalendarDate(selectedDate.getFullYear(), selectedDate.getMonth(), selectedDate.getDate());
+		return false;
+	}
+	
+	function displayNextCalendarMonth() {
+		selectedDate.setMonth(selectedDate.getMonth() + 1);
+		displayCalendarDate(selectedDate.getFullYear(), selectedDate.getMonth(), selectedDate.getDate());
+		return false;
+	}
+	
 	function displayCalendarDate(year, month, day) {
-		selectedDate = new Date(year, month, day);;
+		selectedDate = new Date(year, month, day);
 		
 		$('.calendar-top-controls-date').html(getMonthNameFromNumber(month) + '&nbsp;&nbsp;' + year);
 		
@@ -147,6 +178,8 @@
 		var totalRows = totalCells / 7;
 		
 		var str = '<table class="calendar-table">';
+		
+		str += buildCalendarHeader();
 		
 		for (var i = 0; i < totalRows; i++) {
 			str += '<tr>';
@@ -171,6 +204,22 @@
 		str += '</table>';
 		
 		$('.calendar-body').html(str);
+	}
+	
+	function buildCalendarHeader() {
+		var str = '<tr>';
+		
+		str += '<th>Sunday</td>';
+		str += '<th>Monday</td>';
+		str += '<th>Tuesday</td>';
+		str += '<th>Wednesday</td>';
+		str += '<th>Thursday</td>';
+		str += '<th>Friday</td>';
+		str += '<th>Saturday</td>';
+		
+		str += '</tr>';
+		
+		return str;
 	}
 	
 	function buildCalendarCell(day, isForCurrentMonth) {

@@ -22,11 +22,49 @@
 .calendar-top-controls-date
 {
 	float: left;
+	width: 50%;
 }
 
-.calendar-top-controls-arrows
+.calendar-top-controls-arrow-left, 
+.calendar-top-controls-arrow-right
 {
+	width: 7%;
 	float: left;
+	margin-top: -3px;
+}
+
+.calendar-top-controls-arrow-left a, 
+.calendar-top-controls-arrow-right a
+{
+	color: white;
+	font-size: 28px;
+	transition: color .2s;
+}
+
+.calendar-top-controls-arrow-left a:hover, 
+.calendar-top-controls-arrow-right a:hover
+{
+	color: #FF9147;
+	transition: color .2s;
+}
+
+.calendar-top-controls-today
+{
+	width: 7%;
+}
+
+.calendar-top-controls-today a
+{
+	width: 7%;
+	color: white;
+	text-decoration: none;
+	transition: color .2s;
+}
+
+.calendar-top-controls-today a:hover
+{
+	color: #FF9147;
+	transition: color .2s;
 }
 
 #calendar-side-div
@@ -73,6 +111,20 @@
 .mini-calendar-top-arrow-right
 {
 	width: 10%;
+	margin-top: -2px;
+}
+
+.mini-calendar-top-arrow-left a, 
+.mini-calendar-top-arrow-right a
+{
+	transition: color .2s;
+}
+
+.mini-calendar-top-arrow-left a:hover, 
+.mini-calendar-top-arrow-right a:hover
+{
+	color: #FF9147;
+	transition: color .2s;
 }
 
 .mini-calendar-body
@@ -122,7 +174,7 @@
 
 .calendar-body
 {
-	border: 1px solid #4082E6;
+	border: 2px solid #4082E6;
 }
 
 .calendar-table
@@ -130,19 +182,43 @@
 	width: 100%;
 }
 
+.calendar-table tr th
+{
+	width: 14%;
+}
+
 .calendar-table tr td
 {
-	border: 1px solid #9C9C9C;
+	border: 3px solid #9C9C9C;
 }
 
-.calendar-table-current-day
+.calendar-table tr td:last-child
 {
-	
+	border-right: none;
 }
 
-.calendar-table-not-current-month
+.calendar-table tr td:first-child
 {
-	
+	border-left: none;
+}
+
+.calendar-table tr:nth-child(2) td
+{
+	border-top: none;
+}
+
+.calendar-table tr:last-child td
+{
+	border-bottom: none;
+}
+
+.calendar-table tr th
+{
+	background-color: #4082E6;
+	color: white;
+	text-align: center;
+	font-size: 16px;
+	font-weight: normal;
 }
 
 .calendar-table-cell-header
