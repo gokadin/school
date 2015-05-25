@@ -259,3 +259,25 @@
 {
 	height: 80px;
 }
+
+/* NEW EVENT MODAL */
+
+#add-event-modal .modal-dialog
+{
+	width: 800px;
+}
+
+#new-event-title-input
+{
+	font-size: 22px;
+}
+
+#add-event-modal .checkbox label
+{
+	font-size: 18px;
+}
+
+.checkbox + .checkbox
+{
+	margin-top: 10px;
+}

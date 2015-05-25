@@ -8,22 +8,22 @@
 			<span class="calendar-top-controls">
 				<span class="calendar-top-controls-date"></span>
 				<span class="calendar-top-controls-arrow-left">
-					<a href="#"><i class="fa fa-arrow-circle-left"></i></a>
+					<a href="javascript:;"><i class="fa fa-arrow-circle-left"></i></a>
 				</span>
 				<span class="calendar-top-controls-arrow-right">
-					<a href="#"><i class="fa fa-arrow-circle-right"></i></a>
+					<a href="javascript:;"><i class="fa fa-arrow-circle-right"></i></a>
 				</span>
 				<span class="calendar-top-controls-today">
-					<a href="#">Today</a>
+					<a href="javascript:;">Today</a>
 				</span>
 			</span>
 		</div>
 		<div id="calendar-side-div">
 			<div id="mini-calendar-div">
 				<div class="mini-calendar-top">
-					<span class="mini-calendar-top-arrow-left"><a href="#"><i class="fa fa-arrow-circle-left"></i></a></span>
+					<span class="mini-calendar-top-arrow-left"><a href="javascript:;"><i class="fa fa-arrow-circle-left"></i></a></span>
 					<span class="mini-calendar-top-month-name">May</span>
-					<span class="mini-calendar-top-arrow-right"><a href="#"><i class="fa fa-arrow-circle-right"></i></a></span>
+					<span class="mini-calendar-top-arrow-right"><a href="javascript:;"><i class="fa fa-arrow-circle-right"></i></a></span>
 				</div>
 				<div class="mini-calendar-body">
 					
@@ -37,6 +37,8 @@
 		</div>
 	</div>
 </div>
+
+@includeView('addEventModal')
 
 <script type="text/javascript">
 	var currentDate = new Date();
@@ -142,7 +144,7 @@
 			str += '<td>';
 		}
 		
-		str += '<a href="#" onclick="displayCalendarDate(' + selectedMiniDate.getFullYear() + ', ' + selectedMiniDate.getMonth() + ', ' + day + ')">' + day + '</a>';	
+		str += '<a href="javascript:;" onclick="displayCalendarDate(' + selectedMiniDate.getFullYear() + ', ' + selectedMiniDate.getMonth() + ', ' + day + ')">' + day + '</a>';	
 		
 		str += '</td>';
 		
@@ -242,7 +244,7 @@
 		str += day;
 		str += '</span>';
 		str += '<span class="calendar-table-cell-header-right">';
-		str += '<a href="#"><i class="fa fa-plus-circle"></i>';
+		str += '<a href="javascript:;" onclick="showAddEventModal(this)" data-year="' + selectedDate.getFullYear() + '" data-month="' + selectedDate.getMonth() + '" data-day="' + day + '" ><i class="fa fa-plus-circle"></i>';
 		str += '</span>';
 		str += '</div>';
 		
@@ -291,5 +293,24 @@
 		var monthStart = new Date(year, month, 1);
 		var monthEnd = new Date(year, month + 1, 1);
 		return Math.floor((monthEnd - monthStart) / (1000 * 60 * 60 * 24));
+	}
+	
+	// MODAL DIALOG
+	
+	function showAddEventModal(e) {
+	    var year = e.dataset.year;
+		var month = e.dataset.month;
+		var day = e.dataset.day;
+	    var modal = $('#add-event-modal');
+	
+//	    editModal.find('input').removeClass('valid').removeClass('invalid');
+//	    editModal.find('input').parent().removeClass('show');
+//	    editModal.find('input').parent().nextAll('span').removeClass('show');
+
+//	    $('#edit-modal-firstName').val(currentForm.elements['firstName'].value);
+//	    $('#edit-modal-lastName').val(currentForm.elements['lastName'].value);
+	
+	    modal.modal('show');
+	    return false;
 	}
 </script>

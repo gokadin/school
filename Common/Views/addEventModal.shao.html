@@ -1,0 +1,95 @@
+<div class="modal fade" id="add-event-modal" tabindex="-1" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-6 create-form-input">
+                        <input id="new-event-title-input" type="text" class="form-control" placeholder="Event title">
+                    </div>
+                    <div class="col-md-2 checkbox">
+                        <label>
+                            <input id="new-event-recurring-input" type="checkbox" value="1">
+                            Recurring
+                        </label>
+                    </div>
+                    <div class="col-md-2 checkbox">
+                        <label>
+                            <input id="new-event-all-day-input" type="checkbox" value="1">
+                            All day
+                        </label>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="row">
+                <div id="new-event-start-date" class="col-md-3 create-form-input">
+                    <input id="new-event-start-date-input" class="form-control" type="text" />
+                </div>
+                <div id="new-event-start-time" class="col-md-3">
+                    start time
+                </div>
+                <div id="new-event-end-date" class="col-md-3">
+                    end date
+                </div>
+                <div id="new-event-end-time" class="col-md-3">
+                    end time
+                </div>
+            </div>
+                
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">
+                    Cancel
+                </button>
+                <button id="add-event-modal-create-button" type="button" class="btn btn-success">
+                    Create event
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    $(function() {
+        handleRecurringCheckbox();
+        handleAllDayCheckbox();
+        
+        $('#new-event-recurring-input').on('change', function() {
+            handleRecurringCheckbox();
+        });
+        
+        $('#new-event-all-day-input').on('change', function() {
+            handleAllDayCheckbox();
+        });
+        
+        $('#add-event-modal-create-button').on('click', function() {
+            alert('clc;');
+        });
+        
+        $('#new-event-start-date-input').datepicker();
+        $('#new-event-end-date-input').datepicker();
+    });
+    
+    function handleRecurringCheckbox() {
+        if ($('#new-event-recurring-input').is(':checked')) {
+            
+            
+            return;
+        }
+    }
+    
+    function handleAllDayCheckbox() {
+        if ($('#new-event-all-day-input').is(':checked')) {
+            $('#new-event-start-date input').prop('disabled', true);
+            $('#new-event-end-date input').prop('disabled', true);
+            $('#new-event-start-time').hide();
+            $('#new-event-end-time').hide();
+            
+            return;
+        }
+        
+        $('#new-event-start-date input').prop('disabled', false);
+        $('#new-event-end-date input').prop('disabled', false);
+        $('#new-event-start-time').show();
+        $('#new-event-end-time').show();
+    }
+</script>
