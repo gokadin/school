@@ -74,7 +74,12 @@
         $('#add-event-start-date-input').datepicker();
         $('#add-event-end-date-input').datepicker();
         $('#add-event-start-time-input').timepicker();
-        $('#add-event-end-time-input').timepicker();
+        $('#add-event-start-time-input').timepicker('setTime', '1:00pm');
+        $('#add-event-end-time-input').timepicker({
+            'minTime': '1:00pm', 
+            'showDuration': true    
+        });
+        $('#add-event-end-time-input').timepicker('setTime', '2:00pm');
     });
     
     function handleRecurringCheckbox() {
