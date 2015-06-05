@@ -4,35 +4,37 @@
             <div class="modal-body">
                 <div class="row">
                     <div class="col-md-6 create-form-input">
-                        <input id="new-event-title-input" type="text" class="form-control" placeholder="Event title">
+                        <input id="add-event-title-input" type="text" class="form-control" placeholder="Event title">
                     </div>
                     <div class="col-md-2 checkbox">
                         <label>
-                            <input id="new-event-recurring-input" type="checkbox" value="1">
+                            <input id="add-event-recurring-input" type="checkbox" value="1">
                             Recurring
                         </label>
                     </div>
                     <div class="col-md-2 checkbox">
                         <label>
-                            <input id="new-event-all-day-input" type="checkbox" value="1">
+                            <input id="add-event-all-day-input" type="checkbox" value="1">
                             All day
                         </label>
                     </div>
                 </div>
-            </div>
             
-            <div class="row">
-                <div id="new-event-start-date" class="col-md-3 create-form-input">
-                    <input id="new-event-start-date-input" class="form-control" type="text" />
-                </div>
-                <div id="new-event-start-time" class="col-md-3">
-                    start time
-                </div>
-                <div id="new-event-end-date" class="col-md-3">
-                    end date
-                </div>
-                <div id="new-event-end-time" class="col-md-3">
-                    end time
+                <div id="add-event-datetime-row" class="row create-form-input-row">
+                    <div class="col-md-1 create-form-label">From</div>
+                    <div id="add-event-start-date" class="col-md-2 create-form-input">
+                        <input id="add-event-start-date-input" class="form-control" type="text" />
+                    </div>
+                    <div id="add-event-start-time" class="col-md-2 create-form-input">
+                        <input id="add-event-start-time-input" class="form-control" type="text" />
+                    </div>
+                    <div class="col-md-1 create-form-label">To</div>
+                    <div id="add-event-end-date" class="col-md-2 create-form-input">
+                        <input id="add-event-end-date-input" class="form-control" type="text" />
+                    </div>
+                    <div id="add-event-end-time" class="col-md-2 create-form-input">
+                        <input id="add-event-end-time-input" class="form-control" type="text" />
+                    </div>
                 </div>
             </div>
                 
@@ -53,24 +55,30 @@
         handleRecurringCheckbox();
         handleAllDayCheckbox();
         
-        $('#new-event-recurring-input').on('change', function() {
-            alert('changed');
+        $('#add-event-recurring-input').on('change', function() {
+            handleRecurringCheckbox();
         });
         
-        $('#new-event-all-day-input').on('change', function() {
+        $('#add-event-all-day-input').on('change', function() {
             handleAllDayCheckbox();
+        });
+        
+        $('#add-event-start-time-input').on('change', function() {
+            handleStartTimeChanged();
         });
         
         $('#add-event-modal-create-button').on('click', function() {
             alert('clc;');
         });
         
-        $('#new-event-start-date-input').datepicker();
-        $('#new-event-end-date-input').datepicker();
+        $('#add-event-start-date-input').datepicker();
+        $('#add-event-end-date-input').datepicker();
+        $('#add-event-start-time-input').timepicker();
+        $('#add-event-end-time-input').timepicker();
     });
     
     function handleRecurringCheckbox() {
-        if ($('#new-event-recurring-input').is(':checked')) {
+        if ($('#add-event-recurring-input').is(':checked')) {
             
             
             return;
@@ -78,18 +86,25 @@
     }
     
     function handleAllDayCheckbox() {
-        if ($('#new-event-all-day-input').is(':checked')) {
-            $('#new-event-start-date input').prop('disabled', true);
-            $('#new-event-end-date input').prop('disabled', true);
-            $('#new-event-start-time').hide();
-            $('#new-event-end-time').hide();
+        if ($('#add-event-all-day-input').is(':checked')) {
+            $('#add-event-start-time').hide();
+            $('#add-event-end-time').hide();
             
             return;
         }
         
-        $('#new-event-start-date input').prop('disabled', false);
-        $('#new-event-end-date input').prop('disabled', false);
-        $('#new-event-start-time').show();
-        $('#new-event-end-time').show();
+        $('#add-event-start-time').show();
+        $('#add-event-end-time').show();
+    }
+    
+    function handleStartTimeChanged() {
+        var startTimeString = $('#add-event-start-time-input').val();
+        $('#add-event-end-time-input').timepicker('option', 'minTime', startTimeString);
+        
+        var startTime = $('#add-event-start-time-input').timepicker('getTime');
+        var endTime = $('#add-event-end-time-input').timepicker('getTime');
+        if (startTime > endTime) {
+            $('#add-event-end-time-input').timepicker('setTime', startTime);
+        }
     }
 </script>

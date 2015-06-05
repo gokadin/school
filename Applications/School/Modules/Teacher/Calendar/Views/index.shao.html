@@ -38,6 +38,9 @@
 	</div>
 </div>
 
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-timepicker/1.7.0/jquery.timepicker.min.css"></link>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery-timepicker/1.7.0/jquery.timepicker.min.js"></script>
+
 @includeView('addEventModal')
 
 <script type="text/javascript">
@@ -191,12 +194,12 @@
 				var cellNumber = i * 7 + j;
 				
 				if (cellNumber < dayOfWeek) {
-					str += buildCalendarCell(daysInLastMonth - dayOfWeek + j + 1, false);
+					str += buildCalendarCell(daysInLastMonth - dayOfWeek + j + 1, false, true);
 				} else if (cellNumber >= dayOfWeek + daysInMonth) {
 					nextMonthDayCounter++;
-					str += buildCalendarCell(nextMonthDayCounter, false);
+					str += buildCalendarCell(nextMonthDayCounter, false, false);
 				} else {
-					str += buildCalendarCell(cellNumber - dayOfWeek + 1, true);
+					str += buildCalendarCell(cellNumber - dayOfWeek + 1, true, false);
 				}
 			}
 			
@@ -224,8 +227,16 @@
 		return str;
 	}
 	
-	function buildCalendarCell(day, isForCurrentMonth) {
+	function buildCalendarCell(day, isForCurrentMonth, isForPreviousMonth) {
 		var str = '';
+		
+		var tempDate = new Date(selectedDate.getFullYear(), selectedDate.getMonth(), selectedDate.getDate());
+		if (isForPreviousMonth) {
+			tempDate.setMonth(tempDate.getMonth() - 1);
+		} else if (!isForCurrentMonth) {
+			tempDate.setMonth(tempDate.getMonth() + 1);
+		}
+		var cellDate = new Date(tempDate.getUTCFullYear(), tempDate.getMonth(), day);
 		
 		if (isForCurrentMonth 
 				&& currentDate.getDate() == day
@@ -244,7 +255,7 @@
 		str += day;
 		str += '</span>';
 		str += '<span class="calendar-table-cell-header-right">';
-		str += '<a href="javascript:;" onclick="showAddEventModal(this)" data-year="' + selectedDate.getFullYear() + '" data-month="' + selectedDate.getMonth() + '" data-day="' + day + '" ><i class="fa fa-plus-circle"></i>';
+		str += '<a href="javascript:;" onclick="showAddEventModal(this)" data-year="' + cellDate.getFullYear() + '" data-month="' + (cellDate.getMonth() + 1) + '" data-day="' + cellDate.getDate() + '" ><i class="fa fa-plus-circle"></i>';	
 		str += '</span>';
 		str += '</div>';
 		
@@ -307,6 +318,11 @@
 //	    editModal.find('input').parent().removeClass('show');
 //	    editModal.find('input').parent().nextAll('span').removeClass('show');
 
+		// add original date variable for when checking all day???
+		$('#add-event-start-date-input').val(month + '/' + day + '/' + year);
+		$('#add-event-end-date-input').val((month + 1) + '/' + day + '/' + year);
+		$('#add-event-start-time-input').val('1:00pm');
+		$('#add-event-end-time-input').val('2:00pm');
 //	    $('#edit-modal-firstName').val(currentForm.elements['firstName'].value);
 //	    $('#edit-modal-lastName').val(currentForm.elements['lastName'].value);
 	
