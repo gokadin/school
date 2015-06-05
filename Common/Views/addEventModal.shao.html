@@ -36,6 +36,20 @@
                         <input id="add-event-end-time-input" class="form-control" type="text" />
                     </div>
                 </div>
+                <div id="add-event-color-row" class="row create-form-input-row">
+                    <div class="col-md-1 create-form-label">Color</div>
+                    <div id="add-event-color" class="col-md-11 create-form-input">
+                        <input id="add-event-color-input" type="hidden" value="blue" />
+                        <div id="add-event-color-blue" class="color-selected" onclick="setColor(this)" data-value="blue"></div>
+                        <div id="add-event-color-lightblue" onclick="setColor(this)" data-value="lightblue"></div>
+                        <div id="add-event-color-lightgreen" onclick="setColor(this)" data-value="lightgreen"></div>
+                        <div id="add-event-color-green" onclick="setColor(this)" data-value="green"></div>
+                        <div id="add-event-color-orange" onclick="setColor(this)" data-value="orange"></div>
+                        <div id="add-event-color-pink" onclick="setColor(this)" data-value="pink"></div>
+                        <div id="add-event-color-red" onclick="setColor(this)" data-value="red"></div>
+                        <div id="add-event-color-violet" onclick="setColor(this)" data-value="violet"></div>
+                    </div>
+                </div>
             </div>
                 
             <div class="modal-footer">
@@ -111,5 +125,11 @@
         if (startTime > endTime) {
             $('#add-event-end-time-input').timepicker('setTime', startTime);
         }
+    }
+    
+    function setColor(e) {
+        $('#add-event-color div').removeClass('color-selected');
+        $(e).addClass('color-selected');
+        $('#add-event-color-input').val($(e).data('value'));
     }
 </script>

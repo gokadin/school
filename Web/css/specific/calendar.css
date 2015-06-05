@@ -293,3 +293,74 @@
 	padding-left: 5px;
 	line-height: 30px;
 }
+
+#add-event-color div
+{
+	display: inline-block;
+	width: 18px;
+	height: 18px;
+	margin-right: 3px;
+	text-align: center;
+	line-height: 18px;
+	cursor: pointer;
+	vertical-align: middle;
+}
+
+#add-event-color
+{
+	margin-top: 3px;
+}
+
+#add-event-color div:hover
+{
+	border: 1px solid black;
+	line-height: 16px;
+}
+
+#add-event-color div.color-selected::after
+{
+	font-family: FontAwesome;
+	content: "\f00c";
+	color: white;
+	font-size: 12px;
+}
+
+#add-event-color-blue
+{
+	background-color: #4775FF;
+}
+
+#add-event-color-lightblue
+{
+	background-color: #75D1FF;
+}
+
+#add-event-color-lightgreen
+{
+	background-color: #85FFAD;
+}
+
+#add-event-color-green
+{
+	background-color: #53CF53;
+}
+
+#add-event-color-orange
+{
+	background-color: #FF8F45;
+}
+
+#add-event-color-pink	
+{
+	background-color: #FFA3A3;
+}
+
+#add-event-color-red
+{
+	background-color: #FF4545;
+}
+
+#add-event-color-violet
+{
+	background-color: #DA6AFF;
+}
