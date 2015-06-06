@@ -309,20 +309,18 @@
 	// MODAL DIALOG
 	
 	function showAddEventModal(e) {
+		$('#add-event-form')[0].reset();
+		
 	    var year = e.dataset.year;
 		var month = e.dataset.month;
 		var day = e.dataset.day;
 	    var modal = $('#add-event-modal');
-	
-//	    editModal.find('input').removeClass('valid').removeClass('invalid');
-//	    editModal.find('input').parent().removeClass('show');
-//	    editModal.find('input').parent().nextAll('span').removeClass('show');
 
-		// add original date variable for when checking all day???
 		$('#add-event-start-date-input').val(month + '/' + day + '/' + year);
 		$('#add-event-end-date-input').val(month + '/' + day + '/' + year);
-//	    $('#edit-modal-firstName').val(currentForm.elements['firstName'].value);
-//	    $('#edit-modal-lastName').val(currentForm.elements['lastName'].value);
+		$('#add-event-recurring-ends-date-input-date').val(month + '/' + day + '/' + year);
+		$('#add-event-start-time-input').timepicker('setTime', '1:00pm');
+		$('#add-event-end-time-input').timepicker('setTime', '2:00pm');
 	
 	    modal.modal('show');
 	    return false;

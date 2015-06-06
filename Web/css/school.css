@@ -703,7 +703,8 @@ Footer Layouts (new in v1.3)
     font-size: 16px;
 }
 
-.create-form-input input
+.create-form-input input, 
+.create-form-input textarea
 {
     border-radius: 0px;
     color: #333;
@@ -715,7 +716,8 @@ Footer Layouts (new in v1.3)
     border-radius: 0px;
 }
 
-.create-form-input input:focus
+.create-form-input input:focus, 
+.create-form-input textarea:focus
 {
     border-color: #999;
     outline: 0 none;
@@ -729,12 +731,14 @@ Footer Layouts (new in v1.3)
     box-shadow: none !important;
 }
 
-.create-form-input input.valid
+.create-form-input input.valid, 
+.create-form-input textarea.valid
 {
     border-color: #8aac3a;
 }
 
-.create-form-input input.invalid
+.create-form-input input.invalid, 
+.create-form-input textarea.invalid
 {
     border-color: #b94a48;
 }
