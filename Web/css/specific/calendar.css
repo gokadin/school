@@ -400,3 +400,27 @@
 {
 	padding-right: 0px;
 }
+
+#add-event-more-options
+{
+	margin-left: 20px;
+}
+
+#add-event-more-options a
+{
+	font-size: 18px;
+	color: grey;
+}
+
+#add-event-more-options a:hover
+{
+	color: black;
+}
+
+#add-event-more-options i
+{
+	font-size: 18px;
+	margin-left: 3px;
+	padding-top: 5px;
+	color: #4C4C4C;
+}

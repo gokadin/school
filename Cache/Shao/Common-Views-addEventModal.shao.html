@@ -133,6 +133,13 @@
                             <div id="add-event-color-violet" onclick="setColor(this)" data-value="violet"></div>
                         </div>
                     </div>
+                    <div id="add-event-more-options" class="row">
+                        <a href="javascript:;" onclick="handleMoreOptions()" >More options</a>
+                        <i class="fa fa-caret-right"></i>
+                    </div>
+                    <div id="add-event-more-options-container">
+                        fdsafsd
+                    </div>
                 </div>
                     
                 <div class="modal-footer">
@@ -153,6 +160,7 @@
         handleRecurringCheckbox();
         handleAllDayCheckbox();
         handleRecurringRepeatInput();
+        $('#add-event-more-options-container').hide();
         
         $('#add-event-recurring-input').on('change', function() {
             handleRecurringCheckbox();
@@ -243,5 +251,15 @@
         $('#add-event-color div').removeClass('color-selected');
         $(e).addClass('color-selected');
         $('#add-event-color-input').val($(e).data('value'));
+    }
+    
+    function handleMoreOptions() {
+        if ($('#add-event-more-options-container').is(':visible')) {
+            $('#add-event-more-options-container').slideUp();
+            $('#add-event-more-options i').removeClass('fa-caret-down').addClass('fa-caret-right');
+        } else {
+            $('#add-event-more-options-container').slideDown();
+            $('#add-event-more-options i').removeClass('fa-caret-right').addClass('fa-caret-down');
+        }
     }
 </script>
