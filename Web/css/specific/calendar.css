@@ -404,6 +404,7 @@
 #add-event-more-options
 {
 	margin-left: 20px;
+	margin-bottom: 10px;
 }
 
 #add-event-more-options a
@@ -440,4 +441,14 @@
 	position: absolute; 
 	cursor: default;
 	z-index:1060 !important;
+}
+
+#add-event-notify-me-before
+{
+	padding-left: 0px;
+}
+
+#add-event-notify-me-row
+{
+	margin-top: 8px;
 }

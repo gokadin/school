@@ -14,5 +14,6 @@ class CalendarController extends BackController
 		}
 		
 		Page::add('studentNames', $studentNames);
+		Page::add('activities', $this->currentUser->activities());
 	}
 }

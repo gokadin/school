@@ -313,6 +313,8 @@
 	
 	function showAddEventModal(e) {
 		$('#add-event-form')[0].reset();
+		$('#add-event-more-options-container').hide();
+		$('#add-event-more-options i').removeClass('fa-caret-down').addClass('fa-caret-right');
 		
 	    var year = e.dataset.year;
 		var month = e.dataset.month;
@@ -336,6 +338,8 @@
             autocomplete: {delay: 0, minLength: 0}, 
     		showAutocompleteOnFocus: true, 
     		placeholderText: 'type student name', 
+			removeConfirmation: true, 
+			caseSensitive: false, 
     		beforeTagAdded: function(event, ui) {
           	if ($.inArray(ui.tagLabel, studentNamesArray) == -1) {
     	        return false;

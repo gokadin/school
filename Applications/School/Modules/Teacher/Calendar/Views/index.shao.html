@@ -313,6 +313,8 @@
 	
 	function showAddEventModal(e) {
 		$('#add-event-form')[0].reset();
+		$('#add-event-more-options-container').hide();
+		$('#add-event-more-options i').removeClass('fa-caret-down').addClass('fa-caret-right');
 		
 	    var year = e.dataset.year;
 		var month = e.dataset.month;

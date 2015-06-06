@@ -159,6 +159,38 @@
                                 <ul id="add-event-students-input"></ul>
                             </div>
                         </div>
+                        <div id="add-event-activity-row" class="row create-form-row">
+                            <div class="col-md-2 create-form-label">Activity</div>
+                            <div id="add-event-activity" class="col-md-4 create-form-input">
+                                <select id="add-event-activity-input" class="form-control" name="activityId">
+                                    <?php foreach ($activities as $activity) { ?>
+                                        <option value="<?php echo  $activity->id ; ?>"><?php echo  $activity->name ; ?></option>
+                                    <?php } ?>each
+                                </select>
+                            </div>
+                        </div>
+                        <div id="add-event-notify-me-row" class="row create-form-row">
+                            <div class="col-md-2 create-form-label">Notify me</div>
+                            <div id="add-event-notify-me-by" class="col-md-4 create-form-input">
+                                <select id="add-event-notify-me-by-input" class="form-control">
+                                    <option value="never">Never</option>
+                                    <option value="email">By email</option>
+                                </select>
+                            </div>
+                            <div id="add-event-notify-me-before" class="col-md-4 create-form-input">
+                                <select id="add-event-notify-me-before-input" class="form-control">
+                                    <option value="0">At event start</option>
+                                    <option value="5">5 mins before</option>
+                                    <option value="10">10 mins before</option>
+                                    <option value="15" selected>15 mins before</option>
+                                    <option value="30">30 mins before</option>
+                                    <option value="45">45 mins before</option>
+                                    <?php for ($i = 1; $i < 25; $i++) { ?>
+                                        <option value="<?php echo  ($i * 60) ; ?>"><?php echo  $i ; ?> hour before</option>
+                                    <?php } ?>
+                                </select>
+                            </div>
+                        </div>
                     </div>
                 </div>
                     
@@ -180,7 +212,7 @@
         handleRecurringCheckbox();
         handleAllDayCheckbox();
         handleRecurringRepeatInput();
-        $('#add-event-more-options-container').hide();
+        handleNotifyMeByChanged();
         
         $('#add-event-recurring-input').on('change', function() {
             handleRecurringCheckbox();
@@ -196,6 +228,10 @@
         
         $('#add-event-start-time-input').on('change', function() {
             handleStartTimeChanged();
+        });
+        
+        $('#add-event-notify-me-by').on('change', function() {
+            handleNotifyMeByChanged();
         });
         
         $('#add-event-modal-create-button').on('click', function() {
@@ -281,5 +317,14 @@
             $('#add-event-more-options-container').slideDown('fast');
             $('#add-event-more-options i').removeClass('fa-caret-right').addClass('fa-caret-down');
         }
+    }
+    
+    function handleNotifyMeByChanged() {
+        if ($('#add-event-notify-me-by-input').val() == 'never') {
+            $('#add-event-notify-me-before').hide();
+            return;
+        }
+        
+        $('#add-event-notify-me-before').show();
     }
 </script>
