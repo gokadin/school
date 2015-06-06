@@ -138,7 +138,21 @@
                         <i class="fa fa-caret-right"></i>
                     </div>
                     <div id="add-event-more-options-container">
-                        fdsafsd
+                        <div id="add-event-location-row" class="row create-form-row">
+                            <div class="col-md-2 create-form-label">Location</div>
+                            <div id="add-event-location" class="col-md-10 create-form-input">
+                                <input id="add-event-location-input" type="text" class="form-control" />
+                            </div>
+                        </div>
+                        <div id="add-event-visibility-row" class="row create-form-row">
+                            <div class="col-md-2 create-form-label">Visibility</div>
+                            <div id="add-event-visibility" class="col-md-10 create-form-input">
+                                <label class="radio-inline"><input type="radio" name="visibility" value="private" id="add-event-visibility-input-private" checked />
+                                private</label>
+                                <label class="radio-inline"><input type="radio" name="visibility" value="public" id="add-event-visibility-input-public" />
+                                public</label>
+                            </div>
+                        </div>
                     </div>
                 </div>
                     
@@ -255,10 +269,10 @@
     
     function handleMoreOptions() {
         if ($('#add-event-more-options-container').is(':visible')) {
-            $('#add-event-more-options-container').slideUp();
+            $('#add-event-more-options-container').slideUp('fast');
             $('#add-event-more-options i').removeClass('fa-caret-down').addClass('fa-caret-right');
         } else {
-            $('#add-event-more-options-container').slideDown();
+            $('#add-event-more-options-container').slideDown('fast');
             $('#add-event-more-options i').removeClass('fa-caret-right').addClass('fa-caret-down');
         }
     }

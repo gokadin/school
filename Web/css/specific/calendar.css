@@ -424,3 +424,14 @@
 	padding-top: 5px;
 	color: #4C4C4C;
 }
+
+#add-event-visibility-input-private, 
+#add-event-visibility-input-public
+{
+	display: inline-block;
+}
+
+#add-event-visibility
+{
+	margin-top: 6px;
+}
