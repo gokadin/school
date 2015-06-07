@@ -2,70 +2,70 @@
 <routes>
     <application name="Frontend">
         <!-- INDEX MODULE -->
-        <route url="/School/" method="GET" module="Index" action="index" />
-        <route url="/School/features" method="GET" module="Index" action="features" />
-        <route url="/School/testimonials" method="GET" module="Index" action="testimonials" />
-        <route url="/School/faq" method="GET" module="Index" action="faq" />
-        <route url="/School/contact-us" method="GET" module="Index" action="contactUs" />
-        <route url="/School/about" method="GET" module="Index" action="about" />
+        <route url="/" method="GET" module="Index" action="index" />
+        <route url="/features" method="GET" module="Index" action="features" />
+        <route url="/testimonials" method="GET" module="Index" action="testimonials" />
+        <route url="/faq" method="GET" module="Index" action="faq" />
+        <route url="/contact-us" method="GET" module="Index" action="contactUs" />
+        <route url="/about" method="GET" module="Index" action="about" />
         <!-- ACCOUNT MODULE -->
-        <route url="/School/account/login" method="GET" module="Account" action="index" />
-        <route url="/School/account/login" method="POST" module="Account" action="login" />
-        <route url="/School/account/logout" method="GET" module="Account" action="logout" />
-        <route url="/School/account/reset-password" method="GET" module="Account" action="resetPassword" />
-        <route url="/School/account/signup" method="GET" module="Account" action="signUp" />
-        <route url="/School/account/signup" method="POST" module="Account" action="registerUser" />
-        <route url="/School/account/signup-land" method="GET" module="Account" action="signUpLand" />
-        <route url="/School/account/confirm/{0}-{1}" method="GET" module="Account" action="emailConfirmation" vars="id,code" />
-        <route url="/School/account/confirm" method="POST" module="Account" action="completeRegistration" />
+        <route url="/account/login" method="GET" module="Account" action="index" />
+        <route url="/account/login" method="POST" module="Account" action="login" />
+        <route url="/account/logout" method="GET" module="Account" action="logout" />
+        <route url="/account/reset-password" method="GET" module="Account" action="resetPassword" />
+        <route url="/account/signup" method="GET" module="Account" action="signUp" />
+        <route url="/account/signup" method="POST" module="Account" action="registerUser" />
+        <route url="/account/signup-land" method="GET" module="Account" action="signUpLand" />
+        <route url="/account/confirm/{0}-{1}" method="GET" module="Account" action="emailConfirmation" vars="id,code" />
+        <route url="/account/confirm" method="POST" module="Account" action="completeRegistration" />
         <!-- AJAX MODULE -->
-        <route url="/School/ajax/email-exists" method="POST" module="Ajax" action="emailExists" />
+        <route url="/ajax/email-exists" method="POST" module="Ajax" action="emailExists" />
     </application>
 
     <application name="School">
         <!-- COMMON INDEX MODULE -->
-        <route url="/School/school/" method="GET" module="Common/Index" action="index" />
+        <route url="/school/" method="GET" module="Common/Index" action="index" />
 
         <!-- TEACHER INDEX MODULE -->
-        <route url="/School/school/teacher/" method="GET" module="Teacher/Index" action="index" />
+        <route url="/school/teacher/" method="GET" module="Teacher/Index" action="index" />
         <!-- TEACHER MESSAGING MODULE -->
-        <route url="/School/school/teacher/messaging" method="GET" module="Teacher/Messaging" action="index" />
+        <route url="/school/teacher/messaging" method="GET" module="Teacher/Messaging" action="index" />
         <!-- TEACHER ACTIVITY MODULE -->
-        <route url="/School/school/teacher/activities" method="GET" module="Teacher/Activity" action="index" />
-        <route url="/School/school/teacher/activities/create" method="GET" module="Teacher/Activity" action="create" />
-        <route url="/School/school/teacher/activities/create" method="POST" module="Teacher/Activity" action="store" />
-        <route url="/School/school/teacher/activities/edit" method="PUT" module="Teacher/Activity" action="update" />
-        <route url="/School/school/teacher/activities/delete" method="DELETE" module="Teacher/Activity" action="destroy" />
+        <route url="/school/teacher/activities" method="GET" module="Teacher/Activity" action="index" />
+        <route url="/school/teacher/activities/create" method="GET" module="Teacher/Activity" action="create" />
+        <route url="/school/teacher/activities/create" method="POST" module="Teacher/Activity" action="store" />
+        <route url="/school/teacher/activities/edit" method="PUT" module="Teacher/Activity" action="update" />
+        <route url="/school/teacher/activities/delete" method="DELETE" module="Teacher/Activity" action="destroy" />
         <!-- TEACHER STUDENT MODULE -->
-        <route url="/School/school/teacher/students" method="GET" module="Teacher/Student" action="index" />
-        <route url="/School/school/teacher/students/create" method="GET" module="Teacher/Student" action="create" />
-        <route url="/School/school/teacher/students/create" method="POST" module="Teacher/Student" action="store" />
-        <route url="/School/school/teacher/students/edit" method="PUT" module="Teacher/Student" action="update" />
-        <route url="/School/school/teacher/students/delete" method="DELETE" module="Teacher/Student" action="destroy" />
+        <route url="/school/teacher/students" method="GET" module="Teacher/Student" action="index" />
+        <route url="/school/teacher/students/create" method="GET" module="Teacher/Student" action="create" />
+        <route url="/school/teacher/students/create" method="POST" module="Teacher/Student" action="store" />
+        <route url="/school/teacher/students/edit" method="PUT" module="Teacher/Student" action="update" />
+        <route url="/school/teacher/students/delete" method="DELETE" module="Teacher/Student" action="destroy" />
         <!-- TEACHER CALENDAR MODULE -->
-        <route url="/School/school/teacher/calendar" method="GET" module="Teacher/Calendar" action="index" />
+        <route url="/school/teacher/calendar" method="GET" module="Teacher/Calendar" action="index" />
         <!-- TEACHER PAYMENT MODULE -->
-        <route url="/School/school/teacher/payment" method="GET" module="Teacher/Payment" action="index" />
-        <route url="/School/school/teacher/payment" method="POST" module="Teacher/Payment" action="test" />
+        <route url="/school/teacher/payment" method="GET" module="Teacher/Payment" action="index" />
+        <route url="/school/teacher/payment" method="POST" module="Teacher/Payment" action="test" />
         <!-- TEACHER ACCOUNT MODULE -->
-        <route url="/School/school/teacher/account" method="GET" module="Teacher/Account" action="index" />
-        <route url="/School/school/teacher/account/edit-personal-info" method="PUT" module="Teacher/Account" action="editPersonalInfo" />
-        <route url="/School/school/teacher/account/change-password" method="PUT" module="Teacher/Account" action="changePassword" />
-        <route url="/School/school/teacher/account/edit-profile-picture" method="PUT" module="Teacher/Account" action="editProfilePicture" />
-        <route url="/School/school/teacher/account/subscription" method="GET" module="Teacher/Account" action="subscription" />
-        <route url="/School/school/teacher/account/subscription/payment" method="POST" module="Teacher/Account" action="subscriptionPayment" />
-        <route url="/School/school/teacher/account/subscription/payment/credit-card/{0}" method="GET" module="Teacher/Account" action="creditCardPayment" vars="subscriptionType" />
-        <route url="/School/school/teacher/account/subscription/payment/paypal/{0}" method="GET" module="Teacher/Account" action="paypalPayment" vars="subscriptionType" />
-        <route url="/School/school/teacher/account/subscription/payment/credit-card" method="POST" module="Teacher/Account" action="processCreditCardPayment" />
+        <route url="/school/teacher/account" method="GET" module="Teacher/Account" action="index" />
+        <route url="/school/teacher/account/edit-personal-info" method="PUT" module="Teacher/Account" action="editPersonalInfo" />
+        <route url="/school/teacher/account/change-password" method="PUT" module="Teacher/Account" action="changePassword" />
+        <route url="/school/teacher/account/edit-profile-picture" method="PUT" module="Teacher/Account" action="editProfilePicture" />
+        <route url="/school/teacher/account/subscription" method="GET" module="Teacher/Account" action="subscription" />
+        <route url="/school/teacher/account/subscription/payment" method="POST" module="Teacher/Account" action="subscriptionPayment" />
+        <route url="/school/teacher/account/subscription/payment/credit-card/{0}" method="GET" module="Teacher/Account" action="creditCardPayment" vars="subscriptionType" />
+        <route url="/school/teacher/account/subscription/payment/paypal/{0}" method="GET" module="Teacher/Account" action="paypalPayment" vars="subscriptionType" />
+        <route url="/school/teacher/account/subscription/payment/credit-card" method="POST" module="Teacher/Account" action="processCreditCardPayment" />
         <!-- TEACHER AJAX MODULE -->
-        <route url="/School/school/teacher/ajax/email-exists" method="POST" module="Teacher/Ajax" action="emailExists" />
+        <route url="/school/teacher/ajax/email-exists" method="POST" module="Teacher/Ajax" action="emailExists" />
 
         <!-- STUDENT INDEX MODULE -->
-        <route url="/School/school/student/" method="GET" module="Student/Index" action="index" />
+        <route url="/school/student/" method="GET" module="Student/Index" action="index" />
     </application>
 
     <application name="Backend">
         <!-- INDEX MODULE -->
-        <route url="/School/admin/" method="GET" module="Index" action="index" />
+        <route url="/admin/" method="GET" module="Index" action="index" />
     </application>
 </routes>

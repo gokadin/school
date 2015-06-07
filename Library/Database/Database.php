@@ -13,8 +13,10 @@ class Database
     {
         if (Config::get('testing') == 'true')
             $this->dao = PDOFactory::testConn();
+        else if (Config::get('env') == 'local')
+            $this->dao = PDOFactory::localConn();
         else
-            $this->dao = PDOFactory::conn();
+            $this->dao = PDOFactory::productionConn();
 
         $this->tables = new TableBuilder($this);
     }
