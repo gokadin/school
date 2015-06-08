@@ -235,7 +235,7 @@
         });
         
         $('#add-event-modal-create-button').on('click', function() {
-            alert('clc;');
+            submitAddEventForm();
         });
         
         $('#add-event-start-date-input').datepicker();
@@ -326,5 +326,70 @@
         }
         
         $('#add-event-notify-me-before').show();
+    }
+    
+    /* AJAX REQUEST */
+    
+    function submitAddEventForm() {
+        var title = $('#add-event-title-input').val();
+        var startDate = $('#add-event-start-date-input').val();
+        var endDate = $('#add-event-end-date-input').val();
+        var isAllDay = $('#add-event-all-day-input').is(':checked');
+        var startTime = $('#add-event-start-time-input').val();
+        var endTime = $('#add-event-end-time-input').val();
+        var isRecurring = $('#add-event-recurring-input').is(':checked');
+        var recurringRepeat = $('#add-event-recurring-repeat-input').val();
+        var recurringEvery = 'undefined';
+        if (recurringRepeat == 'daily') {
+            recurringEvery = $('#add-event-recurring-days-every-input').val();
+        } else if (recurringRepeat == 'weekly') {
+            recurringEvery = $('#add-event-recurring-weeks-every-input').val();
+        } else if (recurringRepeat == 'monthly') {
+            recurringEvery = $('#add-event-recurring-months-every-input').val();
+        } else if (recurringRepeat == 'yearly') {
+            recurringEvery = $('#add-event-recurring-years-every-input').val();
+        }
+        var isRecurringEndsNever = $('#add-event-recurring-ends-never-input').is(':checked');
+        var recurringEndDate = $('#add-event-recurring-ends-date-input-date').val();
+        var description = $('#add-event-description-input').val();
+
+        // Validation
+
+        
+
+        // Ajax request
+        
+        var ajaxResult = null;
+        $.ajax({
+            async: false, 
+            type: 'POST', 
+            url: '/School/school/teacher/ajax/add-event', 
+            datatype: 'html', 
+            data: {
+                title: title, 
+                startDate: startDate, 
+                endDate: endDate, 
+                isAllDay: isAllDay, 
+                startTime: startTime, 
+                endTime: endTime, 
+                isRecurring: isRecurring, 
+                recurringRepeat: recurringRepeat, 
+                recurringEvery: recurringEvery, 
+                isRecurringEndsNever: isRecurringEndsNever, 
+                recurringEndDate: recurringEndDate, 
+                description: description
+            }, 
+            success: function(result) {
+                ajaxResult = result;
+            }
+        });
+        
+        if (ajaxResult >= 1) {
+
+        } else {
+            alert('false');
+        }
+        
+        $('#add-event-modal').modal('hide');
     }
 </script>

@@ -235,7 +235,7 @@
         });
         
         $('#add-event-modal-create-button').on('click', function() {
-            alert('clc;');
+            submitAddEventForm();
         });
         
         $('#add-event-start-date-input').datepicker();
@@ -326,5 +326,33 @@
         }
         
         $('#add-event-notify-me-before').show();
+    }
+    
+    /* AJAX REQUEST */
+    
+    function submitAddEventForm() {
+        var title = $('#add-event-title-input').val();
+
+        var ajaxResult = null;
+        $.ajax({
+            async: false, 
+            type: 'POST', 
+            url: '/School/school/teacher/ajax/add-event', 
+            datatype: 'html', 
+            data: {
+                title: title
+            }, 
+            success: function(result) {
+                ajaxResult = result;
+            }
+        });
+        
+        if (ajaxResult >= 1) {
+
+        } else {
+            alert('false');
+        }
+        
+        $('#add-event-modal').modal('hide');
     }
 </script>

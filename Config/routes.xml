@@ -59,6 +59,7 @@
         <route url="/school/teacher/account/subscription/payment/credit-card" method="POST" module="Teacher/Account" action="processCreditCardPayment" />
         <!-- TEACHER AJAX MODULE -->
         <route url="/school/teacher/ajax/email-exists" method="POST" module="Teacher/Ajax" action="emailExists" />
+        <route url="/school/teacher/ajax/add-event" method="POST" module="Teacher/Ajax" action="addEvent" />
 
         <!-- STUDENT INDEX MODULE -->
         <route url="/school/student/" method="GET" module="Student/Index" action="index" />

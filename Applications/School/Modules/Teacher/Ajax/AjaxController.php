@@ -12,4 +12,9 @@ class AjaxController extends BackController
     {
         echo User::exists('email', Request::postData('email'));
     }
+    
+    public function addEvent()
+    {
+        echo true;
+    }
 }
