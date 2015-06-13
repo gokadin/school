@@ -15,6 +15,6 @@ class AjaxController extends BackController
     
     public function addEvent()
     {
-        echo true;
+        echo Request::postData('isAllDay');
     }
 }

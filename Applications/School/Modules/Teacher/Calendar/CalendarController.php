@@ -7,14 +7,14 @@ use Library\Facades\Request;
 class CalendarController extends BackController
 {
 	public function index()
-	{
-		$studentNames = array();
+	{	
+		$studentNamesAndIds = array();
 		foreach ($this->currentUser->students() as $student)
 		{
-			$studentNames[] = $student->name();
+			$studentNamesAndIds[$student->id] = $student->name();
 		}
 		
-		Page::add('studentNames', $studentNames);
+		Page::add('studentNamesAndIds', $studentNamesAndIds);
 		Page::add('activities', $this->currentUser->activities());
 	}
 }

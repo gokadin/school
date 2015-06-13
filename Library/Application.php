@@ -11,12 +11,18 @@ class Application
 {
     private $container;
     protected $name;
+    protected $module;
+    protected $method;
+    protected $action;
 
     public function __construct($name)
     {
         Facade::setFacadeApplication($this);
 
         $this->name = $name;
+        $this->module = null;
+        $this->method = null;
+        $this->action = null;
 
         $this->container = new Container();
         $this->ConfigureContainer();
@@ -44,8 +50,23 @@ class Application
     {
         return $this->name;
     }
-
-    public function getController()
+    
+    public function module()
+    {
+        return $this->module;
+    }
+    
+    public function method()
+    {
+        return $this->method;
+    }
+    
+    public function action()
+    {
+        return $this->action;
+    }
+    
+    public function processRoute()
     {
         $matchedRoute = null;
         try
@@ -59,8 +80,15 @@ class Application
         }
         
         $_GET = array_merge($_GET, $matchedRoute->vars());
+        
+        $this->module = str_replace('\\', '/', $matchedRoute->module());
+        $this->method = $matchedRoute->method();
+        $this->action = $matchedRoute->action();
+    }
 
-        $controllerPrefix = $matchedRoute->module();
+    public function getController()
+    {
+        $controllerPrefix = $this->module();
         if (strpos($controllerPrefix, '\\'))
             $controllerPrefix = strstr($controllerPrefix, '\\');
         if (substr($controllerPrefix, 0, 1) == '\\')
@@ -71,14 +99,19 @@ class Application
         if (substr($controllerPrefix, 0, 1) == '/')
             $controllerPrefix = substr($controllerPrefix, 1);
 
-        $controllerClass = 'Applications\\'.$this->name.'\\Modules\\'.str_replace('/', '\\', $matchedRoute->module()).'\\'.$controllerPrefix.'Controller';
-        return new $controllerClass($this, str_replace('\\', '/', $matchedRoute->module()), $matchedRoute->method(), $matchedRoute->action());
+        $controllerClass = 'Applications\\'.$this->name.'\\Modules\\'.str_replace('/', '\\', $this->module()).'\\'.$controllerPrefix.'Controller';
+        return new $controllerClass();
     }	
     
     public function run()
     {
+        $this->processRoute();
         $controller = $this->getController();
-
+        
+        require 'Web/lang/common.php';
+        $this->setLang($lang);
+        \Library\Facades\Page::add('lang', $lang);
+        
         $controller->execute();
         Response::send();
     }

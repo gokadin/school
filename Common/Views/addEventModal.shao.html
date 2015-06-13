@@ -195,6 +195,7 @@
                 </div>
                     
                 <div class="modal-footer">
+                    <span id="add-event-error">error here</span>
                     <button type="button" class="btn btn-default" data-dismiss="modal">
                         Cancel
                     </button>
@@ -332,6 +333,7 @@
     
     function submitAddEventForm() {
         var title = $('#add-event-title-input').val();
+        // if title is empty or whitespace assign untitled to it...
         var startDate = $('#add-event-start-date-input').val();
         var endDate = $('#add-event-end-date-input').val();
         var isAllDay = $('#add-event-all-day-input').is(':checked');
@@ -352,10 +354,18 @@
         var isRecurringEndsNever = $('#add-event-recurring-ends-never-input').is(':checked');
         var recurringEndDate = $('#add-event-recurring-ends-date-input-date').val();
         var description = $('#add-event-description-input').val();
+        var color = $('#add-event-color-input').val();
+        var location = $('#add-event-location-input').val();
+        var visibility = 'private';
+        if ($('#add-event-visibility-input-public').is(':checked')) {
+            visibility = 'public';
+        }
 
         // Validation
 
-        
+        if (endDate < startDate) {
+            
+        }
 
         // Ajax request
         
@@ -377,19 +387,22 @@
                 recurringEvery: recurringEvery, 
                 isRecurringEndsNever: isRecurringEndsNever, 
                 recurringEndDate: recurringEndDate, 
-                description: description
+                description: description,
+                color: color, 
+                location: location, 
+                visibility: visibility
             }, 
             success: function(result) {
                 ajaxResult = result;
             }
         });
         
-        if (ajaxResult >= 1) {
+        if (ajaxResult) {
 
         } else {
             alert('false');
         }
         
-        $('#add-event-modal').modal('hide');
+        //$('#add-event-modal').modal('hide');
     }
 </script>

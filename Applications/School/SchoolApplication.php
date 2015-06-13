@@ -10,6 +10,7 @@ class SchoolApplication extends Application
 {
     public function run()
     {
+        $this->processRoute();
         $controller = $this->getController();
 
         /* ASSIGNING CURRENT USER */
@@ -30,12 +31,12 @@ class SchoolApplication extends Application
 
         if ($currentUser->meta_type == 'Teacher')
         {
-            if (substr($controller->module(), 0, 7) == 'Student/')
+            if (substr($this->module(), 0, 7) == 'Student/')
                 Response::toAction('School#Teacher/Index#index');
         }
         else if ($currentUser->meta_type == 'Student')
         {
-            if (substr($controller->module(), 0, 7) == 'Teacher/')
+            if (substr($this->module(), 0, 7) == 'Teacher/')
                 Response::toAction('School#Student/Index#index');
         }
         else
@@ -47,7 +48,7 @@ class SchoolApplication extends Application
 
         $breadcrumbs = $this->buildBreadcrumbs($controller, $currentUser->meta_type);
         \Library\Facades\Page::add(['breadcrumbs' => $breadcrumbs]);
-        \Library\Facades\Page::add(['module' => $controller->module(), 'action' => $controller->action()]);
+        \Library\Facades\Page::add(['module' => $this->module(), 'action' => $this->action()]);
         
         $controller->execute();
         Response::send();
@@ -62,7 +63,7 @@ class SchoolApplication extends Application
         else
             $breadcrumbs['Home'] = Router::actionToPath('School#Student/Index#index');
 
-        switch ($controller->module())
+        switch ($this->module())
         {
             case 'Teacher/Activity':
                 $breadcrumbs['Activities'] = Router::actionToPath('School#Teacher/Activity#index');

@@ -328,20 +328,20 @@
 		$('#add-event-end-time-input').timepicker('setTime', '2:00pm');
 		
 		<?php
-		$jsArray = json_encode($studentNames);
-		echo "var studentNamesArray = ".$jsArray.";\n";
+		$jsArray = json_encode($studentNamesAndIds);
+		echo "var studentNamesAndIds = ".$jsArray.";\n";
 		?>
-	
+	alert(studentNamesAndIds.join('\n'));
     	$("#add-event-students-input").tagit({
             fieldName: 'studentNames', 
-            availableTags: studentNamesArray, 
+            availableTags: studentNamesAndIds, 
             autocomplete: {delay: 0, minLength: 0}, 
     		showAutocompleteOnFocus: true, 
     		placeholderText: 'type student name', 
 			removeConfirmation: true, 
 			caseSensitive: false, 
     		beforeTagAdded: function(event, ui) {
-          	if ($.inArray(ui.tagLabel, studentNamesArray) == -1) {
+          	if ($.inArray(ui.tagLabel, studentNamesAndIds) == -1) {
     	        return false;
     	      }
     	    }  

@@ -1,5 +1,7 @@
 <?php namespace Library;
 
+use \Library\Shao\Shao;
+
 class Page
 {
     protected $contentFile;
@@ -37,6 +39,8 @@ class Page
 
     public function getGeneratedPage()
     {
+        $this->processView();
+        
         if (!file_exists($this->contentFile))
             throw new \RuntimeException('Content file does not exist');
 
@@ -69,5 +73,46 @@ class Page
     public function setLayoutFile($layoutFile)
     {
         $this->layoutFile = $layoutFile;
+    }
+    
+    public function processView()
+    {
+        $view = \Library\Facades\App::action();
+        
+        if (!is_string($view) || empty($view))
+            throw new \InvalidArgumentException('This view has to be a string');
+
+        $viewPrefix = 'Applications/' . \Library\Facades\App::name() . '/Modules/' . \Library\Facades\App::module() . '/Views/';
+        $contentFile = null;
+        if (file_exists($viewPrefix . $view . '.shao.html')) // change later for in_array based on config
+        {
+            $contentFile = Shao::parseFile($viewPrefix . $view . '.shao.html');
+        }
+        else if (file_exists($viewPrefix . $view . '.php'))
+        {
+            $contentFile = $viewPrefix . $view . '.php';
+        }
+        else if (file_exists($viewPrefix . $view . '.html'))
+        {
+            $contentFile = $viewPrefix . $view . '.html';
+        }
+
+        $layoutPrefix = 'Applications/'.\Library\Facades\App::name().'/Templates/';
+        $layoutFile = null;
+        if (file_exists($layoutPrefix.'layout.shao.html')) // change later for in_array based on configs
+        {
+            $layoutFile = Shao::parseFile($layoutPrefix.'layout.shao.html');
+        }
+        else if (file_exists($layoutPrefix.'layout.php'))
+        {
+            $layoutFile = $layoutPrefix.'layout.php';
+        }
+        else if (file_exists($layoutPrefix.'layout.html'))
+        {
+            $layoutFile = $layoutPrefix.'layout.html';
+        }
+
+        $this->setContentFile($contentFile);
+        $this->setLayoutFile($layoutFile);
     }
 }
