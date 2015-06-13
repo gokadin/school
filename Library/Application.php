@@ -115,4 +115,4 @@ class Application
         $controller->execute();
         Response::send();
     }
-}	
+}
