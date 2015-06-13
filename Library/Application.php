@@ -109,7 +109,7 @@ class Application
         $controller = $this->getController();
         
         require 'Web/lang/common.php';
-        $this->setLang($lang);
+        $controller->setLang($lang);
         \Library\Facades\Page::add('lang', $lang);
         
         $controller->execute();
