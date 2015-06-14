@@ -321,6 +321,7 @@
 		var day = e.dataset.day;
 	    var modal = $('#add-event-modal');
 
+        $('#add-event-error').hide();
 		$('#add-event-start-date-input').val(month + '/' + day + '/' + year);
 		$('#add-event-end-date-input').val(month + '/' + day + '/' + year);
 		$('#add-event-recurring-ends-date-input-date').val(month + '/' + day + '/' + year);

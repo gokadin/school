@@ -452,3 +452,10 @@
 {
 	margin-top: 8px;
 }
+
+#add-event-error
+{
+    display: none;
+    float: left;
+    color: darkred;
+}
