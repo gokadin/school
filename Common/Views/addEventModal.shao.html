@@ -167,6 +167,7 @@
                             <div class="col-md-2 create-form-label">Activity</div>
                             <div id="add-event-activity" class="col-md-4 create-form-input">
                                 <select id="add-event-activity-input" class="form-control" name="activityId">
+                                    <option value="0" selected>None</option>
                                     @foreach ($activities as $activity)
                                         <option value="{{ $activity->id }}">{{ $activity->name }}</option>
                                     @endforeach
@@ -364,6 +365,10 @@
         if ($('#add-event-visibility-input-public').is(':checked')) {
             visibility = 'public';
         }
+        var studentIds = $('#add-event-students-input').select2('val');
+        var activity = $('#add-event-activity-input').val();
+        var notifyMeBy = $('#add-event-notify-me-by-input').val();
+        var notifyMeBefore = $('#add-event-notify-me-before-input').val();
 
         // Validation
 
@@ -376,7 +381,7 @@
         $('#add-event-error').hide();
 
         // Ajax request
-        
+
         var ajaxResult = null;
         $.ajax({
             async: false, 
@@ -398,7 +403,11 @@
                 description: description,
                 color: color, 
                 location: location, 
-                visibility: visibility
+                visibility: visibility,
+                studentIds: studentIds,
+                activity: activity,
+                notifyMeBy: notifyMeBy,
+                notifyMeBefore: notifyMeBefore
             }, 
             success: function(result) {
                 ajaxResult = result;
