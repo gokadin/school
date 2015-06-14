@@ -49,7 +49,12 @@ class SchoolApplication extends Application
         $breadcrumbs = $this->buildBreadcrumbs($controller, $currentUser->meta_type);
         \Library\Facades\Page::add(['breadcrumbs' => $breadcrumbs]);
         \Library\Facades\Page::add(['module' => $this->module(), 'action' => $this->action()]);
-        
+
+
+        require 'Web/lang/common.php';
+        $controller->setLang($lang);
+        \Library\Facades\Page::add('lang', $lang);
+
         $controller->execute();
         Response::send();
     }

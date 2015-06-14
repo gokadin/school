@@ -14,7 +14,7 @@ class Shao
         $cachedFileName = self::generateCachedFileName($file);
         $str = file_get_contents($file);
 
-        if (Config::get('env') != 'local')
+        if (Config::get('env') != 'debug')
         {
             if (!self::isFileChanged($file, $str))
                 return $cachedFileName;

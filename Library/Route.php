@@ -35,8 +35,6 @@ class Route
         $substituteUrl = $this->url;
         if ($this->hasVars())
         {
-            
-            
             $substituteUrl = preg_replace('({[0-9]+})', '(.+)', $this->url);
         }
         

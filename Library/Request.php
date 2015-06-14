@@ -67,6 +67,15 @@ class Request
 
     public function requestURI()
     {
-        return $_SERVER['REQUEST_URI'];
+        $requestUri = $_SERVER['REQUEST_URI'];
+
+        if (\Library\Config::get('env') != 'debug')
+            return $requestUri;
+
+        $pos = strpos($requestUri, '?XDEBUG_SESSION_START=');
+        if ($pos !== false)
+            $requestUri = substr($requestUri, 0, $pos);
+
+        return $requestUri;
     }
 }

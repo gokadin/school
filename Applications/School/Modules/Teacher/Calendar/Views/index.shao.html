@@ -326,12 +326,12 @@
 		$('#add-event-recurring-ends-date-input-date').val(month + '/' + day + '/' + year);
 		$('#add-event-start-time-input').timepicker('setTime', '1:00pm');
 		$('#add-event-end-time-input').timepicker('setTime', '2:00pm');
-		
+
 		<?php
 		$jsArray = json_encode($studentNamesAndIds);
 		echo "var studentNamesAndIds = ".$jsArray.";\n";
 		?>
-	alert(studentNamesAndIds.join('\n'));
+
     	$("#add-event-students-input").tagit({
             fieldName: 'studentNames', 
             availableTags: studentNamesAndIds, 

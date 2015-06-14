@@ -35,7 +35,7 @@ class Router
                     $vars = explode(',', $route->getAttribute('vars'));
                     
                 $url = $route->getAttribute('url');
-                if (Config::get('env') == 'local')
+                if (Config::get('env') == 'debug')
                     $url = '/School'.$url;
                 
                 $vars = array_map('trim', $vars);

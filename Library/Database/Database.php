@@ -13,7 +13,7 @@ class Database
     {
         if (Config::get('testing') == 'true')
             $this->dao = PDOFactory::testConn();
-        else if (Config::get('env') == 'local')
+        else if (Config::get('env') == 'debug')
             $this->dao = PDOFactory::localConn();
         else
             $this->dao = PDOFactory::productionConn();
