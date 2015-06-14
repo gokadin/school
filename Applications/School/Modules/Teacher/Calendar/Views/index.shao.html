@@ -38,11 +38,11 @@
 	</div>
 </div>
 
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-timepicker/1.7.0/jquery.timepicker.min.css"></link>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-timepicker/1.7.0/jquery.timepicker.min.css" />
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery-timepicker/1.7.0/jquery.timepicker.min.js"></script>
 
-<link rel="stylesheet" type="text/css" href="/School/Web/css/jquery.tagit.css">
-<script type="text/javascript" src="/School/Web/js/tag-it.min.js"></script>
+<link rel="stylesheet" type="text/css" href="/School/Web/css/select2.min.css">
+<script type="text/javascript" src="/School/Web/js/select2.min.js"></script>
 
 @includeView('addEventModal')
 
@@ -326,28 +326,19 @@
 		$('#add-event-recurring-ends-date-input-date').val(month + '/' + day + '/' + year);
 		$('#add-event-start-time-input').timepicker('setTime', '1:00pm');
 		$('#add-event-end-time-input').timepicker('setTime', '2:00pm');
-
-		<?php
-		$jsArray = json_encode($studentNamesAndIds);
-		echo "var studentNamesAndIds = ".$jsArray.";\n";
-		?>
-
-    	$("#add-event-students-input").tagit({
-            fieldName: 'studentNames', 
-            availableTags: studentNamesAndIds, 
-            autocomplete: {delay: 0, minLength: 0}, 
-    		showAutocompleteOnFocus: true, 
-    		placeholderText: 'type student name', 
-			removeConfirmation: true, 
-			caseSensitive: false, 
-    		beforeTagAdded: function(event, ui) {
-          	if ($.inArray(ui.tagLabel, studentNamesAndIds) == -1) {
-    	        return false;
-    	      }
-    	    }  
+        $('#add-event-students-input').select2({
+            placeholder: "Select students",
+            templateResult: formatStudent
         });
 	
 	    modal.modal('show');
 	    return false;
 	}
+
+    function formatStudent (student) {
+        var $student = $(
+            '<span><img src="' + $(student.element).data("picture") + '" width="20" /> ' + student.text + '</span>'
+        );
+        return $student;
+    };
 </script>

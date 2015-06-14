@@ -1,6 +1,7 @@
 <?php namespace Applications\School\Modules\Teacher\Student;
 
 use Library\BackController;
+use Library\Config;
 use Library\Facades\Page;
 use Library\Facades\Session;
 use Library\Facades\Request;
@@ -35,7 +36,8 @@ class StudentController extends BackController
             'last_name' => Request::postData('lastName'),
             'email' => Request::postData('email'),
             'password' => md5($generatedPassword),
-            'phone' => Request::postData('phone')
+            'phone' => Request::postData('phone'),
+            'profile_picture' => Config::get('defaultProfilePicturePath')
         ]);
 
         if ($student == null)

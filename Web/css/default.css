@@ -177,3 +177,21 @@ button:disabled
     max-height: 30px;
     width: 100%;
 }
+
+/* SELECT2 */
+
+.select2.select2-container
+{
+    width: 100% !important;
+    margin-bottom: 5px !important;
+}
+
+.select2-search__field
+{
+    width: 100% !important;
+}
+
+.select2-container--default .select2-selection--multiple
+{
+    border-radius: 0px !important;
+}
