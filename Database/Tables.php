@@ -160,4 +160,33 @@ class Tables
         
         return $t;
     }
+
+    protected function events()
+    {
+        $t = new Table('Event');
+
+        $t->increments('id');
+        $t->integer('user_id');
+        $t->datetime('start_date');
+        $t->datetime('end_date');
+        $t->boolean('is_all_day');
+        $t->string('start_time', 12);
+        $t->string('end_time', 12);
+        $t->boolean('is_recurring');
+        $t->string('recurring_repeat', 12);
+        $t->integer('recurring_every');
+        $t->boolean('is_recurring_ends_never');
+        $t->datetime('recurring_end_date');
+        $t->string('description', 255);
+        $t->string('color', 16);
+        $t->string('location');
+        $t->string('visibility', 12);
+        $t->string('studentIds');
+        $t->integer('activity_id');
+        $t->string('notifyMeBy', 12);
+        $t->integer('notifyMeBefore');
+        $t->timestamps();
+
+        return $t;
+    }
 }

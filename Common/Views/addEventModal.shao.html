@@ -33,7 +33,7 @@
                         <div id="add-event-end-date" class="col-md-2 create-form-input">
                             <input id="add-event-end-date-input" class="form-control" type="text" />
                         </div>
-                        <div id="add-event-end-time" class="col-md-2 create-form-input">
+                        <div id="add-event-end-time" class="col-md-3 create-form-input">
                             <input id="add-event-end-time-input" class="form-control" type="text" />
                         </div>
                     </div>
@@ -307,6 +307,8 @@
         if (startTime > endTime) {
             $('#add-event-end-time-input').timepicker('setTime', startTime);
         }
+
+        $('#add-event-end-time-input').next('select').addClass('form-control');
     }
     
     function setColor(e) {
@@ -338,13 +340,12 @@
     
     function submitAddEventForm() {
         var title = $('#add-event-title-input').val();
-        // if title is empty or whitespace assign untitled to it...
         var startDate = $('#add-event-start-date-input').val();
         var endDate = $('#add-event-end-date-input').val();
-        var isAllDay = $('#add-event-all-day-input').is(':checked');
+        var isAllDay = $('#add-event-all-day-input').is(':checked') ? 1 : 0;
         var startTime = $('#add-event-start-time-input').val();
         var endTime = $('#add-event-end-time-input').val();
-        var isRecurring = $('#add-event-recurring-input').is(':checked');
+        var isRecurring = $('#add-event-recurring-input').is(':checked') ? 1 : 0;
         var recurringRepeat = $('#add-event-recurring-repeat-input').val();
         var recurringEvery = 'undefined';
         if (recurringRepeat == 'daily') {
@@ -356,7 +357,7 @@
         } else if (recurringRepeat == 'yearly') {
             recurringEvery = $('#add-event-recurring-years-every-input').val();
         }
-        var isRecurringEndsNever = $('#add-event-recurring-ends-never-input').is(':checked');
+        var isRecurringEndsNever = $('#add-event-recurring-ends-never-input').is(':checked') ? 1 : 0;
         var recurringEndDate = $('#add-event-recurring-ends-date-input-date').val();
         var description = $('#add-event-description-input').val();
         var color = $('#add-event-color-input').val();
@@ -366,7 +367,7 @@
             visibility = 'public';
         }
         var studentIds = $('#add-event-students-input').select2('val');
-        var activity = $('#add-event-activity-input').val();
+        var activityId = $('#add-event-activity-input').val();
         var notifyMeBy = $('#add-event-notify-me-by-input').val();
         var notifyMeBefore = $('#add-event-notify-me-before-input').val();
 
@@ -405,7 +406,7 @@
                 location: location, 
                 visibility: visibility,
                 studentIds: studentIds,
-                activity: activity,
+                activityId: activityId,
                 notifyMeBy: notifyMeBy,
                 notifyMeBefore: notifyMeBefore
             }, 
@@ -415,7 +416,7 @@
         });
         
         if (ajaxResult) {
-
+            alert('true');
         } else {
             alert('false');
         }

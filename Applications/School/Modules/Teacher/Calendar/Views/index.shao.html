@@ -326,7 +326,11 @@
 		$('#add-event-end-date-input').val(month + '/' + day + '/' + year);
 		$('#add-event-recurring-ends-date-input-date').val(month + '/' + day + '/' + year);
 		$('#add-event-start-time-input').timepicker('setTime', '1:00pm');
+        $('#add-event-start-time-input').timepicker('option', { useSelect: true });
+        $('#add-event-start-time-input').next('select').addClass('form-control');
 		$('#add-event-end-time-input').timepicker('setTime', '2:00pm');
+		$('#add-event-end-time-input').timepicker('option', { useSelect: true });
+		$('#add-event-end-time-input').next('select').addClass('form-control');
         $('#add-event-students-input').select2({
             placeholder: "Select students",
             templateResult: formatStudent

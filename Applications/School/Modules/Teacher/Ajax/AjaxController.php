@@ -5,6 +5,7 @@ error_reporting(0);
 use Library\BackController;
 use Library\Facades\Request;
 use Models\User;
+use Models\Event;
 
 class AjaxController extends BackController
 {
@@ -15,6 +16,28 @@ class AjaxController extends BackController
     
     public function addEvent()
     {
-        echo Request::postData('isAllDay');
+        $event = new Event();
+        $event->user_id = $this->currentUser->id;
+        $event->start_date = Request::postData('startDate');
+        $event->end_date = Request::postData('endDate');
+        $event->is_all_day = Request::postData('isAllDay');
+        $event->start_time = empty(Request::postData('startTime')) ?  '12:00pm' : Request::postData('startTime');
+        $event->end_time = empty(Request::postData('endTime')) ?  '12:00pm' : Request::postData('endTime');
+        $event->is_recurring = Request::postData('isRecurring');
+        $event->recurring_repeat = Request::postData('recurringRepeat');
+        $event->recurring_every = Request::postData('recurringEvery');
+        $event->is_recurring_ends_never = Request::postData('isRecurringEndsNever');
+        $event->recurring_end_date = Request::postData('recurringEndDate');
+        $event->description = Request::postData('description');
+        $event->color = Request::postData('color');
+        $event->location = Request::postData('location');
+        $event->visibility = Request::postData('visibility');
+        $event->studentIds = empty(Request::postData('studentIds')) ? "0" : Request::postData('studentIds');
+        $event->activity_id = empty(Request::postData('activity_id')) ? 0 : Request::postData('activityId');
+        $event->notifyMeBy = Request::postData('notifyMeBy');
+        $event->notifyMeBefore = Request::postData('notifyMeBefore');
+        $event->save();
+
+        echo true;
     }
 }
