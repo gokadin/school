@@ -3,9 +3,6 @@
   <component name="ChangeListManager">
     <list default="true" id="3347934e-25d9-4bf3-896c-cd0b902c396c" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.gitignore" afterPath="$PROJECT_DIR$/.gitignore" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Cache/Shao/Common-Views-addEventModal.metadata" afterPath="$PROJECT_DIR$/Cache/Shao/Common-Views-addEventModal.metadata" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Cache/Shao/Common-Views-addEventModal.shao.html" afterPath="$PROJECT_DIR$/Cache/Shao/Common-Views-addEventModal.shao.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Common/Views/addEventModal.shao.html" afterPath="$PROJECT_DIR$/Common/Views/addEventModal.shao.html" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="school.iws" />
@@ -44,8 +41,8 @@
       <file leaf-file-name=".gitignore" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/.gitignore">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.01901566" vertical-offset="0" max-vertical-offset="894">
-              <caret line="1" column="0" selection-start-line="1" selection-start-column="0" selection-end-line="1" selection-end-column="0" />
+            <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="919">
+              <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
               <folding />
             </state>
           </provider>
@@ -826,8 +823,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/.gitignore">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.01901566" vertical-offset="0" max-vertical-offset="894">
-          <caret line="1" column="0" selection-start-line="1" selection-start-column="0" selection-end-line="1" selection-end-column="0" />
+        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="919">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding />
         </state>
       </provider>
