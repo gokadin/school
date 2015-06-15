@@ -19,6 +19,7 @@ class AjaxController extends BackController
     {
         $event = new Event();
         $event->user_id = $this->currentUser->id;
+        $event->title = empty(Request::postData('title')) ? 'untitled' : Request::postData('title');
         $event->start_date = new Carbon(Request::postData('startDate'));
         $event->end_date = new Carbon(Request::postData('endDate'));
         $event->is_all_day = Request::postData('isAllDay');

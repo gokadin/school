@@ -167,6 +167,7 @@ class Tables
 
         $t->increments('id');
         $t->integer('user_id');
+        $t->string('title');
         $t->datetime('start_date');
         $t->datetime('end_date');
         $t->boolean('is_all_day');

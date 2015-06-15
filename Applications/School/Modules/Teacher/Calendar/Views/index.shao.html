@@ -50,7 +50,16 @@
 	var currentDate = new Date();
 	var selectedMiniDate = new Date();
 	var selectedDate = new Date();
-	
+    var events = [];
+    <?php
+    foreach ($events as $event)
+    {
+        echo 'events.push({id: '.$event->id.', '.
+                'title: "'.$event->title.'",'.
+                'startDate: new Date("'.substr($event->start_date, 0, 10).'")});';
+    }
+    ?>
+
 	$(function() {
 		displayMiniCalendarMonth(currentDate.getMonth(), currentDate.getFullYear());
 		displayCalendarDate(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate());
@@ -258,19 +267,59 @@
 		str += day;
 		str += '</span>';
 		str += '<span class="calendar-table-cell-header-right">';
-		str += '<a href="javascript:;" onclick="showAddEventModal(this)" data-year="' + cellDate.getFullYear() + '" data-month="' + (cellDate.getMonth() + 1) + '" data-day="' + cellDate.getDate() + '" ><i class="fa fa-plus-circle"></i>';	
+		str += '<a href="javascript:;" onclick="showAddEventModal(this)" data-year="' + cellDate.getFullYear() + '" data-month="' + (cellDate.getMonth() + 1) + '" data-day="' + cellDate.getDate() + '" ><i class="fa fa-plus-circle"></i></a>';
 		str += '</span>';
 		str += '</div>';
 		
 		// Cell body
-		str += '<div class="calendar-table-cell-body"';
-
+		str += '<div class="calendar-table-cell-body" ondragover="handleDragOver(e)" ondrop="handleDrop(e)">';
+        $.each(events, function(index, value) {
+            if (value.startDate.getDate() == cellDate.getDate() &&
+                    value.startDate.getMonth() == cellDate.getMonth() &&
+                    value.startDate.getFullYear() == cellDate.getFullYear()) {
+                str += buildCalendarEvent(value);
+            }
+        });
 		str += '</div>';
 		
 		str += '</td>';
 		
 		return str;
 	}
+
+    function buildCalendarEvent(event) {
+        var str = '<div id="calendar-event-' + event.id + '" class="calendar-event" draggable="true" ondragstart="handleDragStart(e)" ondragend="handleDragEnd(e)">';
+
+        str += event.title;
+
+        str += '</div>';
+
+        return str;
+    }
+
+    function handleDragEnter(e) {
+        alert('handleDragEnter');
+        e.preventDefault();
+    }
+
+    function handleDragStart(e) {
+        e.dataTransfer.setData('text', e.target.id);
+        alert('handleDragStart');
+    }
+
+    function handleDragEnd(e) {
+        alert('dragend');
+    }
+
+    function handleDragOver(e) {alert('allowDrop');
+        e.preventDefault()
+    }
+
+    function handleDrop(e) {alert('drop');
+        e.preventDefault();
+        var data = e.dataTransfer.getData('text');
+        e.target.appendChild(document.getElementById(data));
+    }
 	
 	function getMonthNameFromNumber(monthNumber) {
 		switch (monthNumber) {
