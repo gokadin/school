@@ -239,7 +239,7 @@
 		} else if (!isForCurrentMonth) {
 			tempDate.setMonth(tempDate.getMonth() + 1);
 		}
-		var cellDate = new Date(tempDate.getUTCFullYear(), tempDate.getMonth(), day);
+		var cellDate = new Date(tempDate.getFullYear(), tempDate.getMonth(), day);
 		
 		if (isForCurrentMonth 
 				&& currentDate.getDate() == day
@@ -264,6 +264,7 @@
 		
 		// Cell body
 		str += '<div class="calendar-table-cell-body"';
+
 		str += '</div>';
 		
 		str += '</td>';

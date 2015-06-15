@@ -6,6 +6,7 @@ use Library\BackController;
 use Library\Facades\Request;
 use Models\User;
 use Models\Event;
+use Carbon\Carbon;
 
 class AjaxController extends BackController
 {
@@ -18,8 +19,8 @@ class AjaxController extends BackController
     {
         $event = new Event();
         $event->user_id = $this->currentUser->id;
-        $event->start_date = Request::postData('startDate');
-        $event->end_date = Request::postData('endDate');
+        $event->start_date = new Carbon(Request::postData('startDate'));
+        $event->end_date = new Carbon(Request::postData('endDate'));
         $event->is_all_day = Request::postData('isAllDay');
         $event->start_time = empty(Request::postData('startTime')) ?  '12:00pm' : Request::postData('startTime');
         $event->end_time = empty(Request::postData('endTime')) ?  '12:00pm' : Request::postData('endTime');
@@ -27,7 +28,7 @@ class AjaxController extends BackController
         $event->recurring_repeat = Request::postData('recurringRepeat');
         $event->recurring_every = Request::postData('recurringEvery');
         $event->is_recurring_ends_never = Request::postData('isRecurringEndsNever');
-        $event->recurring_end_date = Request::postData('recurringEndDate');
+        $event->recurring_end_date = new Carbon(Request::postData('recurringEndDate'));
         $event->description = Request::postData('description');
         $event->color = Request::postData('color');
         $event->location = Request::postData('location');

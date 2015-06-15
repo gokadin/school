@@ -18,6 +18,11 @@ class User extends Model
     {
         return $this->hasOne('UserSetting');
     }
+
+    public function events()
+    {
+        return $this->hasMany('Event');
+    }
     
     public function messagesReceived()
     {
