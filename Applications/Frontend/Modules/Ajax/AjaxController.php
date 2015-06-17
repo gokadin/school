@@ -4,7 +4,6 @@ error_reporting(0);
 
 use Library\BackController;
 use Library\Facades\Request;
-use Library\Facades\Session;
 use Models\User;
 
 class AjaxController extends BackController

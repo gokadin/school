@@ -27,6 +27,6 @@ class Config
 
     public static function temporary($var, $value)
     {
-        self::$vars['testing'] = true;
+        self::$vars[$var] = $value;
     }
 }

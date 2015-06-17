@@ -4,7 +4,7 @@
     </div>
 @else
     <div class="emailConfirmation">
-        <form id="email-confirmation-form" method="POST" action="/School/account/confirm">
+        <form id="email-confirmation-form" method="POST" action="/account/confirm">
             <input type="hidden" name="tempUserId" value="{{ $tempUser->id }}" />
             <div class="g-form-header">
                 Complete registration
@@ -46,5 +46,5 @@
         </form>
     </div>
 
-    <script src="/School/Applications/Frontend/Modules/Account/Views/js/emailConfirmationValidation.js"></script>
+    <script src="/Applications/Frontend/Modules/Account/Views/js/emailConfirmationValidation.js"></script>
 @endif

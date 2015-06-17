@@ -1,7 +1,6 @@
 <?php namespace Tests\SchoolTest\Modules\Teacher\Ajax;
 
 use Tests\SchoolTest\BaseTest;
-use Library\Facades\App;
 use Applications\School\Modules\Teacher\Ajax\AjaxController;
 
 class AjaxControllerTest extends BaseTest

@@ -1,7 +1,6 @@
 <?php namespace Library;
 
 use Symfony\Component\Yaml\Exception\RuntimeException;
-use Library\Config;
 
 class Router
 {
@@ -33,17 +32,13 @@ class Router
 
                 if ($route->hasAttribute('vars'))
                     $vars = explode(',', $route->getAttribute('vars'));
-                    
-                $url = $route->getAttribute('url');
-                if (Config::get('env') == 'debug')
-                    $url = '/School'.$url;
                 
                 $vars = array_map('trim', $vars);
                 $this->routes[] = (new Route(
                     $appName,
                     $route->getAttribute('module'),
                     $route->getAttribute('action'),
-                    $url,
+                    $route->getAttribute('url'),
                     $route->getAttribute('method'),
                     $vars));
             }
