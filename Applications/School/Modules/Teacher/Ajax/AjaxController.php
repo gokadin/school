@@ -34,7 +34,7 @@ class AjaxController extends BackController
         $event->color = Request::postData('color');
         $event->location = Request::postData('location');
         $event->visibility = Request::postData('visibility');
-        $event->studentIds = empty(Request::postData('studentIds')) ? "0" : Request::postData('studentIds');
+        $event->studentIds = empty(Request::postData('studentIds')) ? "0" : implode(',', Request::postData('studentIds'));
         $event->activity_id = empty(Request::postData('activity_id')) ? 0 : Request::postData('activityId');
         $event->notifyMeBy = Request::postData('notifyMeBy');
         $event->notifyMeBefore = Request::postData('notifyMeBefore');
