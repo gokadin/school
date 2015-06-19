@@ -255,7 +255,10 @@ class Model implements ModelQueryContract
                 $this->baseModel->$metaTypeField = ucfirst($this->modelName);
                 $this->baseModel->$metaIdField = $lastInsertId;
 
-                return $this->baseModel->save();
+                if (!$this->baseModel->save())
+                    DB::exec('DELETE FROM '.$this->tableName.' WHERE '.$this->primaryKey.' = '.$lastInsertId);
+                else
+                    return true;
             }
 
             $this->hydrate($this->find($lastInsertId));
