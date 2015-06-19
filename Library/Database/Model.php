@@ -244,22 +244,21 @@ class Model implements ModelQueryContract
                 $values[$key] = $var;
         }
 
-        $result = $this->query->create($values);
+        $lastInsertId = $this->query->create($values);
 
-        if ($result != null)
+        if ($lastInsertId != null && $lastInsertId > 0)
         {
-            $this->hydrate($result->first());
-
             if ($this->hasBaseModel())
             {
                 $metaTypeField = Table::META_TYPE;
                 $metaIdField = Table::META_ID;
                 $this->baseModel->$metaTypeField = ucfirst($this->modelName);
-                $this->baseModel->$metaIdField = $this->vars[$this->primaryKey];
+                $this->baseModel->$metaIdField = $lastInsertId;
 
                 return $this->baseModel->save();
             }
 
+            $this->hydrate($this->find($lastInsertId));
             return true;
         }
 

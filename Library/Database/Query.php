@@ -36,8 +36,7 @@ class Query extends QueryBuilder implements QueryContract
         if (!$this->dao->exec($str))
             return false;
 
-        $this->where($this->model->primaryKey(), '=', $this->lastInsertId());
-        return $this->get();
+        return $this->lastInsertId();
     }
 
     public function update($values)
@@ -118,7 +117,7 @@ class Query extends QueryBuilder implements QueryContract
         $tempWheres = array();
         foreach ($this->wheres as $where)
         {
-            if ($this->model->hasColumn($where['var']))
+            if ($where['var'] != $this->model->primaryKey() && $this->model->hasColumn($where['var']))
             {
                 $tempWheres[] = $where;
                 continue;
@@ -129,6 +128,12 @@ class Query extends QueryBuilder implements QueryContract
         }
 
         $this->wheres = $tempWheres;
+
+        foreach ($this->wheres as $where)
+            $where['var'] = $this->model->tableName().'.'.$where['var'];
+
+        foreach ($this->baseWheres as $baseWhere)
+            $baseWhere['var'] = $this->model->baseModel()->tableName().'.'.$baseWhere['var'];
 
         if (sizeof($this->baseWheres) > 0)
             $this->polymorphicQueryLink = $this->baseWheres[0]['link'];
@@ -160,11 +165,23 @@ class Query extends QueryBuilder implements QueryContract
 
     public function get($values = null)
     {
-        if (!$this->model->hasBaseModel() || sizeof($this->wheres) == 0)
+        if (!$this->model->hasBaseModel())
         {
             $this->addValues($values);
             return $this->select();
         }
+
+        if ($values == null)
+            $values = $this->model->tableName().'.*';
+
+        $this->addValues($values);
+        $this->splitWheres();
+        $this->join($this->model->baseModel()->tableName(),
+            $this->model->tableName().'.'.$this->model->primaryKey(),
+            '=',
+            $this->model->baseModel()->tableName().'.'.Table::META_TYPE);
+
+        return $this->select();
 
         if ($values != null)
             $this->doPolymorphicJoin($values);
@@ -216,6 +233,14 @@ class Query extends QueryBuilder implements QueryContract
 
         if (sizeof($this->wheres) > 0)
             $str .= $this->buildWheres($this->wheres);
+
+        if (sizeof($this->baseWheres) > 0)
+        {
+            if (sizeof($this->wheres) > 0)
+                $str .= $this->buildBaseWheres($this->baseWheres, $this->polymorphicQueryLink);
+            else
+                $str .= $this->buildBaseWheres($this->baseWheres);
+        }
 
         $result = $this->dao->prepare($str);
         $result->execute();

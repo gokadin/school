@@ -111,6 +111,14 @@ class QueryBuilder
         return $str;
     }
 
+    protected function buildBaseWheres($baseWheres, $previousLink = null)
+    {
+        if ($previousLink != null)
+            return $previousLink.$this->buildWheres($baseWheres);
+
+        return $this->buildWheres($baseWheres);
+    }
+
     protected function buildJoins($joins)
     {
         $str = '';

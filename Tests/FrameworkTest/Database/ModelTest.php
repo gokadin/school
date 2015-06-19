@@ -367,7 +367,6 @@ class ModelTest extends BaseTest
 
     /**
      * @group polymorphism
-     * @group x
      */
     public function testThatWhenAccessingIdOfPolymorphicModelThenThenBaseModelIdIsReturned()
     {
