@@ -273,7 +273,7 @@
 		
 		// Cell body
 		str += '<div class="calendar-table-cell-body" ondragover="handleDragOver(e)" ondrop="handleDrop(e)">';
-        $.each(events, function(index, value) {
+        $.each(events, function(index, value) {alert('x');
             if (value.startDate.getDate() == cellDate.getDate() &&
                     value.startDate.getMonth() == cellDate.getMonth() &&
                     value.startDate.getFullYear() == cellDate.getFullYear()) {
@@ -289,7 +289,7 @@
 
     function buildCalendarEvent(event) {
         var str = '<div id="calendar-event-' + event.id + '" class="calendar-event" draggable="true" ondragstart="handleDragStart(e)" ondragend="handleDragEnd(e)">';
-
+alert('s)');
         str += event.title;
 
         str += '</div>';

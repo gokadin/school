@@ -369,16 +369,16 @@ class ModelTest extends BaseTest
      * @group polymorphism
      * @group x
      */
-    public function testThatWhenAccessingIdOfPolymorphicModelThenThePolymorphicModelIdIsReturned()
+    public function testThatWhenAccessingIdOfPolymorphicModelThenThenBaseModelIdIsReturned()
     {
         // Arrange
         $lion = Lion::create(['lionCol1' => 'pstr', 'animalCol1' => 'bstr']);
 
         // Act
-        $lion->baseModel()->id = 'nonIntegerId';
+        $lion->baseModel()->id = 'someId';
 
         // Assert
-        $this->assertNotEquals('nonIntegerId', $lion->id);
+        $this->assertEquals('someId', $lion->id);
     }
 
     /**
