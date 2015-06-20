@@ -11,13 +11,10 @@ class Model implements ModelQueryContract
     protected $tableName;
     protected $modelName;
     protected $modelDirectory;
-    protected $primaryKey;
+    protected $primaryKeyName;
     private $columns;
     protected $columnNames;
     private $hasTimestamps;
-    private $isMeta;
-    protected $inheritsFrom = null;
-    private $baseModel = null;
 
     public function __construct(array $data = array())
     {
@@ -31,22 +28,16 @@ class Model implements ModelQueryContract
         $table = DB::getTable($this->modelName);
         $this->tableName = $table->tableName();
         $this->hasTimestamps = $table->hasTimestamps();
-        $this->isMeta = $table->isMeta();
         foreach ($table->columns() as $column)
         {
-            if ($column->isPrimaryKey())
-                $this->primaryKey = $column->getName();
+            if ($column->primaryKeyName())
+                $this->$primaryKeyName = $column->getName();
             else {
                 $this->columns[] = $column;
                 $this->columnNames[] = $column->getName();
             }
         }
 
-        if ($this->inheritsFrom != null)
-        {
-            $baseModelName = $this->modelDirectory.ucfirst($this->inheritsFrom);
-            $this->baseModel = new $baseModelName();
-        }
 
         foreach ($data as $key => $value)
             $this->__set($key, $value);
@@ -74,15 +65,15 @@ class Model implements ModelQueryContract
         return $this->columnNames;
     }
 
-    public function primaryKey()
+    public function primaryKeyName()
     {
-        return $this->primaryKey;
+        return $this->$primaryKeyName;
     }
 
-    public function getPrimaryKey()
+    public function primaryKeyValue()
     {
-        if (isset($this->vars[$this->primaryKey]))
-            return $this->vars[$this->primaryKey];
+        if (isset($this->vars[$this->primaryKeyName]))
+            return $this->vars[$this->primaryKeyName];
     }
 
     public function defaultForeignKey()
@@ -95,44 +86,15 @@ class Model implements ModelQueryContract
         return $this->hasTimestamps;
     }
 
-    public function isMeta()
-    {
-        return $this->isMeta;
-    }
-
-    public function hasBaseModel()
-    {
-        return $this->baseModel != null;
-    }
-
-    public function baseModel()
-    {
-        return $this->baseModel;
-    }
-
     public function __set($var, $value)
     {
-        if (!$this->hasColumn($var) && $this->hasBaseModel())
-        {
-            if ($this->baseModel->hasColumn($var))
-            {
-                $this->baseModel->$var = $value;
-                return;
-            }
-        }
-
         $this->vars[$var] = $value;
     }
 
     public function __get($var)
     {
-        if ($var == $this->primaryKey && $this->hasBaseModel())
-            return $this->baseModel->$var;
-
         if (isset($this->vars[$var]))
             return $this->vars[$var];
-        else if ($this->hasBaseModel())
-            return $this->baseModel->$var;
     }
 
     public function __isset($var)
@@ -140,30 +102,7 @@ class Model implements ModelQueryContract
         if (isset($this->vars[$var]))
             return true;
 
-        if ($this->hasBaseModel())
-            return isset($this->baseModel->$var);
-    }
-
-    public function __call($method, $args)
-    {
-        if (!$this->hasBaseModel())
-            throw new RuntimeException('Method not found: '.$method);
-
-        switch (count($args))
-        {
-            case 0:
-                return $this->baseModel->$method();
-            case 1:
-                return $this->baseModel->$method($args[0]);
-            case 2:
-                return $this->baseModel->$method($args[0], $args[1]);
-            case 3:
-                return $this->baseModel->$method($args[0], $args[1], $args[2]);
-            case 4:
-                return $this->baseModel->$method($args[0], $args[1], $args[2], $args[3]);
-            default:
-                return call_user_func_array(array($this->baseModel, $method), $args);
-        }
+        return false;
     }
 
     public function save()
@@ -183,23 +122,13 @@ class Model implements ModelQueryContract
 
         foreach ($this->vars as $key => $var)
         {
-            if ($key == $this->primaryKey) continue;
+            if ($key == $this->primaryKeyName) continue;
 
             if ($this->hasColumn($key))
                 $values[$key] = $var;
         }
 
-        if ($this->hasBaseModel())
-        {
-            $this->query->update($values);
-            $this->baseModel->update();
-            return true; // TODO: change this
-        }
-
-        $this->query->update($values); // TODO: change this
-            //throw new RuntimeException('Update failed.');
-        
-        return true;
+        return $this->query->update($values);
     }
 
     public function touch()
@@ -207,17 +136,10 @@ class Model implements ModelQueryContract
         if ($this->isMissingPrimaryKey())
             throw new RuntimeException('Cannot touch model '.$this->modelName.', it was not yet created.');
 
-        if ($this->hasTimestamps)
-        {
-            $this->vars[QueryBuilder::UPDATED_AT] = Carbon::now()->toDateTimeString();
-            if ($this->update() == 0)
-                return false;
-        }
+        if (!$this->hasTimestamps)
+            throw new RuntimeException('Cannot touch model '.$this->modelName.', timestamps do not exist.');
 
-        if ($this->hasBaseModel() && $this->baseModel->hasTimestamps())
-            return $this->baseModel->touch();
-
-        return true;
+        return $this->query->touch();
     }
 
     public function delete()
@@ -225,10 +147,7 @@ class Model implements ModelQueryContract
         if ($this->isMissingPrimaryKey())
             throw new RuntimeException('Cannot delete model, it was not yet created.');
 
-        if ($this->hasBaseModel())
-            return $this->query->delete() > 0 && $this->baseModel->delete();
-
-        return $this->query->delete() > 0;
+        return $this->query->delete();
     }
 
     private function insert()
@@ -246,25 +165,10 @@ class Model implements ModelQueryContract
 
         $lastInsertId = $this->query->create($values);
 
-        if ($lastInsertId != null && $lastInsertId > 0)
-        {
-            if ($this->hasBaseModel())
-            {
-                $metaTypeField = Table::META_TYPE;
-                $metaIdField = Table::META_ID;
-                $this->baseModel->$metaTypeField = ucfirst($this->modelName);
-                $this->baseModel->$metaIdField = $lastInsertId;
+        if ($lastInsertId == null || $lastInsertId <= 0)
+            return false;
 
-                if (!$this->baseModel->save())
-                    DB::exec('DELETE FROM '.$this->tableName.' WHERE '.$this->primaryKey.' = '.$lastInsertId);
-                else
-                    return true;
-            }
-
-            $this->hydrate($this->find($lastInsertId));
-            return true;
-        }
-
+        $this->hydrate($this->find($lastInsertId));
         return false;
     }
 
@@ -273,10 +177,8 @@ class Model implements ModelQueryContract
         $instance = new static;
 
         if ($values != null)
-        {
             foreach ($values as $key => $value)
                 $instance->$key = $value;
-        }
 
         if ($instance->insert())
             return $instance;
@@ -293,29 +195,13 @@ class Model implements ModelQueryContract
             $this->$key = $value;
     }
 
-    public function hydrateBaseModel()
-    {
-        if (!$this->hasBaseModel())
-            return;
-
-        $this->baseModel->hydrate($this->morphOne($this->baseModel->modelName()));
-    }
-
     public static function exists($var, $value)
     {
         $instance = new static;
         $query = new Query($instance);
 
         if (!$instance->hasColumn($var))
-        {
-            if ($instance->hasBaseModel())
-            {
-                $baseModelName = $instance->modelDirectory.$instance->baseModel()->modelName();
-                return $baseModelName::exists($var, $value);
-            }
-            else
-                throw new RuntimeException('Field '.$var.' does not exists in model '.$instance->modelName());
-        }
+            return false;
 
         return $query->exists($var, $value);
     }
@@ -324,8 +210,7 @@ class Model implements ModelQueryContract
     {
         $instance = new static;
         $query = new Query($instance);
-        $all = $query->get();
-        return $all;
+        return $query->get();
     }
 
     public static function where($var, $operator, $value, $link = 'AND')
@@ -346,19 +231,12 @@ class Model implements ModelQueryContract
     {
         $instance = new static;
         $query = new Query($instance);
-        $model = $query->where($instance->primaryKey, '=', $id)->get()->first();
-
-        if ($model == null)
-            return null;
-
-        $model->hydrateBaseModel();
-
-        return $model;
+        return $query->where($instance->primaryKeyName, '=', $id)->get()->first();
     }
 
     public function hasColumn($name)
     {
-        if ($name == $this->primaryKey)
+        if ($name == $this->primaryKeyName)
             return true;
 
         foreach ($this->columnNames as $columnName)
@@ -372,7 +250,8 @@ class Model implements ModelQueryContract
 
     public function isMissingRequiredColumn()
     {
-        foreach ($this->columns as $column) {
+        foreach ($this->columns as $column)
+        {
             if ($column->isRequired() && !isset($this->vars[$column->getName()]))
                 return true;   
         }
@@ -382,7 +261,7 @@ class Model implements ModelQueryContract
 
     public function isMissingPrimaryKey()
     {
-        return !isset($this->vars[$this->primaryKey]);
+        return !isset($this->vars[$this->primaryKeyName]);
     }
 
     protected function camelCaseToUnderscore($str)
