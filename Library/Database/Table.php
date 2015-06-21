@@ -4,8 +4,6 @@ class Table
 {
     const CREATED_AT = 'created_at';
     const UPDATED_AT = 'updated_at';
-    const META_ID = 'meta_id';
-    const META_TYPE = 'meta_type';
 
     protected $modelName;
     protected $tableName;
@@ -62,12 +60,6 @@ class Table
         $this->columns[] = new Column(self::CREATED_AT, 'datetime');
     }
 
-    public function meta()
-    {
-        $this->columns[] = new Column(self::META_ID, 'integer');
-        $this->columns[] = new Column(self::META_TYPE, 'string', 32);
-    }
-
     /* ACCESSORS */
 
     public function modelName()
@@ -78,14 +70,6 @@ class Table
     public function tableName()
     {
         return $this->tableName;
-    }
-
-    public function isMeta()
-    {
-        if ($this->hasColumn(self::META_ID) && $this->hasColumn(self::META_TYPE))
-            return true;
-
-        return false;
     }
 
     public function columns()

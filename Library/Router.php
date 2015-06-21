@@ -4,8 +4,8 @@ use Symfony\Component\Yaml\Exception\RuntimeException;
 
 class Router
 {
-    const ROUTES_CONFIG_PATH = 'Config/routes.xml';
-    const TEST_ROUTES_CONFIG_PATH = 'Tests/FrameworkTest/Config/routes.xml';
+    const ROUTES_CONFIG_PATH = __DIR__.'/../Config/routes.xml';
+    const TEST_ROUTES_CONFIG_PATH = __DIR__.'/../Tests/FrameworkTest/Config/routes.xml';
     const NO_ROUTE = 1;
 
     protected $routes = array();
@@ -53,7 +53,7 @@ class Router
         {
             if ($route->match($appName, $url, $method))
             {
-                $route->resolveUrl($_SERVER['REQUEST_URI']);
+                $route->resolveUrl();
                 return $route;
             }
         }

@@ -64,9 +64,9 @@ class Route
             strcasecmp($action, $this->action) == 0;
     }
 
-    public function resolveUrl($args)
+    public function resolveUrl($args = null)
     {
-        if (!$this->hasVars())
+        if (!$this->hasVars() || $args == null)
             return $this->url;
             
         if (!is_array($args))
