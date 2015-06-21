@@ -52,8 +52,9 @@ class Query extends QueryBuilder implements QueryContract
 
     public function touch()
     {
+        $updatedAtName = Table::UPDATED_AT;
         $values = array();
-        $values[Table::UPDATED_AT] = Carbon::now()->toDateTimeString();
+        $values[Table::UPDATED_AT] = $this->model->$updatedAtName;
 
         $str = $this->buildUpdate($values)
             .$this->buildWheres([[

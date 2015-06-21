@@ -30,8 +30,8 @@ class Model implements ModelQueryContract
         $this->hasTimestamps = $table->hasTimestamps();
         foreach ($table->columns() as $column)
         {
-            if ($column->primaryKeyName())
-                $this->$primaryKeyName = $column->getName();
+            if ($column->isPrimaryKey())
+                $this->primaryKeyName = $column->getName();
             else {
                 $this->columns[] = $column;
                 $this->columnNames[] = $column->getName();
@@ -67,7 +67,7 @@ class Model implements ModelQueryContract
 
     public function primaryKeyName()
     {
-        return $this->$primaryKeyName;
+        return $this->primaryKeyName;
     }
 
     public function primaryKeyValue()
@@ -139,6 +139,9 @@ class Model implements ModelQueryContract
         if (!$this->hasTimestamps)
             throw new RuntimeException('Cannot touch model '.$this->modelName.', timestamps do not exist.');
 
+        $updatedAtName = Table::UPDATED_AT;
+        $this->$updatedAtName = Carbon::now()->toDateTimeString();
+
         return $this->query->touch();
     }
 
@@ -169,7 +172,7 @@ class Model implements ModelQueryContract
             return false;
 
         $this->hydrate($this->find($lastInsertId));
-        return false;
+        return true;
     }
 
     public static function create(array $values = null)
@@ -252,6 +255,9 @@ class Model implements ModelQueryContract
     {
         foreach ($this->columns as $column)
         {
+            if ($column->isPrimaryKey())
+                continue;
+
             if ($column->isRequired() && !isset($this->vars[$column->getName()]))
                 return true;   
         }
@@ -295,7 +301,7 @@ class Model implements ModelQueryContract
             $foreignKey = $this->camelCaseToUnderscore($this->modelName) . '_id';
 
         $modelName = $this->modelDirectory . $modelName;
-        return $modelName::where($foreignKey, '=', $this->vars[$this->primaryKey])->get()->first();
+        return $modelName::where($foreignKey, '=', $this->vars[$this->primaryKeyName])->get()->first();
     }
 
     public function hasMany($modelName, $foreignKey = null)
@@ -307,7 +313,7 @@ class Model implements ModelQueryContract
             $foreignKey = $this->camelCaseToUnderscore($this->modelName) . '_id';
 
         $modelName = $this->modelDirectory . $modelName;
-        return $modelName::where($foreignKey, '=', $this->vars[$this->primaryKey])->get();
+        return $modelName::where($foreignKey, '=', $this->vars[$this->primaryKeyName])->get();
     }
 
     public function hasManyThrough($modelName, $throughModelName, $foreignKey = null, $throughForeignKey = null)
@@ -319,7 +325,7 @@ class Model implements ModelQueryContract
             $foreignKey = $this->camelCaseToUnderscore($this->modelName) . '_id';
 
         $throughModelName = $this->modelDirectory . $throughModelName;
-        $throughModel = $throughModelName::where($foreignKey, '=', $this->vars[$this->primaryKey])->get()->first();
+        $throughModel = $throughModelName::where($foreignKey, '=', $this->vars[$this->primaryKeyName])->get()->first();
 
         return $throughModel->hasMany(ucfirst($modelName), $throughForeignKey);
     }
@@ -346,7 +352,7 @@ class Model implements ModelQueryContract
         }
 
         $targetIds = DB::query('SELECT '.$targetForeignKey.' FROM '.$pivotName.' WHERE '.
-            $thisForeignKey.'='.$this->vars[$this->primaryKey])->fetchAll(\PDO::FETCH_COLUMN, 0);
+            $thisForeignKey.'='.$this->vars[$this->primaryKeyName])->fetchAll(\PDO::FETCH_COLUMN, 0);
 
         if (sizeof($targetIds) == 0)
             return new ModelCollection();
@@ -355,50 +361,7 @@ class Model implements ModelQueryContract
 
         $modelName = $this->modelDirectory.ucfirst($modelName);
         $model = new $modelName();
-        $results = $modelName::where($model->primaryKey(), 'in', $targetIds)->get();
+        $results = $modelName::where($model->primaryKeyName(), 'in', $targetIds)->get();
         return $results;
-    }
-
-    public function morphTo($metaIdField = Table::META_ID, $metaTypeField = Table::META_TYPE)
-    {
-        if (!$this->isMeta)
-            throw new RuntimeException('Model is not a meta type.');
-
-        if (!isset($this->vars[$metaTypeField]) || !isset($this->vars[$metaIdField]))
-            throw new RuntimeException('Model meta field names are invalid or do not exist.');
-
-        $metaType = ucfirst($this->$metaTypeField);
-
-        if ($metaType == null || !is_string($metaType))
-            throw new RuntimeException('Meta type is invalid or is not defined.');
-
-        $metaType = $this->modelDirectory.$metaType;
-        if (!class_exists($metaType))
-            throw new RuntimeException('Model '.$metaType.' does not exist,');
-
-        return $metaType::find($this->$metaIdField);
-    }
-
-    public function morphOne($modelName, $metaIdField = Table::META_ID, $metaTypeField = Table::META_TYPE, $typeName = null)
-    {
-        $result = $this->morphMany($modelName, $metaIdField, $metaTypeField, $typeName);
-
-        if ($result == null)
-            return null;
-
-        return $result->first();
-    }
-
-    public function morphMany($modelName, $metaIdField = Table::META_ID, $metaTypeField = Table::META_TYPE, $typeName = null)
-    {
-        $modelName = $this->modelDirectory . ucfirst($modelName);
-        $model = new $modelName();
-
-        if ($typeName == null)
-            $typeName = $this->modelName;
-
-        return $model::where($metaTypeField, '=', $typeName)
-            ->where($metaIdField, '=', $this->vars[$this->primaryKey])
-            ->get();
     }
 }

@@ -42,7 +42,7 @@ class ModelCollection implements IteratorAggregate
     {
         foreach ($this->models as $model)
         {
-            if ($model->getPrimaryKey() == $key)
+            if ($model->primaryKeyValue() == $key)
                 return true;
         }
 
@@ -53,7 +53,7 @@ class ModelCollection implements IteratorAggregate
     {
         foreach ($this->models as $model)
         {
-            if ($model->getPrimaryKey() == $key)
+            if ($model->primaryKeyValue() == $key)
                 return $model;
         }
 

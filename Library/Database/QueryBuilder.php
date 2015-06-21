@@ -121,7 +121,7 @@ class QueryBuilder
             if ($joins[$i]['on'] != null)
                 $str .= $joins[$i]['on'];
             else
-                $str .= $this->model->tableName() . '.' . $this->model->primaryKey();
+                $str .= $this->model->tableName() . '.' . $this->model->primaryKeyName();
 
             $str .= ' ' . $joins[$i]['operator'] . ' ';
 
