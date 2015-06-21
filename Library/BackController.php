@@ -1,7 +1,5 @@
 <?php namespace Library;
 
-use Library\Shao\Shao;
-
 abstract class BackController
 {
     protected $vars = array();

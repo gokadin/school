@@ -2,6 +2,38 @@
 
 class Request
 {
+    public function __get($key)
+    {
+        switch ($this->method())
+        {
+            case 'GET':
+                return isset($_GET[$key]) ? $_GET[$key] : null;
+            case 'POST':
+            case 'PUT':
+            case 'PATCH':
+            case 'DELETE':
+                return isset($_POST[$key]) ? $_POST[$key] : null;
+        }
+
+        return null;
+    }
+
+    public function all()
+    {
+        switch ($this->method())
+        {
+            case 'GET':
+                return $_GET;
+            case 'POST':
+            case 'PUT':
+            case 'PATCH':
+            case 'DELETE':
+                return $_POST;
+        }
+
+        return null;
+    }
+
     public function cookieData($key)
     {
         return isset($_COOKIE[$key]) ? $_COOKIE[$key] : null;
@@ -29,8 +61,6 @@ class Request
             $method = $this->postData('_method');
             switch (strtoupper($method))
             {
-                case 'GET':
-                    return 'GET';
                 case 'PUT':
                     return 'PUT';
                 case 'PATCH':
