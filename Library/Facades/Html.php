@@ -1,6 +1,6 @@
 <?php namespace Library\Facades;
 
-class HTML extends Facade
+class Html extends Facade
 {
     protected static function getFacadeAccessor()
     {

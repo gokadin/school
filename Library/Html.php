@@ -1,6 +1,6 @@
 <?php namespace Library;
 
-class HTML
+class Html
 {
 
 }
