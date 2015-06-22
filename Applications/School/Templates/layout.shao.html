@@ -26,7 +26,7 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </a>
-                <a href="@path('School#Common/Index#index')" class="navbar-brand">{{ $currentUser->school()->name }}</a>
+                <a href="@path('School#Common/Index#index')" class="navbar-brand">{{ $currentUser->userInfo()->school()->name }}</a>
             </div>
             <div id="navbarCollapse" class="collapse navbar-collapse">
                 <form role="search" class="navbar-form navbar-left nav-top-search">
@@ -46,8 +46,8 @@
                     @endif
                     <li class="dropdown">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                            <img class="profile-picture-small" src="{{ $currentUser->profile_picture }}" />
-                            {{ $currentUser->name() }}&nbsp;<b class="caret"></b>
+                            <img class="profile-picture-small" src="{{ $currentUser->userInfo()->profile_picture }}" />
+                            {{ $currentUser->userInfo()->name() }}&nbsp;<b class="caret"></b>
                         </a>
                         <ul class="dropdown-menu">
                             <li><a href="@path('School#Teacher/Account#index')">My Account</a></li>

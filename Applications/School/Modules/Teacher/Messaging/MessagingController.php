@@ -8,4 +8,13 @@ class MessagingController extends BackController
 	{
 		
 	}
+
+    public function test()
+    {
+        $this->validateToken();
+        $this->validateRequest([
+            'firstName' => 'required',
+            'lastName' => 'required'
+        ]);
+    }
 }

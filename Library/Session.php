@@ -13,14 +13,9 @@ class Session
     const FLASH_TYPE_KEY = 'flashType';
     const FLASH_DURATION_KEY = 'flashDuration';
     const SHOULD_CLEAR_FLASH_KEY = 'shouldClearFlash';
-    const CURRENT_CSRF_KEY = 'currentCsrfToken';
-    const NEXT_CSRF_KEY = 'nextCsrfToken';
-    const SHOULD_CLEAR_CSRF_TOKEN_KEY = 'shouldClearCsrfToken';
 
     public function __construct()
     {
-        $this->rotateCsrf();
-        
         if (!$this->shouldClearErrors())
             $_SESSION[self::SHOULD_CLEAR_ERRORS_KEY] = true;
         else
@@ -54,10 +49,17 @@ class Session
             unset($_SESSION[$key]);
     }
 
-    public function login($id)
+    public function login($id, $type)
     {
         $_SESSION['id'] = $id;
+        $_SESSION['type'] = $type;
         $_SESSION['authenticated'] = true;
+        $_SESSION['token'] = $this->generateToken();
+    }
+
+    public function generateToken()
+    {
+        return md5('G2s92!dK2!185fr0?Se0');
     }
     
     public function logout()
@@ -153,38 +155,5 @@ class Session
             return false;
 
         return $_SESSION[self::SHOULD_CLEAR_FLASH_KEY];
-    }
-    
-    private function shouldClearCsrfToken()
-    {
-        if (!isset($_SESSION[self::SHOULD_CLEAR_CSRF_TOKEN]))
-            return false;
-
-        return $_SESSION[self::SHOULD_CLEAR_CSRF_TOKEN];
-    }
-    
-    private function rotateCsrf()
-    {
-        if (isset($_SESSION[self::NEXT_CSRF_KEY]))
-            $_SESSION[self::CURRENT_CSRF_KEY] = $_SESSION[self::NEXT_CSRF_KEY];
-            
-        $_SESSION[self::NEXT_CSRF_KEY] = md5(uniqid(rand(), true));
-    }
-    
-    public function currentCsrfToken()
-    {
-        if (isset($_SESSION[self::CURRENT_CSRF_KEY]))
-            return $_SESSION[self::CURRENT_CSRF_KEY];
-    }
-    
-    public function nextCsrfToken()
-    {
-        if (isset($_SESSION[self::NEXT_CSRF_KEY]))
-            return $_SESSION[self::NEXT_CSRF_KEY];
-    }
-    
-    public function validateCsrfToken($token)
-    {
-        return $token === $_SESSION[self::CURRENT_CSRF_KEY];
     }
 }

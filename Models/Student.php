@@ -4,20 +4,13 @@ use Library\Database\Model;
 
 class Student extends Model
 {
-    protected $inheritsFrom = 'User';
-
-    public function user()
+    public function userInfo()
     {
-        return $this->morphOne('User');
+        return $this->hasOne('UserInfo');
     }
 
     public function activities()
     {
         return $this->belongsToMany('Activity');
-    }
-
-    public function school()
-    {
-        return $this->hasOne('School');
     }
 }

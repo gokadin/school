@@ -15,12 +15,13 @@ class AccountController extends BackController
 	}
 	
 	public function editPersonalInfo()
-	{	
-		$this->currentUser->first_name = Request::postData('firstName');
-		$this->currentUser->last_name = Request::postData('lastName');
-		$this->currentUser->email = Request::postData('email');
+	{
+        $userInfo = $this->currentUser->userInfo();
+        $userInfo->first_name = Request::postData('firstName');
+        $userInfo->last_name = Request::postData('lastName');
+        $userInfo->email = Request::postData('email');
 		
-		if ($this->currentUser->save())
+		if ($userInfo->save())
 			Session::setFlash('Personal info updated successfully.', 'success', 5);
 		else
 			Session::setFlash('There was an error processing your request.', 'error');
@@ -42,9 +43,10 @@ class AccountController extends BackController
 			
 		if (md5($currentPassword) != $this->currentUser->password)
 			Session::setFlash('Invalid password. Please try again.');
-			
-		$this->currentUser->password = md5($password);
-		if ($this->currentUser->save())
+
+        $userInfo = $this->currentUser->userInfo();
+        $userInfo->password = md5($password);
+		if ($userInfo->save())
 			Session::setFlash('Password changed successfully.', 'success', 5);
 		else
 			Session::setFlash('An error occured while processing your request.', 'error');	
@@ -91,10 +93,11 @@ class AccountController extends BackController
 			Session::setFlash('There was an error while uploading your picture.', 'error');
 			Response::toAction('School#Teacher/Account#index');
 	    }
-		
-		$this->currentUser->profile_picture = $databaseLink;
 
-		if (!$this->currentUser->save())
+        $userInfo = $this->currentUser->userInfo();
+        $userInfo->profile_picture = $databaseLink;
+
+		if (!$userInfo->save())
 		{
 			if (file_exists($targetFile.'.temp'))
 				rename($targetFile.'.temp', $targetFile);
@@ -176,7 +179,7 @@ class AccountController extends BackController
 		$customer = \Stripe\Customer::create(array(
 		  "source" => $token,
 		  "plan" => $subscriptionType,
-		  "email" => $this->currentUser->email));
+		  "email" => $this->currentUser->userInfo()->email));
 		  
 	  	Session::setFlash('Thank you for subscribing. blablabla.', 'success', 5);
 		Response::toAction('School#Teacher/Index#index');

@@ -1,6 +1,7 @@
 <?php namespace Applications\Frontend\Modules\Account;
 
 use Library\BackController;
+use Library\Config;
 use Library\Facades\Request;
 use Library\Facades\Response;
 use Library\Facades\Page;
@@ -8,8 +9,8 @@ use Library\Facades\Session;
 use Models\Address;
 use Models\School;
 use Models\Teacher;
-use Models\TempUser;
-use Models\User;
+use Models\TempTeacher;
+use Models\UserInfo;
 use Models\UserSetting;
 use Models\Subscription;
 
@@ -22,20 +23,35 @@ class AccountController extends BackController
 
     public function login()
     {
-        $user = User::where('email', '=', Request::postData('email'))
+        $userInfo = UserInfo::where('email', '=', Request::postData('email'))
             ->where('password', '=', md5(Request::postData('password')))
             ->get()->first();
 
-        if ($user != null)
-        {
-            Session::login($user->id);
-            Response::toAction('School#Teacher/Index#index');
-        }
-        else
+        if ($userInfo == null)
         {
             Session::setErrors('The email or password is incorrect.');
             Response::back();
+            return;
         }
+
+        $teacher = $userInfo->teacher();
+        if ($teacher != null)
+        {
+            Session::login($teacher->id, 'teacher');
+            Response::toAction('School#Teacher/Index#index');
+            return;
+        }
+
+        $student = $userInfo->student();
+        if ($student != null)
+        {
+            Session::login($student->id, 'student');
+            Response::toAction('School#Student/Index#index');
+            return;
+        }
+
+        Session::setErrors('The email or password is incorrect.');
+        Response::back();
     }
 
     public function logout()
@@ -51,13 +67,12 @@ class AccountController extends BackController
 
     public function signUp()
     {
-        if (Session::hasErrors())
-            Page::add('errors', Session::getErrors());
+
     }
 
     public function registerUser()
     {
-        if (User::exists('email', Request::postData('email')))
+        if (UserInfo::exists('email', Request::postData('email')))
         {
             Session::setErrors(['Email is already in use.']);
             Response::back();
@@ -66,13 +81,13 @@ class AccountController extends BackController
         $subscription = Subscription::create(['type' => Request::postData('subscriptionType')]);
         $confirmationCode = md5(rand(999, 999999));
 
-        $tempUser = new TempUser();
-        $tempUser->subscription_id = $subscription->id;
-        $tempUser->first_name = Request::postData('firstName');
-        $tempUser->last_name = Request::postData('lastName');
-        $tempUser->email = Request::postData('email');
-        $tempUser->confirmation_code = $confirmationCode;
-        $tempUser->save();
+        $tempTeacher = new TempTeacher();
+        $tempTeacher->subscription_id = $subscription->id;
+        $tempTeacher->first_name = Request::postData('firstName');
+        $tempTeacher->last_name = Request::postData('lastName');
+        $tempTeacher->email = Request::postData('email');
+        $tempTeacher->confirmation_code = $confirmationCode;
+        $tempTeacher->save();
 
         Response::toAction('Frontend#Account#signUpLand');
     }
@@ -84,26 +99,26 @@ class AccountController extends BackController
 
     public function emailConfirmation()
     {
-        if (!TempUser::exists('id', Request::getData('id')))
+        if (!TempTeacher::exists('id', Request::getData('id')))
         {
             Page::add('error', 'Your account no longer exists in our database.');
             return;   
         }
 
-        $tempUser = TempUser::find(Request::getData('id'));
+        $tempTeacher = TempTeacher::find(Request::getData('id'));
 
-        if ($tempUser->confirmation_code !== Request::getData('code'))
+        if ($tempTeacher->confirmation_code !== Request::getData('code'))
         {
             Page::add('error', 'The confirmation code is invalid.');
             return;
         }
 
-        Page::add('tempUser', $tempUser);
+        Page::add('tempUser', $tempTeacher);
     }
 
     public function completeRegistration()
     {
-        if (!TempUser::exists('id', Request::postData('tempUserId')))
+        if (!TempTeacher::exists('id', Request::postData('tempUserId')))
         {
             Session::setErrors(['Your account no longer exists in our database.']);
             Response::back();
@@ -115,33 +130,34 @@ class AccountController extends BackController
             Response::back();
         }
 
-        $tempUser = TempUser::find(Request::postData('tempUserId'));
+        $tempTeacher = TempTeacher::find(Request::postData('tempUserId'));
 
         $schoolAddress = Address::create();
         $school = School::create(['name' => 'Your School', 'address_id' => $schoolAddress->id]);
         $userAddress = Address::create();
         $userSetting = UserSetting::create();
-        $subscription = Subscription::find($tempUser->subscription_id);
+        $subscription = Subscription::find($tempTeacher->subscription_id);
 
-        $teacher = new Teacher();
-        $teacher->school_id = $school->id;
-        $teacher->subscription_id = $subscription->id;
-        $teacher->address_id = $userAddress->id;
-        $teacher->user_setting_id = $userSetting->id;
-        $teacher->first_name = $tempUser->first_name;
-        $teacher->last_name = $tempUser->last_name;
-        $teacher->email = $tempUser->email;
-        $teacher->password = md5(Request::postData('password'));
-        $teacher->profile_picture = Config::get('defaultProfilePicturePath');
-        $teacher->save();
+        $userInfo = new UserInfo();
+        $userInfo->school_id = $school->id;
+        $userInfo->address_id = $userAddress->id;
+        $userInfo->user_setting_id = $userSetting->id;
+        $userInfo->first_name = $tempTeacher->first_name;
+        $userInfo->last_name = $tempTeacher->last_name;
+        $userInfo->email = $tempTeacher->email;
+        $userInfo->password = md5(Request::postData('password'));
+        $userInfo->profile_picture = Config::get('defaultProfilePicturePath');
+        $userInfo->save();
 
-        $user = User::where('email', '=', $teacher->email)
-            ->where('password', '=', $teacher->password)
+        $teacher = Teacher::create(['user_info_id' => $userInfo->id, 'subscription_id' => $subscription->id]);
+
+        $teacher = UserInfo::where('email', '=', $userInfo->email)
+            ->where('password', '=', $userInfo->password)
             ->get()->first();
 
-        if ($user != null)
+        if ($teacher != null)
         {
-            Session::login($user->id);
+            Session::login($teacher->id, 'teacher');
             Response::toAction('School#Teacher/Index#index');
         }
         else

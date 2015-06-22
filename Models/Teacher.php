@@ -4,11 +4,9 @@ use Library\Database\Model;
 
 class Teacher extends Model
 {
-    protected $inheritsFrom = 'User';
-
-    public function user()
+    public function userInfo()
     {
-        return $this->morphOne('User');
+        return $this->hasOne('UserInfo');
     }
 
     public function subscription()
@@ -19,11 +17,6 @@ class Teacher extends Model
     public function students()
     {
         return $this->hasMany('Student');
-    }
-
-    public function school()
-    {
-        return $this->hasOne('School');
     }
 
     public function activities()

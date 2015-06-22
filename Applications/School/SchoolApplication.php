@@ -1,10 +1,12 @@
 <?php namespace Applications\School;
 
 use Library\Application;
+use Library\Facades\Page;
 use Library\Facades\Session;
 use Library\Facades\Response;
 use Library\Facades\Router;
-use Models\User;
+use Models\Student;
+use Models\Teacher;
 
 class SchoolApplication extends Application
 {
@@ -15,26 +17,32 @@ class SchoolApplication extends Application
 
         /* ASSIGNING CURRENT USER */
 
-        if (!Session::exists('id'))
+        if (!Session::exists('id') || !Session::exists('type')|| !Session::get('authenticated'))
             Response::toAction('Frontend#Account#index');
 
-        $currentUser = User::find(Session::get('id'));
-        $currentUser = $currentUser->morph();
+        $currentTeacher = null;
+        $currentStudent = null;
+        if (Session::get('type') == 'teacher')
+            $currentTeacher = Teacher::find(Session::get('id'));
+        else if (Session::get('type') == 'student')
+            $currentStudent = Student::find(Session::get('id'));
 
         /* PERMISSIONS */
 
-        if ($currentUser == null || !Session::get('authenticated'))
+        if ($currentTeacher == null && $currentStudent == null)
             Response::toAction('Frontend#Account#index');
 
-        $controller->add(['currentUser' => $currentUser]);
-        \Library\Facades\Page::add(['currentUser' => $currentUser]);
+        $currentUser = $currentTeacher == null ? $currentStudent : $currentTeacher;
 
-        if ($currentUser->meta_type == 'Teacher')
+        $controller->add(['currentUser' => $currentUser]);
+        Page::add(['currentUser' => $currentUser]);
+
+        if ($currentStudent == null)
         {
             if (substr($this->module(), 0, 7) == 'Student/')
                 Response::toAction('School#Teacher/Index#index');
         }
-        else if ($currentUser->meta_type == 'Student')
+        else if ($currentTeacher == null)
         {
             if (substr($this->module(), 0, 7) == 'Teacher/')
                 Response::toAction('School#Student/Index#index');
@@ -46,24 +54,24 @@ class SchoolApplication extends Application
 
         /* BREADCRUMBS */
 
-        $breadcrumbs = $this->buildBreadcrumbs($controller, $currentUser->meta_type);
-        \Library\Facades\Page::add(['breadcrumbs' => $breadcrumbs]);
-        \Library\Facades\Page::add(['module' => $this->module(), 'action' => $this->action()]);
+        $breadcrumbs = $this->buildBreadcrumbs();
+        Page::add(['breadcrumbs' => $breadcrumbs]);
+        Page::add(['module' => $this->module(), 'action' => $this->action()]);
 
 
-        require 'Web/lang/common.php';
+        require '/Web/lang/common.php';
         $controller->setLang($lang);
-        \Library\Facades\Page::add('lang', $lang);
+        Page::add('lang', $lang);
 
         $controller->execute();
         Response::send();
     }
 
-    private function buildBreadcrumbs($controller, $userType)
+    private function buildBreadcrumbs()
     {
         $breadcrumbs = array();
 
-        if ($userType == 'Teacher')
+        if (Session::get('type') == 'teacher')
             $breadcrumbs['Home'] = Router::actionToPath('School#Teacher/Index#index');
         else
             $breadcrumbs['Home'] = Router::actionToPath('School#Student/Index#index');

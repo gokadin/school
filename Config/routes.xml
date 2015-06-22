@@ -30,6 +30,7 @@
         <route url="/school/teacher/" method="GET" module="Teacher/Index" action="index" />
         <!-- TEACHER MESSAGING MODULE -->
         <route url="/school/teacher/messaging" method="GET" module="Teacher/Messaging" action="index" />
+        <route url="/school/teacher/messaging/test" method="POST" module="Teacher/Messaging" action="test" />
         <!-- TEACHER ACTIVITY MODULE -->
         <route url="/school/teacher/activities" method="GET" module="Teacher/Activity" action="index" />
         <route url="/school/teacher/activities/create" method="GET" module="Teacher/Activity" action="create" />

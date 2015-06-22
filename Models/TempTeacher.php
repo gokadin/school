@@ -2,7 +2,7 @@
 
 use Library\Database\Model;
 
-class TempUser extends Model
+class TempTeacher extends Model
 {
 	public function name()
     {

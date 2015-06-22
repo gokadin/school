@@ -4,5 +4,5 @@
     <define var="env" value="debug" />
     <define var="testing" value="false" />
 
-    <define var="defaultProfilePicturePath" value="/School/Web/images/defaultProfilePicture.png" />
+    <define var="defaultProfilePicturePath" value="/Web/images/defaultProfilePicture.png" />
 </definitions>

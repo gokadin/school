@@ -23,15 +23,27 @@ class Request
         switch ($this->method())
         {
             case 'GET':
-                return $_GET;
+                return $this->excludeFrameworkVariablesFromAll($_GET);
             case 'POST':
             case 'PUT':
             case 'PATCH':
             case 'DELETE':
-                return $_POST;
+                return $this->excludeFrameworkVariablesFromAll($_POST);
         }
 
         return null;
+    }
+
+    private function excludeFrameworkVariablesFromAll($arr)
+    {
+        $results = array();
+        foreach ($arr as $key => $value)
+        {
+            if ($key != '_method' && $key != '_token')
+                $results[$key] = $value;
+        }
+
+        return $results;
     }
 
     public function cookieData($key)
@@ -44,14 +56,26 @@ class Request
         return isset($_COOKIE[$key]);
     }
 
-    public function getData($key)
+    public function data($key)
     {
-        return isset($_GET[$key]) ? $_GET[$key] : null;
+        switch ($this->method())
+        {
+            case 'GET':
+                return isset($_GET[$key]) ? $_GET[$key] : null;
+            default:
+                return isset($_POST[$key]) ? $_POST[$key] : null;
+        }
     }
 
-    public function getExists($key)
+    public function dataExists($key)
     {
-        return isset($_GET[$key]);
+        switch ($this->method())
+        {
+            case 'GET':
+                return isset($_GET[$key]);
+            default:
+                return isset($_POST[$key]);
+        }
     }
 
     public function method()
@@ -73,16 +97,6 @@ class Request
         }
 
         return $_SERVER['REQUEST_METHOD'];
-    }
-
-    public function postData($key)
-    {
-        return isset($_POST[$key]) ? $_POST[$key] : null;
-    }
-
-    public function postExists($key)
-    {
-        return isset($_POST[$key]);
     }
     
     public function fileData($key)

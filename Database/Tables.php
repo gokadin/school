@@ -4,26 +4,6 @@ use Library\Database\Table;
 
 class Tables
 {
-    protected function users()
-    {
-        $t = new Table('User');
-
-        $t->increments('id');
-        $t->integer('address_id');
-        $t->integer('user_setting_id');
-        $t->string('first_name', 32);
-        $t->string('last_name', 32);
-        $t->string('email')->unique();
-        $t->string('password');
-        $t->string('phone', 32)->nullable();
-        $t->boolean('active')->default(1);
-        $t->string('profile_picture', 200)->nullable();
-        $t->meta();
-        $t->timestamps();
-
-        return $t;
-    }
-
     protected function user_settings()
     {
         $t = new Table('UserSetting');
@@ -37,21 +17,53 @@ class Tables
         return $t;
     }
 
+    protected function user_info()
+    {
+        $t = new Table('UserInfo');
+
+        $t->increments('id');
+        $t->integer('address_id');
+        $t->integer('user_setting_id');
+        $t->integer('school_id');
+        $t->string('first_name', 32);
+        $t->string('last_name', 32);
+        $t->string('email')->unique();
+        $t->string('password');
+        $t->string('phone', 32)->nullable();
+        $t->boolean('active')->default(1);
+        $t->string('profile_picture', 200)->nullable();
+        $t->timestamps();
+
+        return $t;
+    }
+
     protected function teachers()
     {
         $t = new Table('Teacher');
 
         $t->increments('id');
-        $t->integer('school_id');
+        $t->integer('user_info_id');
         $t->integer('subscription_id');
         $t->integer('type', 5)->default(1);
 
         return $t;
     }
 
-    public function temp_users()
+    protected function students()
     {
-        $t = new Table('TempUser');
+        $t = new Table('Student');
+
+        $t->increments('id');
+        $t->integer('user_info_id');
+        $t->integer('teacher_id');
+        $t->integer('type', 5)->default(1);
+
+        return $t;
+    }
+
+    public function temp_teachers()
+    {
+        $t = new Table('TempTeacher');
 
         $t->increments('id');
         $t->integer('subscription_id');
@@ -74,18 +86,6 @@ class Tables
         $t->decimal('custom_rate', 6, 2)->default(-1.0);
         $t->integer('period', 5)->default(1);
         $t->timestamps();
-
-        return $t;
-    }
-
-    protected function students()
-    {
-        $t = new Table('Student');
-
-        $t->increments('id');
-        $t->integer('school_id');
-        $t->integer('teacher_id');
-        $t->integer('type', 5)->default(1);
 
         return $t;
     }
