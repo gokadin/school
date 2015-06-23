@@ -10,7 +10,7 @@ class BackControllerTest extends BaseTest
     {
         // Arrange
         $_POST['_token'] = Session::generateToken();
-        $_SERVER['REQUEST_METHOD'] = 'POST';
+        $_POST['_method'] = 'POST';
         $controller = new IndexController();
 
         // Act
@@ -27,7 +27,7 @@ class BackControllerTest extends BaseTest
     {
         // Arrange
         $_POST['_token'] = 'other';
-        $_SERVER['REQUEST_METHOD'] = 'POST';
+        $_POST['_method'] = 'POST';
         $controller = new IndexController();
 
         // Act
@@ -37,5 +37,78 @@ class BackControllerTest extends BaseTest
         $this->assertTrue(true, 'if reached this then exception was thrown');
     }
 
-    // ... for all validations and for multiple at the same time
+    public function testThatRequestValidationWorksWhenRequiredIsValid()
+    {
+        // Arrange
+        $_POST['one'] = 1;
+        $_POST['_method'] = 'POST';
+        $controller = new IndexController();
+
+        // Act
+        $controller->testRequestValidation();
+
+        // Assert
+        $this->assertFalse(Session::hasErrors());
+    }
+
+    public function testThatRequestValidationWorksWhenRequiredIsInvalid()
+    {
+        // Arrange
+        $_POST['_method'] = 'POST';
+        $controller = new IndexController();
+
+        // Act
+        $controller->testRequestValidation();
+
+        // Assert
+        $this->assertTrue(Session::hasErrors());
+    }
+
+    public function testThatRequestValidationWorksWithMultipleValidationsAreAllValid()
+    {
+        // Arrange
+        $_POST['_method'] = 'POST';
+        $_POST['one'] = 1;
+        $_POST['two'] = 2;
+        $controller = new IndexController();
+
+        // Act
+        $controller->testMultipleRequestValidation();
+
+        // Assert
+        $this->assertFalse(Session::hasErrors());
+    }
+
+    public function testThatRequestValidationWorksWithMultipleValidationsWhenNotValid()
+    {
+        // Arrange
+        $_POST['_method'] = 'POST';
+        $_POST['one'] = 1;
+        $_POST['two'] = 'not a number';
+        $controller = new IndexController();
+
+        // Act
+        $controller->testMultipleRequestValidation();
+
+        // Assert
+        $this->assertTrue(Session::hasErrors());
+    }
+
+    public function testThatRequestValidationGeneratesCorrectErrorArray()
+    {
+        // Arrange
+        $_POST['_method'] = 'POST';
+        $controller = new IndexController();
+
+        // Act
+        $controller->testMultipleRequestValidation();
+        $errors = Session::getErrors();
+
+        // Assert
+        $this->assertEquals(2, sizeof($errors));
+        $this->assertTrue(isset($errors['one']));
+        $this->assertTrue(isset($errors['two']));
+    }
+
+    // test complex validations... ex: unique:posts ... or ... max:255
 }

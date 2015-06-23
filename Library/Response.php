@@ -22,6 +22,9 @@ class Response
 
     public function back()
     {
+        if (\Library\Config::get('testing') == 'true')
+            return;
+
         header('Location: '.$_SESSION['HTTP_REFERER']);
         exit();
     }

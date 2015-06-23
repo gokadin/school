@@ -13,4 +13,19 @@ class IndexController extends BackController
     {
         $this->validateToken();
     }
+
+    public function testRequestValidation()
+    {
+        $this->validateRequest([
+            'one' => 'required'
+        ]);
+    }
+
+    public function testMultipleRequestValidation()
+    {
+        $this->validateRequest([
+            'one' => 'required|number',
+            'two' => 'required|number'
+        ]);
+    }
 }

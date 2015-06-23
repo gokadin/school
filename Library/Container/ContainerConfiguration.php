@@ -8,6 +8,7 @@ use Library\Html;
 use Library\Form;
 use Library\Page;
 use Library\Session;
+use Library\Validator;
 
 class ContainerConfiguration
 {
@@ -28,5 +29,6 @@ class ContainerConfiguration
         $this->container->instance('form', new Form());
         $this->container->instance('page', new Page());
         $this->container->instance('session', new Session());
+        $this->container->instance('validator', new Validator());
     }
 }
