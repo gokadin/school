@@ -80,9 +80,9 @@ class Request
 
     public function method()
     {
-        if ($this->postExists('_method'))
+        if (isset($_POST['_method']))
         {
-            $method = $this->postData('_method');
+            $method = $_POST['_method'];
             switch (strtoupper($method))
             {
                 case 'PUT':

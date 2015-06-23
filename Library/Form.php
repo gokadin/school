@@ -52,8 +52,7 @@ class Form
         $str = '<input type="text" name="'.$name.'" id="'.$name.'"';
 
         if ($default != null)
-            foreach ($options as $key => $value)
-                $str .= ' '.$key.'="'.$value.'"';
+            $str .= ' value="'.$default.'"';
 
         if ($options != null)
             foreach ($options as $key => $value)

@@ -108,21 +108,59 @@ class RequestTest extends BaseTest
 
     public function testThatDataMethodWorksWithGetRequests()
     {
-        $this->assertTrue(false);
+        // Arrange
+        $_SERVER['REQUEST_METHOD'] = 'GET';
+        $_GET['one'] = 1;
+        $_GET['two'] = 'text';
+
+        // Act
+        $one = \Library\Facades\Request::data('one');
+        $two = \Library\Facades\Request::data('two');
+
+        // Assert
+        $this->assertEquals(1, $one);
+        $this->assertEquals('text', $two);
     }
 
     public function testThatDataMethodWorksWithPostRequests()
     {
-        $this->assertTrue(false);
+        // Arrange
+        $_SERVER['REQUEST_METHOD'] = 'POST';
+        $_POST['one'] = 1;
+        $_POST['two'] = 'text';
+
+        // Act
+        $one = \Library\Facades\Request::data('one');
+        $two = \Library\Facades\Request::data('two');
+
+        // Assert
+        $this->assertEquals(1, $one);
+        $this->assertEquals('text', $two);
     }
 
     public function testThatDataExistsMethodWorksWithGetRequests()
     {
-        $this->assertTrue(false);
+        // Arrange
+        $_SERVER['REQUEST_METHOD'] = 'GET';
+        $_GET['one'] = 1;
+        $_GET['two'] = 'text';
+
+        // Assert
+        $this->assertTrue(\Library\Facades\Request::dataExists('one'));
+        $this->assertTrue(\Library\Facades\Request::dataExists('two'));
+        $this->assertFalse(\Library\Facades\Request::dataExists('nonexistant'));
     }
 
     public function testTHatDataExistsMethodWorksWithPostRequests()
     {
-        $this->assertTrue(false);
+        // Arrange
+        $_SERVER['REQUEST_METHOD'] = 'POST';
+        $_POST['one'] = 1;
+        $_POST['two'] = 'text';
+
+        // Assert
+        $this->assertTrue(\Library\Facades\Request::dataExists('one'));
+        $this->assertTrue(\Library\Facades\Request::dataExists('two'));
+        $this->assertFalse(\Library\Facades\Request::dataExists('nonexistant'));
     }
 }

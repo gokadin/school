@@ -64,38 +64,6 @@ class TableBuilderTest extends BaseTest
         $this->assertFalse($columns[1]->isRequired());
     }
 
-    public function testThatMetaColumnsAreCorrectlyCreated()
-    {
-        // Arrange
-        $t = new Table('testModel');
-
-        // Act
-        $t->meta();
-
-        // Assert
-        $this->assertTrue($t->isMeta());
-        $this->assertEquals(2, sizeof($t->columns()));
-        $this->assertTrue($t->hasColumn(Table::META_TYPE));
-        $this->assertTrue($t->hasColumn(Table::META_ID));
-    }
-
-    /**
-     * @depends testThatMetaColumnsAreCorrectlyCreated
-     */
-    public function testThatMetaColumnsAreNotRequired()
-    {
-        // Arrange
-        $t = new Table('testModel');
-
-        // Act
-        $t->meta();
-        $columns = $t->columns();
-
-        // Assert
-        $this->assertFalse($columns[0]->isRequired());
-        $this->assertFalse($columns[1]->isRequired());
-    }
-
     public function testThatNonNullableAndNonDefaultRegularColumnsAreRequired()
     {
         // Arrange
