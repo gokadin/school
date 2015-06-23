@@ -1,17 +1,40 @@
 <?php namespace Tests\FrameworkTest\Library;
 
+use Library\Facades\Session;
+use Tests\FrameworkTest\Applications\TestApplication\Modules\Index\IndexController;
 use Tests\FrameworkTest\BaseTest;
 
 class BackControllerTest extends BaseTest
 {
-    public function testThatTokenValidationWorksCorrectly()
+    public function testThatTokenValidationWorksCorrectlyWhenValid()
     {
-        $this->assertTrue(false);
+        // Arrange
+        $_POST['_token'] = Session::generateToken();
+        $_SERVER['REQUEST_METHOD'] = 'POST';
+        $controller = new IndexController();
+
+        // Act
+        $controller->testTokenValidation();
+
+        // Assert
+        $this->assertTrue(true, 'if reached this then no exception was thrown');
     }
 
-    public function testThatRequiredRequestValidationWorksCorrectly()
+    /**
+     * @expectedException RuntimeException
+     */
+    public function testThatTokenValidationWorksCorrectlyWhenInvalid()
     {
-        $this->assertTrue(false);
+        // Arrange
+        $_POST['_token'] = 'other';
+        $_SERVER['REQUEST_METHOD'] = 'POST';
+        $controller = new IndexController();
+
+        // Act
+        $controller->testTokenValidation();
+
+        // Assert
+        $this->assertTrue(true, 'if reached this then exception was thrown');
     }
 
     // ... for all validations and for multiple at the same time

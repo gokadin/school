@@ -230,9 +230,7 @@ class ModelTest extends BaseTest
         Test::create(['col1' => 'three', 'col2' => 3]);
 
         // Act
-        $results = Test::all();
-
-        // Assert
+        $results = Test::all();// Assert
         $this->assertGreaterThanOrEqual(3, $results->count());
     }
 

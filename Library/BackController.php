@@ -1,7 +1,5 @@
 <?php namespace Library;
 
-use Library\Facades\Request;
-use Library\Facades\Session;
 use Symfony\Component\Yaml\Exception\RuntimeException;
 
 abstract class BackController
@@ -50,12 +48,8 @@ abstract class BackController
 
     protected function validateToken()
     {
-        if (Request::method() == 'GET')
-            if (!Request::getExists('_token') || Request::getData('_token') != Session::generateToken())
-                throw new RuntimeException('CSRF token mismatch.');
-        else
-            if (!Request::postExists('_token') || Request::postData('_token') != Session::generateToken())
-                throw new RuntimeException('CSRF token mismatch.');
+        if (!\Library\Facades\Request::dataExists('_token') || \Library\Facades\Request::data('_token') != \Library\Facades\Session::generateToken())
+            throw new RuntimeException('CSRF token mismatch.');
     }
 
     protected function validateRequest(array $rules)
