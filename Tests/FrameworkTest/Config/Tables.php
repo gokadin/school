@@ -1,4 +1,4 @@
-<?php namespace Tests\FrameworkTest\Database;
+<?php namespace Tests\FrameworkTest\Config;
 
 use Library\Database\Table;
 

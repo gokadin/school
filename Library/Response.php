@@ -22,7 +22,7 @@ class Response
 
     public function back()
     {
-        if (\Library\Config::get('testing') == 'true')
+        if (\Library\Config::get('testing') == 'true' || \Library\Config::get('frameworkTesting') == 'true')
             return;
 
         header('Location: '.$_SESSION['HTTP_REFERER']);

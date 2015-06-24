@@ -18,7 +18,7 @@ class Model implements ModelQueryContract
 
     public function __construct(array $data = array())
     {
-        if (\Library\Config::get('testing') == 'true')
+        if (\Library\Config::get('frameworkTesting') == 'true')
             $this->modelDirectory = '\\Tests\\FrameworkTest\\Database\\Models\\';
         else
             $this->modelDirectory = '\\Models\\';

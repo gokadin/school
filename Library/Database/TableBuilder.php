@@ -13,14 +13,14 @@ class TableBuilder extends Tables
     {
         $this->db = $db;
 
-        if (Config::get('testing') == 'true')
-            $functions = get_class_methods('\\Tests\\FrameworkTest\\Database\\Tables');
+        if (Config::get('frameworkTesting') == 'true')
+            $functions = get_class_methods('\\Tests\\FrameworkTest\\Config\\Tables');
         else
             $functions = get_class_methods('Config\\Tables');
 
-        if (Config::get('testing') == 'true')
+        if (Config::get('frameworkTesting') == 'true')
         {
-            $testTablesName = '\\Tests\\FrameworkTest\\Database\\Tables';
+            $testTablesName = '\\Tests\\FrameworkTest\\Config\\Tables';
             $testTables = new $testTablesName();
             foreach ($functions as $function)
             {

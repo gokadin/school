@@ -1,6 +1,6 @@
 <?php namespace Library;
 
-if(Config::get('testing') != 'true')
+if(Config::get('testing') != 'true' && Config::get('frameworkTesting') != 'true')
 {
     session_start();
 }

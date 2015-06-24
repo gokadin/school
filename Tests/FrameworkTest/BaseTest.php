@@ -10,7 +10,7 @@ abstract class BaseTest extends PHPUnit_Framework_TestCase
 {
     public static function setUpBeforeClass()
     {
-        \Library\Config::temporary('testing', 'true');
+        \Library\Config::temporary('frameworkTesting', 'true');
         new Application('test');
     }
 

@@ -35,7 +35,7 @@ class Database
             throw new RuntimeException('Invalid module');
 
         $table = strtolower($table);
-        if (Config::get('testing') == 'true')
+        if (Config::get('frameworkTesting') == 'true')
             $className = '\\Tests\\FrameworkTest\\Database\\Models\\'.ucfirst($table);
         else
             $className = '\\Models\\'.ucfirst($table);
