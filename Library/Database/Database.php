@@ -66,4 +66,14 @@ class Database
     {
         return $this->tables->dropTable($tableName);
     }
+
+    public function beginTransaction()
+    {
+        $this->dao->beginTransaction();
+    }
+
+    public function rollBack()
+    {
+        $this->dao->rollBack();
+    }
 }

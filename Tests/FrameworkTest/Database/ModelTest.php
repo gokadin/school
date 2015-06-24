@@ -124,7 +124,7 @@ class ModelTest extends BaseTest
     {
         // Arrange
         $test = Test::create(['col1' => 'str', 'col2' => 10]);
-
+        $x = $this->getRowCount('tests');
         // Act
         $result = $test->delete();
 

@@ -21,12 +21,12 @@ abstract class BaseTest extends PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-
+        \Library\Facades\DB::beginTransaction();
     }
 
     public function tearDown()
     {
-
+        \Library\Facades\DB::rollBack();
     }
 
     public function getRowCount($tableName)
