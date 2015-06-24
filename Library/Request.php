@@ -2,6 +2,11 @@
 
 class Request
 {
+    public function instance()
+    {
+        return $this;
+    }
+
     public function __get($key)
     {
         switch ($this->method())

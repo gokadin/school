@@ -22,14 +22,14 @@ class ValidatorTest extends BaseTest
     public function testThatNumberWorksWhenValid()
     {
         // Assert
-        $this->assertTrue(Validator::number(3));
+        $this->assertTrue(Validator::numeric(3));
     }
 
     public function testThatNumberWorksWhenInvalid()
     {
         // Assert
-        $this->assertFalse(Validator::number(null));
-        $this->assertFalse(Validator::number(''));
-        $this->assertFalse(Validator::number('test'));
+        $this->assertFalse(Validator::numeric(null));
+        $this->assertFalse(Validator::numeric(''));
+        $this->assertFalse(Validator::numeric('test'));
     }
 }

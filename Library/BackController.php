@@ -1,5 +1,6 @@
 <?php namespace Library;
 
+use Library\Facades\Validator;
 use Symfony\Component\Yaml\Exception\RuntimeException;
 
 abstract class BackController
@@ -57,26 +58,7 @@ abstract class BackController
         if ($rules == null || sizeof($rules) == 0)
             return;
 
-        $errors = array();
-
-        foreach ($rules as $field => $constraints)
-        {
-            $value = \Library\Facades\Request::data($field);
-            $constraints = explode('|', $constraints);
-            foreach ($constraints as $constraint)
-            {
-                if (Validator::$constraint($value))
-                    continue;
-
-                $errors[$field] = $field.' is required';
-                break;
-            }
-        }
-
-        if (sizeof($errors) == 0)
-            return;
-
-        \Library\Facades\Session::setErrors($errors);
-        \Library\Facades\Response::back();
+        if (!Validator::make(\Library\Facades\Request::instance(), $rules))
+            \Library\Facades\Response::back();
     }
 }

@@ -24,8 +24,8 @@ class IndexController extends BackController
     public function testMultipleRequestValidation()
     {
         $this->validateRequest([
-            'one' => 'required|number',
-            'two' => 'required|number'
+            'one' => 'required|numeric',
+            'two' => 'required|numeric'
         ]);
     }
 }
