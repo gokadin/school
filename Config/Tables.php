@@ -4,9 +4,22 @@ use Library\Database\Table;
 
 class Tables
 {
-    protected function user_settings()
+    protected function teacher_settings()
     {
-        $t = new Table('UserSetting');
+        $t = new Table('StudentSetting');
+
+        $t->increments('id');
+        $t->boolean('show_email')->default(1);
+        $t->boolean('show_address')->default(1);
+        $t->boolean('show_phone')->default(1);
+        $t->timestamps();
+
+        return $t;
+    }
+
+    protected function student_settings()
+    {
+        $t = new Table('StudentSetting');
 
         $t->increments('id');
         $t->boolean('show_email')->default(1);
@@ -22,9 +35,19 @@ class Tables
         $t = new Table('Teacher');
 
         $t->increments('id');
-        $t->integer('user_info_id');
         $t->integer('subscription_id');
+        $t->integer('address_id');
+        $t->integer('teacher_setting_id');
+        $t->integer('school_id');
+        $t->string('first_name', 32);
+        $t->string('last_name', 32);
+        $t->string('email')->unique();
+        $t->string('password');
+        $t->string('phone', 32)->nullable();
         $t->integer('type', 5)->default(1);
+        $t->boolean('active')->default(1);
+        $t->string('profile_picture', 200)->nullable();
+        $t->timestamps();
 
         return $t;
     }
@@ -34,9 +57,19 @@ class Tables
         $t = new Table('Student');
 
         $t->increments('id');
-        $t->integer('user_info_id');
         $t->integer('teacher_id');
+        $t->integer('address_id');
+        $t->integer('student_setting_id');
+        $t->integer('school_id');
+        $t->string('first_name', 32);
+        $t->string('last_name', 32);
+        $t->string('email')->unique();
+        $t->string('password');
+        $t->string('phone', 32)->nullable();
         $t->integer('type', 5)->default(1);
+        $t->boolean('active')->default(1);
+        $t->string('profile_picture', 200)->nullable();
+        $t->timestamps();
 
         return $t;
     }
@@ -132,7 +165,7 @@ class Tables
         $t = new Table('Message');
         
         $t->increments('id');
-        $t->integer('user_id');
+        $t->integer('user_id'); // refactor later
         $t->integer('to_user_id');
         $t->boolean('is_read')->default(0);
         $t->datetime('time_read')->nullable();
@@ -146,7 +179,7 @@ class Tables
         $t = new Table('Event');
 
         $t->increments('id');
-        $t->integer('user_id');
+        $t->integer('teacher_id');
         $t->string('title');
         $t->datetime('start_date');
         $t->datetime('end_date');
