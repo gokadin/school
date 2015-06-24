@@ -231,4 +231,19 @@ class ValidatorTest extends BaseTest
         $this->assertFalse(Validator::boolean('2'));
         $this->assertFalse(Validator::boolean('-1'));
     }
+
+    public function testEmailWorksWhenValid()
+    {
+        // Assert
+        $this->assertTrue(Validator::email('a@b.cc'));
+    }
+
+    public function testEmailWorksWhenInvalid()
+    {
+        // Assert
+        $this->assertFalse(Validator::email('a@b'));
+        $this->assertFalse(Validator::email('a@.c'));
+        $this->assertFalse(Validator::email('a.c'));
+        $this->assertFalse(Validator::email('@b.c'));
+    }
 }

@@ -169,4 +169,12 @@ class Validator
 
         return false;
     }
+
+    public function email($value)
+    {
+        if (!filter_var($value, FILTER_VALIDATE_EMAIL))
+            return false;
+
+        return true;
+    }
 }

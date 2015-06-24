@@ -10,7 +10,7 @@ class Database
 
     public function __construct()
     {
-        $settings = include '/Config/database.php';
+        $settings = include __DIR__.'/../../Config/database.php';
 
         $this->dao = new \PDO($settings['mysql']['driver'].':host='.$settings['mysql']['host'].';dbname='.$settings['mysql']['database'],
             $settings['mysql']['username'],
