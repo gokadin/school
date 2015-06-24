@@ -130,7 +130,8 @@
 </div>
 
 <div class="signup">
-    <form id="signup-form" method="POST" action="">
+    {{{ use \Library\Facades\Form; }}}
+    {{ Form::open('signup-form', '') }}
         <input type="hidden" id="subscription" name="subscriptionType" value="1" />
         <div class="g-form-header">
             Sign up

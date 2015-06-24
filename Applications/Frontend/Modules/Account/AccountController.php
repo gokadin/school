@@ -2,6 +2,7 @@
 
 use Library\BackController;
 use Library\Config;
+use Library\Facades\DB;
 use Library\Facades\Request;
 use Library\Facades\Response;
 use Library\Facades\Page;
@@ -72,23 +73,37 @@ class AccountController extends BackController
 
     public function registerUser()
     {
-        if (UserInfo::exists('email', Request::data('email')))
+        $this->validateToken();
+        $this->validateRequest([
+            'firstName' => 'required',
+            'lastName' => 'required',
+            //'email' => ['email', 'unique:Teacher', 'unique:Student'],
+            'subscriptionType' => 'required'
+        ]);
+
+        DB::beginTransaction();
+
+        try
         {
-            Session::setErrors(['Email is already in use.']);
+            $subscription = Subscription::create(['type' => Request::data('subscriptionType')]);
+            $confirmationCode = md5(rand(999, 999999));
+
+            TempTeacher::create([
+                'subscription_id' => $subscription->id,
+                'first_name' => Request::data('firstName'),
+                'last_name' => Request::data('lastName'),
+                'email' => Request::data('email'),
+                'confirmation_code' => $confirmationCode
+            ]);
+        }
+        catch (\PDOException $e)
+        {
+            DB::rollBack();
+            Session::setFlash('An error occurred. Please try again.');
             Response::back();
         }
 
-        $subscription = Subscription::create(['type' => Request::data('subscriptionType')]);
-        $confirmationCode = md5(rand(999, 999999));
-
-        $tempTeacher = new TempTeacher();
-        $tempTeacher->subscription_id = $subscription->id;
-        $tempTeacher->first_name = Request::data('firstName');
-        $tempTeacher->last_name = Request::data('lastName');
-        $tempTeacher->email = Request::data('email');
-        $tempTeacher->confirmation_code = $confirmationCode;
-        $tempTeacher->save();
-
+        DB::commit();
         Response::toAction('Frontend#Account#signUpLand');
     }
 

@@ -25,6 +25,8 @@ class Session
             $_SESSION[self::SHOULD_CLEAR_FLASH_KEY] = true;
         else
             $this->clearFlash();
+
+        $_SESSION['token'] = $this->generateToken(); // TODO: move from here
     }
 
     public function set($var, $value)
@@ -54,7 +56,6 @@ class Session
         $_SESSION['id'] = $id;
         $_SESSION['type'] = $type;
         $_SESSION['authenticated'] = true;
-        $_SESSION['token'] = $this->generateToken();
     }
 
     public function generateToken()

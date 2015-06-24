@@ -16,6 +16,8 @@ class Database
             $settings['mysql']['username'],
             $settings['mysql']['password']);
 
+        $this->dao->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
+
         $this->tables = new TableBuilder($this);
     }
 
@@ -68,6 +70,11 @@ class Database
     public function beginTransaction()
     {
         $this->dao->beginTransaction();
+    }
+
+    public function commit()
+    {
+        $this->dao->commit();
     }
 
     public function rollBack()

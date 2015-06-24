@@ -7,7 +7,10 @@ class Form
     public function open($name, $action, $method = 'POST', array $options = null, $includeToken = true)
     {
         $needHiddenMethod = false;
-        $str = '<form id="'.$name.'" action="@path('.$action.')';
+        $str = '<form id="'.$name.'" action="';
+        if (!empty($action))
+            $str .= '@path('.$action.')';
+        $str .= '"';
 
         if ($method == 'GET' || $method == 'POST')
             $str .= ' method="'.$method.'"';
