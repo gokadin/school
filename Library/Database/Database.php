@@ -11,12 +11,11 @@ class Database
 
     public function __construct()
     {
-        if (Config::get('testing') == 'true')
-            $this->dao = PDOFactory::testConn();
-        else if (Config::get('env') == 'debug')
-            $this->dao = PDOFactory::localConn();
-        else
-            $this->dao = PDOFactory::productionConn();
+        $settings = include '/Config/Database.php';
+
+        $this->dao = new \PDO($settings['mysql']['driver'].':host='.$settings['mysql']['host'].';dbname='.$settings['mysql']['database'],
+            $settings['mysql']['username'],
+            $settings['mysql']['password']);
 
         $this->tables = new TableBuilder($this);
     }

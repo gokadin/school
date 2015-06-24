@@ -17,26 +17,6 @@ class Tables
         return $t;
     }
 
-    protected function user_info()
-    {
-        $t = new Table('UserInfo');
-
-        $t->increments('id');
-        $t->integer('address_id');
-        $t->integer('user_setting_id');
-        $t->integer('school_id');
-        $t->string('first_name', 32);
-        $t->string('last_name', 32);
-        $t->string('email')->unique();
-        $t->string('password');
-        $t->string('phone', 32)->nullable();
-        $t->boolean('active')->default(1);
-        $t->string('profile_picture', 200)->nullable();
-        $t->timestamps();
-
-        return $t;
-    }
-
     protected function teachers()
     {
         $t = new Table('Teacher');
