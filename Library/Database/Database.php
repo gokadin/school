@@ -1,7 +1,6 @@
 <?php namespace Library\Database;
 
 use Symfony\Component\Yaml\Exception\RuntimeException;
-use Library\PDOFactory;
 use Library\Config;
 
 class Database
@@ -11,7 +10,7 @@ class Database
 
     public function __construct()
     {
-        $settings = include '/Config/Database.php';
+        $settings = include '/Config/database.php';
 
         $this->dao = new \PDO($settings['mysql']['driver'].':host='.$settings['mysql']['host'].';dbname='.$settings['mysql']['database'],
             $settings['mysql']['username'],
