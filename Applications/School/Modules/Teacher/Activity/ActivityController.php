@@ -23,10 +23,10 @@ class ActivityController extends BackController
     {
         $activity = Activity::create([
             'teacher_id' => $this->currentUser->id,
-            'name' => Request::postData('name'),
-            'rate' => Request::postData('defaultRate'),
-            'period' => Request::postData('period'),
-            'location' => Request::postData('location')
+            'name' => Request::data('name'),
+            'rate' => Request::data('defaultRate'),
+            'period' => Request::data('period'),
+            'location' => Request::data('location')
         ]);
 
         if ($activity == null)
@@ -34,7 +34,7 @@ class ActivityController extends BackController
         else
             Session::setFlash('Activity <b>'.$activity->name.'</b> was created successfully.');
 
-        if (Request::postData('createAnother') == 1)
+        if (Request::data('createAnother') == 1)
             Response::toAction('School#Teacher/Activity#create');
 
         Response::toAction('School#Teacher/Activity#index');
@@ -42,17 +42,17 @@ class ActivityController extends BackController
 
     public function update()
     {
-        if (!is_numeric(Request::postData('activityId')) || !Activity::exists('id', Request::postData('activityId')))
+        if (!is_numeric(Request::data('activityId')) || !Activity::exists('id', Request::data('activityId')))
         {
             Session::setFlash('An error occurred. Activity is not valid.');
             Response::toAction('School#Teacher/Activity#index');
         }
 
-        $activity = Activity::find(Request::postData('activityId'));
-        $activity->name = Request::postData('name');
-        $activity->rate = Request::postData('defaultRate');
-        $activity->period = Request::postData('period');
-        $activity->location = Request::postData('location');
+        $activity = Activity::find(Request::data('activityId'));
+        $activity->name = Request::data('name');
+        $activity->rate = Request::data('defaultRate');
+        $activity->period = Request::data('period');
+        $activity->location = Request::data('location');
 
         if ($activity->save())
             Session::setFlash('Updated activity <b>'.$activity->name.'</b>.');
@@ -64,13 +64,13 @@ class ActivityController extends BackController
 
     public function destroy()
     {
-        if (!is_numeric(Request::postData('activityId')) || !Activity::exists('id', Request::postData('activityId')))
+        if (!is_numeric(Request::data('activityId')) || !Activity::exists('id', Request::data('activityId')))
         {
             Session::setFlash('An error occurred. Activity is not valid.');
             Response::toAction('School#Teacher/Activity#index');
         }
 
-        $activity = Activity::find(Request::postData('activityId'));
+        $activity = Activity::find(Request::data('activityId'));
         if ($activity->delete())
             Session::setFlash('Deleted activity <b>'.$activity->name.'</b>.');
         else

@@ -32,11 +32,11 @@ class StudentController extends BackController
             'school_id' => $this->currentUser->school()->id,
             'address_id' => Address::create()->id,
             'user_setting_id' => UserSetting::create()->id,
-            'first_name' => Request::postData('firstName'),
-            'last_name' => Request::postData('lastName'),
-            'email' => Request::postData('email'),
+            'first_name' => Request::data('firstName'),
+            'last_name' => Request::data('lastName'),
+            'email' => Request::data('email'),
             'password' => md5($generatedPassword),
-            'phone' => Request::postData('phone'),
+            'phone' => Request::data('phone'),
             'profile_picture' => Config::get('defaultProfilePicturePath')
         ]);
 
@@ -49,14 +49,14 @@ class StudentController extends BackController
             Session::setFlash('Student <b>'.$student->name().'</b> was added successfully.');
 
         $activityStudent = ActivityStudent::create([
-            'activity_id' => Request::postData('activity'),
+            'activity_id' => Request::data('activity'),
             'student_id' => $student->id
         ]);
 
         if ($activityStudent == null)
             Session::setFlash('An error occurred. Student was not added.');
 
-        if (Request::postData('createAnother') == 1)
+        if (Request::data('createAnother') == 1)
             Response::toAction('School#Teacher/Student#create');
 
         Response::toAction('School#Teacher/Student#index');
@@ -64,15 +64,15 @@ class StudentController extends BackController
 
     public function update()
     {
-        if (!is_numeric(Request::postData('studentId')) || !Student::exists('id', Request::postData('studentId')))
+        if (!is_numeric(Request::data('studentId')) || !Student::exists('id', Request::data('studentId')))
         {
             Session::setFlash('An error occurred. Student is not valid.');
             Response::toAction('School#Teacher/Student#index');
         }
 
-        $student = Student::find(Request::postData('studentId'));
-        $student->first_name = Request::postData('firstName');
-        $student->last_name = Request::postData('lastName');
+        $student = Student::find(Request::data('studentId'));
+        $student->first_name = Request::data('firstName');
+        $student->last_name = Request::data('lastName');
 
         if ($student->save())
             Session::setFlash('Updated student <b>'.$student->name().'</b>.');
@@ -84,13 +84,13 @@ class StudentController extends BackController
 
     public function destroy()
     {
-        if (!is_numeric(Request::postData('studentId')) || !Student::exists('id', Request::postData('studentId')))
+        if (!is_numeric(Request::data('studentId')) || !Student::exists('id', Request::data('studentId')))
         {
             Session::setFlash('An error occurred. Student is not valid.');
             Response::toAction('School#Teacher/Student#index');
         }
 
-        $student = Student::find(Request::postData('studentId'));
+        $student = Student::find(Request::data('studentId'));
         if ($student->delete())
             Session::setFlash('Deleted student <b>'.$student->name().'</b>.');
         else

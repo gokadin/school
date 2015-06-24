@@ -1,6 +1,6 @@
 <?php namespace Library\Database;
 
-use Database\Tables;
+use Config\Tables;
 use Library\Config;
 use Symfony\Component\Yaml\Exception\RuntimeException;
 
@@ -16,7 +16,7 @@ class TableBuilder extends Tables
         if (Config::get('testing') == 'true')
             $functions = get_class_methods('\\Tests\\FrameworkTest\\Database\\Tables');
         else
-            $functions = get_class_methods('Database\\Tables');
+            $functions = get_class_methods('Config\\Tables');
 
         if (Config::get('testing') == 'true')
         {

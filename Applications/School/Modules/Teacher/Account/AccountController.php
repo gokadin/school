@@ -17,9 +17,9 @@ class AccountController extends BackController
 	public function editPersonalInfo()
 	{
         $userInfo = $this->currentUser->userInfo();
-        $userInfo->first_name = Request::postData('firstName');
-        $userInfo->last_name = Request::postData('lastName');
-        $userInfo->email = Request::postData('email');
+        $userInfo->first_name = Request::data('firstName');
+        $userInfo->last_name = Request::data('lastName');
+        $userInfo->email = Request::data('email');
 		
 		if ($userInfo->save())
 			Session::setFlash('Personal info updated successfully.', 'success', 5);
@@ -31,9 +31,9 @@ class AccountController extends BackController
 	
 	public function changePassword()
 	{
-		$currentPassword = Request::postData('currentPassword');
-		$password = Request::postData('password');
-		$confirmPassword = Request::postData('confirmPassword');
+		$currentPassword = Request::data('currentPassword');
+		$password = Request::data('password');
+		$confirmPassword = Request::data('confirmPassword');
 		
 		if (empty($currentPassword) || empty($password) || empty($confirmPassword))
 			Session::setFlash('One or more fields are empty.');	
@@ -120,8 +120,8 @@ class AccountController extends BackController
 	
 	public function subscriptionPayment()
 	{
-		$subscriptionType = Request::postData('subscriptionType');
-		$paymentMethod = Request::postData('paymentMethod');
+		$subscriptionType = Request::data('subscriptionType');
+		$paymentMethod = Request::data('paymentMethod');
 		
 		switch ($paymentMethod)
 		{
@@ -140,7 +140,7 @@ class AccountController extends BackController
 	
 	public function creditCardPayment()
 	{
-		$subscriptionType = Request::getData('subscriptionType');
+		$subscriptionType = Request::data('subscriptionType');
 		
 		if ($subscriptionType < 1 || $subscriptionType > Subscription::SUBSCRIPTION_COUNT)
 		{
@@ -155,7 +155,7 @@ class AccountController extends BackController
 	
 	public function paypalPayment()
 	{
-		$subscriptionType = Request::getData('subscriptionType');
+		$subscriptionType = Request::data('subscriptionType');
 		
 		if ($subscriptionType < 1 || $subscriptionType > Subscription::SUBSCRIPTION_COUNT)
 		{
@@ -168,8 +168,8 @@ class AccountController extends BackController
 	{
 		\Stripe\Stripe::setApiKey("sk_test_dVsKknKBGTxmMO87Aah9MBzn");
 
-		$token = Request::postData('stripeToken');
-		$subscriptionType = Request::postData('subscriptionType');
+		$token = Request::data('stripeToken');
+		$subscriptionType = Request::data('subscriptionType');
 		if ($subscriptionType < 1 || $subscriptionType > 4)
 		{
 			Session::setFlash('An error has occured. Your card was not charged.', 'error');

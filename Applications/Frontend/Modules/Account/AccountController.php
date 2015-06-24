@@ -23,8 +23,8 @@ class AccountController extends BackController
 
     public function login()
     {
-        $userInfo = UserInfo::where('email', '=', Request::postData('email'))
-            ->where('password', '=', md5(Request::postData('password')))
+        $userInfo = UserInfo::where('email', '=', Request::data('email'))
+            ->where('password', '=', md5(Request::data('password')))
             ->get()->first();
 
         if ($userInfo == null)
@@ -72,20 +72,20 @@ class AccountController extends BackController
 
     public function registerUser()
     {
-        if (UserInfo::exists('email', Request::postData('email')))
+        if (UserInfo::exists('email', Request::data('email')))
         {
             Session::setErrors(['Email is already in use.']);
             Response::back();
         }
 
-        $subscription = Subscription::create(['type' => Request::postData('subscriptionType')]);
+        $subscription = Subscription::create(['type' => Request::data('subscriptionType')]);
         $confirmationCode = md5(rand(999, 999999));
 
         $tempTeacher = new TempTeacher();
         $tempTeacher->subscription_id = $subscription->id;
-        $tempTeacher->first_name = Request::postData('firstName');
-        $tempTeacher->last_name = Request::postData('lastName');
-        $tempTeacher->email = Request::postData('email');
+        $tempTeacher->first_name = Request::data('firstName');
+        $tempTeacher->last_name = Request::data('lastName');
+        $tempTeacher->email = Request::data('email');
         $tempTeacher->confirmation_code = $confirmationCode;
         $tempTeacher->save();
 
@@ -118,19 +118,19 @@ class AccountController extends BackController
 
     public function completeRegistration()
     {
-        if (!TempTeacher::exists('id', Request::postData('tempUserId')))
+        if (!TempTeacher::exists('id', Request::data('tempUserId')))
         {
             Session::setErrors(['Your account no longer exists in our database.']);
             Response::back();
         }
 
-        if (Request::postData('password') != Request::postData('confirmPassword'))
+        if (Request::data('password') != Request::data('confirmPassword'))
         {
             Session::setErrors(['Passwords don\'t match.']);
             Response::back();
         }
 
-        $tempTeacher = TempTeacher::find(Request::postData('tempUserId'));
+        $tempTeacher = TempTeacher::find(Request::data('tempUserId'));
 
         $schoolAddress = Address::create();
         $school = School::create(['name' => 'Your School', 'address_id' => $schoolAddress->id]);
@@ -145,7 +145,7 @@ class AccountController extends BackController
         $userInfo->first_name = $tempTeacher->first_name;
         $userInfo->last_name = $tempTeacher->last_name;
         $userInfo->email = $tempTeacher->email;
-        $userInfo->password = md5(Request::postData('password'));
+        $userInfo->password = md5(Request::data('password'));
         $userInfo->profile_picture = Config::get('defaultProfilePicturePath');
         $userInfo->save();
 
