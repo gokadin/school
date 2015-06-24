@@ -1,6 +1,6 @@
 <?php
 /*
- * This file is part of the PHP_CodeCoverage package.
+ * This file is part of the PHP_Invoker package.
  *
  * (c) Sebastian Bergmann <sebastian@phpunit.de>
  *
@@ -9,8 +9,8 @@
  */
 
 /**
- * @since Class available since Release 2.0.0
+ * @since      Class available since Release 1.0.0
  */
-class PHP_CodeCoverage_Report_XML_Directory extends PHP_CodeCoverage_Report_XML_Node
+class PHP_Invoker_TimeoutException extends RuntimeException
 {
 }

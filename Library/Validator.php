@@ -4,85 +4,90 @@ class Validator
 {
     public function make(array $data, array $rules, $withErrors = true)
     {
+        if ($rules == null || sizeof($rules) == 0)
+            return false;
+
         $errors = array();
         $isValid = true;
 
         foreach ($rules as $field => $constraints)
         {
             $customError = null;
-            if (is_array($constraints))
+            $value = isset($data[$field]) ? $data[$field] : null;
+
+            if (!is_array($constraints))
             {
-                $customError = $constraints[1];
-                $constraints= $constraints[0];
-            }
-            $value = $data[$field];
-            $constraints = explode('|', $constraints);
-            foreach ($constraints as $constraint)
-            {
-                $result = false;
-                $functionName = '';
                 $args = array();
-                $temp = explode(':', $constraint);
-                if (sizeof($temp) == 1)
-                    $functionName = $constraint;
-                else
-                {
-                    $functionName = $temp[0];
+                $temp = explode(':', $constraints);
+                $functionName = $temp[0];
+                if (sizeof($temp) > 1)
                     $args = explode(',', $temp[1]);
-                }
 
-                switch (sizeof($args))
-                {
-                    case 0:
-                        $result = $this->$functionName($value);
-                        break;
-                    case 1:
-                        $result = $this->$functionName($value, $args[0]);
-                        break;
-                    case 2:
-                        $result = $this->$functionName($value, $args[0], $args[1]);
-                        break;
-                    case 3:
-                        $result = $this->$functionName($value, $args[0], $args[1], $args[2]);
-                        break;
-                    case 4:
-                        $result = $this->$functionName($value, $args[0], $args[1], $args[2], $args[3]);
-                        break;
-                    case 5:
-                        $result = $this->$functionName($value, $args[0], $args[1], $args[2], $args[3], $args[4]);
-                        break;
-                }
-
-                if ($result)
+                if ($this->callProperFunction($functionName, $value, $args))
                     continue;
 
                 if ($isValid)
                     $isValid = false;
 
                 if ($withErrors)
-                    $errors[] = $this->buildErrorString($field, $functionName, $args, $customError);
+                    $errors[$field][] = $this->buildErrorString($field, $functionName, $args, $customError);
+
+                continue;
+            }
+
+            foreach ($constraints as $key => $error)
+            {
+                $customError = null;
+                $constraint = $error;
+
+                if (is_string($key))
+                {
+                    $customError = $error;
+                    $constraint = $key;
+                }
+
+                $args = array();
+                $temp = explode(':', $constraint);
+                $functionName = $temp[0];
+                if (sizeof($temp) > 1)
+                    $args = explode(',', $temp[1]);
+
+                if ($this->callProperFunction($functionName, $value, $args))
+                    continue;
+
+                if ($isValid)
+                    $isValid = false;
+
+                if ($withErrors)
+                    $errors[$field][] = $this->buildErrorString($field, $functionName, $args, $customError);
             }
         }
+
+        if ($withErrors && sizeof($errors) > 0)
+            \Library\Facades\Session::setErrors($errors);
 
         return $isValid;
     }
 
-    public function required($value)
+    private function callProperFunction($functionName, $value, array $args)
     {
-        if ($value == null || trim($value) === '')
-            return false;
-
-        return true;
-    }
-
-    public function numeric($value)
-    {
-        return is_numeric($value);
-    }
-
-    public function min($value, $min)
-    {
-        // ...
+        switch (sizeof($args))
+        {
+            case 0:
+                return $this->$functionName($value);
+            case 1:
+                return $this->$functionName($value, $args[0]);
+            case 2:
+                return $this->$functionName($value, $args[0], $args[1]);
+            case 3:
+                return $this->$functionName($value, $args[0], $args[1], $args[2]);
+            case 4:
+                return $this->$functionName($value, $args[0], $args[1], $args[2], $args[3]);
+            case 5:
+                return $this->$functionName($value, $args[0], $args[1], $args[2], $args[3], $args[4]);
+            default:
+                return false;
+        }
     }
 
     private function buildErrorString($field, $functionName, array $args, $customError)
@@ -96,6 +101,10 @@ class Validator
                 return $field.' is required';
             case 'numeric':
                 return $field.' must be numeric';
+            case 'min':
+                return $field.' must be bigger than '.$args[0];
+            default:
+                return '';
         }
     }
 
@@ -115,5 +124,49 @@ class Validator
             $result = str_replace('{'.$i.'}', $args[$i], $result);
 
         return $result;
+    }
+
+    /* INDIVIDUAL VALIDATIONS */
+
+    public function required($value)
+    {
+        if ($value == null || trim($value) === '')
+            return false;
+
+        return true;
+    }
+
+    public function numeric($value)
+    {
+        return is_numeric($value);
+    }
+
+    public function min($value, $min)
+    {
+        return $this->numeric($value) && $value >= $min;
+    }
+
+    public function max($value, $max)
+    {
+        return $this->numeric($value) && $value <= $max;
+    }
+
+    public function between($value, $min, $max)
+    {
+        return $this->numeric($value) && $value >= $min && $value <= $max;
+    }
+
+    public function boolean($value)
+    {
+        if (is_bool($value))
+            return true;
+
+        if (is_string($value))
+            return $value == '1' || $value == '0';
+
+        if (is_integer($value))
+            return $value == 1 || $value == 0;
+
+        return false;
     }
 }

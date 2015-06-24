@@ -1,6 +1,5 @@
 <?php namespace Library;
 
-use Library\Facades\Validator;
 use Symfony\Component\Yaml\Exception\RuntimeException;
 
 abstract class BackController
@@ -58,7 +57,7 @@ abstract class BackController
         if ($rules == null || sizeof($rules) == 0)
             return;
 
-        if (!Validator::make(\Library\Facades\Request::instance(), $rules))
+        if (!\Library\Facades\Validator::make(\Library\Facades\Request::all(), $rules))
             \Library\Facades\Response::back();
     }
 }

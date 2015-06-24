@@ -4,8 +4,6 @@ use Symfony\Component\Yaml\Exception\RuntimeException;
 
 class Router
 {
-    const ROUTES_CONFIG_PATH = __DIR__.'/../Config/routes.xml';
-    const TEST_ROUTES_CONFIG_PATH = __DIR__.'/../Tests/FrameworkTest/Config/routes.xml';
     const NO_ROUTE = 1;
 
     protected $routes = array();
@@ -17,9 +15,9 @@ class Router
 
         $xml = new \DOMDocument;
         if (Config::get('testing') == 'true')
-            $xml->load(self::TEST_ROUTES_CONFIG_PATH);
+            $xml->load(__DIR__.'/../Tests/FrameworkTest/Config/routes.xml');
         else
-            $xml->load(self::ROUTES_CONFIG_PATH);
+            $xml->load(__DIR__.'/../Config/routes.xml');
 
         $applications = $xml->getElementsByTagName('application');
         foreach ($applications as $application)
