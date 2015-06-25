@@ -9,7 +9,7 @@ class Form
         $needHiddenMethod = false;
         $str = '<form id="'.$name.'" action="';
         if (!empty($action))
-            $str .= '@path('.$action.')';
+            $str .= \Library\Facades\Router::actionToPath($action);
         $str .= '"';
 
         if ($method == 'GET' || $method == 'POST')
