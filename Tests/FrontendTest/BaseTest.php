@@ -30,6 +30,6 @@ abstract class BaseTest extends PHPUnit_Framework_TestCase
 
     public function getRowCount($tableName)
     {
-        return DB::query('SELECT COUNT(*) FROM '.$tableName)->fetchColumn();
+        return \Library\Facades\DB::query('SELECT COUNT(*) FROM '.$tableName)->fetchColumn();
     }
 }
