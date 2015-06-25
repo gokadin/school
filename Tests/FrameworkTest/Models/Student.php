@@ -1,4 +1,4 @@
-<?php namespace Tests\FrameworkTest\Database\Models;
+<?php namespace Tests\FrameworkTest\Models;
 
 use Library\Database\Model;
 

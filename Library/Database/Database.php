@@ -38,7 +38,7 @@ class Database
 
         $table = strtolower($table);
         if (Config::get('frameworkTesting') == 'true')
-            $className = '\\Tests\\FrameworkTest\\Database\\Models\\'.ucfirst($table);
+            $className = '\\Tests\\FrameworkTest\\Models\\'.ucfirst($table);
         else
             $className = '\\Models\\'.ucfirst($table);
 

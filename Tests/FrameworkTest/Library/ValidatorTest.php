@@ -3,6 +3,7 @@
 use Library\Facades\Session;
 use Library\Facades\Validator;
 use Tests\FrameworkTest\BaseTest;
+use Tests\FrameworkTest\Models\Test;
 
 class ValidatorTest extends BaseTest
 {
@@ -245,5 +246,20 @@ class ValidatorTest extends BaseTest
         $this->assertFalse(Validator::email('a@.c'));
         $this->assertFalse(Validator::email('a.c'));
         $this->assertFalse(Validator::email('@b.c'));
+    }
+
+    public function testUniqueWorksWhenValid()
+    {
+        // Assert
+        $this->assertTrue(Validator::unique('nonexistant', 'Test', 'col1'));
+    }
+
+    public function testUniqueWorksWhenInvalid()
+    {
+        // Arrange
+        Test::create(['col1' => 'str', 'col2' => 1]);
+
+        // Assert
+        $this->assertFalse(Validator::unique('str', 'Test', 'col1'));
     }
 }

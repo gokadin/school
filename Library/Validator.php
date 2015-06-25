@@ -177,4 +177,13 @@ class Validator
 
         return true;
     }
+
+    public function unique($value, $modelName, $columnName)
+    {
+        $model = '\\Models\\'.$modelName;
+        if (\Library\Config::get('frameworkTesting') == 'true')
+            $model = '\\Tests\\FrameworkTest\\Models\\'.$modelName;
+
+        return !$model::exists($columnName, $value);
+    }
 }

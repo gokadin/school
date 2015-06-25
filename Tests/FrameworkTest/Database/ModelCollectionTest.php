@@ -2,7 +2,7 @@
 
 use Library\Database\ModelCollection;
 use Tests\FrameworkTest\BaseTest;
-use Tests\FrameworkTest\Database\Models\Test;
+use Tests\FrameworkTest\Models\Test;
 
 class ModelCollectionTest extends BaseTest
 {

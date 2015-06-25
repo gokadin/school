@@ -15,7 +15,7 @@ class Router
 
         $xml = new \DOMDocument;
         if (Config::get('frameworkTesting') == 'true')
-            $xml->load(__DIR__.'/../Tests/'.Config::get('testApplication').'Test/Config/routes.xml');
+            $xml->load(__DIR__.'/../Tests/FrameworkTest/Config/routes.xml');
         else
             $xml->load(__DIR__.'/../Config/routes.xml');
 

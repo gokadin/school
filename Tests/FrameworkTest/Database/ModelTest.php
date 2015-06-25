@@ -1,14 +1,14 @@
 <?php namespace Tests\FrameworkTest\Database;
 
 use Tests\FrameworkTest\BaseTest;
-use Tests\FrameworkTest\Database\Models\Activity;
-use Tests\FrameworkTest\Database\Models\Post;
-use Tests\FrameworkTest\Database\Models\School;
-use Tests\FrameworkTest\Database\Models\Test;
-use Tests\FrameworkTest\Database\Models\Teacher;
-use Tests\FrameworkTest\Database\Models\Student;
-use Tests\FrameworkTest\Database\Models\Address;
-use Tests\FrameworkTest\Database\Models\ActivityStudent;
+use Tests\FrameworkTest\Models\Activity;
+use Tests\FrameworkTest\Models\Post;
+use Tests\FrameworkTest\Models\School;
+use Tests\FrameworkTest\Models\Test;
+use Tests\FrameworkTest\Models\Teacher;
+use Tests\FrameworkTest\Models\Student;
+use Tests\FrameworkTest\Models\Address;
+use Tests\FrameworkTest\Models\ActivityStudent;
 
 class ModelTest extends BaseTest
 {

@@ -77,7 +77,7 @@ class AccountController extends BackController
         $this->validateRequest([
             'firstName' => 'required',
             'lastName' => 'required',
-            //'email' => ['email', 'unique:Teacher', 'unique:Student'],
+            'email' => ['email', 'unique:Teacher,email', 'unique:Student,email'],
             'subscriptionType' => 'required'
         ]);
 
