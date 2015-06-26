@@ -75,8 +75,8 @@ class AccountController extends BackController
     {
         $this->validateToken();
         $this->validateRequest([
-            'firstName' => 'required',
-            'lastName' => 'required',
+            'firstName' => ['required' => 'First name is required'],
+            'lastName' => ['required' => 'Last name is required'],
             'email' => ['email', 'unique:Teacher,email', 'unique:Student,email'],
             'subscriptionType' => 'required'
         ]);

@@ -133,7 +133,7 @@
 
 <div class="signup">
 
-    {{ Form::open('signup-form', '', 'POST', ['class' => 'custom-1']) }}
+    {{ Form::open('', 'POST', ['id' => 'signup-form', 'class' => 'custom-1']) }}
 
     {{ Form::hidden('subscriptionType', '1') }}
 
@@ -143,20 +143,23 @@
 
     <div class="g-form-body">
 
-        <div class="form-row">
+        {{ Form::openRow('firstName') }}
             {{ Form::label('firstName', 'First name', ['class' => 'required']) }}
             {{ Form::text('firstName', null, ['placeholder' => 'First name']) }}
-        </div>
+            {{ Form::error('firstName') }}
+        {{ Form::closeRow() }}
 
-        <div class="form-row">
+        {{ Form::openRow('lastName') }}
             {{ Form::label('lastName', 'Last name', ['class' => 'required']) }}
             {{ Form::text('lastName', null, ['placeholder' => 'Last name']) }}
-        </div>
+            {{ Form::error('lastName') }}
+        {{ Form::closeRow() }}
 
-        <div class="form-row">
+        {{ Form::openRow('email') }}
             {{ Form::label('email', 'Email', ['class' => 'required']) }}
             {{ Form::text('email', null, ['placeholder' => 'Email']) }}
-        </div>
+            {{ Form::error('email') }}
+        {{ Form::closeRow() }}
 
     </div>
 

@@ -38,6 +38,27 @@ class Form
         return '</form>';
     }
 
+    public function openRow($name)
+    {
+        $str = '<div class="form-row';
+
+        if (\Library\Facades\Session::hasErrors()
+            && isset(\Library\Facades\Session::getErrors()[$name])
+            && sizeof(\Library\Facades\Session::getErrors()[$name]) > 0)
+        {
+            $str .= ' has-errors';
+        }
+
+        $str .= '">';
+
+        return $str;
+    }
+
+    public function closeRow()
+    {
+        return '</div>';
+    }
+
     public function label($for, $name, array $options = null)
     {
         $str = '<label for="'.$for.'"';
@@ -72,6 +93,24 @@ class Form
         $str .= ' />';
 
         return $str;
+    }
+
+    public function error($name, $options = null)
+    {
+        $str = '<div';
+
+        $str .= $this->buildOptionsAndId($options);
+
+        $str .= '>';
+
+        if (\Library\Facades\Session::hasErrors()
+            && isset(\Library\Facades\Session::getErrors()[$name])
+            && sizeof(\Library\Facades\Session::getErrors()[$name]) > 0)
+        {
+            $str .= \Library\Facades\Session::getErrors()[$name][0];
+        }
+
+        return $str .= '</div>';
     }
 
     public function submit($name, $options = null)

@@ -78,6 +78,26 @@ input[type="checkbox"]:focus
     font-size: 20px;
 }
 
+.custom-1 input[type=text]:focus,
+.custom-1 input[type=email]:focus,
+.custom-1 input[type=password]:focus
+{
+    border-color: #666666;
+}
+
+.custom-1 .form-row.has-errors input
+{
+    border-color: darkred;
+}
+
+.custom-1 .form-row div
+{
+    color: darkred;
+    font-size: 14px;
+    margin-left: 30%;
+    padding-left: 10px;
+}
+
 /* JQUERY UI TABS */
 
 .tabs-styled

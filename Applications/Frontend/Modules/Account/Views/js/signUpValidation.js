@@ -114,7 +114,7 @@ $(document).ready(function() {
         checkExists['email']('#email');
     });
 
-    $('#signup-form').on('submit', function() {
+    $('#signup-form1').on('submit', function() {
         var isValid = true;
 
         $.each(check, function(key, value) {

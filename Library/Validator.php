@@ -103,6 +103,16 @@ class Validator
                 return $field.' must be numeric';
             case 'min':
                 return $field.' must be bigger than '.$args[0];
+            case 'max':
+                return $field.' must be smaller than '.$args[0];
+            case 'between':
+                return $field.' must be between '.$args[0].' and '.$args[1];
+            case 'boolean':
+                return $field.' must be true or false';
+            case 'email':
+                return 'Email format is invalid';
+            case 'unique':
+                return $field.' is already taken';
             default:
                 return '';
         }
