@@ -131,13 +131,27 @@
 
 <div class="signup">
     {{{ use \Library\Facades\Form; }}}
+
     {{ Form::open('signup-form', '') }}
-        <input type="hidden" id="subscription" name="subscriptionType" value="1" />
-        <div class="g-form-header">
-            Sign up
+
+    {{ Form::hidden('subscriptionType', '1') }}
+
+    <div class="g-form-header">
+        Sign up
+    </div>
+
+    <div class="g-form-body">
+
+        <div class="form-group">
+            {{ Form::label('firstName', 'First name', ['class' => 'col-md-6']) }}
+            {{ Form::text('firstName', null, ['class' => 'form-input col-md-1', 'placeholder' => 'First name']) }}
         </div>
 
-        <div class="g-form-body">
+        <div class="form-group">
+            {{ Form::label('lastName', 'Last name') }}
+            {{ Form::text('lastName', null, ['placeholder' => 'Last name']) }}
+        </div>
+
             <div class="g-form-input-row">
                 <label class="g-form-label">First name<span class="required">*</span></label>
                 <div class="g-form-input">

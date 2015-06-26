@@ -5,6 +5,57 @@ use Tests\FrameworkTest\BaseTest;
 
 class FormTest extends BaseTest
 {
+    public function testThatSimpleFormIsCorrectlyGenerated()
+    {
+        // Arrange
+        $expected = '<form action="" method="POST" id="aname"><input type="hidden" name="_token" value="'. \Library\Facades\Session::generateToken() .'" />';
+
+        // Act
+        $result = Form::open('aname', '');
+
+        // Assert
+        $this->assertEquals($expected, $result);
+    }
+
+    public function testThatSimpleFormIsCorrectlyGeneratedWhenMethodIsNotGetOrPost()
+    {
+        // Arrange
+        $expected = '<form action="" method="POST" id="aname">'
+            .'<input type="hidden" name="_method" value="DELETE" />'
+            .'<input type="hidden" name="_token" value="'. \Library\Facades\Session::generateToken() .'" />';
+
+        // Act
+        $result = Form::open('aname', '', 'DELETE');
+
+        // Assert
+        $this->assertEquals($expected, $result);
+    }
+
+    public function testThatSimpleFormIsCorrectlyGeneratedWhenIdIsSpecified()
+    {
+        // Arrange
+        $expected = '<form action="" method="POST" id="customId">'
+            .'<input type="hidden" name="_token" value="'. \Library\Facades\Session::generateToken() .'" />';
+
+        // Act
+        $result = Form::open('aname', '', 'POST', ['id' => 'customId']);
+
+        // Assert
+        $this->assertEquals($expected, $result);
+    }
+
+    public function testThatSimpleFormIsCorrectlyGeneratedWhenTokenIsNotWanted()
+    {
+        // Arrange
+        $expected = '<form action="" method="POST" id="aname">';
+
+        // Act
+        $result = Form::open('aname', '', 'POST', null, false);
+
+        // Assert
+        $this->assertEquals($expected, $result);
+    }
+
     public function testThatSimpleLabelIsCorrectlyGenerated()
     {
         // Arrange
@@ -44,7 +95,7 @@ class FormTest extends BaseTest
     public function testThatTextIsCorrectlyGeneratedWithDefaultValue()
     {
         // Arrange
-        $expected = '<input type="text" name="aname" id="aname" value="adefaultvalue" />';
+        $expected = '<input type="text" name="aname" value="adefaultvalue" id="aname" />';
 
         // Act
         $result = Form::text('aname', 'adefaultvalue');
@@ -56,7 +107,7 @@ class FormTest extends BaseTest
     public function testThatTextIsCorrectlyGeneratedWithDefaultValueAndOptions()
     {
         // Arrange
-        $expected = '<input type="text" name="aname" id="aname" value="adefaultvalue" class="aclass" />';
+        $expected = '<input type="text" name="aname" value="adefaultvalue" class="aclass" id="aname" />';
 
         // Act
         $result = Form::text('aname', 'adefaultvalue', ['class' => 'aclass']);

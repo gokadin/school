@@ -7,7 +7,7 @@ class Form
     public function open($name, $action, $method = 'POST', array $options = null, $includeToken = true)
     {
         $needHiddenMethod = false;
-        $str = '<form id="'.$name.'" action="';
+        $str = '<form action="';
         if (!empty($action))
             $str .= \Library\Facades\Router::actionToPath($action);
         $str .= '"';
@@ -15,11 +15,12 @@ class Form
         if ($method == 'GET' || $method == 'POST')
             $str .= ' method="'.$method.'"';
         else
+        {
             $needHiddenMethod = true;
+            $str .= ' method="POST"';
+        }
 
-        if ($options != null)
-            foreach ($options as $key => $value)
-                $str .= ' '.$key.'="'.$value.'"';
+        $str .= $this->buildOptionsAndId($options, $name);
 
         $str .= '>';
 
@@ -41,25 +42,32 @@ class Form
     {
         $str = '<label for="'.$for.'"';
 
-        if ($options != null)
-            foreach ($options as $key => $value)
-                $str .= ' '.$key.'="'.$value.'"';
+        $str .= $this->buildOptionsAndId($options, null);
 
         $str .= '>'.$name.'</label>';
 
         return $str;
     }
 
+    public function hidden($name, $value, array $options = null)
+    {
+        $str = '<input type="hidden" name="'.$name.'" value="'.$value.'"';
+
+        $str .= $this->buildOptionsAndId($options, $name);
+
+        $str .= ' />';
+
+        return $str;
+    }
+
     public function text($name, $default = null, array $options = null)
     {
-        $str = '<input type="text" name="'.$name.'" id="'.$name.'"';
+        $str = '<input type="text" name="'.$name.'"';
 
         if ($default != null)
             $str .= ' value="'.$default.'"';
 
-        if ($options != null)
-            foreach ($options as $key => $value)
-                $str .= ' '.$key.'="'.$value.'"';
+        $str .= $this->buildOptionsAndId($options, $name);
 
         $str .= ' />';
 
@@ -70,11 +78,30 @@ class Form
     {
         $str = '<input type="submit" value="'.$name.'"';
 
-        if ($options != null)
-            foreach ($options as $key => $value)
-                $str .= ' '.$key.'="'.$value.'"';
+        $str .= $this->buildOptionsAndId($options, $name);
 
         $str .= ' />';
+
+        return $str;
+    }
+
+    private function buildOptionsAndId($options, $name = null)
+    {
+        if ($options == null)
+            return $name == null ? '' : ' id="'.$name.'"';
+
+        $str = '';
+        $idIsSet = false;
+        foreach ($options as $key => $value)
+        {
+            if ($key == 'id')
+                $idIsSet = true;
+
+            $str .= ' '.$key.'="'.$value.'"';
+        }
+
+        if (!$idIsSet && $name != null)
+            $str .= ' id="'.$name.'"';
 
         return $str;
     }
