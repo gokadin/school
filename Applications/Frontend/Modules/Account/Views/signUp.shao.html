@@ -1,3 +1,5 @@
+{{{ use \Library\Facades\Form; }}}
+
 <div class="memberships">
     <div class="membership membership1 active">
         <div class="membership-header">
@@ -130,9 +132,8 @@
 </div>
 
 <div class="signup">
-    {{{ use \Library\Facades\Form; }}}
 
-    {{ Form::open('signup-form', '') }}
+    {{ Form::open('signup-form', '', 'POST', ['class' => 'custom-1']) }}
 
     {{ Form::hidden('subscriptionType', '1') }}
 
@@ -142,56 +143,29 @@
 
     <div class="g-form-body">
 
-        <div class="form-group">
-            {{ Form::label('firstName', 'First name', ['class' => 'col-md-6']) }}
-            {{ Form::text('firstName', null, ['class' => 'form-input col-md-1', 'placeholder' => 'First name']) }}
+        <div class="form-row">
+            {{ Form::label('firstName', 'First name', ['class' => 'required']) }}
+            {{ Form::text('firstName', null, ['placeholder' => 'First name']) }}
         </div>
 
-        <div class="form-group">
-            {{ Form::label('lastName', 'Last name') }}
+        <div class="form-row">
+            {{ Form::label('lastName', 'Last name', ['class' => 'required']) }}
             {{ Form::text('lastName', null, ['placeholder' => 'Last name']) }}
         </div>
 
-            <div class="g-form-input-row">
-                <label class="g-form-label">First name<span class="required">*</span></label>
-                <div class="g-form-input">
-                    <div class="input-icon">
-                        <i class="fa fa-warning"></i>
-                        <input type="text" id="firstName" name="firstName" placeholder="First name" />
-                    </div>
-                    <span class="input-message">First name is required.</span>
-                </div>
-            </div>
-
-            <div class="g-form-input-row">
-                <label class="g-form-label">Last name<span class="required">*</span></label>
-                <div class="g-form-input">
-                    <div class="input-icon">
-                        <i class="fa fa-warning"></i>
-                        <input type="text" id="lastName" name="lastName" placeholder="Last name" />
-                    </div>
-                    <span class="input-message">Last name is required.</span>
-                </div>
-            </div>
-
-            <div class="g-form-input-row">
-                <label class="g-form-label">Email<span class="required">*</span></label>
-                <div class="g-form-input">
-                    <div class="input-icon">
-                        <i class="fa fa-warning"></i>
-                        <input type="text" id="email" name="email" placeholder="Email" />
-                    </div>
-                    <span class="input-message">Email is required.</span>
-                    <span class="input-message">Email is invalid.</span>
-                    <span class="input-message">Email is already registered.</span>
-                </div>
-            </div>
+        <div class="form-row">
+            {{ Form::label('email', 'Email', ['class' => 'required']) }}
+            {{ Form::text('email', null, ['placeholder' => 'Email']) }}
         </div>
 
-        <div class="g-form-footer">
-            <button type="submit">Sign up</button>
-        </div>
+    </div>
+
+    <div class="g-form-footer">
+        {{ Form::button('Sign up', ['type' => 'submit']) }}
+    </div>
+
     {{ Form::close() }}
+
 </div>
 
 <script src="/Applications/Frontend/Modules/Account/Views/js/signUpValidation.js"></script>

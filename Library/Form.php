@@ -85,6 +85,17 @@ class Form
         return $str;
     }
 
+    public function button($text, $options = null)
+    {
+        $str = '<button';
+
+        $str .= $this->buildOptionsAndId($options);
+
+        $str .= '>'.$text.'</button>';
+
+        return $str;
+    }
+
     private function buildOptionsAndId($options, $name = null)
     {
         if ($options == null)

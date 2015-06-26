@@ -38,7 +38,45 @@ input[type="checkbox"]:focus
 
 /* FORMS */
 
+/* Custom style 1 */
 
+.custom-1 .form-row
+{
+
+}
+
+.custom-1 label
+{
+    display: inline-block;
+    text-align: right;
+    font-size: 22px;
+    line-height: 40px;
+    height: 40px;
+    width: 30%;
+}
+
+.custom-1 label.required:after
+{
+    content: "*";
+    color: darkred;
+}
+
+.custom-1 input
+{
+    display: inline-block;
+    clear: both;
+    margin-bottom: 5px;
+    margin-top: 5px;
+    color: #333;
+    padding-right: 5px;
+    border-radius: 0;
+    border: 1px solid #CCC;
+    width: 55%;
+    height: 40px;
+    padding-left: 5px;
+    margin-left: 5px;
+    font-size: 20px;
+}
 
 /* JQUERY UI TABS */
 
