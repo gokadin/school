@@ -171,8 +171,6 @@
 
 </div>
 
-<script src="/Applications/Frontend/Modules/Account/Views/js/signUpValidation.js"></script>
-
 <script type="text/javascript">
 var currentSubscription = 1;
 
@@ -187,4 +185,9 @@ function selectSubscription(subscriptionNumber) {
 
     $('#subscription').val(currentSubscription);
 }
+
+$('#signup-form').validate({
+    firstName: 'required',
+    lastName: 'required'
+});
 </script>
