@@ -8,10 +8,10 @@ class FormTest extends BaseTest
     public function testThatSimpleFormIsCorrectlyGenerated()
     {
         // Arrange
-        $expected = '<form action="" method="POST" id="aname"><input type="hidden" name="_token" value="'. \Library\Facades\Session::generateToken() .'" />';
+        $expected = '<form action="" method="POST"><input type="hidden" name="_token" value="'. \Library\Facades\Session::generateToken() .'" />';
 
         // Act
-        $result = Form::open('aname', '');
+        $result = Form::open('');
 
         // Assert
         $this->assertEquals($expected, $result);
@@ -20,25 +20,12 @@ class FormTest extends BaseTest
     public function testThatSimpleFormIsCorrectlyGeneratedWhenMethodIsNotGetOrPost()
     {
         // Arrange
-        $expected = '<form action="" method="POST" id="aname">'
+        $expected = '<form action="" method="POST">'
             .'<input type="hidden" name="_method" value="DELETE" />'
             .'<input type="hidden" name="_token" value="'. \Library\Facades\Session::generateToken() .'" />';
 
         // Act
-        $result = Form::open('aname', '', 'DELETE');
-
-        // Assert
-        $this->assertEquals($expected, $result);
-    }
-
-    public function testThatSimpleFormIsCorrectlyGeneratedWhenIdIsSpecified()
-    {
-        // Arrange
-        $expected = '<form action="" method="POST" id="customId">'
-            .'<input type="hidden" name="_token" value="'. \Library\Facades\Session::generateToken() .'" />';
-
-        // Act
-        $result = Form::open('aname', '', 'POST', ['id' => 'customId']);
+        $result = Form::open('', 'DELETE');
 
         // Assert
         $this->assertEquals($expected, $result);
@@ -47,10 +34,10 @@ class FormTest extends BaseTest
     public function testThatSimpleFormIsCorrectlyGeneratedWhenTokenIsNotWanted()
     {
         // Arrange
-        $expected = '<form action="" method="POST" id="aname">';
+        $expected = '<form action="" method="POST">';
 
         // Act
-        $result = Form::open('aname', '', 'POST', null, false);
+        $result = Form::open('', 'POST', null, false);
 
         // Assert
         $this->assertEquals($expected, $result);

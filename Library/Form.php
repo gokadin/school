@@ -4,7 +4,7 @@ use Library\Facades\Session;
 
 class Form
 {
-    public function open($name, $action, $method = 'POST', array $options = null, $includeToken = true)
+    public function open($action, $method = 'POST', array $options = null, $includeToken = true)
     {
         $needHiddenMethod = false;
         $str = '<form action="';
@@ -20,7 +20,7 @@ class Form
             $str .= ' method="POST"';
         }
 
-        $str .= $this->buildOptionsAndId($options, $name);
+        $str .= $this->buildOptionsAndId($options);
 
         $str .= '>';
 
