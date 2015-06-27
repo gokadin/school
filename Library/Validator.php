@@ -113,6 +113,8 @@ class Validator
                 return 'Email format is invalid';
             case 'unique':
                 return $field.' is already taken';
+            case 'equalsField':
+                return $field.' does not equal '.$args[0];
             default:
                 return '';
         }
@@ -195,5 +197,10 @@ class Validator
             $model = '\\Tests\\FrameworkTest\\Models\\'.$modelName;
 
         return !$model::exists($columnName, $value);
+    }
+
+    public function equalsField($value, $fieldName)
+    {
+        return $value == \Library\Facades\Request::data($fieldName);
     }
 }

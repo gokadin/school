@@ -262,4 +262,25 @@ class ValidatorTest extends BaseTest
         // Assert
         $this->assertFalse(Validator::unique('str', 'Test', 'col1'));
     }
+
+    public function testEqualsFieldWorksWhenValid()
+    {
+        // Arrange
+        $_POST['_method'] = 'POST';
+        $_POST['one'] = 1;
+
+        // Assert
+        $this->assertTrue(Validator::equalsField(1, 'one'));
+    }
+
+    public function testEqualsFieldWorksWhenInvalid()
+    {
+        // Arrange
+        $_POST['_method'] = 'POST';
+        $_POST['one'] = 1;
+
+        // Assert
+        $this->assertFalse(Validator::equalsField(2, 'one'));
+        $this->assertFalse(Validator::equalsField(2, 'nonexistant'));
+    }
 }
