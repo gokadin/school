@@ -187,9 +187,17 @@ function selectSubscription(subscriptionNumber) {
 }
 
 $('#signup-form').validate({
-    firstName: 'required',
-    lastName: {
-        rule: 'required', message: 'custom message',
-    }
+    firstName: [
+        {rule: 'required', message: 'First name is required'}
+    ],
+    lastName: [
+        {rule: 'required', message: 'Last name is required'}
+    ],
+    email: [
+        {rule: 'required'},
+        {rule: 'email'},
+        {rule: 'unique:Teacher,email', triggers: 'focusout'},
+        {rule: 'unique:Student,email', triggers: 'focusout'}
+    ]
 });
 </script>

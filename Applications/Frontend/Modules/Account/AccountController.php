@@ -85,7 +85,10 @@ class AccountController extends BackController
 
         try
         {
-            $subscription = Subscription::create(['type' => Request::data('subscriptionType')]);
+            $subscription = Subscription::create([
+                'type' => Request::data('subscriptionType')
+            ]);
+
             $confirmationCode = md5(rand(999, 999999));
 
             TempTeacher::create([

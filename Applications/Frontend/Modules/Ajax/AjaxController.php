@@ -4,12 +4,15 @@ error_reporting(0);
 
 use Library\BackController;
 use Library\Facades\Request;
-use Models\User;
 
 class AjaxController extends BackController
 {
-    public function emailExists()
+    public function exists()
     {
-        echo User::exists('email', Request::postData('email'));
+        $model = '\\Models\\'.Request::data('modelName');
+        if (\Library\Config::get('frameworkTesting') == 'true')
+            $model = '\\Tests\\FrameworkTest\\Models\\'.Request::data('modelName');
+
+        echo !$model::exists(Request::data('columnName'), Request::data('value'));
     }
 }

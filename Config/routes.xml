@@ -19,7 +19,7 @@
         <route url="/account/confirm/{0}-{1}" method="GET" module="Account" action="emailConfirmation" vars="id,code" />
         <route url="/account/confirm" method="POST" module="Account" action="completeRegistration" />
         <!-- AJAX MODULE -->
-        <route url="/ajax/email-exists" method="POST" module="Ajax" action="emailExists" />
+        <route url="/ajax/exists" method="POST" module="Ajax" action="exists" />
     </application>
 
     <application name="School">
