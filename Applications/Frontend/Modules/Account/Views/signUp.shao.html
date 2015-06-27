@@ -143,23 +143,23 @@
 
     <div class="g-form-body">
 
-        {{ Form::openRow('firstName') }}
+        <div class="form-row">
             {{ Form::label('firstName', 'First name', ['class' => 'required']) }}
             {{ Form::text('firstName', null, ['placeholder' => 'First name']) }}
             {{ Form::error('firstName') }}
-        {{ Form::closeRow() }}
+        </div>
 
-        {{ Form::openRow('lastName') }}
+        <div class="form-row">
             {{ Form::label('lastName', 'Last name', ['class' => 'required']) }}
             {{ Form::text('lastName', null, ['placeholder' => 'Last name']) }}
             {{ Form::error('lastName') }}
-        {{ Form::closeRow() }}
+        </div>
 
-        {{ Form::openRow('email') }}
+        <div class="form-row">
             {{ Form::label('email', 'Email', ['class' => 'required']) }}
             {{ Form::text('email', null, ['placeholder' => 'Email']) }}
             {{ Form::error('email') }}
-        {{ Form::closeRow() }}
+        </div>
 
     </div>
 
@@ -188,6 +188,6 @@ function selectSubscription(subscriptionNumber) {
 
 $('#signup-form').validate({
     firstName: 'required',
-    lastName: 'required'
+    lastName: {rule: 'required', message: 'custom message'}
 });
 </script>

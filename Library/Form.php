@@ -38,27 +38,6 @@ class Form
         return '</form>';
     }
 
-    public function openRow($name)
-    {
-        $str = '<div class="form-row';
-
-        if (\Library\Facades\Session::hasErrors()
-            && isset(\Library\Facades\Session::getErrors()[$name])
-            && sizeof(\Library\Facades\Session::getErrors()[$name]) > 0)
-        {
-            $str .= ' has-errors';
-        }
-
-        $str .= '">';
-
-        return $str;
-    }
-
-    public function closeRow()
-    {
-        return '</div>';
-    }
-
     public function label($for, $name, array $options = null)
     {
         $str = '<label for="'.$for.'"';
@@ -88,7 +67,7 @@ class Form
         if ($default != null)
             $str .= ' value="'.$default.'"';
 
-        $str .= $this->buildOptionsAndId($options, $name);
+        $str .= $this->buildOptionsAndId($options, $name, true);
 
         $str .= ' />';
 
@@ -135,23 +114,50 @@ class Form
         return $str;
     }
 
-    private function buildOptionsAndId($options, $name = null)
+    private function buildOptionsAndId($options, $name = null, $presentError = false)
     {
         if ($options == null)
             return $name == null ? '' : ' id="'.$name.'"';
 
         $str = '';
         $idIsSet = false;
+        $classIsSet = false;
         foreach ($options as $key => $value)
         {
             if ($key == 'id')
                 $idIsSet = true;
+
+            if ($key == 'class')
+            {
+                if ($presentError
+                    && $name != null
+                    && \Library\Facades\Session::hasErrors()
+                    && isset(\Library\Facades\Session::getErrors()[$name])
+                    && sizeof(\Library\Facades\Session::getErrors()[$name]) > 0)
+                {
+                    $value .= ' invalid';
+                }
+
+                $classIsSet = true;
+            }
 
             $str .= ' '.$key.'="'.$value.'"';
         }
 
         if (!$idIsSet && $name != null)
             $str .= ' id="'.$name.'"';
+
+        if (!$classIsSet)
+        {
+            if ($presentError
+                && $name != null
+                && \Library\Facades\Session::hasErrors()
+                && isset(\Library\Facades\Session::getErrors()[$name])
+                && sizeof(\Library\Facades\Session::getErrors()[$name]) > 0)
+            {
+                $str .= ' class="invalid"';
+            }
+        }
 
         return $str;
     }

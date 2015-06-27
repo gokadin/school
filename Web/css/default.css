@@ -78,16 +78,21 @@ input[type="checkbox"]:focus
     font-size: 20px;
 }
 
+.custom-1 input.valid
+{
+    border-color: #67b168;
+}
+
+.custom-1 input.invalid
+{
+    border-color: darkred;
+}
+
 .custom-1 input[type=text]:focus,
 .custom-1 input[type=email]:focus,
 .custom-1 input[type=password]:focus
 {
     border-color: #666666;
-}
-
-.custom-1 .form-row.has-errors input
-{
-    border-color: darkred;
 }
 
 .custom-1 .form-row div
