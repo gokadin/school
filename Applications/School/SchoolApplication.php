@@ -20,36 +20,32 @@ class SchoolApplication extends Application
         if (!Session::exists('id') || !Session::exists('type')|| !Session::get('authenticated'))
             Response::toAction('Frontend#Account#index');
 
-        $currentTeacher = null;
-        $currentStudent = null;
-        if (Session::get('type') == 'teacher')
-            $currentTeacher = Teacher::find(Session::get('id'));
-        else if (Session::get('type') == 'student')
-            $currentStudent = Student::find(Session::get('id'));
+        $currentUser = null;
+        if (Session::get('type') == 'Teacher')
+            $currentUser = Teacher::find(Session::get('id'));
+        else if (Session::get('type') == 'Student')
+            $currentUser = Student::find(Session::get('id'));
 
-        /* PERMISSIONS */
-
-        if ($currentTeacher == null && $currentStudent == null)
+        if ($currentUser == null)
+        {
+            Session::setFlash('Please login again.');
             Response::toAction('Frontend#Account#index');
-
-        $currentUser = $currentTeacher == null ? $currentStudent : $currentTeacher;
+        }
 
         $controller->add(['currentUser' => $currentUser]);
         Page::add(['currentUser' => $currentUser]);
 
-        if ($currentStudent == null)
+        /* PERMISSIONS */
+
+        if (Session::get('type') == 'Teacher')
         {
             if (substr($this->module(), 0, 7) == 'Student/')
                 Response::toAction('School#Teacher/Index#index');
         }
-        else if ($currentTeacher == null)
+        else if (Session::get('type') == 'Student')
         {
             if (substr($this->module(), 0, 7) == 'Teacher/')
                 Response::toAction('School#Student/Index#index');
-        }
-        else
-        {
-            Response::toAction('Frontend#Account#index');
         }
 
         /* BREADCRUMBS */
