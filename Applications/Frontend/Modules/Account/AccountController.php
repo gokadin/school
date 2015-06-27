@@ -9,7 +9,9 @@ use Library\Facades\Page;
 use Library\Facades\Session;
 use Models\Address;
 use Models\School;
+use Models\Student;
 use Models\Teacher;
+use Models\TeacherSetting;
 use Models\TempTeacher;
 use Models\UserInfo;
 use Models\UserSetting;
@@ -24,34 +26,33 @@ class AccountController extends BackController
 
     public function login()
     {
-        $userInfo = UserInfo::where('email', '=', Request::data('email'))
+        $this->validateToken();
+        $this->validateRequest([
+            'email' => ['required', 'email'],
+            'password' => 'required'
+        ]);
+
+        $teacher = Teacher::where('email', '=', Request::data('email'))
             ->where('password', '=', md5(Request::data('password')))
             ->get()->first();
 
-        if ($userInfo == null)
-        {
-            Session::setErrors('The email or password is incorrect.');
-            Response::back();
-            return;
-        }
-
-        $teacher = $userInfo->teacher();
         if ($teacher != null)
         {
-            Session::login($teacher->id, 'teacher');
+            Session::login($teacher->id, 'Teacher');
             Response::toAction('School#Teacher/Index#index');
-            return;
         }
 
-        $student = $userInfo->student();
+        $student = Student::where('email', '=', Request::data('email'))
+            ->where('password', '=', md5(Request::data('password')))
+            ->get()->first();
+
         if ($student != null)
         {
-            Session::login($student->id, 'student');
+            Session::login($student->id, 'Student');
             Response::toAction('School#Student/Index#index');
-            return;
         }
 
-        Session::setErrors('The email or password is incorrect.');
+        Session::setFlash('The email or password is incorrect. Please try again.');
         Response::back();
     }
 
@@ -75,8 +76,8 @@ class AccountController extends BackController
     {
         $this->validateToken();
         $this->validateRequest([
-            'firstName' => ['required' => 'First name is required'],
-            'lastName' => ['required' => 'Last name is required'],
+            'firstName' => ['required' => 'first name is required'],
+            'lastName' => ['required' => 'last name is required'],
             'email' => ['email', 'unique:Teacher,email', 'unique:Student,email'],
             'subscriptionType' => 'required'
         ]);
@@ -122,14 +123,12 @@ class AccountController extends BackController
         {
             Session::setFlash('Your account no longer exists in our database');
             Response::toAction('Frontend#Account#signup');
-            return;
         }
 
         if ($tempTeacher->confirmation_code !== Request::data('code'))
         {
             Session::setFlash('The confirmation code is invalid');
             Response::toAction('Frontend#Account#signup');
-            return;
         }
 
         Page::add('tempTeacher', $tempTeacher);
@@ -137,49 +136,58 @@ class AccountController extends BackController
 
     public function completeRegistration()
     {
-        if (!TempTeacher::exists('id', Request::data('tempUserId')))
+        $this->validateToken();
+        $this->validateRequest([
+            'password' => 'required',
+            'confirmPassword' => ['required', 'equalsField:password' => 'passwords don\'t match']
+        ]);
+
+        $tempTeacher = TempTeacher::find(Request::data('tempTeacherId'));
+        if ($tempTeacher == null)
         {
-            Session::setErrors(['Your account no longer exists in our database.']);
-            Response::back();
+            Session::setFlash('Your account no longer exists. Please try signing up again.');
+            Response::toAction('Fronend#Account#signup');
         }
 
-        if (Request::data('password') != Request::data('confirmPassword'))
-        {
-            Session::setErrors(['Passwords don\'t match.']);
-            Response::back();
-        }
-
-        $tempTeacher = TempTeacher::find(Request::data('tempUserId'));
-
-        $schoolAddress = Address::create();
-        $school = School::create(['name' => 'Your School', 'address_id' => $schoolAddress->id]);
-        $userAddress = Address::create();
-        $userSetting = UserSetting::create();
         $subscription = Subscription::find($tempTeacher->subscription_id);
-
-        $userInfo = new UserInfo();
-        $userInfo->school_id = $school->id;
-        $userInfo->address_id = $userAddress->id;
-        $userInfo->user_setting_id = $userSetting->id;
-        $userInfo->first_name = $tempTeacher->first_name;
-        $userInfo->last_name = $tempTeacher->last_name;
-        $userInfo->email = $tempTeacher->email;
-        $userInfo->password = md5(Request::data('password'));
-        $userInfo->profile_picture = Config::get('defaultProfilePicturePath');
-        $userInfo->save();
-
-        $teacher = Teacher::create(['user_info_id' => $userInfo->id, 'subscription_id' => $subscription->id]);
-
-        $teacher = UserInfo::where('email', '=', $userInfo->email)
-            ->where('password', '=', $userInfo->password)
-            ->get()->first();
-
-        if ($teacher != null)
+        if ($subscription == null)
         {
-            Session::login($teacher->id, 'teacher');
-            Response::toAction('School#Teacher/Index#index');
+            Session::setFlash('An error occurred. Please try signing up again.');
+            Response::toAction('Frontend#Account#signup');
         }
-        else
-            Response::toAction('Frontend#Account#index');
+
+        DB::beginTransaction();
+
+        try
+        {
+            $school = School::create([
+                'name' => 'Your School',
+                'address_id' => Address::create()->id
+            ]);
+
+            $teacher = Teacher::create([
+                'subscription_id' => $subscription->id,
+                'address_id' => Address::create()->id,
+                'teacher_setting_id' => TeacherSetting::create()->id,
+                'school_id' => $school->id,
+                'first_name' => $tempTeacher->first_name,
+                'last_name' => $tempTeacher->last_name,
+                'email' => $tempTeacher->email,
+                'password' => md5(Request::data('password')),
+            ]);
+        }
+        catch (\PDOException $e)
+        {
+            DB::rollBack();
+            Session::setFlash('An error occurred. Please try signing up again.');
+            Response::toAction('Frontend#Account#signup');
+        }
+
+        DB::commit();
+
+        $tempTeacher->delete();
+
+        Session::login($teacher->id, 'Teacher');
+        Response::toAction('School#Teacher/Index#index');
     }
 }

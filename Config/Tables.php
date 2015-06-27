@@ -6,7 +6,7 @@ class Tables
 {
     protected function teacher_settings()
     {
-        $t = new Table('StudentSetting');
+        $t = new Table('TeacherSetting');
 
         $t->increments('id');
         $t->boolean('show_email')->default(1);
@@ -46,7 +46,7 @@ class Tables
         $t->string('phone', 32)->nullable();
         $t->integer('type', 5)->default(1);
         $t->boolean('active')->default(1);
-        $t->string('profile_picture', 200)->nullable();
+        $t->string('profile_picture', 200)->default('"'.\Library\Config::get('defaultProfilePicturePath').'"');
         $t->timestamps();
 
         return $t;
@@ -68,7 +68,7 @@ class Tables
         $t->string('phone', 32)->nullable();
         $t->integer('type', 5)->default(1);
         $t->boolean('active')->default(1);
-        $t->string('profile_picture', 200)->nullable();
+        $t->string('profile_picture', 200)->default('"'.\Library\Config::get('defaultProfilePicturePath').'"');
         $t->timestamps();
 
         return $t;
