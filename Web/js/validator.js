@@ -1,14 +1,37 @@
 (function() {
     $.fn.validate = function(options) {
         $.each(options, function(key, value) {
+            var input = $('#' + key);
+            var rule = null;
+            var message = null;
+            var triggers = ['input'];
+
             if ($.isArray(value)) {
-                var input = $('#' + key);
-                if (!validateSingle(input, value['rule'])) {
-                    makeInvalid(input, value['rule'], value['message']);
+                rule = value['rule'];
+                if ('message' in value) {
+                    message = value['message'];
                 }
-            } else{
-                validateSingle($('#' + key), value, null);
+
+                if ('triggers' in value) {alert('in triggers');
+                    if ($.isArray(value['triggers'])) {
+                        triggers = value['triggers'];
+                    } else {
+                        triggers = [];alert('here');
+                        triggers.push(value['triggers']);
+                    }
+                }
+            } else {
+                rule = value;
             }
+
+alert(triggers.join(' '));
+            input.on(triggers.join(' '), function() {
+                if (!validateSingle(input, rule)) {
+                    makeInvalid(input, rule, message);
+                } else {
+                    makeValid(input);
+                }
+            });
         });
     };
     // add options for checking on input or on out of focus
