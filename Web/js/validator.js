@@ -54,6 +54,21 @@
                 });
             });
         });
+
+        $(this).submit(function() {
+            var isValid = true;
+
+            $.each(check, function(key, lines) {
+                $.each(lines, function(index, line) {
+                    if (!validateSingleWithError(key, line['input'], line['rule']['functionName'], line['rule']['args'], line['message'])) {
+                        isValid = false;
+                        return false;
+                    }
+                });
+            });
+
+            return isValid;
+        });
     };
 
     function validateSingle(input, functionName, args) {
