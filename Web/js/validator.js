@@ -46,14 +46,22 @@
         });
 
         $.each(check, function(key, lines) {
-            $.each(lines, function(index, line) {
-                line['input'].on(line['triggers'], function() {
-                    validateSingleWithError(line['input'],
-                        line['rule']['functionName'],
-                        line['rule']['args'],
-                        line['message']);
+            lines[0]['input'].on('input', function() {
+                $.each(lines, function(index, line) {
+                    if (!validateSingleWithError(key, line['input'], line['rule']['functionName'], line['rule']['args'], line['message'])) {
+                        return false;
+                    }
                 });
             });
+
+            //$.each(lines, function(index, line) {
+            //    line['input'].on(line['triggers'], function() {
+            //        validateSingleWithError(line['input'],
+            //            line['rule']['functionName'],
+            //            line['rule']['args'],
+            //            line['message']);
+            //    });
+            //});
         });
     };
 
@@ -68,24 +76,43 @@
         }
     }
 
-    function validateSingleWithError(input, functionName, args, message) {
+    function validateSingleWithError(key, input, functionName, args, message) {
         if (!validateSingle(input, functionName, args)) {
-            makeInvalid(input, functionName, message);
+            makeInvalid(key, input, functionName, args, message);
+            return false;
         } else {
             makeValid(input);
+            return true;
         }
     }
 
-    function makeInvalid(input, functionName, message) {
+    function makeInvalid(key, input, functionName, args, message) {
         input.removeClass('valid').addClass('invalid');
         var errorDiv = input.next('div');
-        errorDiv.html('hello');
+
+        if (message != null) {
+            errorDiv.html(message);
+            return;
+        }
+
+        errorDiv.html(getErrorMessage(key, functionName, args));
     }
 
     function makeValid(input) {
         input.removeClass('invalid').addClass('valid');
         var errorDiv = input.next('div');
         errorDiv.html('');
+    }
+
+    function getErrorMessage(key, functionName, args) {
+        switch (functionName) {
+            case 'required':
+                return key + ' is required';
+            case 'email':
+                return 'email format is invalid';
+            case 'unique':
+                return key + ' is already taken';
+        }
     }
 
     /* VALIDATIONS */
@@ -105,8 +132,6 @@
         }
 
         // STOPPED here :
-        // find out how to avoit valid field if not valid email
-        // try some kind of sequential validation...
         // implement previous values in session in case error and redirected back
 
         $ajaxResult = null;
