@@ -6,17 +6,17 @@
             var message = null;
             var triggers = ['input'];
 
-            if ($.isArray(value)) {
+            if (typeof value === 'object') {
                 rule = value['rule'];
                 if ('message' in value) {
                     message = value['message'];
                 }
 
-                if ('triggers' in value) {alert('in triggers');
-                    if ($.isArray(value['triggers'])) {
+                if ('triggers' in value) {
+                    if (typeof value['triggers'] === 'object') {
                         triggers = value['triggers'];
                     } else {
-                        triggers = [];alert('here');
+                        triggers = [];
                         triggers.push(value['triggers']);
                     }
                 }
@@ -24,7 +24,6 @@
                 rule = value;
             }
 
-alert(triggers.join(' '));
             input.on(triggers.join(' '), function() {
                 if (!validateSingle(input, rule)) {
                     makeInvalid(input, rule, message);
@@ -34,7 +33,6 @@ alert(triggers.join(' '));
             });
         });
     };
-    // add options for checking on input or on out of focus
     // add submit check
     function validateSingle(input, rule) {
         switch (rule) {
@@ -52,6 +50,6 @@ alert(triggers.join(' '));
     }
 
     function required(input) {
-        return false;
+        return input.val() != null && $.trim(input.val()).length > 0;
     }
 }());
