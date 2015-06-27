@@ -74,9 +74,36 @@ class Form
         return $str;
     }
 
-    public function error($name, $options = null)
+    public function password($name, $default = null, array $options = null)
+    {
+        $str = '<input type="password" name="'.$name.'"';
+
+        if ($default != null)
+            $str .= ' value="'.$default.'"';
+
+        $str .= $this->buildOptionsAndId($options, $name, true);
+
+        $str .= ' />';
+
+        return $str;
+    }
+
+    public function error($name, array $options = null)
     {
         $str = '<div';
+
+        if ($options != null)
+        {
+            if (isset($options['class']))
+                $options['class'] .= ' form-error';
+            else
+                $options['class'] = 'form-error';
+        }
+        else
+        {
+            $options = array();
+            $options['class'] = 'form-error';
+        }
 
         $str .= $this->buildOptionsAndId($options);
 

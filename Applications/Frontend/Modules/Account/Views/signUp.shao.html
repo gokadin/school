@@ -197,7 +197,8 @@ $('#signup-form').validate({
         {rule: 'required'},
         {rule: 'email'},
         {rule: 'unique:Teacher,email'},
-        {rule: 'unique:Student,email'}
+        {rule: 'unique:Student,email'},
+        {rule: 'unique:TempTeacher,email'}
     ]
 });
 </script>

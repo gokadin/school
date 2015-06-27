@@ -1,50 +1,52 @@
-@if (isset($error) && $error != null)
-    <div class="error">
-        {{ $error }}
-    </div>
-@else
-    <div class="emailConfirmation">
-        <form id="email-confirmation-form" method="POST" action="/account/confirm">
-            <input type="hidden" name="tempUserId" value="{{ $tempUser->id }}" />
-            <div class="g-form-header">
-                Complete registration
-            </div>
+{{{ use \Library\Facades\Form; }}}
 
-            <div class="g-form-body">
-                <div class="g-form-input-row">
-                    <label class="g-form-label">Name</label>
-                    <div class="g-form-input g-form-text">{{ $tempUser->name() }}</div>
-                </div>
-                
-                <div class="g-form-input-row">
-                    <label class="g-form-label">Create password<span class="required">*</span></label>
-                    <div class="g-form-input">
-                        <div class="input-icon">
-                            <i class="fa fa-warning"></i>
-                            <input type="password" id="password" name="password" />
-                        </div>
-                        <span class="input-message">Password is required.</span>
-                    </div>
-                </div>
+<div class="emailConfirmation">
 
-                <div class="g-form-input-row">
-                    <label class="g-form-label">Confirm password<span class="required">*</span></label>
-                    <div class="g-form-input">
-                        <div class="input-icon">
-                            <i class="fa fa-warning"></i>
-                            <input type="password" id="confirmPassword" name="confirmPassword" />
-                        </div>
-                        <span class="input-message">Confirmation is required.</span>
-                        <span class="input-message">Passwords don't match.</span>
-                    </div>
-                </div>
-            </div>
+    {{ Form::open('Frontend#Account#completeRegistration', 'POST', ['id' => 'confirm-form', 'class' => 'custom-1']) }}
 
-            <div class="g-form-footer">
-                <button type="submit">Finish and login</button>
-            </div>
-        </form>
+    {{ Form::hidden('tempTeacherId', $tempTeacher->id) }}
+
+    <div class="g-form-header">
+        Complete registration
     </div>
 
-    <script src="/Applications/Frontend/Modules/Account/Views/js/emailConfirmationValidation.js"></script>
-@endif
+    <div class="g-form-body">
+
+        <div class="form-row">
+            {{ Form::label('name', 'Name') }}
+            <div class="g-form-input g-form-text">{{ $tempTeacher->name() }}</div>
+        </div>
+
+        <div class="form-row">
+            {{ Form::label('password', 'Create password', ['class' => 'required']) }}
+            {{ Form::password('password') }}
+            {{ Form::error('password') }}
+        </div>
+
+        <div class="form-row">
+            {{ Form::label('confirmPassword', 'Confirm password', ['class' => 'required']) }}
+            {{ Form::password('confirmPassword') }}
+            {{ Form::error('confirmPassword') }}
+        </div>
+
+    </div>
+
+    <div class="g-form-footer">
+        {{ Form::button('Finish and login', ['type' => 'submit']) }}
+    </div>
+
+    {{ Form::close() }}
+
+</div>
+
+<script type="text/javascript">
+$('#confirm-form').validate({
+    password: [
+        {rule: 'required'}
+    ],
+    confirmPassword: [
+        {rule: 'required', message: 'confirmation is required'},
+        {rule: 'equalsField:password', message: 'passwords don\'t match'}
+    ]
+});
+</script>

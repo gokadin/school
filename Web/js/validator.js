@@ -53,15 +53,6 @@
                     }
                 });
             });
-
-            //$.each(lines, function(index, line) {
-            //    line['input'].on(line['triggers'], function() {
-            //        validateSingleWithError(line['input'],
-            //            line['rule']['functionName'],
-            //            line['rule']['args'],
-            //            line['message']);
-            //    });
-            //});
         });
     };
 
@@ -73,6 +64,8 @@
                 return email(input.val());
             case 'unique':
                 return unique(input.val(), args[0], args[1]);
+            case 'equalsField':
+                return equalsField(input.val(), args[0]);
         }
     }
 
@@ -88,7 +81,7 @@
 
     function makeInvalid(key, input, functionName, args, message) {
         input.removeClass('valid').addClass('invalid');
-        var errorDiv = input.next('div');
+        var errorDiv = input.next('div.form-error');
 
         if (message != null) {
             errorDiv.html(message);
@@ -100,7 +93,7 @@
 
     function makeValid(input) {
         input.removeClass('invalid').addClass('valid');
-        var errorDiv = input.next('div');
+        var errorDiv = input.next('div.form-error');
         errorDiv.html('');
     }
 
@@ -112,6 +105,8 @@
                 return 'email format is invalid';
             case 'unique':
                 return key + ' is already taken';
+            case 'equalsField':
+                return key + ' does not equal to ' + args[0];
         }
     }
 
@@ -131,9 +126,6 @@
             return false;
         }
 
-        // STOPPED here :
-        // implement previous values in session in case error and redirected back
-
         $ajaxResult = null;
         $.ajax({
             async: false,
@@ -147,5 +139,9 @@
         });
 
         return ajaxResult != null && ajaxResult > 0;
+    }
+
+    function equalsField(value, fieldName) {
+        return value == $('#' + fieldName).val();
     }
 }());

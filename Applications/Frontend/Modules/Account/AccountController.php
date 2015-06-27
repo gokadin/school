@@ -117,21 +117,22 @@ class AccountController extends BackController
 
     public function emailConfirmation()
     {
-        if (!TempTeacher::exists('id', Request::getData('id')))
+        $tempTeacher = TempTeacher::find(Request::data('id'));
+        if ($tempTeacher == null)
         {
-            Page::add('error', 'Your account no longer exists in our database.');
-            return;   
-        }
-
-        $tempTeacher = TempTeacher::find(Request::getData('id'));
-
-        if ($tempTeacher->confirmation_code !== Request::getData('code'))
-        {
-            Page::add('error', 'The confirmation code is invalid.');
+            Session::setFlash('Your account no longer exists in our database');
+            Response::toAction('Frontend#Account#signup');
             return;
         }
 
-        Page::add('tempUser', $tempTeacher);
+        if ($tempTeacher->confirmation_code !== Request::data('code'))
+        {
+            Session::setFlash('The confirmation code is invalid');
+            Response::toAction('Frontend#Account#signup');
+            return;
+        }
+
+        Page::add('tempTeacher', $tempTeacher);
     }
 
     public function completeRegistration()

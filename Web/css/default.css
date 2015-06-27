@@ -52,7 +52,7 @@ input[type="checkbox"]:focus
     font-size: 22px;
     line-height: 40px;
     height: 40px;
-    width: 30%;
+    width: 35%;
 }
 
 .custom-1 label.required:after
@@ -95,11 +95,11 @@ input[type="checkbox"]:focus
     border-color: #666666;
 }
 
-.custom-1 .form-row div
+.custom-1 .form-row div.form-error
 {
     color: darkred;
     font-size: 14px;
-    margin-left: 30%;
+    margin-left: 35%;
     padding-left: 10px;
 }
 
