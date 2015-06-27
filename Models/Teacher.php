@@ -4,9 +4,9 @@ use Library\Database\Model;
 
 class Teacher extends Model
 {
-    public function userInfo()
+    public function school()
     {
-        return $this->hasOne('UserInfo');
+        return $this->hasOne('School');
     }
 
     public function subscription()
@@ -22,5 +22,20 @@ class Teacher extends Model
     public function activities()
     {
         return $this->hasMany('Activity');
+    }
+
+    public function address()
+    {
+        return $this->hasOne('Address');
+    }
+
+    public function settings()
+    {
+        return $this->hasOne('TeacherSetting');
+    }
+
+    public function name()
+    {
+        return $this->first_name.' '.$this->last_name;
     }
 }
