@@ -44,7 +44,8 @@ class AjaxController extends BackController
         $javascriptValues = [
             'id' => $event->id,
             'title' => $event->title,
-            'startDate' => $event->start_date
+            'startDate' => $event->start_date,
+            'color' => $event->color
         ];
 
         echo json_encode($javascriptValues);

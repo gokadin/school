@@ -300,7 +300,9 @@ function buildCalendarCell(day, isForCurrentMonth, isForPreviousMonth) {
 }
 
 function buildCalendarEvent(event) {
-    var str = '<div id="calendar-event-' + event.id + '" class="calendar-event" draggable="true" ondragstart="drag(event)">';
+    var str = '<div id="calendar-event-' + event.id + '"';
+    str += ' class="calendar-event calendar-event-' + event.color + '"';
+    str += ' draggable="true" ondragstart="drag(event)">';
 
     str += event.title;
 

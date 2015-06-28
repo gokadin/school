@@ -469,10 +469,11 @@
     background-color: gray;
 }
 
-[draggable] {
-    -moz-user-select: none;
-    -webkit-user-select: none;
-    user-select: none;
-    /* Required to make elements draggable in old WebKit */
-    -webkit-user-drag: element;
-}
+.calendar-event-blue { background-color: #4775FF; }
+.calendar-event-lightblue { background-color: #75D1FF; }
+.calendar-event-green { background-color: #53CF53; }
+.calendar-event-lightgreen { background-color: #53CF53; }
+.calendar-event-orange { background-color: #FF8F45;; }
+.calendar-event-pink { background-color: #FFA3A3; }
+.calendar-event-red { background-color: #FF4545; }
+.calendar-event-violet { background-color: #DA6AFF; }
