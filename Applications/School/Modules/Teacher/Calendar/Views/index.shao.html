@@ -56,7 +56,7 @@
     {
         echo 'events.push({id: '.$event->id.', '.
                 'title: "'.$event->title.'",'.
-                'startDate: new Date("'.substr($event->start_date, 0, 10).'")});';
+                'startDate: new Date("'.substr($event->start_date, 0, 4).'", "'.(intval(substr($event->start_date, 5, 2)) - 1).'", "'.substr($event->start_date, 8, 2).'")});';
     }
     ?>
 
@@ -272,8 +272,16 @@
 		str += '</div>';
 		
 		// Cell body
-		str += '<div class="calendar-table-cell-body" ondragover="handleDragOver(e)" ondrop="handleDrop(e)">';
-        $.each(events, function(index, value) {alert('x');
+        var m = cellDate.getMonth() + 1;
+        if (m < 10) {
+            m = '0' + m;
+        }
+        var d = cellDate.getDate();
+        if (d < 10) {
+            d = '0' + d;
+        }
+		str += '<div id="' + cellDate.getFullYear() + m + d + '" class="calendar-table-cell-body" ondragover="handleDragOver(e)" ondrop="handleDrop(e)">';
+        $.each(events, function(index, value) {
             if (value.startDate.getDate() == cellDate.getDate() &&
                     value.startDate.getMonth() == cellDate.getMonth() &&
                     value.startDate.getFullYear() == cellDate.getFullYear()) {
@@ -370,6 +378,15 @@
 		var month = e.dataset.month;
 		var day = e.dataset.day;
 	    var modal = $('#add-event-modal');
+        if (month < 10) {
+            month = '0' + month;
+        }
+        if (day < 10)
+        {
+            day = '0' + day;
+        }
+
+        $('#add-event-current-date').val(year + month + day);
 
         $('#add-event-error').hide();
 		$('#add-event-start-date-input').val(month + '/' + day + '/' + year);

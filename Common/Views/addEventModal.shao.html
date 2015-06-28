@@ -2,6 +2,9 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <form id="add-event-form" action="" method="POST">
+
+                <input id="add-event-current-date" type="hidden" value="" />
+
                 <div class="modal-body">
                     <div class="row">
                         <div class="col-md-6 create-form-input">
@@ -414,6 +417,13 @@
                 ajaxResult = result;
             }
         });
+
+        var addedEvent = JSON.parse(ajaxResult);
+        events.push(addedEvent);
+
+        var currentCell = $('#' + $('#add-event-current-date').val());
+
+        currentCell.html(currentCell.html() + buildCalendarEvent(addedEvent));
 
         $('#add-event-modal').modal('hide');
     }

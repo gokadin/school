@@ -54,8 +54,7 @@ class SchoolApplication extends Application
         Page::add(['breadcrumbs' => $breadcrumbs]);
         Page::add(['module' => $this->module(), 'action' => $this->action()]);
 
-
-        require '/Web/lang/common.php';
+        require __DIR__.'/../../Web/lang/common.php';
         $controller->setLang($lang);
         Page::add('lang', $lang);
 

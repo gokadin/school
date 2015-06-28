@@ -3,6 +3,7 @@
 error_reporting(0);
 
 use Library\BackController;
+use Library\Facades\DB;
 use Library\Facades\Request;
 use Library\Facades\Validator;
 use Models\TeacherEvent;
@@ -19,6 +20,7 @@ class AjaxController extends BackController
     
     public function addEvent()
     {
+        DB::beginTransaction();
         $event = TeacherEvent::create([
             'teacher_id' => $this->currentUser->id,
             'title' => empty(Request::data('title')) ? 'untitled' : Request::data('title'),
@@ -41,7 +43,14 @@ class AjaxController extends BackController
             'notify_me_by' => Request::data('notifyMeBy'),
             'notify_me_before' => Request::data('notifyMeBefore')
         ]);
+        DB::rollBack();
 
-        echo $event != null;
+        $javascriptValues = [
+            'id' => $event->id,
+            'title' => $event->title,
+            'startDate' => $event->start_date
+        ];
+        
+        echo json_encode($javascriptValues);
     }
 }
