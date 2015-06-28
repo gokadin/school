@@ -34,6 +34,11 @@ class Teacher extends Model
         return $this->hasOne('TeacherSetting');
     }
 
+    public function events()
+    {
+        return $this->hasMany('TeacherEvent');
+    }
+
     public function name()
     {
         return $this->first_name.' '.$this->last_name;

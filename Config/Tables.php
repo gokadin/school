@@ -159,24 +159,10 @@ class Tables
 
         return $t;
     }
-    
-    protected function messages()
-    {
-        $t = new Table('Message');
-        
-        $t->increments('id');
-        $t->integer('user_id'); // refactor later
-        $t->integer('to_user_id');
-        $t->boolean('is_read')->default(0);
-        $t->datetime('time_read')->nullable();
-        $t->timestamps();
-        
-        return $t;
-    }
 
-    protected function events()
+    protected function teacher_events()
     {
-        $t = new Table('Event');
+        $t = new Table('TeacherEvent');
 
         $t->increments('id');
         $t->integer('teacher_id');
@@ -195,10 +181,10 @@ class Tables
         $t->string('color', 16);
         $t->string('location');
         $t->string('visibility', 12);
-        $t->string('studentIds');
+        $t->string('student_ids');
         $t->integer('activity_id');
-        $t->string('notifyMeBy', 12);
-        $t->integer('notifyMeBefore');
+        $t->string('notify_me_by', 12);
+        $t->integer('notify_me_before');
         $t->timestamps();
 
         return $t;
