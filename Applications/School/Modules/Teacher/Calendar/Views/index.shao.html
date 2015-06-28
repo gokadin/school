@@ -283,7 +283,7 @@ function buildCalendarCell(day, isForCurrentMonth, isForPreviousMonth) {
     if (d < 10) {
         d = '0' + d;
     }
-    str += '<div id="' + cellDate.getFullYear() + m + d + '" class="calendar-table-cell-body" ondragover="handleDragOver(e)" ondrop="handleDrop(e)">';
+    str += '<div id="' + cellDate.getFullYear() + m + d + '" class="calendar-table-cell-body" ondrop="drop(event)" ondragover="allowDrop(event)">';
     $.each(events, function(index, value) {
         if (value.startDate.getDate() == cellDate.getDate() &&
                 value.startDate.getMonth() == cellDate.getMonth() &&
@@ -300,7 +300,7 @@ function buildCalendarCell(day, isForCurrentMonth, isForPreviousMonth) {
 }
 
 function buildCalendarEvent(event) {
-    var str = '<div id="calendar-event-' + event.id + '" class="calendar-event" draggable="true" ondragstart="handleDragStart(e)" ondragend="handleDragEnd(e)">';
+    var str = '<div id="calendar-event-' + event.id + '" class="calendar-event" draggable="true" ondragstart="drag(event)">';
 
     str += event.title;
 
@@ -309,28 +309,21 @@ function buildCalendarEvent(event) {
     return str;
 }
 
-function handleDragEnter(e) {
-    alert('handleDragEnter');
+function allowDrop(e) {
     e.preventDefault();
 }
 
-function handleDragStart(e) {
-    e.dataTransfer.setData('text', e.target.id);
-    alert('handleDragStart');
+function drag(e) {
+    e.dataTransfer.setData('id', e.target.id);
 }
 
-function handleDragEnd(e) {
-    alert('dragend');
-}
+function drop(e) {
+    var data = e.dataTransfer.getData('id');
+    var target = $(e.target);
 
-function handleDragOver(e) {alert('allowDrop');
-    e.preventDefault()
-}
+    target.append($('#' + data));
 
-function handleDrop(e) {alert('drop');
     e.preventDefault();
-    var data = e.dataTransfer.getData('text');
-    e.target.appendChild(document.getElementById(data));
 }
 
 function getMonthNameFromNumber(monthNumber) {
