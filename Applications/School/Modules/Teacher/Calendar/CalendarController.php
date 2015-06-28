@@ -9,6 +9,19 @@ class CalendarController extends BackController
 	{
 		Page::add('students', $this->currentUser->students());
 		Page::add('activities', $this->currentUser->activities());
-        Page::add('events', $this->currentUser->events());
+
+        $events = $this->currentUser->events();
+        $jsEvents = array();
+        foreach ($events as $event)
+        {
+            $temp = array();
+            $temp['id'] = $event->id;
+            $temp['title'] = $event->title;
+            $temp['startDate'] = $event->start_date;
+
+            $jsEvents[] = $temp;
+        }
+
+        Page::add('serializedEvents', json_encode($jsEvents));
 	}
 }

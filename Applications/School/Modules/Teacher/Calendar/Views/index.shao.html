@@ -47,370 +47,374 @@
 @includeView('addEventModal')
 
 <script type="text/javascript">
-	var currentDate = new Date();
-	var selectedMiniDate = new Date();
-	var selectedDate = new Date();
-    var events = [];
-    <?php
-    foreach ($events as $event)
-    {
-        echo 'events.push({id: '.$event->id.', '.
-                'title: "'.$event->title.'",'.
-                'startDate: new Date("'.substr($event->start_date, 0, 4).'", "'.(intval(substr($event->start_date, 5, 2)) - 1).'", "'.substr($event->start_date, 8, 2).'")});';
-    }
-    ?>
+var currentDate = new Date();
+var selectedMiniDate = new Date();
+var selectedDate = new Date();
+var events = [];
 
-	$(function() {
-		displayMiniCalendarMonth(currentDate.getMonth(), currentDate.getFullYear());
-		displayCalendarDate(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate());
-		
-		$('.mini-calendar-top-arrow-left').on('click', function() {
-			displayPreviousMiniCalendarMonth();
-		});
-		
-		$('.mini-calendar-top-arrow-right').on('click', function() {
-			displayNextMiniCalendarMonth();
-		});
-		
-		$('.calendar-top-controls-arrow-left').on('click', function() {
-			displayPreviousCalendarMonth();
-		});
-		
-		$('.calendar-top-controls-arrow-right').on('click', function() {
-			displayNextCalendarMonth();
-		});
-		
-		$('.calendar-top-controls-today').on('click', function() {
-			displayCalendarDate(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate());
-		});
-	});
-	
-	function displayPreviousMiniCalendarMonth() {
-		selectedMiniDate.setMonth(selectedMiniDate.getMonth() - 1);
-		displayMiniCalendarMonth(selectedMiniDate.getMonth(), selectedMiniDate.getFullYear());
-		return false;
-	} 
-	
-	function displayNextMiniCalendarMonth() {
-		selectedMiniDate.setMonth(selectedMiniDate.getMonth() + 1);
-		displayMiniCalendarMonth(selectedMiniDate.getMonth(), selectedMiniDate.getFullYear());
-		return false;
-	} 
-	
-	function displayMiniCalendarMonth(monthNumber, year) {
-		if (monthNumber < 0 || monthNumber > 11) {
-			monthNumber = currentDate.getMonth();
-			year = currentDate.getFullYear();
-		}
-		
-		var date = new Date(year, monthNumber, 1);
-		selectedMiniDate = date;
-		
-		var dayOfWeek = date.getDay();
-		var daysInMonth = getNumberOfDaysInMonth(monthNumber, year);
-		var daysInLastMonth = getNumberOfDaysInMonth(monthNumber - 1, year);
-		
-		$('.mini-calendar-top-month-name').html(getMonthNameFromNumber(monthNumber) + '&nbsp;&nbsp;' + year);
-		
-		var totalCells = dayOfWeek + daysInMonth;
-		if (totalCells % 7 != 0) {
-			totalCells = (Math.floor(totalCells / 7) + 1) * 7;
-		}
-		var totalRows = totalCells / 7;
-		
-		var str = '<table class="mini-calendar-table">';
-		
-		for (var i = 0; i < totalRows; i++) {
-			str += '<tr>';
-			
-			var nextMonthDayCounter = 0;
-			for (var j = 0; j < 7; j++) {				
-				var cellNumber = i * 7 + j;
-				
-				if (cellNumber < dayOfWeek) {
-					str += buildMiniCalendarCell(daysInLastMonth - dayOfWeek + j + 1, false);
-				} else if (cellNumber >= dayOfWeek + daysInMonth) {
-					nextMonthDayCounter++;
-					str += buildMiniCalendarCell(nextMonthDayCounter, false);
-				} else {
-					str += buildMiniCalendarCell(cellNumber - dayOfWeek + 1, true);
-				}
-			}
-			
-			str += '</tr>';
-		}
-		
-		str += '</table>';
-		
-		$('.mini-calendar-body').html(str);
-	}
-	
-	function buildMiniCalendarCell(day, isForCurrentMonth) {
-		var str = '';
-		
-		if (isForCurrentMonth 
-				&& currentDate.getDate() == day
-				&& selectedMiniDate.getMonth() == currentDate.getMonth()
-				&& selectedMiniDate.getFullYear() == currentDate.getFullYear()) {
-			str += '<td class="mini-calendar-table-current-day">';	
-		} else if (!isForCurrentMonth) {
-			str += '<td class="mini-calendar-table-not-current-month">';
-		} else {
-			str += '<td>';
-		}
-		
-		str += '<a href="javascript:;" onclick="displayCalendarDate(' + selectedMiniDate.getFullYear() + ', ' + selectedMiniDate.getMonth() + ', ' + day + ')">' + day + '</a>';	
-		
-		str += '</td>';
-		
-		return str;
-	}
-	
-	function displayPreviousCalendarMonth() {
-		selectedDate.setMonth(selectedDate.getMonth() - 1);
-		displayCalendarDate(selectedDate.getFullYear(), selectedDate.getMonth(), selectedDate.getDate());
-		return false;
-	}
-	
-	function displayNextCalendarMonth() {
-		selectedDate.setMonth(selectedDate.getMonth() + 1);
-		displayCalendarDate(selectedDate.getFullYear(), selectedDate.getMonth(), selectedDate.getDate());
-		return false;
-	}
-	
-	function displayCalendarDate(year, month, day) {
-		selectedDate = new Date(year, month, day);
-		
-		$('.calendar-top-controls-date').html(getMonthNameFromNumber(month) + '&nbsp;&nbsp;' + year);
-		
-		var tempDate = new Date(year, month, 1);
-		var dayOfWeek = tempDate.getDay();
-		var daysInMonth = getNumberOfDaysInMonth(month, year);
-		var daysInLastMonth = getNumberOfDaysInMonth(month - 1, year);
-		
-		var totalCells = dayOfWeek + daysInMonth;
-		if (totalCells % 7 != 0) {
-			totalCells = (Math.floor(totalCells / 7) + 1) * 7;
-		}
-		var totalRows = totalCells / 7;
-		
-		var str = '<table class="calendar-table">';
-		
-		str += buildCalendarHeader();
-		
-		for (var i = 0; i < totalRows; i++) {
-			str += '<tr>';
-			
-			var nextMonthDayCounter = 0;
-			for (var j = 0; j < 7; j++) {				
-				var cellNumber = i * 7 + j;
-				
-				if (cellNumber < dayOfWeek) {
-					str += buildCalendarCell(daysInLastMonth - dayOfWeek + j + 1, false, true);
-				} else if (cellNumber >= dayOfWeek + daysInMonth) {
-					nextMonthDayCounter++;
-					str += buildCalendarCell(nextMonthDayCounter, false, false);
-				} else {
-					str += buildCalendarCell(cellNumber - dayOfWeek + 1, true, false);
-				}
-			}
-			
-			str += '</tr>';
-		}
-		
-		str += '</table>';
-		
-		$('.calendar-body').html(str);
-	}
-	
-	function buildCalendarHeader() {
-		var str = '<tr>';
-		
-		str += '<th>Sunday</td>';
-		str += '<th>Monday</td>';
-		str += '<th>Tuesday</td>';
-		str += '<th>Wednesday</td>';
-		str += '<th>Thursday</td>';
-		str += '<th>Friday</td>';
-		str += '<th>Saturday</td>';
-		
-		str += '</tr>';
-		
-		return str;
-	}
-	
-	function buildCalendarCell(day, isForCurrentMonth, isForPreviousMonth) {
-		var str = '';
-		
-		var tempDate = new Date(selectedDate.getFullYear(), selectedDate.getMonth(), selectedDate.getDate());
-		if (isForPreviousMonth) {
-			tempDate.setMonth(tempDate.getMonth() - 1);
-		} else if (!isForCurrentMonth) {
-			tempDate.setMonth(tempDate.getMonth() + 1);
-		}
-		var cellDate = new Date(tempDate.getFullYear(), tempDate.getMonth(), day);
-		
-		if (isForCurrentMonth 
-				&& currentDate.getDate() == day
-				&& selectedMiniDate.getMonth() == currentDate.getMonth()
-				&& selectedMiniDate.getFullYear() == currentDate.getFullYear()) {
-			str += '<td class="calendar-table-current-day">';
-		} else if (!isForCurrentMonth) {
-			str += '<td class="calendar-table-not-current-month">';
-		} else {
-			str += '<td>';
-		}
-		
-		// Cell header
-		str += '<div class="calendar-table-cell-header">';
-		str += '<span class="calendar-table-cell-header-left">';
-		str += day;
-		str += '</span>';
-		str += '<span class="calendar-table-cell-header-right">';
-		str += '<a href="javascript:;" onclick="showAddEventModal(this)" data-year="' + cellDate.getFullYear() + '" data-month="' + (cellDate.getMonth() + 1) + '" data-day="' + cellDate.getDate() + '" ><i class="fa fa-plus-circle"></i></a>';
-		str += '</span>';
-		str += '</div>';
-		
-		// Cell body
-        var m = cellDate.getMonth() + 1;
-        if (m < 10) {
-            m = '0' + m;
-        }
-        var d = cellDate.getDate();
-        if (d < 10) {
-            d = '0' + d;
-        }
-		str += '<div id="' + cellDate.getFullYear() + m + d + '" class="calendar-table-cell-body" ondragover="handleDragOver(e)" ondrop="handleDrop(e)">';
-        $.each(events, function(index, value) {
-            if (value.startDate.getDate() == cellDate.getDate() &&
-                    value.startDate.getMonth() == cellDate.getMonth() &&
-                    value.startDate.getFullYear() == cellDate.getFullYear()) {
-                str += buildCalendarEvent(value);
+$(function() {
+    events = JSON.parse('<?php echo $serializedEvents; ?>', dateParser);
+
+    displayMiniCalendarMonth(currentDate.getMonth(), currentDate.getFullYear());
+    displayCalendarDate(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate());
+
+    $('.mini-calendar-top-arrow-left').on('click', function() {
+        displayPreviousMiniCalendarMonth();
+    });
+
+    $('.mini-calendar-top-arrow-right').on('click', function() {
+        displayNextMiniCalendarMonth();
+    });
+
+    $('.calendar-top-controls-arrow-left').on('click', function() {
+        displayPreviousCalendarMonth();
+    });
+
+    $('.calendar-top-controls-arrow-right').on('click', function() {
+        displayNextCalendarMonth();
+    });
+
+    $('.calendar-top-controls-today').on('click', function() {
+        displayCalendarDate(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate());
+    });
+});
+
+dateParser = function parseDate(key, value) {
+    if (key == 'startDate') {
+        return new Date(value.substr(0, 4), value.substr(5, 2) - 1, value.substr(8, 2));
+    }
+
+    return value;
+};
+
+
+function displayPreviousMiniCalendarMonth() {
+    selectedMiniDate.setMonth(selectedMiniDate.getMonth() - 1);
+    displayMiniCalendarMonth(selectedMiniDate.getMonth(), selectedMiniDate.getFullYear());
+    return false;
+}
+
+function displayNextMiniCalendarMonth() {
+    selectedMiniDate.setMonth(selectedMiniDate.getMonth() + 1);
+    displayMiniCalendarMonth(selectedMiniDate.getMonth(), selectedMiniDate.getFullYear());
+    return false;
+}
+
+function displayMiniCalendarMonth(monthNumber, year) {
+    if (monthNumber < 0 || monthNumber > 11) {
+        monthNumber = currentDate.getMonth();
+        year = currentDate.getFullYear();
+    }
+
+    var date = new Date(year, monthNumber, 1);
+    selectedMiniDate = date;
+
+    var dayOfWeek = date.getDay();
+    var daysInMonth = getNumberOfDaysInMonth(monthNumber, year);
+    var daysInLastMonth = getNumberOfDaysInMonth(monthNumber - 1, year);
+
+    $('.mini-calendar-top-month-name').html(getMonthNameFromNumber(monthNumber) + '&nbsp;&nbsp;' + year);
+
+    var totalCells = dayOfWeek + daysInMonth;
+    if (totalCells % 7 != 0) {
+        totalCells = (Math.floor(totalCells / 7) + 1) * 7;
+    }
+    var totalRows = totalCells / 7;
+
+    var str = '<table class="mini-calendar-table">';
+
+    for (var i = 0; i < totalRows; i++) {
+        str += '<tr>';
+
+        var nextMonthDayCounter = 0;
+        for (var j = 0; j < 7; j++) {
+            var cellNumber = i * 7 + j;
+
+            if (cellNumber < dayOfWeek) {
+                str += buildMiniCalendarCell(daysInLastMonth - dayOfWeek + j + 1, false);
+            } else if (cellNumber >= dayOfWeek + daysInMonth) {
+                nextMonthDayCounter++;
+                str += buildMiniCalendarCell(nextMonthDayCounter, false);
+            } else {
+                str += buildMiniCalendarCell(cellNumber - dayOfWeek + 1, true);
             }
-        });
-		str += '</div>';
-		
-		str += '</td>';
-		
-		return str;
-	}
-
-    function buildCalendarEvent(event) {
-        var str = '<div id="calendar-event-' + event.id + '" class="calendar-event" draggable="true" ondragstart="handleDragStart(e)" ondragend="handleDragEnd(e)">';
-
-        str += event.title;
-
-        str += '</div>';
-
-        return str;
-    }
-
-    function handleDragEnter(e) {
-        alert('handleDragEnter');
-        e.preventDefault();
-    }
-
-    function handleDragStart(e) {
-        e.dataTransfer.setData('text', e.target.id);
-        alert('handleDragStart');
-    }
-
-    function handleDragEnd(e) {
-        alert('dragend');
-    }
-
-    function handleDragOver(e) {alert('allowDrop');
-        e.preventDefault()
-    }
-
-    function handleDrop(e) {alert('drop');
-        e.preventDefault();
-        var data = e.dataTransfer.getData('text');
-        e.target.appendChild(document.getElementById(data));
-    }
-	
-	function getMonthNameFromNumber(monthNumber) {
-		switch (monthNumber) {
-			case 0:
-				return 'January';
-			case 1:
-				return 'February';
-			case 2:
-				return 'March';
-			case 3:
-				return 'April';
-			case 4:
-				return 'May';
-			case 5:
-				return 'June';
-			case 6:
-				return 'July';
-			case 7:
-				return 'August';
-			case 8:
-				return 'September';
-			case 9:
-				return 'October';
-			case 10:
-				return 'November';
-			case 11:
-				return 'December';
-			default:
-				return 'n/a';
-		}
-	}
-	
-	function getNumberOfDaysInMonth(month, year)
-	{
-		var monthStart = new Date(year, month, 1);
-		var monthEnd = new Date(year, month + 1, 1);
-		return Math.floor((monthEnd - monthStart) / (1000 * 60 * 60 * 24));
-	}
-	
-	// MODAL DIALOG
-	
-	function showAddEventModal(e) {
-		$('#add-event-form')[0].reset();
-		$('#add-event-more-options-container').hide();
-		$('#add-event-more-options i').removeClass('fa-caret-down').addClass('fa-caret-right');
-		
-	    var year = e.dataset.year;
-		var month = e.dataset.month;
-		var day = e.dataset.day;
-	    var modal = $('#add-event-modal');
-        if (month < 10) {
-            month = '0' + month;
-        }
-        if (day < 10)
-        {
-            day = '0' + day;
         }
 
-        $('#add-event-current-date').val(year + month + day);
+        str += '</tr>';
+    }
 
-        $('#add-event-error').hide();
-		$('#add-event-start-date-input').val(month + '/' + day + '/' + year);
-		$('#add-event-end-date-input').val(month + '/' + day + '/' + year);
-		$('#add-event-recurring-ends-date-input-date').val(month + '/' + day + '/' + year);
-		$('#add-event-start-time-input').timepicker('setTime', '1:00pm');
-        $('#add-event-start-time-input').timepicker('option', { useSelect: true });
-        $('#add-event-start-time-input').next('select').addClass('form-control');
-		$('#add-event-end-time-input').timepicker('setTime', '2:00pm');
-		$('#add-event-end-time-input').timepicker('option', { useSelect: true });
-		$('#add-event-end-time-input').next('select').addClass('form-control');
-        $('#add-event-students-input').select2({
-            placeholder: "Select students",
-            templateResult: formatStudent
-        });
-	
-	    modal.modal('show');
-	    return false;
-	}
+    str += '</table>';
 
-    function formatStudent (student) {
-        var $student = $(
-            '<span><img src="' + $(student.element).data("picture") + '" width="20" /> ' + student.text + '</span>'
-        );
-        return $student;
-    };
+    $('.mini-calendar-body').html(str);
+}
+
+function buildMiniCalendarCell(day, isForCurrentMonth) {
+    var str = '';
+
+    if (isForCurrentMonth
+            && currentDate.getDate() == day
+            && selectedMiniDate.getMonth() == currentDate.getMonth()
+            && selectedMiniDate.getFullYear() == currentDate.getFullYear()) {
+        str += '<td class="mini-calendar-table-current-day">';
+    } else if (!isForCurrentMonth) {
+        str += '<td class="mini-calendar-table-not-current-month">';
+    } else {
+        str += '<td>';
+    }
+
+    str += '<a href="javascript:;" onclick="displayCalendarDate(' + selectedMiniDate.getFullYear() + ', ' + selectedMiniDate.getMonth() + ', ' + day + ')">' + day + '</a>';
+
+    str += '</td>';
+
+    return str;
+}
+
+function displayPreviousCalendarMonth() {
+    selectedDate.setMonth(selectedDate.getMonth() - 1);
+    displayCalendarDate(selectedDate.getFullYear(), selectedDate.getMonth(), selectedDate.getDate());
+    return false;
+}
+
+function displayNextCalendarMonth() {
+    selectedDate.setMonth(selectedDate.getMonth() + 1);
+    displayCalendarDate(selectedDate.getFullYear(), selectedDate.getMonth(), selectedDate.getDate());
+    return false;
+}
+
+function displayCalendarDate(year, month, day) {
+    selectedDate = new Date(year, month, day);
+
+    $('.calendar-top-controls-date').html(getMonthNameFromNumber(month) + '&nbsp;&nbsp;' + year);
+
+    var tempDate = new Date(year, month, 1);
+    var dayOfWeek = tempDate.getDay();
+    var daysInMonth = getNumberOfDaysInMonth(month, year);
+    var daysInLastMonth = getNumberOfDaysInMonth(month - 1, year);
+
+    var totalCells = dayOfWeek + daysInMonth;
+    if (totalCells % 7 != 0) {
+        totalCells = (Math.floor(totalCells / 7) + 1) * 7;
+    }
+    var totalRows = totalCells / 7;
+
+    var str = '<table class="calendar-table">';
+
+    str += buildCalendarHeader();
+
+    for (var i = 0; i < totalRows; i++) {
+        str += '<tr>';
+
+        var nextMonthDayCounter = 0;
+        for (var j = 0; j < 7; j++) {
+            var cellNumber = i * 7 + j;
+
+            if (cellNumber < dayOfWeek) {
+                str += buildCalendarCell(daysInLastMonth - dayOfWeek + j + 1, false, true);
+            } else if (cellNumber >= dayOfWeek + daysInMonth) {
+                nextMonthDayCounter++;
+                str += buildCalendarCell(nextMonthDayCounter, false, false);
+            } else {
+                str += buildCalendarCell(cellNumber - dayOfWeek + 1, true, false);
+            }
+        }
+
+        str += '</tr>';
+    }
+
+    str += '</table>';
+
+    $('.calendar-body').html(str);
+}
+
+function buildCalendarHeader() {
+    var str = '<tr>';
+
+    str += '<th>Sunday</td>';
+    str += '<th>Monday</td>';
+    str += '<th>Tuesday</td>';
+    str += '<th>Wednesday</td>';
+    str += '<th>Thursday</td>';
+    str += '<th>Friday</td>';
+    str += '<th>Saturday</td>';
+
+    str += '</tr>';
+
+    return str;
+}
+
+function buildCalendarCell(day, isForCurrentMonth, isForPreviousMonth) {
+    var str = '';
+
+    var tempDate = new Date(selectedDate.getFullYear(), selectedDate.getMonth(), selectedDate.getDate());
+    if (isForPreviousMonth) {
+        tempDate.setMonth(tempDate.getMonth() - 1);
+    } else if (!isForCurrentMonth) {
+        tempDate.setMonth(tempDate.getMonth() + 1);
+    }
+    var cellDate = new Date(tempDate.getFullYear(), tempDate.getMonth(), day);
+
+    if (isForCurrentMonth
+            && currentDate.getDate() == day
+            && selectedMiniDate.getMonth() == currentDate.getMonth()
+            && selectedMiniDate.getFullYear() == currentDate.getFullYear()) {
+        str += '<td class="calendar-table-current-day">';
+    } else if (!isForCurrentMonth) {
+        str += '<td class="calendar-table-not-current-month">';
+    } else {
+        str += '<td>';
+    }
+
+    // Cell header
+    str += '<div class="calendar-table-cell-header">';
+    str += '<span class="calendar-table-cell-header-left">';
+    str += day;
+    str += '</span>';
+    str += '<span class="calendar-table-cell-header-right">';
+    str += '<a href="javascript:;" onclick="showAddEventModal(this)" data-year="' + cellDate.getFullYear() + '" data-month="' + (cellDate.getMonth() + 1) + '" data-day="' + cellDate.getDate() + '" ><i class="fa fa-plus-circle"></i></a>';
+    str += '</span>';
+    str += '</div>';
+
+    // Cell body
+    var m = cellDate.getMonth() + 1;
+    if (m < 10) {
+        m = '0' + m;
+    }
+    var d = cellDate.getDate();
+    if (d < 10) {
+        d = '0' + d;
+    }
+    str += '<div id="' + cellDate.getFullYear() + m + d + '" class="calendar-table-cell-body" ondragover="handleDragOver(e)" ondrop="handleDrop(e)">';
+    $.each(events, function(index, value) {
+        if (value.startDate.getDate() == cellDate.getDate() &&
+                value.startDate.getMonth() == cellDate.getMonth() &&
+                value.startDate.getFullYear() == cellDate.getFullYear()) {
+            str += buildCalendarEvent(value);
+            return false;
+        }
+    });
+    str += '</div>';
+
+    str += '</td>';
+
+    return str;
+}
+
+function buildCalendarEvent(event) {
+    var str = '<div id="calendar-event-' + event.id + '" class="calendar-event" draggable="true" ondragstart="handleDragStart(e)" ondragend="handleDragEnd(e)">';
+
+    str += event.title;
+
+    str += '</div>';
+
+    return str;
+}
+
+function handleDragEnter(e) {
+    alert('handleDragEnter');
+    e.preventDefault();
+}
+
+function handleDragStart(e) {
+    e.dataTransfer.setData('text', e.target.id);
+    alert('handleDragStart');
+}
+
+function handleDragEnd(e) {
+    alert('dragend');
+}
+
+function handleDragOver(e) {alert('allowDrop');
+    e.preventDefault()
+}
+
+function handleDrop(e) {alert('drop');
+    e.preventDefault();
+    var data = e.dataTransfer.getData('text');
+    e.target.appendChild(document.getElementById(data));
+}
+
+function getMonthNameFromNumber(monthNumber) {
+    switch (monthNumber) {
+        case 0:
+            return 'January';
+        case 1:
+            return 'February';
+        case 2:
+            return 'March';
+        case 3:
+            return 'April';
+        case 4:
+            return 'May';
+        case 5:
+            return 'June';
+        case 6:
+            return 'July';
+        case 7:
+            return 'August';
+        case 8:
+            return 'September';
+        case 9:
+            return 'October';
+        case 10:
+            return 'November';
+        case 11:
+            return 'December';
+        default:
+            return 'n/a';
+    }
+}
+
+function getNumberOfDaysInMonth(month, year)
+{
+    var monthStart = new Date(year, month, 1);
+    var monthEnd = new Date(year, month + 1, 1);
+    return Math.floor((monthEnd - monthStart) / (1000 * 60 * 60 * 24));
+}
+
+// MODAL DIALOG
+
+function showAddEventModal(e) {
+    $('#add-event-form')[0].reset();
+    $('#add-event-more-options-container').hide();
+    $('#add-event-more-options i').removeClass('fa-caret-down').addClass('fa-caret-right');
+
+    var year = e.dataset.year;
+    var month = e.dataset.month;
+    var day = e.dataset.day;
+    var modal = $('#add-event-modal');
+    if (month < 10) {
+        month = '0' + month;
+    }
+    if (day < 10)
+    {
+        day = '0' + day;
+    }
+
+    $('#add-event-current-date').val(year + month + day);
+
+    $('#add-event-error').hide();
+    $('#add-event-start-date-input').val(month + '/' + day + '/' + year);
+    $('#add-event-end-date-input').val(month + '/' + day + '/' + year);
+    $('#add-event-recurring-ends-date-input-date').val(month + '/' + day + '/' + year);
+    $('#add-event-start-time-input').timepicker('setTime', '1:00pm');
+    $('#add-event-start-time-input').timepicker('option', { useSelect: true });
+    $('#add-event-start-time-input').next('select').addClass('form-control');
+    $('#add-event-end-time-input').timepicker('setTime', '2:00pm');
+    $('#add-event-end-time-input').timepicker('option', { useSelect: true });
+    $('#add-event-end-time-input').next('select').addClass('form-control');
+    $('#add-event-students-input').select2({
+        placeholder: "Select students",
+        templateResult: formatStudent
+    });
+
+    modal.modal('show');
+    return false;
+}
+
+function formatStudent (student) {
+    var $student = $(
+        '<span><img src="' + $(student.element).data("picture") + '" width="20" /> ' + student.text + '</span>'
+    );
+    return $student;
+};
 </script>
