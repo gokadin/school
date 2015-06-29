@@ -80,13 +80,28 @@ $(function() {
 });
 
 dateParser = function parseDate(key, value) {
-    if (key == 'startDate') {
+    if (key == 'startDate' || key == 'endDate') {
         return new Date(value.substr(0, 4), value.substr(5, 2) - 1, value.substr(8, 2));
     }
 
     return value;
 };
 
+function getEventById(id) {
+    var event = null;
+    $.each(events, function(index, value) {
+        if (value.id == id) {
+            event = value;
+            return false;
+        }
+    });
+
+    return event;
+}
+
+function jsDateToPhpString(jsDate) {
+    return jsDate.getFullYear() + '-' + (jsDate.getMonth() + 1) + '-' + jsDate.getDate();
+}
 
 function displayPreviousMiniCalendarMonth() {
     selectedMiniDate.setMonth(selectedMiniDate.getMonth() - 1);
@@ -270,7 +285,8 @@ function buildCalendarCell(day, isForCurrentMonth, isForPreviousMonth) {
     str += day;
     str += '</span>';
     str += '<span class="calendar-table-cell-header-right">';
-    str += '<a href="javascript:;" onclick="showAddEventModal(this)" data-year="' + cellDate.getFullYear() + '" data-month="' + (cellDate.getMonth() + 1) + '" data-day="' + cellDate.getDate() + '" ><i class="fa fa-plus-circle"></i></a>';
+    str += '<a href="javascript:;" onclick="showAddEventModal(this)" data-year="' + cellDate.getFullYear() + '"';
+    str += ' data-month="' + (cellDate.getMonth() + 1) + '" data-day="' + cellDate.getDate() + '" ><i class="fa fa-plus-circle"></i></a>';
     str += '</span>';
     str += '</div>';
 
@@ -283,7 +299,8 @@ function buildCalendarCell(day, isForCurrentMonth, isForPreviousMonth) {
     if (d < 10) {
         d = '0' + d;
     }
-    str += '<div id="' + cellDate.getFullYear() + m + d + '" class="calendar-table-cell-body" ondrop="drop(event)" ondragover="allowDrop(event)">';
+    str += '<div data-year="' + cellDate.getFullYear() + '" data-month="' + cellDate.getMonth() + '" data-day="' + cellDate.getDate() + '"';
+    str += ' class="calendar-table-cell-body" ondrop="monthDrop(event)" ondragover="monthAllowDrop(event)">';
     $.each(events, function(index, value) {
         if (value.startDate.getDate() == cellDate.getDate() &&
                 value.startDate.getMonth() == cellDate.getMonth() &&
@@ -302,7 +319,7 @@ function buildCalendarCell(day, isForCurrentMonth, isForPreviousMonth) {
 function buildCalendarEvent(event) {
     var str = '<div id="calendar-event-' + event.id + '"';
     str += ' class="calendar-event calendar-event-' + event.color + '"';
-    str += ' draggable="true" ondragstart="drag(event)">';
+    str += ' draggable="true" ondragstart="monthDrag(event)">';
 
     str += event.title;
 
@@ -311,21 +328,59 @@ function buildCalendarEvent(event) {
     return str;
 }
 
-function allowDrop(e) {
+function monthAllowDrop(e) {
     e.preventDefault();
 }
 
-function drag(e) {
+function monthDrag(e) {
     e.dataTransfer.setData('id', e.target.id);
 }
 
-function drop(e) {
+function monthDrop(e) {
     var data = e.dataTransfer.getData('id');
-    var target = $(e.target);
+    var eventId = data.substr(data.lastIndexOf('-') + 1);
+    var event = getEventById(eventId);
+    if (event == null) {
+        return;
+    }
 
+    var target = $(e.target);
     target.append($('#' + data));
 
+    var originalStartDate = event.startDate;
+    var originalEndDate = event.endDate;
+    var targetDate = new Date(target.data('year'), target.data('month'), target.data('day'));
+    var displacementInDays = Math.round(Math.abs((originalStartDate.getTime() - targetDate.getTime())/(24*60*60*1000)));
+    if (originalStartDate > targetDate) {
+        displacementInDays *= -1;
+    }
+
+    var newStartDate = originalStartDate;
+    newStartDate.setDate(newStartDate.getDate() + displacementInDays);
+    var newEndDate = originalEndDate;
+    newEndDate.setDate(newEndDate.getDate() + displacementInDays);
+
+    event.startDate = newStartDate;
+    event.endDate = newEndDate;
+
+    changeEventDate(eventId, jsDateToPhpString(newStartDate), jsDateToPhpString(newEndDate), null, null);
+
     e.preventDefault();
+}
+
+function changeEventDate(eventId, startDate, endDate, startTime, endTime) {
+    $.ajax({
+        async: true,
+        type: 'POST',
+        url: '/school/teacher/ajax/change-event-date',
+        data: {
+            eventId: eventId,
+            startDate: startDate,
+            endDate: endDate,
+            startTime: startTime,
+            endTime: endTime
+        }
+    });
 }
 
 function getMonthNameFromNumber(monthNumber) {

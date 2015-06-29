@@ -5,6 +5,7 @@ error_reporting(0);
 use Library\BackController;
 use Library\Facades\DB;
 use Library\Facades\Request;
+use Library\Facades\Validator;
 use Models\TeacherEvent;
 use Carbon\Carbon;
 
@@ -45,9 +46,31 @@ class AjaxController extends BackController
             'id' => $event->id,
             'title' => $event->title,
             'startDate' => $event->start_date,
+            'endDate' => $event->endDate,
             'color' => $event->color
         ];
 
         echo json_encode($javascriptValues);
+    }
+
+    public function changeEventDate()
+    {
+        if (!Request::dataExists('eventId') ||
+            !Request::dataExists('startDate') ||
+            !Request::dataExists('endDate'))
+            return;
+
+        $event = TeacherEvent::find(Request::data('eventId'));
+        if ($event == null)
+            return;
+
+        $event->start_date = new Carbon(Request::data('startDate'));
+        $event->end_date = new Carbon(Request::data('endDate'));
+        if (Request::dataExists('startTime') && !empty(Request::data('startTime')))
+            $event->start_time = Request::data('startTime');
+        if (Request::dataExists('endTime') && !empty(Request::data('endTime')))
+            $event->end_date = Request::data('endDate');
+
+        $event->save();
     }
 }

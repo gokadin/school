@@ -61,6 +61,7 @@
         <!-- TEACHER AJAX MODULE -->
         <route url="/school/teacher/ajax/email-exists" method="POST" module="Teacher/Ajax" action="emailExists" />
         <route url="/school/teacher/ajax/add-event" method="POST" module="Teacher/Ajax" action="addEvent" />
+        <route url="/school/teacher/ajax/change-event-date" method="POST" module="Teacher/Ajax" action="changeEventDate" />
 
         <!-- STUDENT INDEX MODULE -->
         <route url="/school/student/" method="GET" module="Student/Index" action="index" />
