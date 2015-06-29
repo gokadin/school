@@ -467,6 +467,7 @@
     font-size: 16px;
     text-align: center;
     background-color: gray;
+    cursor: pointer;
 }
 
 .calendar-event-blue { background-color: #4775FF; }

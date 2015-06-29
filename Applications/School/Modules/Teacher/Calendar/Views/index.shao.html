@@ -300,7 +300,8 @@ function buildCalendarCell(day, isForCurrentMonth, isForPreviousMonth) {
         d = '0' + d;
     }
     str += '<div data-year="' + cellDate.getFullYear() + '" data-month="' + cellDate.getMonth() + '" data-day="' + cellDate.getDate() + '"';
-    str += ' class="calendar-table-cell-body" ondrop="monthDrop(event)" ondragover="monthAllowDrop(event)">';
+    str += ' class="calendar-table-cell-body"';
+    str += ' ondrop="monthDrop(event)" ondragover="monthAllowDrop(event)" ondragleave="monthDragLeave(event)" ondragenter="monthDragEnter(event)">';
     $.each(events, function(index, value) {
         if (value.startDate.getDate() == cellDate.getDate() &&
                 value.startDate.getMonth() == cellDate.getMonth() &&
@@ -330,6 +331,27 @@ function buildCalendarEvent(event) {
 
 function monthAllowDrop(e) {
     e.preventDefault();
+
+    if (e.target.getAttribute('draggable') == 'true')
+        e.dataTransfer.dropEffect = 'none';
+    else
+        e.dataTransfer.dropEffect = 'all';
+}
+
+function monthDragEnter(e) {
+    if (e.target.getAttribute('draggable') == 'true') {
+        return;
+    }
+
+    $(e.target).css('background-color', '#F0F7FF');
+}
+
+function monthDragLeave(e) {
+    if (e.target.getAttribute('draggable') == 'true') {
+        return;
+    }
+
+    $(e.target).css('background-color', 'white');
 }
 
 function monthDrag(e) {
@@ -337,6 +359,8 @@ function monthDrag(e) {
 }
 
 function monthDrop(e) {
+    var target = $(e.target);
+    target.css('background-color', 'white');
     var data = e.dataTransfer.getData('id');
     var eventId = data.substr(data.lastIndexOf('-') + 1);
     var event = getEventById(eventId);
@@ -344,7 +368,6 @@ function monthDrop(e) {
         return;
     }
 
-    var target = $(e.target);
     target.append($('#' + data));
 
     var originalStartDate = event.startDate;
