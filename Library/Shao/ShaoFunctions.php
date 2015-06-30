@@ -23,6 +23,11 @@ class ShaoFunctions
         throw new \Exception('Shao.includeView : could not find common view: '.$commonViewsPath.$string);
     }
 
+    public static function inject($str)
+    {
+        return '<?php use '.$str.'; ?>';
+    }
+
     public static function path($action, $var = null)
     {
         $url = Router::actionToPath($action);
