@@ -45,13 +45,13 @@
 <script type="text/javascript" src="/Web/js/select2.min.js"></script>
 
 @includeView('addEventModal')
-<a id="ex" tabindex="0" class="btn btn-lg btn-danger" role="button" data-toggle="popover" data-trigger="focus" title="Dismissible popover" data-content="And here's some amazing content. It's very engaging. Right?">Dismissible popover</a>
+
 <script type="text/javascript">
 var currentDate = new Date();
 var selectedMiniDate = new Date();
 var selectedDate = new Date();
 var events = [];
-$('#ex').popover();
+
 $(function() {
     events = JSON.parse('<?php echo $serializedEvents; ?>', dateParser);
 
