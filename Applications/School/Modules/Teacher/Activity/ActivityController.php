@@ -21,6 +21,15 @@ class ActivityController extends BackController
 
     public function store()
     {
+        $this->validateToken();
+        $this->validateRequest([
+            'name' => 'required',
+            'defaultRate' => [
+                'required' => 'default rate is required',
+                'numeric' => 'default rate must be numeric'
+            ]
+        ]);
+
         $activity = Activity::create([
             'teacher_id' => $this->currentUser->id,
             'name' => Request::data('name'),
@@ -30,9 +39,12 @@ class ActivityController extends BackController
         ]);
 
         if ($activity == null)
+        {
             Session::setFlash('An error occurred. Activity was not created.');
-        else
-            Session::setFlash('Activity <b>'.$activity->name.'</b> was created successfully.');
+            Response::back();
+        }
+
+        Session::setFlash('Activity <b>'.$activity->name.'</b> was created successfully.');
 
         if (Request::data('createAnother') == 1)
             Response::toAction('School#Teacher/Activity#create');
