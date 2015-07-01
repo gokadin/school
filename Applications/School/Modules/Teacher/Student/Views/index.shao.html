@@ -31,7 +31,7 @@
                     <td>
                         <span class="data-table-action">
                                 <a onclick="return showEditModal(this)">
-                                    <form id="edit-form" action="{{ HTML::path('School#Teacher/Student#update') }}" method="POST">
+                                    <form id="edit-form" action="@path('School#Teacher/Student#update')" method="POST">
                                         <input type="hidden" name="_method" value="PUT" />
                                         <input type="hidden" name="studentId" value="{{ $student->id }}" />
                                         <input type="hidden" name="firstName" value="{{ $student->first_name }}" />
@@ -42,7 +42,7 @@
                             </span>
                         <span class="data-table-action">
                             <a onclick="return showConfirmModal(this)">
-                                <form id="delete-form" action="{{ HTML::path('School#Teacher/Student#destroy') }}" method="POST">
+                                <form id="delete-form" action="@path('School#Teacher/Student#destroy')" method="POST">
                                     <input type="hidden" name="_method" value="DELETE" />
                                     <input type="hidden" name="studentId" value="{{ $student->id }}" />
                                 </form>

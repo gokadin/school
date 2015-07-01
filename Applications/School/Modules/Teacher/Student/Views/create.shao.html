@@ -1,7 +1,9 @@
+@inject('\Library\Facades\Form')
+
 <div class="row">
     <div class="col-md-7">
         <div class="create-form">
-            <form id="create-student-form" action="" method="POST">
+            {{ Form::open('', 'POST', ['id' => 'create-student-form']) }}
                 <div class="create-form-title">Add a student</div>
                 <div class="create-form-body">
                     <div class="row create-form-input-row">
