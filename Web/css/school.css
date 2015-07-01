@@ -782,9 +782,16 @@ Footer Layouts (new in v1.3)
     padding-top: 8px;
 }
 
-.create-form .create-another
+.create-another label
 {
-    margin-top: 7px;
+    font-size: 15px;
+    width: 40%;
+}
+
+.create-another input[type=checkbox]
+{
+    margin-top: 0;
+    width: 25%;
 }
 
 .side-info
@@ -810,13 +817,6 @@ Footer Layouts (new in v1.3)
 .btn
 {
     border-radius: 0px;
-}
-
-.required
-{
-    font-size: 18px;
-    color: #e02222;
-    padding-left: 2px;
 }
 
 /* DATA TABLE */

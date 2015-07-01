@@ -1,4 +1,4 @@
-{{{ use Library\Facades\HTML; }}}
+@inject('\Library\Facades\Form')
 
 <div class="row data-table">
     <div class="col-md-12">
@@ -37,7 +37,7 @@
                         <td>
                             <span class="data-table-action">
                                 <a onclick="return showEditModal(this)">
-                                    <form id="edit-form" action="{{ HTML::path('School#Teacher/Activity#update') }}" method="POST">
+                                    <form id="edit-form" action="@path('School#Teacher/Activity#update')" method="POST">
                                         <input type="hidden" name="_method" value="PUT" />
                                         <input type="hidden" name="activityId" value="{{ $activity->id }}" />
                                         <input type="hidden" name="name" value="{{ $activity->name }}" />
@@ -50,7 +50,7 @@
                             </span>
                             <span class="data-table-action">
                                 <a onclick="return showConfirmModal(this)">
-                                    <form id="delete-form" action="{{ HTML::path('School#Teacher/Activity#destroy') }}" method="POST">
+                                    <form id="delete-form" action="@path('School#Teacher/Activity#destroy')" method="POST">
                                         <input type="hidden" name="_method" value="DELETE" />
                                         <input type="hidden" name="activityId" value="{{ $activity->id }}" />
                                     </form>

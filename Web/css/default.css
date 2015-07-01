@@ -53,6 +53,7 @@ input[type="checkbox"]:focus
     line-height: 40px;
     height: 40px;
     width: 35%;
+    font-weight: normal;
 }
 
 .custom-1 label.required:after
@@ -76,6 +77,23 @@ input[type="checkbox"]:focus
     padding-left: 5px;
     margin-left: 5px;
     font-size: 20px;
+}
+
+.custom-1 select
+{
+    display: inline-block;
+    clear: both;
+    margin-bottom: 5px;
+    margin-top: 5px;
+    border-radius: 0;
+    border: 1px solid #CCC;
+    width: 55%;
+    height: 40px;
+    font-size: 17px;
+    margin-left: 5px;
+    padding-left: 5px;
+    padding-right: 5px;
+    background-color: white;
 }
 
 .custom-1 input.valid

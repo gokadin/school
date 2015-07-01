@@ -20,7 +20,6 @@ class CalendarController extends BackController
             $temp['startDate'] = $event->start_date;
             $temp['endDate'] = $event->end_date;
             $temp['color'] = $event->color;
-
             $jsEvents[] = $temp;
         }
 
