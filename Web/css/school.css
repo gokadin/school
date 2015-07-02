@@ -1199,7 +1199,33 @@ Footer Layouts (new in v1.3)
 
 /* MESSAGING INDEX */
 
-#new-message-div
+#user-messages
+{
+    margin-top: 20px;
+}
+
+#user-messages .user-row
+{
+    margin-bottom: 20px;
+}
+
+#user-messages .user-row img
+{
+    margin-right: 10px;
+}
+
+#user-messages .user-row-name
+{
+    font-size: 20px;
+    text-decoration: none;
+}
+
+#user-messages .user-row-name:hover
+{
+    text-decoration: none;
+}
+
+#user-messages .user-row-messages
 {
     display: none;
 }
