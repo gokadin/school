@@ -44,6 +44,11 @@ class Table
         return $this->columns[] = new Column($name, 'string', $size);
     }
 
+    public function text($name)
+    {
+        return $this->columns[] = new Column($name, 'text', 0);
+    }
+
     public function boolean($name)
     {
         return $this->columns[] = new Column($name, 'boolean', 1);

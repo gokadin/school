@@ -25,6 +25,7 @@ class Shao
         self::parseRawPhp($str);
         self::parseEchoAndEscape($str);
         self::parseEcho($str);
+        self::parseAngularSymbol($str);
         self::parseLogic($str);
         self::parseFunctions($str);
 
@@ -91,8 +92,12 @@ class Shao
 
     private static function parseEcho(&$str)
     {
-        $str = str_replace('{{', '<?php echo ', $str);
-        $str = str_replace('}}', '; ?>', $str);
+        $str = preg_replace('/(?<!\@)\{\{([^\}]*)\}\}/', '<?php echo ${1}; ?>', $str);
+    }
+
+    private static function parseAngularSymbol(&$str)
+    {
+        $str = str_replace('@{{', '{{', $str);
     }
 
     private static function parseLogic(&$str)

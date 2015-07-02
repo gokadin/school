@@ -120,6 +120,8 @@ class TableBuilder extends Tables
                 return 'DECIMAL';
             case 'string':
                 return 'VARCHAR';
+            case 'text':
+                return 'TEXT';
             case 'boolean':
                 return 'TINYINT';
             case 'datetime':

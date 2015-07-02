@@ -189,4 +189,36 @@ class Tables
 
         return $t;
     }
+
+    protected function teacher_messages()
+    {
+        $t = new Table('TeacherMessage');
+
+        $t->increments('id');
+        $t->integer('teacher_id');
+        $t->integer('recipient_id');
+        $t->string('recipient_type', 32);
+        $t->string('subject');
+        $t->text('content');
+        $t->boolean('is_read')->default(0);
+        $t->timestamps();
+
+        return $t;
+    }
+
+    protected function student_messages()
+    {
+        $t = new Table('StudentMessage');
+
+        $t->increments('id');
+        $t->integer('student_id');
+        $t->integer('recipient_id');
+        $t->string('recipient_type', 32);
+        $t->string('subject');
+        $t->text('content');
+        $t->boolean('is_read')->default(0);
+        $t->timestamps();
+
+        return $t;
+    }
 }
