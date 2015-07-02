@@ -1,7 +1,6 @@
 <?php namespace Applications\Frontend\Modules\Account;
 
 use Library\BackController;
-use Library\Config;
 use Library\Facades\DB;
 use Library\Facades\Request;
 use Library\Facades\Response;
@@ -13,8 +12,6 @@ use Models\Student;
 use Models\Teacher;
 use Models\TeacherSetting;
 use Models\TempTeacher;
-use Models\UserInfo;
-use Models\UserSetting;
 use Models\Subscription;
 
 class AccountController extends BackController
@@ -69,7 +66,11 @@ class AccountController extends BackController
 
     public function signUp()
     {
-
+        $memberships = [
+            [
+                'name' => 'Basic'
+            ]
+        ];
     }
 
     public function registerUser()

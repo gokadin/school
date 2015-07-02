@@ -1,6 +1,42 @@
-{{{ use \Library\Facades\Form; }}}
+@inject('\Library\Facades\Form')
 
 <div class="memberships">
+
+    @for ($i = 1; $i < 5; $i++)
+        <div class="membership membership{{ $i }} active">
+            <div class="membership-header">
+                Basic
+            </div>
+            <div class="membership-body">
+                <div class="membership-pricing">FREE</div>
+                <div class="membership-description">
+                    <table>
+                        <tr>
+                            <td><span class="fa fa-group"></span></td>
+                            <td>Students:</td>
+                            <td>5</td>
+                        </tr>
+                        <tr>
+                            <td><span class="fa fa-server"></span></td>
+                            <td>Storage space:</td>
+                            <td>1GB</td>
+                        </tr>
+                        <tr>
+                            <td><span class="fa fa-lock"></span></td>
+                            <td>SSL encryption:</td>
+                            <td>Yes</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+            <div class="membership-footer">
+                <a href="#" onclick="selectSubscription(1);return false;">
+                    <button type="button">Select</button>
+                </a>
+            </div>
+        </div>
+    @endfor
+
     <div class="membership membership1 active">
         <div class="membership-header">
             Basic
