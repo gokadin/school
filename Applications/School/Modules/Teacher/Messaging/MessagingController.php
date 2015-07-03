@@ -24,27 +24,7 @@ class MessagingController extends BackController
         }
 
 		Page::add('students', $students);
-
-        $testStudents = array();
-        foreach ($students as $student)
-        {
-            $messages = array();
-            foreach ($student->messages as $message)
-            {
-                $temp = [
-                    'content' => $message->content
-                ];
-                $messages[] = $temp;
-            }
-
-            $temp = [
-                'name' => $student->name(),
-                'messages' => $messages
-            ];
-            $testStudents[] = $temp;
-        }
-
-        Page::add('testStudents', $testStudents);
+        Page::add('testStudents', $students->json());
 	}
 
     public function test()

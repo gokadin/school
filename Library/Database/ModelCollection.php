@@ -157,4 +157,24 @@ class ModelCollection implements IteratorAggregate
 
         return $this;
     }
+
+    /* JSON */
+
+    public function json(array $toExclude = null)
+    {
+        $json = '[';
+
+        $i = 0;
+        $modelCount = $this->count();
+        foreach ($this->models as $model)
+        {
+            $json .= $model->json($toExclude);
+            if ($i < $modelCount - 1)
+                $json .= ',';
+
+            $i++;
+        }
+
+        return $json.']';
+    }
 }
