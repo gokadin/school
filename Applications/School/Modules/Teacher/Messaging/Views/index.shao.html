@@ -28,7 +28,7 @@
     <div id="demo">
         <div class="col-md-12 user-row" v-repeat="user: users">
             <img src="@{{ user.profilePicture }}" width="50" height="auto" />
-            <a href="javascript:;" v-on="click: showMessages(this)">@{{ user.name }}</a>
+            <a href="javascript:;" v-on="click: showMessages(user)">@{{ user.name }}</a>
             <div v-show="user.isVisible">
                 hrerehrere
             </div>
@@ -44,17 +44,25 @@
 
         data: {
             users: [
-                {name: 'Jennifer Lopez', profilePicture: '/Web/images/defaultProfilePicture.png', isVisible: false},
+                {name: 'Jennifer Lopez', profilePicture: '/Web/images/defaultProfilePicture.png', isVisible: true},
                 {name: 'Tom Cruise', profilePicture: '/Web/images/defaultProfilePicture.png', isVisible: false},
                 {name: 'Sandra Bullock', profilePicture: '/Web/images/defaultProfilePicture.png', isVisible: false}
             ]
         },
 
         methods: {
-            showMessages: function(item) {
+            showMessages: function(user) {
                 // look at vue transitions...
+                if (user.isVisible) {
+                    user.isVisible = false;
+                    return;
+                }
 
-                item.isVisible = !item.isVisible;
+                $.each(this.users, function(key, value) {
+                    value.isVisible = false;
+                });
+
+                user.isVisible = true;
             }
         }
     });
