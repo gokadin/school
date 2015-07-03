@@ -346,4 +346,40 @@ class ModelTest extends BaseTest
         $this->assertEquals($activity2->id, $resolvedActivities->at(1)->id);
         $this->assertEquals($activity3->id, $resolvedActivities->last()->id);
     }
+
+    /* JSON TESTS */
+
+    public function testJsonWorksCorrectly()
+    {
+        // Arrange
+        $test = Test::create(['col1' => 'str1', 'col2' => 1]);
+
+        // Act
+        $json = $test->json();
+        $deserializedJson = json_decode($json);
+
+        // Assert
+        $this->assertEquals($test->col1, $deserializedJson->col1);
+        $this->assertEquals($test->col2, $deserializedJson->col2);
+        $this->assertEquals($test->id, $deserializedJson->id);
+        $this->assertEquals($test->updated_at, $deserializedJson->updated_at);
+        $this->assertEquals($test->created_at, $deserializedJson->created_at);
+    }
+
+    public function testJsonWorksWhenExcludingFields()
+    {
+        // Arrange
+        $test = Test::create(['col1' => 'str1', 'col2' => 1]);
+
+        // Act
+        $json = $test->json(['col2', 'updated_at']);
+        $deserializedJson = json_decode($json);
+
+        // Assert
+        $this->assertFalse(isset($deserializedJson->col2));
+        $this->assertFalse(isset($deserializedJson->updated_at));
+        $this->assertEquals($test->col1, $deserializedJson->col1);
+        $this->assertEquals($test->id, $deserializedJson->id);
+        $this->assertEquals($test->created_at, $deserializedJson->created_at);
+    }
 }

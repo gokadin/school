@@ -364,4 +364,23 @@ class Model implements ModelQueryContract
         $results = $modelName::where($model->primaryKeyName(), 'in', $targetIds)->get();
         return $results;
     }
+
+    /* JSON */
+
+    public function Json(array $toExclude = null)
+    {
+        if ($toExclude == null)
+        {
+            return json_encode($this->vars);
+        }
+
+        $vars = array();
+        foreach ($this->vars as $key => $value)
+        {
+            if (!in_array($key, $toExclude))
+                $vars[$key] = $value;
+        }
+
+        return json_encode($vars);
+    }
 }
