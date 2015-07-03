@@ -4,6 +4,15 @@ use Library\Database\Model;
 
 class Activity extends Model
 {
+    protected $fillable = [
+        'teacher_id',
+        'name',
+        'rate',
+        'period',
+        'location',
+        'active'
+    ];
+
     public function students()
     {
         return $this->belongsToMany('Student');

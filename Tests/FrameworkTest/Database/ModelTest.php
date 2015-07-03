@@ -5,6 +5,7 @@ use Tests\FrameworkTest\Models\Activity;
 use Tests\FrameworkTest\Models\Post;
 use Tests\FrameworkTest\Models\School;
 use Tests\FrameworkTest\Models\Test;
+use Tests\FrameworkTest\Models\MassAssignmentTest;
 use Tests\FrameworkTest\Models\Teacher;
 use Tests\FrameworkTest\Models\Student;
 use Tests\FrameworkTest\Models\Address;
@@ -83,6 +84,15 @@ class ModelTest extends BaseTest
         // Assert
         $this->assertEquals('newStr', $test->col1);
         $this->assertEquals(10, $test->col2);
+    }
+
+    /**
+     * @ExpectedException RuntimeException
+     */
+    public function testThatModelCannotBeMassAssigned()
+    {
+        // Assert
+        MassAssignmentTest::create(['col1' => 'str1', 'col2' => 'str2', 'col3' => 'str3']);
     }
 
     public function testThatTouchIsWorkingCorrectly()

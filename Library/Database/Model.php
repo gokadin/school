@@ -8,6 +8,7 @@ class Model implements ModelQueryContract
 {
     private $query;
     protected $vars = array();
+    protected $fillable = array();
     protected $tableName;
     protected $modelName;
     protected $modelDirectory;
@@ -38,9 +39,13 @@ class Model implements ModelQueryContract
             }
         }
 
-
         foreach ($data as $key => $value)
-            $this->__set($key, $value);
+        {
+            if (in_array($key, $this->fillable))
+                $this->__set($key, $value);
+            else
+                throw new RuntimeException('Model '.$this->modelName.' does not accept mass assigned value of '.$key);
+        }
 
         $this->query = new Query($this);
     }

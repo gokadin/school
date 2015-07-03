@@ -27,6 +27,35 @@ class MessagingController extends BackController
         Page::add('testStudents', $students->json());
 	}
 
+    public function getUsers()
+    {
+        $students = $this->currentUser->students();
+
+        foreach ($students as $student)
+        {
+            $temp = array();
+            $messages = StudentMessage::where('student_id', '=', $student->id)
+                ->where('recipient_type', '=', 'Teacher')
+                ->where('recipient_id', '=', $this->currentUser->id)
+                ->get();
+
+            if ($messages != null)
+            {
+                foreach ($messages as $message)
+                {
+                    $temp[] = [
+                        'subject' => $message->subject,
+                        'content' => $message->content
+                    ];
+                }
+            }
+
+            $student->messages = $temp;
+        }
+
+        echo $students->json();
+    }
+
     public function test()
     {
         $this->validateToken();

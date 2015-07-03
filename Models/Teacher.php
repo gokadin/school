@@ -4,6 +4,21 @@ use Library\Database\Model;
 
 class Teacher extends Model
 {
+    protected $fillable = [
+        'subscription_id',
+        'address_id',
+        'teacher_setting_id',
+        'school_id',
+        'first_name',
+        'last_name',
+        'email',
+        'password',
+        'phone',
+        'type',
+        'active',
+        'profile_picture'
+    ];
+
     public function school()
     {
         return $this->hasOne('School');

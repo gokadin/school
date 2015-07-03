@@ -24,6 +24,12 @@ class Subscription extends Model
     const SUB_4_NUM_STUDENTS = -1;
     const SUB_4_STORAGE = 10;
 
+    protected $fillable = [
+        'type',
+        'custom_rate',
+        'period'
+    ];
+
     public function teacher()
     {
         return $this->belongsTo('Teacher');

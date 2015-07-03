@@ -16,6 +16,18 @@ class Tables
         return $t;
     }
 
+    public function mass_assignment_tests()
+    {
+        $t = new Table('MassAssignmentTest');
+
+        $t->increments('id');
+        $t->string('col1');
+        $t->string('col2');
+        $t->string('col3');
+
+        return $t;
+    }
+
     public function teachers()
     {
         $t = new Table('Teacher');

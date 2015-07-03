@@ -4,6 +4,13 @@ use Library\Database\Model;
 
 class Student extends Model
 {
+    protected $fillable = [
+        'address_id',
+        'school_id',
+        'teacher_id',
+        'name'
+    ];
+
     public function teacher()
     {
         return $this->hasOne('Teacher');

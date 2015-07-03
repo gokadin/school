@@ -31,6 +31,7 @@
         <!-- TEACHER MESSAGING MODULE -->
         <route url="/school/teacher/messaging" method="GET" module="Teacher/Messaging" action="index" />
         <route url="/school/teacher/messaging/test" method="POST" module="Teacher/Messaging" action="test" />
+        <route url="/school/teacher/api/messaging/users" method="GET" module="Teacher/Messaging" action="getUsers" />
         <!-- TEACHER ACTIVITY MODULE -->
         <route url="/school/teacher/activities" method="GET" module="Teacher/Activity" action="index" />
         <route url="/school/teacher/activities/create" method="GET" module="Teacher/Activity" action="create" />

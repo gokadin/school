@@ -2,10 +2,9 @@
 
 use Library\Database\Model;
 
-class Test extends Model
+class MassAssignmentTest extends Model
 {
-    protected $fillable = [
-        'col1',
-        'col2'
+    protected $fillable  = [
+        'col1'
     ];
 }
