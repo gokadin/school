@@ -190,15 +190,14 @@ class Tables
         return $t;
     }
 
-    protected function teacher_messages()
+    protected function teacher_messages_out()
     {
-        $t = new Table('TeacherMessage');
+        $t = new Table('TeacherMessageOut');
 
         $t->increments('id');
         $t->integer('teacher_id');
-        $t->integer('recipient_id');
-        $t->string('recipient_type', 32);
-        $t->string('subject');
+        $t->integer('to_id');
+        $t->string('to_type', 32);
         $t->text('content');
         $t->boolean('is_read')->default(0);
         $t->timestamps();
@@ -206,15 +205,44 @@ class Tables
         return $t;
     }
 
-    protected function student_messages()
+    protected function teacher_messages_in()
     {
-        $t = new Table('StudentMessage');
+        $t = new Table('TeacherMessageIn');
+
+        $t->increments('id');
+        $t->integer('teacher_id');
+        $t->integer('from_id');
+        $t->string('from_type', 32);
+        $t->text('content');
+        $t->boolean('is_read')->default(0);
+        $t->timestamps();
+
+        return $t;
+    }
+
+    protected function student_messages_out()
+    {
+        $t = new Table('StudentMessageOut');
 
         $t->increments('id');
         $t->integer('student_id');
-        $t->integer('recipient_id');
-        $t->string('recipient_type', 32);
-        $t->string('subject');
+        $t->integer('to_id');
+        $t->string('to_type', 32);
+        $t->text('content');
+        $t->boolean('is_read')->default(0);
+        $t->timestamps();
+
+        return $t;
+    }
+
+    protected function student_messages_in()
+    {
+        $t = new Table('StudentMessageIn');
+
+        $t->increments('id');
+        $t->integer('student_id');
+        $t->integer('from_id');
+        $t->string('from_type', 32);
         $t->text('content');
         $t->boolean('is_read')->default(0);
         $t->timestamps();

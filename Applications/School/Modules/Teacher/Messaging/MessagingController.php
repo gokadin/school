@@ -27,34 +27,26 @@ class MessagingController extends BackController
         Page::add('testStudents', $students->json());
 	}
 
-    public function getUsers()
+    /* AJAX */
+
+    public function ajaxStore()
     {
-        $students = $this->currentUser->students();
-
-        foreach ($students as $student)
+        if (!$this->validateRequest([
+            'recipient_id' => ['required', 'numeric'],
+            'recipient_type' => 'required',
+            'subject' => 'required',
+            'content' => 'required'
+        ], false))
         {
-            $student->name = $student->name();
-
-            $temp = array();
-            $messages = StudentMessage::where('student_id', '=', $student->id)
-                ->where('recipient_type', '=', 'Teacher')
-                ->where('recipient_id', '=', $this->currentUser->id)
-                ->get();
-
-            if ($messages != null)
-            {
-                foreach ($messages as $message)
-                {
-                    $temp[] = [
-                        'subject' => $message->subject,
-                        'content' => $message->content
-                    ];
-                }
-            }
-
-            $student->messages = $temp;
+            exit(false);
         }
 
-        exit($students->json());
+        exit(TeacherMessage::create([
+            'teacher_id' => $this->currentUser->id,
+            'recipient_id' => Request::data('recipient_id'),
+            'recipient_type' => Request::data('recipient_type'),
+            'subject' => Request::data('subject'),
+            'content' => Request::data('content')
+        ]) != null);
     }
 }

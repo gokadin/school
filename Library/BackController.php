@@ -59,12 +59,19 @@ abstract class BackController
             throw new RuntimeException('CSRF token mismatch.');
     }
 
-    protected function validateRequest(array $rules)
+    protected function validateRequest(array $rules, $handleErrors = false)
     {
         if ($rules == null || sizeof($rules) == 0)
-            return;
+            return true;
 
-        if (!\Library\Facades\Validator::make(\Library\Facades\Request::all(), $rules))
-            \Library\Facades\Response::back();
+        if (!\Library\Facades\Validator::make(\Library\Facades\Request::all(), $rules, $handleErrors))
+        {
+            if ($handleErrors)
+                \Library\Facades\Response::back();
+            else
+                return false;
+        }
+
+        return true;
     }
 }

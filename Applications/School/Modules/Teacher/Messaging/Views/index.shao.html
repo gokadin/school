@@ -87,11 +87,13 @@
                 e.preventDefault();
 
                 var message = this.newMessage;
-                message.student_ids = $('#student-ids').select2('val');
+                message.recipient_id = $('#student-ids').select2('val');
+                message.recipient_type = 'Student';
+                message.subject = 'a subject';
                 $('#student-ids').select2('val', '');
                 this.newMessage = {subject: '', content: '', student_ids: ''};
-alert(message.student_ids);
-                this.$http.post('school/api/teacher/messaging/create', message);
+
+                this.$http.post('/school/teacher/messaging/ajax/store', message);
             }
         }
     });

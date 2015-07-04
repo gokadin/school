@@ -2,13 +2,12 @@
 
 use Library\Database\Model;
 
-class TeacherMessage extends Model
+class TeacherMessageIn extends Model
 {
     protected $fillable = [
         'teacher_id',
-        'recipient_id',
-        'recipient_type',
-        'subject',
+        'from_id',
+        'from_type',
         'content',
         'is_read'
     ];
