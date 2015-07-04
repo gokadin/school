@@ -182,11 +182,7 @@ class Model implements ModelQueryContract
 
     public static function create(array $values = null)
     {
-        $instance = new static;
-
-        if ($values != null)
-            foreach ($values as $key => $value)
-                $instance->$key = $value;
+        $instance = new static($values);
 
         if ($instance->insert())
             return $instance;

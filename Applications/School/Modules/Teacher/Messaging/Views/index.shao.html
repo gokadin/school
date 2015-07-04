@@ -1,3 +1,5 @@
+@inject('\Library\Facades\Form')
+
 <div>
     <!--
     <div id="new-message">
@@ -28,12 +30,21 @@
 
 <div>
     <div id="demo">
-        <pre>
-            @{{ users | json }}
-        </pre>
+        {{ Form::open('', 'POST', ['v-on' => 'submit: submitForm'], false) }}
+
+        <div class="form-row">
+            {{ Form::text('content', null, ['v-model' => 'newMessage.content']) }}
+        </div>
+
+        <div class="form-row">
+            {{ Form::button('Send', ['type' => 'submit']) }}
+        </div>
+
+        {{ Form::close() }}
+
         <div class="col-md-12 user-row" v-repeat="user: users">
             <img src="@{{ user.profile_picture }}" width="50" height="auto" />
-            <a href="javascript:;" v-on="click: showMessages(user)">@{{ user.name }}</a>
+            <a href="javascript:;" v-on="click: showMessages(this)">@{{ user.name }}</a>
             <div v-show="user.isVisible">
                 hrerehrere
             </div>
@@ -52,14 +63,23 @@
             this.fetchUsers();
         },
 
+        data: {
+            newMessage: {
+                subject: '',
+                content: ''
+            }
+        },
+
         methods: {
             fetchUsers: function() {
                 this.$http.get('/school/teacher/api/messaging/users', function(users) {
                     this.$set('users', users);
                 });
+
+                //this.users.$add('isVisible', true);
             },
 
-            showMessages: function(user) {
+            showMessages: function(user) {alert(user.isVisible);
                 // look at vue transitions...
                 if (user.isVisible) {
                     user.isVisible = false;
@@ -71,25 +91,16 @@
                 });
 
                 user.isVisible = true;
+            },
+
+            submitForm: function(e) {
+                e.preventDefault();
+
+                var message = this.newMessage;
+                this.newMessage = {subject: '', content: ''};
+
+                this.$http.post('school/api/teacher/messaging/create', message);
             }
         }
-    });
-
-    function showMessages(e) {
-        var messagesDiv = $(e).next('.user-row-messages');
-
-        if (messagesDiv.is(':visible')) {
-            messagesDiv.slideUp('fast');
-            return;
-        }
-
-        $('.user-row-messages').slideUp('fast');
-        messagesDiv.slideDown('fast');
-    }
-
-    $('#new-message-form').submit(function(e) {
-        e.preventDefault();
-
-
     });
 </script>

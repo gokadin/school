@@ -87,7 +87,7 @@ class ModelTest extends BaseTest
     }
 
     /**
-     * @ExpectedException RuntimeException
+     * @expectedException RuntimeException
      */
     public function testThatModelCannotBeMassAssigned()
     {
