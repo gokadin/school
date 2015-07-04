@@ -1,39 +1,16 @@
 @inject('\Library\Facades\Form')
 
 <div>
-    <!--
-    <div id="new-message">
-        <form id="new-message-form" action="" method="POST">
-            <select name="user">
-                @foreach ($students as $student)
-                    <option value="{{ $student->id }}">{{ $student->name() }}</option>
-                @endforeach
-            </select>
-            <input type="text" name="content" />
-            <button type="submit" class="btn btn-primary">Send</button>
-        </form>
-    </div>
-
-    <div id="user-messages">
-        @foreach ($students as $student)
-            <div class="row col-md-12 user-row">
-                <img src="{{ $student->profile_picture }}" width="50" height="auto" />
-                <a href="javascript:;" onclick="showMessages(this)" class="user-row-name">{{ $student->name() }}</a>
-                <div class="user-row-messages">
-                    here
-                </div>
-            </div>
-        @endforeach
-    </div>
-    -->
-</div>
-
-<div>
     <div id="demo">
         {{ Form::open('', 'POST', ['v-on' => 'submit: submitForm'], false) }}
 
         <div class="form-row">
             {{ Form::text('content', null, ['v-model' => 'newMessage.content']) }}
+            <select id="student-ids" class="js-example-basic-multiple form-control" multiple="multiple">
+                @foreach ($students as $student)
+                <option value="{{ $student->id }}" data-picture="{{ $student->profile_picture }}">{{ $student->name() }}</option>
+                @endforeach
+            </select>
         </div>
 
         <div class="form-row">
@@ -52,7 +29,22 @@
     </div>
 </div>
 
+<link rel="stylesheet" type="text/css" href="/Web/css/select2.min.css">
+<script type="text/javascript" src="/Web/js/select2.min.js"></script>
+
 <script type="text/javascript">
+    $('#student-ids').select2({
+        placeholder: "Select students",
+        templateResult: formatStudent
+    });
+
+    function formatStudent (student) {
+        var $student = $(
+                '<span><img src="' + $(student.element).data("picture") + '" width="20" /> ' + student.text + '</span>'
+        );
+        return $student;
+    }
+
     new Vue({
         el: '#demo',
 
@@ -63,7 +55,8 @@
         data: {
             newMessage: {
                 subject: '',
-                content: ''
+                content: '',
+                student_ids: ''
             }
         },
 
@@ -94,8 +87,10 @@
                 e.preventDefault();
 
                 var message = this.newMessage;
-                this.newMessage = {subject: '', content: ''};
-
+                message.student_ids = $('#student-ids').select2('val');
+                $('#student-ids').select2('val', '');
+                this.newMessage = {subject: '', content: '', student_ids: ''};
+alert(message.student_ids);
                 this.$http.post('school/api/teacher/messaging/create', message);
             }
         }
