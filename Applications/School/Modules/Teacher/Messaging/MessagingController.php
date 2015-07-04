@@ -33,6 +33,8 @@ class MessagingController extends BackController
 
         foreach ($students as $student)
         {
+            $student->name = $student->name();
+
             $temp = array();
             $messages = StudentMessage::where('student_id', '=', $student->id)
                 ->where('recipient_type', '=', 'Teacher')
@@ -53,7 +55,7 @@ class MessagingController extends BackController
             $student->messages = $temp;
         }
 
-        echo $students->json();
+        exit($students->json());
     }
 
     public function test()

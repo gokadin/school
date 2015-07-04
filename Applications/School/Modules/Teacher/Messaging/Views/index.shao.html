@@ -1,4 +1,5 @@
 <div>
+    <!--
     <div id="new-message">
         <form id="new-message-form" action="" method="POST">
             <select name="user">
@@ -22,15 +23,16 @@
             </div>
         @endforeach
     </div>
+    -->
 </div>
 
 <div>
     <div id="demo">
         <pre>
-            @{{ $users | json }}
+            @{{ users | json }}
         </pre>
         <div class="col-md-12 user-row" v-repeat="user: users">
-            <img src="@{{ user.profilePicture }}" width="50" height="auto" />
+            <img src="@{{ user.profile_picture }}" width="50" height="auto" />
             <a href="javascript:;" v-on="click: showMessages(user)">@{{ user.name }}</a>
             <div v-show="user.isVisible">
                 hrerehrere
@@ -49,19 +51,11 @@
         ready: function() {
             this.fetchUsers();
         },
-data: {users: []},
+
         methods: {
             fetchUsers: function() {
-//                this.$http.get('/school/teacher/api/messaging/users', function(users) {
-//                    this.$set('users', users);
-//                });
-                $.ajax({
-                    async: false,
-                    type: 'GET',
-                    url: '/school/teacher/api/messaging/users',
-                    success: function(data) {
-                        this.users = data;
-                    }
+                this.$http.get('/school/teacher/api/messaging/users', function(users) {
+                    this.$set('users', users);
                 });
             },
 

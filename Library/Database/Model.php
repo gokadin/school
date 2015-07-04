@@ -372,7 +372,7 @@ class Model implements ModelQueryContract
 
     /* JSON */
 
-    public function Json(array $toExclude = null)
+    public function json(array $toExclude = null)
     {
         if ($toExclude == null)
         {
