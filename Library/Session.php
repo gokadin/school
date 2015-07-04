@@ -14,6 +14,8 @@ class Session
     const FLASH_DURATION_KEY = 'flashDuration';
     const SHOULD_CLEAR_FLASH_KEY = 'shouldClearFlash';
 
+    private $token;
+
     public function __construct()
     {
         if (!$this->shouldClearErrors())
@@ -60,7 +62,11 @@ class Session
 
     public function generateToken()
     {
-        return md5('G2s92!dK2!185fr0?Se0');
+        if (isset($token))
+            return $token;
+
+        $token = md5('G2s92!dK2!185fr0?Se0');
+        return $token;
     }
     
     public function logout()

@@ -38,6 +38,12 @@ abstract class BackController
         if (!is_callable(array($this, $action)))
             throw new \RuntimeException('The action '.$action.' is not defined on this module');
 
+        $method = \Library\Facades\Request::method();
+        if ($method == 'POST' || $method == 'PUT' || $method == 'DELETE')
+        {
+            $this->validateToken();
+        }
+
         $this->$action();
     }
     
@@ -48,7 +54,8 @@ abstract class BackController
 
     protected function validateToken()
     {
-        if (!\Library\Facades\Request::dataExists('_token') || \Library\Facades\Request::data('_token') != \Library\Facades\Session::generateToken())
+        $token = \Library\Facades\Session::generateToken();
+        if (\Library\Facades\Request::data('_token') != $token && \Library\Facades\Request::header('CSRF-TOKEN') != $token)
             throw new RuntimeException('CSRF token mismatch.');
     }
 

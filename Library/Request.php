@@ -127,4 +127,15 @@ class Request
 
         return $requestUri;
     }
+
+    public function header($key)
+    {
+        $headers = getallheaders();
+        return isset($headers[$key]) ? $headers[$key] : null;
+    }
+
+    public function headers()
+    {
+        return getallheaders();
+    }
 }

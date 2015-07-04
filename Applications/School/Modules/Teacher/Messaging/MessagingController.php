@@ -57,13 +57,4 @@ class MessagingController extends BackController
 
         exit($students->json());
     }
-
-    public function test()
-    {
-        $this->validateToken();
-        $this->validateRequest([
-            'firstName' => 'required',
-            'lastName' => 'required'
-        ]);
-    }
 }

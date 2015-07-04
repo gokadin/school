@@ -17,7 +17,7 @@ class Model implements ModelQueryContract
     protected $columnNames;
     private $hasTimestamps;
 
-    public function __construct(array $data = array())
+    public function __construct(array $data = null)
     {
         if (\Library\Config::get('frameworkTesting') == 'true')
             $this->modelDirectory = '\\Tests\\FrameworkTest\\Models\\';
@@ -39,12 +39,15 @@ class Model implements ModelQueryContract
             }
         }
 
-        foreach ($data as $key => $value)
+        if ($data != null)
         {
-            if (in_array($key, $this->fillable))
-                $this->__set($key, $value);
-            else
-                throw new RuntimeException('Model '.$this->modelName.' does not accept mass assigned value of '.$key);
+            foreach ($data as $key => $value)
+            {
+                if (in_array($key, $this->fillable))
+                    $this->__set($key, $value);
+                else
+                    throw new RuntimeException('Model '.$this->modelName.' does not accept mass assigned value of '.$key);
+            }
         }
 
         $this->query = new Query($this);
