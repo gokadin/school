@@ -28,6 +28,11 @@ abstract class Facade
         return static::$resolvedInstance[$name] = static::$app->container()->make($name);
     }
 
+    public static function resetResolvedInstances()
+    {
+        static::$resolvedInstance = [];
+    }
+
     public static function __callStatic($method, $args)
     {
         $instance = static::resolveFacadeInstance(static::getFacadeAccessor());

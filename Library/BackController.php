@@ -59,7 +59,7 @@ abstract class BackController
             throw new RuntimeException('CSRF token mismatch.');
     }
 
-    protected function validateRequest(array $rules, $handleErrors = false)
+    protected function validateRequest(array $rules, $handleErrors = true)
     {
         if ($rules == null || sizeof($rules) == 0)
             return true;

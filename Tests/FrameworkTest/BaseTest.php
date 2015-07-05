@@ -1,6 +1,7 @@
 <?php namespace Tests\FrameworkTest;
 
 use Library\Facades\DB;
+use Library\Facades\Facade;
 use PHPUnit_Framework_TestCase;
 use Library\Application;
 
@@ -11,7 +12,6 @@ abstract class BaseTest extends PHPUnit_Framework_TestCase
     public static function setUpBeforeClass()
     {
         \Library\Config::temporary('frameworkTesting', 'true');
-        new Application('test');
     }
 
     public static function tearDownAfterClass()
@@ -21,6 +21,9 @@ abstract class BaseTest extends PHPUnit_Framework_TestCase
 
     public function setUp()
     {
+        Facade::resetResolvedInstances();
+        new Application('test');
+
         \Library\Facades\DB::beginTransaction();
     }
 

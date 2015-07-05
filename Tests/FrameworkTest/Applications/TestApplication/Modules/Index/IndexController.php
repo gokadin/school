@@ -1,7 +1,6 @@
 <?php namespace Tests\FrameworkTest\Applications\TestApplication\Modules\Index;
 
 use Library\BackController;
-use Library\Facades\Request;
 
 class IndexController extends BackController
 {

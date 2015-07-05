@@ -266,7 +266,7 @@ class ValidatorTest extends BaseTest
     public function testEqualsFieldWorksWhenValid()
     {
         // Arrange
-        $_POST['_method'] = 'POST';
+        $_SERVER['REQUEST_METHOD'] = 'POST';
         $_POST['one'] = 1;
 
         // Assert
@@ -277,7 +277,7 @@ class ValidatorTest extends BaseTest
     {
         // Arrange
         $_POST['_method'] = 'POST';
-        $_POST['one'] = 1;
+        $_SERVER['REQUEST_METHOD'] = 'POST';
 
         // Assert
         $this->assertFalse(Validator::equalsField(2, 'one'));

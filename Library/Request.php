@@ -15,20 +15,25 @@ class Request
             return $this->data;
 
         if ($this->isJson())
-            return $this->data = $this->getDecodedJson();
+        {
+            $this->data = $this->getDecodedJson();
+            return $this->data;
+        }
 
         switch ($this->method())
         {
             case 'GET':
-                return $this->data = $_GET;
+                $this->data = $_GET;
+                break;
             case 'POST':
             case 'PUT':
             case 'PATCH':
             case 'DELETE':
-                return $this->data = $_POST;
+                $this->data = $_POST;
+                break;
         }
 
-        return null;
+        return $this->data;
     }
 
     public function isJson()
@@ -91,6 +96,9 @@ class Request
 
     public function method()
     {
+        if ($_SERVER['REQUEST_METHOD'] == 'GET')
+            return 'GET';
+
         if (isset($_POST['_method']))
         {
             $method = $_POST['_method'];

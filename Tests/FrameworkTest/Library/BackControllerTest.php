@@ -10,7 +10,7 @@ class BackControllerTest extends BaseTest
     {
         // Arrange
         $_POST['_token'] = Session::generateToken();
-        $_POST['_method'] = 'POST';
+        $_SERVER['REQUEST_METHOD'] = 'POST';
         $controller = new IndexController();
 
         // Act
@@ -27,7 +27,7 @@ class BackControllerTest extends BaseTest
     {
         // Arrange
         $_POST['_token'] = 'other';
-        $_POST['_method'] = 'POST';
+        $_SERVER['REQUEST_METHOD'] = 'POST';
         $controller = new IndexController();
 
         // Act
@@ -41,7 +41,7 @@ class BackControllerTest extends BaseTest
     {
         // Arrange
         $_POST['one'] = 1;
-        $_POST['_method'] = 'POST';
+        $_SERVER['REQUEST_METHOD'] = 'POST';
         $controller = new IndexController();
 
         // Act
@@ -54,7 +54,7 @@ class BackControllerTest extends BaseTest
     public function testThatRequestValidationWorksWhenRequiredIsInvalid()
     {
         // Arrange
-        $_POST['_method'] = 'POST';
+        $_SERVER['REQUEST_METHOD'] = 'POST';
         $controller = new IndexController();
 
         // Act
@@ -67,7 +67,7 @@ class BackControllerTest extends BaseTest
     public function testThatRequestValidationWorksWithMultipleValidationsAreAllValid()
     {
         // Arrange
-        $_POST['_method'] = 'POST';
+        $_SERVER['REQUEST_METHOD'] = 'POST';
         $_POST['one'] = 1;
         $_POST['two'] = 2;
         $controller = new IndexController();
@@ -82,7 +82,7 @@ class BackControllerTest extends BaseTest
     public function testThatRequestValidationWorksWithMultipleValidationsWhenNotValid()
     {
         // Arrange
-        $_POST['_method'] = 'POST';
+        $_SERVER['REQUEST_METHOD'] = 'POST';
         $_POST['one'] = 1;
         $_POST['two'] = 'not a number';
         $controller = new IndexController();
@@ -97,7 +97,7 @@ class BackControllerTest extends BaseTest
     public function testThatRequestValidationGeneratesCorrectErrorArray()
     {
         // Arrange
-        $_POST['_method'] = 'POST';
+        $_SERVER['REQUEST_METHOD'] = 'POST';
         $controller = new IndexController();
 
         // Act
