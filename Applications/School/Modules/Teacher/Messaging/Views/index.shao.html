@@ -19,6 +19,10 @@
 
         {{ Form::close() }}
 
+        <div>
+            @{{ userMessages | json }}
+        </div>
+
         <!--<div class="col-md-12 user-row" v-repeat="userMessage: userMessages">
             <img src="@{{ userMessage.profile_picture }}" width="50" height="auto" />
             <a href="javascript:;" v-on="click: showMessages(this)">@{{ userMessage.name }}</a>

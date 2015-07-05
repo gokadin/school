@@ -85,7 +85,7 @@ class ModelCollection implements IteratorAggregate
             switch ($operator)
             {
                 case '=':
-                    if ($model->$var === $value)
+                    if ($model->$var == $value)
                         $results->add($model);
                     break;
                 case '>':

@@ -32,17 +32,9 @@ class MessagingController extends BackController
             ];
 
             if ($out->to_type == 'Teacher')
-            {
-                $messagesWithTeachers[$out->to_id]['messages'] = $message;
-                $messagesWithTeachers[$out->to_id]['user_id'] = $out->to_id;
-                $messagesWithTeachers[$out->to_id]['user_type'] = 'Teacher';
-            }
+                $messagesWithTeachers[$out->to_id][] = $message;
             else if ($out->to_type == 'Student')
-            {
-                $messagesWithStudents[$out->to_id]['messages'] = $message;
-                $messagesWithStudents[$out->to_id]['user_id'] = $out->to_id;
-                $messagesWithStudents[$out->to_id]['user_type'] = 'Student';
-            }
+                $messagesWithStudents[$out->to_id][] = $message;
         }
 
         foreach ($messagesIn as $in)
@@ -55,58 +47,44 @@ class MessagingController extends BackController
             ];
 
             if ($in->from_type == 'Teacher')
-            {
-                $messagesWithTeachers[$in->from_id]['messages'] = $message;
-                $messagesWithTeachers[$in->from_id]['user_id'] = $in->from_id;
-                $messagesWithStudents[$in->from_id]['user_type'] = 'Teacher';
-            }
+                $messagesWithTeachers[$in->from_id][] = $message;
             else if ($in->from_type == 'Student')
-            {
-                $messagesWithStudents[$in->from_id]['messages'] = $message;
-                $messagesWithStudents[$in->from_id]['user_id'] = $in->from_id;
-                $messagesWithStudents[$in->from_id]['user_type'] = 'Student';
-            }
+                $messagesWithStudents[$in->from_id][] = $message;
         }
 
         $teachers = null;
         if (sizeof($messagesWithTeachers) > 0)
-        {
-            $teachers = Teacher::where('id', 'in', '('.implode(',', array_keys($messagesWithTeachers)).')')->get([
-                'id',
-                'first_name',
-                'last_name',
-                'email',
-                'profile_picture'
-            ]);
-        }
+            $teachers = Teacher::where('id', 'in', '('.implode(',', array_keys($messagesWithTeachers)).')')->get();
 
         $students = null;
         if (sizeof($messagesWithStudents) > 0)
-        {
-            $students = Student::where('id', 'in', '('.implode(',', array_keys($messagesWithStudents)).')')->get([
-                'id',
-                'first_name',
-                'last_name',
-                'email',
-                'profile_picture'
-            ]);
-        }
+            $students = Student::where('id', 'in', '('.implode(',', array_keys($messagesWithStudents)).')')->get();
 
         foreach ($messagesWithTeachers as $key => $value)
         {
-            $user = null;
-            if ($value['user_type'] == 'Teacher')
-                $user = $teachers->where('id', '=', $value['user_id'])->first();
-            else if ($value['user_type'] == 'Student')
-                $user = $students->where('id', '=', $value['user_id'])->first();
+            $user = $teachers->where('id', '=', $key)->first();
 
             $userMessages[] = [
-                'id' => $user->id,
-                'user_type' => $value['user_type'],
+                'id' => $key,
+                'user_type' => 'Teacher',
                 'name' => $user->name(),
                 'email' => $user->email,
                 'profile_picture' => $user->profile_picture,
-                'messages' => $value['messages']
+                'messages' => $value
+            ];
+        }
+
+        foreach ($messagesWithStudents as $key => $value)
+        {
+            $user = $students->where('id', '=', $key)->first();
+
+            $userMessages[] = [
+                'id' => $key,
+                'user_type' => 'Student',
+                'name' => $user->name(),
+                'email' => $user->email,
+                'profile_picture' => $user->profile_picture,
+                'messages' => $value
             ];
         }
 
