@@ -30,8 +30,6 @@
         <route url="/school/teacher/" method="GET" module="Teacher/Index" action="index" />
         <!-- TEACHER MESSAGING MODULE -->
         <route url="/school/teacher/messaging" method="GET" module="Teacher/Messaging" action="index" />
-        <route url="/school/teacher/messaging/test" method="POST" module="Teacher/Messaging" action="test" />
-        <route url="/school/teacher/api/messaging/users" method="GET" module="Teacher/Messaging" action="getUsers" />
         <route url="/school/teacher/messaging/ajax/store" method="POST" module="Teacher/Messaging" action="ajaxStore" />
         <!-- TEACHER ACTIVITY MODULE -->
         <route url="/school/teacher/activities" method="GET" module="Teacher/Activity" action="index" />

@@ -102,7 +102,7 @@ class Column
 
     public function isDefault()
     {
-        return $this->default != null;
+        return !is_null($this->default);
     }
 
     public function getDefault()

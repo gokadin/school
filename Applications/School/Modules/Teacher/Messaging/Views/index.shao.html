@@ -19,13 +19,10 @@
 
         {{ Form::close() }}
 
-        <div class="col-md-12 user-row" v-repeat="user: users">
-            <img src="@{{ user.profile_picture }}" width="50" height="auto" />
-            <a href="javascript:;" v-on="click: showMessages(this)">@{{ user.name }}</a>
-            <div v-show="user.isVisible">
-                hrerehrere
-            </div>
-        </div>
+        <!--<div class="col-md-12 user-row" v-repeat="userMessage: userMessages">
+            <img src="@{{ userMessage.profile_picture }}" width="50" height="auto" />
+            <a href="javascript:;" v-on="click: showMessages(this)">@{{ userMessage.name }}</a>
+        </div>-->
     </div>
 </div>
 
@@ -48,50 +45,24 @@
     new Vue({
         el: '#demo',
 
-        ready: function() {
-            this.fetchUsers();
-        },
-
         data: {
             newMessage: {
-                subject: '',
                 content: '',
-                student_ids: ''
-            }
+                to_id: '',
+                to_type: ''
+            },
+
+            userMessages: JSON.parse('{{ $userMessagesJson }}')
         },
 
         methods: {
-            fetchUsers: function() {
-                this.$http.get('/school/teacher/api/messaging/users', function(users) {
-                    this.$set('users', users);
-                });
-
-                //this.users.$add('isVisible', true);
-            },
-
-            showMessages: function(user) {alert(user.isVisible);
-                // look at vue transitions...
-                if (user.isVisible) {
-                    user.isVisible = false;
-                    return;
-                }
-
-                $.each(this.users, function(key, value) {
-                    value.isVisible = false;
-                });
-
-                user.isVisible = true;
-            },
-
             submitForm: function(e) {
                 e.preventDefault();
 
                 var message = this.newMessage;
-                message.recipient_id = $('#student-ids').select2('val');
-                message.recipient_type = 'Student';
-                message.subject = 'a subject';
-                $('#student-ids').select2('val', '');
-                this.newMessage = {subject: '', content: '', student_ids: ''};
+                message.to_id = $('#student-ids').select2('val')[0];
+                message.to_type = 'Student';
+                this.newMessage = {content: '', to_id: '', to_type: ''};
 
                 this.$http.post('/school/teacher/messaging/ajax/store', message);
             }

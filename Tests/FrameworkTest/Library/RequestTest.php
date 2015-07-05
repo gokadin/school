@@ -151,7 +151,7 @@ class RequestTest extends BaseTest
         $this->assertFalse(\Library\Facades\Request::dataExists('nonexistant'));
     }
 
-    public function testTHatDataExistsMethodWorksWithPostRequests()
+    public function testThatDataExistsMethodWorksWithPostRequests()
     {
         // Arrange
         $_SERVER['REQUEST_METHOD'] = 'POST';

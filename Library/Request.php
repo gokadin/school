@@ -2,41 +2,57 @@
 
 class Request
 {
+    private $data = null;
+
     public function instance()
     {
         return $this;
     }
 
-    public function __get($key)
+    private function getDataFromSource()
     {
+        if ($this->data != null)
+            return $this->data;
+
+        if ($this->isJson())
+            return $this->data = $this->getDecodedJson();
+
         switch ($this->method())
         {
             case 'GET':
-                return isset($_GET[$key]) ? $_GET[$key] : null;
+                return $this->data = $_GET;
             case 'POST':
             case 'PUT':
             case 'PATCH':
             case 'DELETE':
-                return isset($_POST[$key]) ? $_POST[$key] : null;
+                return $this->data = $_POST;
         }
 
         return null;
     }
 
+    public function isJson()
+    {
+        if (!strpos($this->header('CONTENT_TYPE'), '/json'))
+            return false;
+
+        return true;
+    }
+
+    private function getDecodedJson()
+    {
+        return json_decode(file_get_contents('php://input'), true);
+    }
+
+    public function __get($key)
+    {
+        $data = $this->getDataFromSource();
+        return isset($data[$key]) ? $data[$key] : null;
+    }
+
     public function all()
     {
-        switch ($this->method())
-        {
-            case 'GET':
-                return $this->excludeFrameworkVariablesFromAll($_GET);
-            case 'POST':
-            case 'PUT':
-            case 'PATCH':
-            case 'DELETE':
-                return $this->excludeFrameworkVariablesFromAll($_POST);
-        }
-
-        return null;
+        return $this->excludeFrameworkVariablesFromAll($this->getDataFromSource());
     }
 
     private function excludeFrameworkVariablesFromAll($arr)
@@ -63,24 +79,14 @@ class Request
 
     public function data($key)
     {
-        switch ($this->method())
-        {
-            case 'GET':
-                return isset($_GET[$key]) ? $_GET[$key] : null;
-            default:
-                return isset($_POST[$key]) ? $_POST[$key] : null;
-        }
+        $data = $this->getDataFromSource();
+        return isset($data[$key]) ? $data[$key] : null;
     }
 
     public function dataExists($key)
     {
-        switch ($this->method())
-        {
-            case 'GET':
-                return isset($_GET[$key]);
-            default:
-                return isset($_POST[$key]);
-        }
+        $data = $this->getDataFromSource();
+        return isset($data[$key]);
     }
 
     public function method()
@@ -130,12 +136,6 @@ class Request
 
     public function header($key)
     {
-        $headers = getallheaders();
-        return isset($headers[$key]) ? $headers[$key] : null;
-    }
-
-    public function headers()
-    {
-        return getallheaders();
+        return isset($_SERVER[$key]) ? $_SERVER[$key] : null;
     }
 }

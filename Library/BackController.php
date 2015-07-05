@@ -55,7 +55,7 @@ abstract class BackController
     protected function validateToken()
     {
         $token = \Library\Facades\Session::generateToken();
-        if (\Library\Facades\Request::data('_token') != $token && \Library\Facades\Request::header('CSRF-TOKEN') != $token)
+        if (\Library\Facades\Request::data('_token') != $token && \Library\Facades\Request::header('HTTP_CSRF_TOKEN') != $token)
             throw new RuntimeException('CSRF token mismatch.');
     }
 

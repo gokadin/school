@@ -98,8 +98,10 @@ class TableBuilder extends Tables
         if (!$column->isNullable())
             $str .= ' NOT NULL';
 
-        if ($column->getDefault() != null)
+        if (!is_null($column->getDefault()))
+        {
             $str .= ' DEFAULT '.$column->getDefault();
+        }
 
         $str .= ',  ';
         return $str;
