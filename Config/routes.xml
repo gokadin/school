@@ -31,6 +31,7 @@
         <!-- TEACHER MESSAGING MODULE -->
         <route url="/school/teacher/messaging" method="GET" module="Teacher/Messaging" action="index" />
         <route url="/school/teacher/messaging/ajax/store" method="POST" module="Teacher/Messaging" action="ajaxStore" />
+        <route url="/school/teacher/messaging/ajax/destroyConversation" method="DELETE" module="Teacher/Messaging" action="ajaxDestroyConversation" />
         <!-- TEACHER ACTIVITY MODULE -->
         <route url="/school/teacher/activities" method="GET" module="Teacher/Activity" action="index" />
         <route url="/school/teacher/activities/create" method="GET" module="Teacher/Activity" action="create" />

@@ -68,11 +68,9 @@ class Query extends QueryBuilder implements QueryContract
 
     public function delete()
     {
-        $str = $this->buildDelete()
-            .$this->buildWheres([[
-                'var' => $this->model->primaryKeyName(),
-                'operator' => '=',
-                'value' => $this->model->primaryKeyValue()]]);
+        $str = $this->buildDelete();
+
+        $str .= $this->buildWheres($this->wheres);
 
         return $this->dao->exec($str) > 0;
     }

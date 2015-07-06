@@ -158,7 +158,8 @@ class Model implements ModelQueryContract
         if ($this->isMissingPrimaryKey())
             throw new RuntimeException('Cannot delete model, it was not yet created.');
 
-        return $this->query->delete();
+        return $this->query->where($this->primaryKeyName(), '=', $this->primaryKeyValue())
+            ->delete();
     }
 
     private function insert()

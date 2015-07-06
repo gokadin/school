@@ -1,0 +1,54 @@
+#new-message-form .select2.select2-container
+{
+    width: 50% !important;
+}
+
+#new-message-form textarea
+{
+    width: 60%;
+}
+
+#new-message-form button
+{
+    width: 100px;
+    height: 40px;
+}
+
+/* USER LIST */
+
+#messaging-user-rows
+{
+    border-top: 1px solid black;
+    border-bottom: 1px solid black;
+    height: 80px;
+    background-color: #F6EBD5;
+    margin-bottom: 8px;
+}
+
+#messaging-user-rows-picture img
+{
+    margin-top: 10px;
+}
+
+#messaging-user-rows-name
+{
+    font-size: 24px;
+    margin-left: 10px;
+}
+
+#messaging-user-rows-delete
+{
+    float: right;
+    display: none;
+    margin-right: 5%;
+}
+
+#messaging-user-rows-delete img
+{
+    margin-top: 25px;
+}
+
+#messaging-user-rows div:hover span:last-child
+{
+    display: inline-block;
+}

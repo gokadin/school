@@ -88,6 +88,22 @@ class Form
         return $str;
     }
 
+    public function textarea($name, $default = null, array $options = null)
+    {
+        $str = '<textarea name="'.$name.'"';
+
+        $str .= $this->buildOptionsAndId($options, $name, true);
+
+        $str .= '>';
+
+        if ($default != null)
+            $str .= $default;
+
+        $str .= '</textarea>';
+
+        return $str;
+    }
+
     public function error($name, array $options = null)
     {
         $str = '<div';
