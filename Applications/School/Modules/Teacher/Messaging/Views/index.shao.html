@@ -23,7 +23,7 @@
 
     <hr>
 
-    <div id="messaging-user-rows" v-repeat="userMessage: userMessages">
+    <div id="messaging-user-rows" v-repeat="userMessage: userMessages" v-on="click: revealMessages(userMessage)">
         <div class="col-md-12">
             <span id="messaging-user-rows-picture">
                 <img src="@{{ userMessage.profile_picture }}" height="60" width="auto" />
@@ -36,6 +36,9 @@
                     <img src="/Web/images/icons/delete-conversation.png" width="30" height="30" />
                 </a>
             </span>
+        </div>
+        <div id="messaging-user-messages" class="col-md-12" v-if="userMessage.show_messages" v-transition="expand">
+            htllo
         </div>
     </div>
 
@@ -114,6 +117,19 @@
                 this.$http.delete('/school/teacher/messaging/ajax/destroyConversation', {user_id: user_id, user_type: user_type});
 
                 $('#confirm-delete-modal').modal('hide');
+            },
+
+            revealMessages: function(userMessage) {
+                if (userMessage.show_messages) {
+                    userMessage.show_messages = false;
+                    return;
+                }
+
+                this.userMessages.forEach(function(userMessage) {
+                    userMessage.show_messages = false;
+                });
+
+                userMessage.show_messages = true;
             },
 
             submitForm: function(e) {

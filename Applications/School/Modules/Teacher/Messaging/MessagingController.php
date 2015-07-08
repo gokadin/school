@@ -70,6 +70,7 @@ class MessagingController extends BackController
                 'name' => $user->name(),
                 'email' => $user->email,
                 'profile_picture' => $user->profile_picture,
+                'show_messages' => false,
                 'messages' => $value
             ];
         }
@@ -84,6 +85,7 @@ class MessagingController extends BackController
                 'name' => $user->name(),
                 'email' => $user->email,
                 'profile_picture' => $user->profile_picture,
+                'show_messages' => false,
                 'messages' => $value
             ];
         }

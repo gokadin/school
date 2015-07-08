@@ -23,6 +23,7 @@
     height: 80px;
     background-color: #F6EBD5;
     margin-bottom: 8px;
+    cursor: pointer;
 }
 
 #messaging-user-rows-picture img
@@ -51,4 +52,36 @@
 #messaging-user-rows div:hover span:last-child
 {
     display: inline-block;
+}
+
+#messaging-user-messages
+{
+
+    background-color: #4682b4;
+}
+
+.slide-down-transition
+{
+    transition: all .3s ease;
+    height: 100px;
+}
+
+.slide-down-enter, .slide-down-leave
+{
+    height: 0;
+    opacity: 0;
+}
+
+.expand-transition {
+    transition: all .3s ease;
+    -moz-transition: all .3s ease;
+    height: 200px;
+    padding: 10px;
+    background-color: #eee;
+    overflow: hidden;
+}
+.expand-enter, .expand-leave {
+    height: 0;
+    padding: 0 50px;
+    opacity: 0;
 }
