@@ -104,14 +104,16 @@
                 var user_id = $('#confirm-delete-modal-user-id').val();
                 var user_type = $('#confirm-delete-modal-user-type').val();
 
-                this.userMessages.forEach(function(userMessage, index) {
-                    if (value.id == user_id && value.user_type == user_type) {
-                        this.userMessages.$remove(index);
+                this.userMessages.forEach(function(userMessage, index, userMessages) {
+                    if (userMessage.id == user_id && userMessage.user_type == user_type) {
+                        userMessages.$remove(index);
                         return false;
                     }
                 });
 
                 this.$http.delete('/school/teacher/messaging/ajax/destroyConversation', {user_id: user_id, user_type: user_type});
+
+                $('#confirm-delete-modal').modal('hide');
             },
 
             submitForm: function(e) {
