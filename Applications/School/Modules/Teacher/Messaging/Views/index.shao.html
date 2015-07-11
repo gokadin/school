@@ -42,7 +42,7 @@
             </div>
 
             <div class="col-md-12 messaging-user-messages" v-if="userMessage.show_messages" v-transition="expand">
-
+                
             </div>
 
         </div>
@@ -101,6 +101,10 @@
             },
 
             userMessages: JSON.parse('{{ $userMessagesJson }}')
+        },
+
+        ready: function() {
+            this.userMessages[0].show_messages = true
         },
 
         methods: {
