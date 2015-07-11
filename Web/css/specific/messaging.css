@@ -16,7 +16,7 @@
 
 /* USER LIST */
 
-#messaging-user-rows
+.messaging-user-info
 {
     border-top: 1px solid black;
     border-bottom: 1px solid black;
@@ -24,6 +24,13 @@
     background-color: #F6EBD5;
     margin-bottom: 8px;
     cursor: pointer;
+    transition: border-bottom .3s;
+}
+
+.messaging-user-info.open
+{
+    border-bottom: 1px solid #ccc;
+    transition: border-bottom .3s;
 }
 
 #messaging-user-rows-picture img
@@ -54,34 +61,18 @@
     display: inline-block;
 }
 
-#messaging-user-messages
+.expand-transition
 {
-
-    background-color: #4682b4;
-}
-
-.slide-down-transition
-{
-    transition: all .3s ease;
-    height: 100px;
-}
-
-.slide-down-enter, .slide-down-leave
-{
-    height: 0;
-    opacity: 0;
-}
-
-.expand-transition {
-    transition: all .3s ease;
-    -moz-transition: all .3s ease;
-    height: 200px;
-    padding: 10px;
-    background-color: #eee;
+    transition: height .3s ease;
+    height: 500px;
     overflow: hidden;
 }
-.expand-enter, .expand-leave {
-    height: 0;
-    padding: 0 50px;
-    opacity: 0;
+.expand-enter, .expand-leave
+{
+    height: 0px;
+}
+
+#messaging-user-messages
+{
+    margin-top: 10px;
 }

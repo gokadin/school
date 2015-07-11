@@ -23,23 +23,30 @@
 
     <hr>
 
-    <div id="messaging-user-rows" v-repeat="userMessage: userMessages" v-on="click: revealMessages(userMessage)">
-        <div class="col-md-12">
-            <span id="messaging-user-rows-picture">
-                <img src="@{{ userMessage.profile_picture }}" height="60" width="auto" />
-            </span>
-            <span id="messaging-user-rows-name">
-                @{{ userMessage.name }}
-            </span>
-            <span id="messaging-user-rows-delete">
-                <a v-on="click: showDeleteConfirmationModal(userMessage)">
-                    <img src="/Web/images/icons/delete-conversation.png" width="30" height="30" />
-                </a>
-            </span>
+    <div id="messaging-user-rows">
+
+        <div class="messaging-user-row" v-repeat="userMessage: userMessages">
+
+            <div class="col-md-12 messaging-user-info" v-class="open: userMessage.show_messages" v-on="click: revealMessages(userMessage)">
+                <span id="messaging-user-rows-picture">
+                    <img src="@{{ userMessage.profile_picture }}" height="60" width="auto" />
+                </span>
+                <span id="messaging-user-rows-name">
+                    @{{ userMessage.name }}
+                </span>
+                <span id="messaging-user-rows-delete">
+                    <a v-on="click: showDeleteConfirmationModal(userMessage)">
+                        <img src="/Web/images/icons/delete-conversation.png" width="30" height="30" />
+                    </a>
+                </span>
+            </div>
+
+            <div class="col-md-12 messaging-user-messages" v-if="userMessage.show_messages" v-transition="expand">
+
+            </div>
+
         </div>
-        <div id="messaging-user-messages" class="col-md-12" v-if="userMessage.show_messages" v-transition="expand">
-            htllo
-        </div>
+
     </div>
 
     <div class="modal fade" id="confirm-delete-modal" tabindex="-1" role="dialog">
