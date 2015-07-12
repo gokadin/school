@@ -43,8 +43,15 @@
 
             <div class="col-md-12 messaging-user-messages" v-if="userMessage.show_messages" v-transition="expand">
                 <div class="col-md-12 messaging-user-messages-inner-container">
-                    <div class="col-md-12 messaging-user-message" v-class="incoming: !message.outgoing, outgoing: message.outgoing" v-repeat="message: userMessage.messages">
-                        @{{ message.content }}
+                    <div class="col-md-12" v-repeat="message: userMessage.messages">
+                        <div class="user-messaging-message-inner-container" v-class="is-outgoing: message.is_outgoing">
+                            <div class="messaging-user-title">
+                                <b>@{{ message.is_outgoing ? currentUserName : cuserMessage.name }}</b> - @{{ message.created_at | formatDateForMessage }}
+                            </div>
+                            <div class="messaging-user-message">
+                                @{{ message.content }}
+                            </div>
+                        </div>
                     </div>
                 </div>
 
@@ -105,6 +112,19 @@
         return $student;
     }
 
+    function scrollDownMessages() {
+        var scrollables = document.getElementsByClassName('messaging-user-messages-inner-container');
+        for (var i = 0; i < scrollables.length; i++) {
+            scrollables[i].scrollTop = scrollables[i].scrollHeight;
+        }
+    }
+
+    Vue.transition('expand', {
+        enter: function (el) {
+            scrollDownMessages();
+        }
+    })
+
     new Vue({
         el: '#messaging-index',
 
@@ -115,7 +135,9 @@
                 to_type: ''
             },
 
-            userMessages: JSON.parse('{{ $userMessagesJson }}')
+            userMessages: JSON.parse('{{ $userMessagesJson }}'),
+
+            currentUserName: '{{ $currentUser->name() }}'
         },
 
         ready: function() {
@@ -156,8 +178,6 @@
                 });
 
                 userMessage.show_messages = true;
-
-                $('.messaging-user-messages-inner-container').scrollTop(300);
             },
 
             submitForm: function(e) {
@@ -185,11 +205,18 @@
                 userMessage.messages.push({
                     content: message.content,
                     is_read: false,
-                    to_outgoing: true,
-                    created_at: new Date()
+                    is_outgoing: true,
+                    created_at: buildPhpDateTime(new Date())
                 });
 
+                userMessage.show_messages = false;
+                userMessage.show_messages = true;
+
                 this.$http.post('/school/teacher/messaging/ajax/store', message);
+
+                Vue.nextTick(function() {
+                    scrollDownMessages();
+                });
             }
         }
     });

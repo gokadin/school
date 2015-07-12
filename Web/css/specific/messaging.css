@@ -134,23 +134,30 @@
     border: 1px solid gray;
 }
 
+.messaging-user-title
+{
+    color: #67b168;
+    margin-left: 5px;
+    margin-top: 10px;
+}
+
 .messaging-user-message
 {
     border: 3px solid #ccc;
     border-radius: 4px;
     padding: 10px;
-    margin: 10px 0;
-    color: white;
-    width: 40%;
+    margin: 0 0 10px 0;
+    width: 100%;
     clear: both;
-}
-
-.messaging-user-message.incoming
-{
     float: left;
 }
 
-.messaging-user-message.outgoing
+.user-messaging-message-inner-container
+{
+    width: 40%;
+}
+
+.user-messaging-message-inner-container.is-outgoing
 {
     float: right;
 }
