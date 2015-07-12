@@ -42,7 +42,22 @@
             </div>
 
             <div class="col-md-12 messaging-user-messages" v-if="userMessage.show_messages" v-transition="expand">
-                
+                <div class="col-md-12 messaging-user-messages-inner-container">
+                    <div class="col-md-12 messaging-user-message" v-class="incoming: !message.outgoing, outgoing: message.outgoing" v-repeat="message: userMessage.messages">
+                        @{{ message.content }}
+                    </div>
+                </div>
+
+                <div class="col-md-12 messaging-user-new-message">
+                    <hr>
+
+                    {{ Form::open('', 'POST', ['v-on' => 'submit: submitFormWithUser($event, userMessage)'], false) }}
+
+                    {{ Form::text('content', null, ['v-model' => 'userMessage.new_message_content', 'class' => 'new-message-input']) }}
+                    {{ Form::button('Send', ['type' => 'submit', 'class' => 'new-message-button']) }}
+
+                    {{ Form::close() }}
+                </div>
             </div>
 
         </div>
@@ -104,7 +119,7 @@
         },
 
         ready: function() {
-            this.userMessages[0].show_messages = true
+            this.userMessages[0].show_messages = true;
         },
 
         methods: {
@@ -141,6 +156,8 @@
                 });
 
                 userMessage.show_messages = true;
+
+                $('.messaging-user-messages-inner-container').scrollTop(300);
             },
 
             submitForm: function(e) {
@@ -150,6 +167,27 @@
                 message.to_id = $('#student-ids').select2('val')[0];
                 message.to_type = 'Student';
                 this.newMessage = {content: '', to_id: '', to_type: ''};
+
+                this.$http.post('/school/teacher/messaging/ajax/store', message);
+            },
+
+            submitFormWithUser: function(e, userMessage) {
+                e.preventDefault();
+
+                var message = {
+                    content: userMessage.new_message_content,
+                    to_id: userMessage.id,
+                    to_type: userMessage.user_type
+                };
+
+                userMessage.new_message_content = '';
+
+                userMessage.messages.push({
+                    content: message.content,
+                    is_read: false,
+                    to_outgoing: true,
+                    created_at: new Date()
+                });
 
                 this.$http.post('/school/teacher/messaging/ajax/store', message);
             }

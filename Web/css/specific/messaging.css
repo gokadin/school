@@ -21,7 +21,8 @@
     border-top: 1px solid black;
     border-bottom: 1px solid black;
     height: 80px;
-    background-color: #F6EBD5;
+    background-color: #67b168;
+    color: white;
     margin-bottom: 8px;
     cursor: pointer;
     transition: border-bottom .3s;
@@ -83,7 +84,7 @@
 .messaging-user-messages:after
 {
     content:'';
-    width: 30px;
+    width: 50px;
     height: 1px;
     background: #ccc;
     position: absolute;
@@ -94,10 +95,62 @@
 .messaging-user-messages:before
 {
     content: '';
-    width: 30px;
+    width: 50px;
     height: 1px;
     background: #ccc;
     position: absolute;
     bottom: 0;
     right: 0;
+}
+
+.messaging-user-messages-inner-container
+{
+    height: 400px;
+    overflow-y: auto;
+}
+
+.new-message-button
+{
+    height: 45px;
+    width: 7%;
+    float: right;
+    background-color: #67b168;
+    border: 1px solid #ccc;
+    color: white;
+    font-size: 20px;
+}
+
+.new-message-input
+{
+    height: 45px;
+    width: 92%;
+    font-size: 18px;
+    padding: 0 10px;
+}
+
+.new-message-input:hover,
+.new-message-input:focus
+{
+    border: 1px solid gray;
+}
+
+.messaging-user-message
+{
+    border: 3px solid #ccc;
+    border-radius: 4px;
+    padding: 10px;
+    margin: 10px 0;
+    color: white;
+    width: 40%;
+    clear: both;
+}
+
+.messaging-user-message.incoming
+{
+    float: left;
+}
+
+.messaging-user-message.outgoing
+{
+    float: right;
 }
