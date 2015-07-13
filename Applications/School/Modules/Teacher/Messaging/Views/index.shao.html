@@ -120,7 +120,7 @@
     }
 
     Vue.transition('expand', {
-        enter: function (el) {
+        enter: function () {
             scrollDownMessages();
         }
     })
@@ -193,6 +193,10 @@
 
             submitFormWithUser: function(e, userMessage) {
                 e.preventDefault();
+
+                if (userMessage.new_message_content == '') {
+                    return;
+                }
 
                 var message = {
                     content: userMessage.new_message_content,

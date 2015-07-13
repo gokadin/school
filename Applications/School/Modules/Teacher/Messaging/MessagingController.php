@@ -86,7 +86,7 @@ class MessagingController extends BackController
                 'email' => $user->email,
                 'profile_picture' => $user->profile_picture,
                 'show_messages' => false,
-                'new_message_content',
+                'new_message_content' => '',
                 'messages' => $value
             ];
         }
