@@ -4,16 +4,23 @@ namespace Library\Routing;
 
 use Library\Facades\Response;
 use Library\Request;
+use SplStack;
 
 class Router
 {
     protected $routes;
     protected $currentRoute;
+    protected $namespaces;
+    protected $prefixes;
+    protected $middlewares;
 
     public function __construct()
     {
         $this->routes = new RouteCollection();
         $this->currentRoute = null;
+        $this->namespaces= array();
+        $this->prefixes = array();
+        $this->middlewares = array();
     }
 
     public function get($uri, $action)
@@ -46,9 +53,90 @@ class Router
         $this->addRoute($methods, $uri, $action);
     }
 
+    public function group($params, $action)
+    {
+        if (isset($params['namespace']))
+        {
+            array_push($this->namespaces, $params['namespace']);
+        }
+
+        if (isset($params['prefix']))
+        {
+            array_push($this->prefixes, $params['prefix']);
+        }
+
+        if (isset($params['middleware']))
+        {
+            array_push($this->middlewares, $params['middleware']);
+        }
+
+        $action();
+
+        if (isset($params['namespace']))
+        {
+            array_pop($this->namespaces);
+        }
+
+        if (isset($params['prefix']))
+        {
+            array_pop($this->prefixes);
+        }
+
+        if (isset($params['middleware']))
+        {
+            array_pop($this->middlewares);
+        }
+    }
+
     protected function addRoute($methods, $uri, $action)
     {
-        $this->routes->add(new Route($methods, $uri, $action));
+        if (sizeof($this->namespaces) > 0)
+        {
+            $namespaceString = '';
+            for ($i = 0; $i < sizeof($this->namespaces); $i++)
+            {
+                $namespaceString .= $this->namespaces[$i].'\\';
+            }
+
+            if (is_string($action))
+            {
+                $action = $namespaceString.$action;
+            }
+            else if (is_array($action) && isset($action['uses']))
+            {
+                $action['uses'] = $namespaceString.$action['uses'];
+            }
+        }
+
+        if (sizeof($this->prefixes) > 0)
+        {
+            $prefixString = '';
+            for ($i = 0; $i < sizeof($this->prefixes); $i++)
+            {
+                $prefixString .= $this->prefixes[$i];
+            }
+
+            $uri = $prefixString.$uri;
+        }
+
+        $middlewares = array();
+        if (sizeof($this->middlewares > 0))
+        {
+            foreach ($this->middlewares as $middleware)
+            {
+                if (!is_array($middleware))
+                {
+                    $middlewares[] = $middleware;
+                    continue;
+                }
+
+                foreach ($middleware as $m)
+                {
+                    $middlewares[] = $m;
+                }
+            }
+        }
+        $this->routes->add(new Route($methods, $uri, $action, $middlewares));
     }
 
     public function has($name)
@@ -60,7 +148,7 @@ class Router
     {
         $this->currentRoute = $this->findRoute($request);
 
-        return $this->executeRouteAction();
+        return $this->executeRouteAction($request);
     }
 
     protected function findRoute(Request $request)
@@ -75,44 +163,73 @@ class Router
         }
     }
 
-    protected function executeRouteAction()
+    protected function executeRouteAction(Request $request)
     {
         $action = $this->currentRoute->action();
 
+        $actionClosure = function() { return ''; };
+
         if (is_string($action))
         {
-            return $this->callControllerFromString($action);
+            $actionClosure = $this->getControllerClosure($action);
         }
 
         if (is_array($action))
         {
-            return $this->executeArrayAction($action);
+            $actionClosure = $this->getArrayClosure($action);
         }
 
         if (is_callable($action))
         {
-            return $action();
+            $actionClosure = $action;
         }
+
+        return $this->executeActionClosure($actionClosure, $request);
     }
 
-    protected function executeArrayAction($action)
+    protected function executeActionClosure($closure, Request $request)
+    {
+        if (sizeof($this->currentRoute->middlewares()) == 0)
+        {
+            return $closure();
+        }
+
+        $closure = $this->getActionClosureWithMiddlewares($closure, $request, sizeof($this->currentRoute->middlewares()) - 1);
+
+        return $closure();
+    }
+
+    protected function getActionClosureWithMiddlewares($closure, Request $request, $index)
+    {
+        $middlewareName = '\\App\\Http\\Middleware\\'.$this->currentRoute->middlewares()[$index];
+        $middleware = new $middlewareName();
+
+        if ($index == 0)
+        {
+            return function() use ($middleware, $closure, $request) {
+                return $middleware->handle($request, $closure);
+            };
+        }
+
+        return $this->getActionClosureWithMiddlewares(function() use ($middleware, $closure, $request) {
+            return $middleware->handle($request, $closure);
+        }, $request, $index - 1);
+    }
+
+    protected function getArrayClosure($action)
     {
         if (isset($action['uses']))
         {
-            return $this->callControllerFromString($action['uses']);
+            return $this->getControllerClosure($action['uses']);
         }
     }
 
-    protected function callControllerFromString($action)
+    protected function getControllerClosure($action)
     {
         list($controllerName, $methodName) = explode('@', $action);
-        $controllerName = '\\app\\Http\\Controllers\\'.$controllerName.'.php';
 
-        return $this->executeController($controllerName, $methodName);
-    }
-
-    protected function executeController($controllerName, $methodName)
-    {
-        return call_user_func_array($controllerName, $methodName);
+        return function() use ($controllerName, $methodName) {
+            return call_user_func_array([$controllerName, $methodName], []);
+        };
     }
 }

@@ -1,11 +1,13 @@
 <?php
 
-namespace app\Http\Controllers;
+namespace App\Http\Controllers;
 
-class TestController
+class TestController extends Controller
 {
     public function index()
     {
-        return 'from controller';
+        $x = 'what';
+
+        return $x;
     }
 }

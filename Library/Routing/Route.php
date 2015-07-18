@@ -9,12 +9,14 @@ class Route
     protected $methods;
     protected $uri;
     protected $action;
+    protected $middlewares;
 
-    public function __construct($methods, $uri, $action)
+    public function __construct($methods, $uri, $action, $middlewares)
     {
         $this->methods = $methods;
         $this->uri = $uri;
         $this->action = $action;
+        $this->middlewares = $middlewares;
     }
 
     public function methods()
@@ -30,6 +32,11 @@ class Route
     public function action()
     {
         return $this->action;
+    }
+
+    public function middlewares()
+    {
+        return $this->middlewares;
     }
 
     public function matches(Request $request)

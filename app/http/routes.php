@@ -1,5 +1,7 @@
 <?php
 
-use Library\Facades\Router;
+use Library\Facades\Router as Route;
 
-Router::get('/account/login', 'TestController@index');
+Route::group(['namespace' => 'Some', 'prefix' => '/account/', 'middleware' => 'VerifyCsrfToken'], function() {
+    Route::get('login', 'TestController@index');
+});
