@@ -85,9 +85,11 @@ class Application
 //        $this->method = $matchedRoute->method();
 //        $this->action = $matchedRoute->action();
 
-        require __DIR__.'/../app/http/routes.php';
+        require __DIR__ . '/../app/Http/routes.php';
 
         $response = Router::dispatch(Request::instance());
+
+        echo 'HERE'.$response;
     }
 
     public function getController()
@@ -110,13 +112,13 @@ class Application
     public function run()
     {
         $this->processRoute();
-        $controller = $this->getController();
+        //$controller = $this->getController();
         
         require 'Web/lang/common.php';
-        $controller->setLang($lang);
+        //$controller->setLang($lang);
         \Library\Facades\Page::add('lang', $lang);
         
-        $controller->execute();
-        Response::send();
+        //$controller->execute();
+        //Response::send();
     }
 }

@@ -81,7 +81,7 @@ class Router
 
         if (is_string($action))
         {
-            return $action;
+            return $this->callControllerFromString($action);
         }
 
         if (is_array($action))
@@ -99,9 +99,16 @@ class Router
     {
         if (isset($action['uses']))
         {
-            list($controllerName, $methodName) = explode($action['uses']);
-            return $this->executeController($controllerName, $methodName);
+            return $this->callControllerFromString($action['uses']);
         }
+    }
+
+    protected function callControllerFromString($action)
+    {
+        list($controllerName, $methodName) = explode('@', $action);
+        $controllerName = '\\app\\Http\\Controllers\\'.$controllerName.'.php';
+
+        return $this->executeController($controllerName, $methodName);
     }
 
     protected function executeController($controllerName, $methodName)

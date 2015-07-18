@@ -1,5 +1,5 @@
 <?php
 
-Router::get('/account/login', function() {
-    return 'hello world';
-});
+use Library\Facades\Router;
+
+Router::get('/account/login', 'TestController@index');
