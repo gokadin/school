@@ -27,7 +27,7 @@ class RouteCollection implements \Countable
         }
 
         $action = $route->action();
-        if (isset($action['as']))
+        if (is_array($action) && isset($action['as']))
         {
             $this->nameList[$action['as']] = $route;
         }
