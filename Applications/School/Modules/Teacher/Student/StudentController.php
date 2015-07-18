@@ -1,7 +1,6 @@
 <?php namespace Applications\School\Modules\Teacher\Student;
 
 use Library\BackController;
-use Library\Config;
 use Library\Facades\DB;
 use Library\Facades\Page;
 use Library\Facades\Session;

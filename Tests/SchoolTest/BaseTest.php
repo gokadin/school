@@ -1,5 +1,6 @@
 <?php namespace Tests\SchoolTest;
 
+use Library\Config;
 use PHPUnit_Framework_TestCase;
 use Applications\School\SchoolApplication;
 
@@ -9,7 +10,7 @@ abstract class BaseTest extends PHPUnit_Framework_TestCase
 {
     public function setUp()
     {
-        \Library\Config::temporary('testing', 'true');
-        new SchoolApplication('School');
+        Config::temporary('testing', 'true');
+        $app = new SchoolApplication('School');
     }
 }

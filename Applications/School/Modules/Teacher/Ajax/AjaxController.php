@@ -3,9 +3,7 @@
 error_reporting(0);
 
 use Library\BackController;
-use Library\Facades\DB;
 use Library\Facades\Request;
-use Library\Facades\Validator;
 use Models\TeacherEvent;
 use Carbon\Carbon;
 

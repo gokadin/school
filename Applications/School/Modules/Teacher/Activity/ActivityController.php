@@ -21,7 +21,6 @@ class ActivityController extends BackController
 
     public function store()
     {
-        //$this->validateToken();
         $this->validateRequest([
             'name' => 'required',
             'defaultRate' => [

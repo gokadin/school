@@ -2,7 +2,7 @@
 
 use Library\Request;
 use Library\Response;
-use Library\Router;
+use Library\Routing\Router;
 use Library\Database\Database;
 use Library\Html;
 use Library\Form;

@@ -68,22 +68,26 @@ class Application
     
     public function processRoute()
     {
-        $matchedRoute = null;
-        try
-        {
-            $matchedRoute = Router::getRoute($this->name, Request::requestURI(), Request::method());
-        }
-        catch (\RuntimeException $e)
-        {
-            if ($e->getCode() == \Library\Router::NO_ROUTE)
-                Response::redirect404();
-        }
-        
-        $_GET = array_merge($_GET, $matchedRoute->vars());
-        
-        $this->module = str_replace('\\', '/', $matchedRoute->module());
-        $this->method = $matchedRoute->method();
-        $this->action = $matchedRoute->action();
+//        $matchedRoute = null;
+//        try
+//        {
+//            $matchedRoute = Router::getRoute($this->name, Request::requestURI(), Request::method());
+//        }
+//        catch (\RuntimeException $e)
+//        {
+//            if ($e->getCode() == \Library\Router::NO_ROUTE)
+//                Response::redirect404();
+//        }
+//
+//        $_GET = array_merge($_GET, $matchedRoute->vars());
+//
+//        $this->module = str_replace('\\', '/', $matchedRoute->module());
+//        $this->method = $matchedRoute->method();
+//        $this->action = $matchedRoute->action();
+
+        require __DIR__.'/../app/http/routes.php';
+
+        $response = Router::dispatch(Request::instance());
     }
 
     public function getController()
