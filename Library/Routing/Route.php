@@ -10,6 +10,7 @@ class Route
     protected $uri;
     protected $action;
     protected $middlewares;
+    protected $parameters;
 
     public function __construct($methods, $uri, $action, $middlewares)
     {
@@ -17,6 +18,7 @@ class Route
         $this->uri = $uri;
         $this->action = $action;
         $this->middlewares = $middlewares;
+        $this->parameters = array();
     }
 
     public function methods()
@@ -39,8 +41,44 @@ class Route
         return $this->middlewares;
     }
 
+    public function parameters()
+    {
+        return $this->parameters;
+    }
+
     public function matches(Request $request)
     {
-        return $request->requestURI() == $this->uri && in_array($request->method(), $this->methods);
+        if (!in_array($request->method(), $this->methods))
+        {
+            return false;
+        }
+
+        $pattern = '({[a-zA-Z0-9]+})';
+        $substituteUrl = preg_replace($pattern, '(.+)', $this->uri);
+
+        if (preg_match('`^'.strtolower($substituteUrl).'$`', strtolower($request->requestURI()), $valueMatches) != 1)
+        {
+            return false;
+        }
+
+        $pattern = '/{([a-zA-Z0-9]+)}/';
+        preg_match_all($pattern, $this->uri, $varMatches);
+
+        for ($i = 0; $i < sizeof($valueMatches) - 1; $i++)
+        {
+            if (isset($varMatches[$i]))
+            {
+                $this->parameters[$varMatches[1][$i]] = $valueMatches[$i + 1];
+            }
+        }
+
+        $this->populateGetArray();
+
+        return true;
+    }
+
+    private function populateGetArray()
+    {
+        $_GET = array_merge($_GET, $this->parameters);
     }
 }

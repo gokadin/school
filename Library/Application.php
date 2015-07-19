@@ -74,7 +74,7 @@ class Application
 
         $response = Router::dispatch(Request::instance());
 
-        echo 'HERE -> '.$response;
+        echo $response;
     }
 
     public function getController()

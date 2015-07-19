@@ -2,12 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use Library\Facades\Request;
+
 class TestController extends Controller
 {
     public function index()
     {
-        $x = 'what';
 
-        return $x;
+
+        return Request::data('id');
     }
 }

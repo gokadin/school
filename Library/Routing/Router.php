@@ -181,7 +181,9 @@ class Router
 
         if (is_callable($action))
         {
-            $actionClosure = $action;
+            $actionClosure = function() use ($action) {
+                return call_user_func_array($action, $this->currentRoute->parameters());
+            };
         }
 
         return $this->executeActionClosure($actionClosure, $request);
@@ -229,7 +231,7 @@ class Router
         list($controllerName, $methodName) = explode('@', $action);
 
         return function() use ($controllerName, $methodName) {
-            return call_user_func_array([$controllerName, $methodName], []);
+            return call_user_func_array([$controllerName, $methodName], $this->currentRoute->parameters());
         };
     }
 }
