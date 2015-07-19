@@ -1,4 +1,8 @@
-{{{ use \Library\Facades\Form; }}}
+@layout('../layout')
+
+@section('content')
+
+@inject('\Library\Facades\Form')
 
 <div class="login">
 
@@ -55,3 +59,5 @@ $('#login-form').validate({
     ]
 });
 </script>
+
+@stop()

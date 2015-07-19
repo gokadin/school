@@ -16,10 +16,7 @@ use Models\Subscription;
 
 class AccountController extends BackController
 {
-    public function index()
-    {
 
-    }
 
     public function login()
     {
@@ -53,11 +50,7 @@ class AccountController extends BackController
         Response::back();
     }
 
-    public function logout()
-    {
-        Session::logout();
-        Response::toAction('Frontend#Index#index');
-    }
+
 
     public function resetPassword()
     {

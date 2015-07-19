@@ -2,7 +2,7 @@
 
 namespace Library\Routing;
 
-use Library\Facades\Response;
+use Library\Facades\Redirect;
 use Library\Http\Request;
 
 class Router
@@ -245,7 +245,7 @@ class Router
         }
         catch (RouteNotFoundException $e)
         {
-            Response::redirect404();
+            Redirect::redirect404();
         }
     }
 

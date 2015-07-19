@@ -8,26 +8,26 @@ class IndexController extends Controller
 {
     public function index()
     {
-        return view('frontend.index');
+        return view('frontend.index.index');
     }
 
     public function features()
     {
-        return view('frontend.features');
+        return view('frontend.index.features');
     }
 
     public function testimonials()
     {
-        return view('frontend.testimonials');
+        return view('frontend.index.testimonials');
     }
 
     public function faq()
     {
-        return view('frontend.faq');
+        return view('frontend.index.faq');
     }
 
     public function about()
     {
-        return view('frontend.about');
+        return view('frontend.index.about');
     }
 }
