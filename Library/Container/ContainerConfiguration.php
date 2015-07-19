@@ -1,5 +1,6 @@
 <?php namespace Library\Container;
 
+use Library\Http\Redirect;
 use Library\Request;
 use Library\Response;
 use Library\Routing\Router;
@@ -30,5 +31,6 @@ class ContainerConfiguration
         $this->container->instance('page', new Page());
         $this->container->instance('session', new Session());
         $this->container->instance('validator', new Validator());
+        $this->container->instance('redirect', new Redirect());
     }
 }

@@ -2,5 +2,8 @@
 
 require __DIR__.'/bootstrap/autoload.php';
 
-$app = new Applications\Frontend\FrontendApplication('Frontend');
-$app->run();
+$app = new Library\Application();
+
+$app->processRoute();
+
+$app->sendView();

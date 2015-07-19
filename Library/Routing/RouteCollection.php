@@ -45,7 +45,7 @@ class RouteCollection implements \Countable
             }
         }
 
-        throw new RouteNotFoundException('Route for uri '.$request->requestURI().' and method '.$method.' not found.');
+        throw new RouteNotFoundException('Route for uri '.$request->uri().' and method '.$method.' not found.');
     }
 
     public function hasNamedRoute($name)

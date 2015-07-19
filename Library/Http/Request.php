@@ -1,15 +1,13 @@
-<?php namespace Library;
+<?php
+
+namespace Library\Http;
 
 class Request
 {
-    private $data = null;
+    protected $data = null;
+    protected $method = null;
 
-    public function instance()
-    {
-        return $this;
-    }
-
-    private function getDataFromSource()
+    protected function getDataFromSource()
     {
         if ($this->data != null)
             return $this->data;
@@ -44,7 +42,7 @@ class Request
         return true;
     }
 
-    private function getDecodedJson()
+    protected function getDecodedJson()
     {
         return json_decode(file_get_contents('php://input'), true);
     }
@@ -60,7 +58,7 @@ class Request
         return $this->excludeFrameworkVariablesFromAll($this->getDataFromSource());
     }
 
-    private function excludeFrameworkVariablesFromAll($arr)
+    protected function excludeFrameworkVariablesFromAll($arr)
     {
         $results = array();
         foreach ($arr as $key => $value)
@@ -96,26 +94,20 @@ class Request
 
     public function method()
     {
+        if ($this->method != null)
+        {
+            return $this->method;
+        }
+
         if ($_SERVER['REQUEST_METHOD'] == 'GET')
-            return 'GET';
+            return $this->method = 'GET';
 
         if (isset($_POST['_method']))
         {
-            $method = $_POST['_method'];
-            switch (strtoupper($method))
-            {
-                case 'PUT':
-                    return 'PUT';
-                case 'PATCH':
-                    return 'PATCH';
-                case 'DELETE':
-                    return 'DELETE';
-                default:
-                    return 'POST';
-            }
+            return $this->method = strtoupper($_POST['_method']);
         }
 
-        return $_SERVER['REQUEST_METHOD'];
+        return $this->method = $_SERVER['REQUEST_METHOD'];
     }
     
     public function fileData($key)
@@ -128,7 +120,7 @@ class Request
         return isset($_FILES[$key]);
     }
 
-    public function requestURI()
+    public function uri()
     {
         $requestUri = $_SERVER['REQUEST_URI'];
 

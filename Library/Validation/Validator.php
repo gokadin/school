@@ -1,4 +1,10 @@
-<?php namespace Library;
+<?php
+
+namespace Library\Validation;
+
+use Library\Config;
+use Library\Facades\Request;
+use Library\Facades\Session;
 
 class Validator
 {
@@ -64,7 +70,7 @@ class Validator
         }
 
         if ($withErrors && sizeof($errors) > 0)
-            \Library\Facades\Session::setErrors($errors);
+            Session::setErrors($errors);
 
         return $isValid;
     }
@@ -120,7 +126,7 @@ class Validator
         }
     }
 
-    /**
+    /*
      * Example: '{field} is required'
      * Example: '{field} should be bigger than {0}'
      * Example: '{field} should be between {0} and {1}'
@@ -193,7 +199,7 @@ class Validator
     public function unique($value, $modelName, $columnName)
     {
         $model = '\\Models\\'.$modelName;
-        if (\Library\Config::get('frameworkTesting') == 'true')
+        if (Config::get('frameworkTesting') == 'true')
             $model = '\\Tests\\FrameworkTest\\Models\\'.$modelName;
 
         return !$model::exists($columnName, $value);
@@ -201,6 +207,6 @@ class Validator
 
     public function equalsField($value, $fieldName)
     {
-        return $value == \Library\Facades\Request::data($fieldName);
+        return $value == Request::data($fieldName);
     }
 }

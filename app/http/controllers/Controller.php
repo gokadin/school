@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use Library\BackController;
+use Library\Controller\BackController;
 
-class Controller extends BackController
+abstract class Controller extends BackController
 {
-
+    use ValidatesRequests;
 }
