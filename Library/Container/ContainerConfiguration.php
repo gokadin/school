@@ -1,5 +1,7 @@
 <?php namespace Library\Container;
 
+use Library\Config;
+use Library\Database\Factory;
 use Library\Http\Redirect;
 use Library\Http\Request;
 use Library\Http\Response;
@@ -36,5 +38,15 @@ class ContainerConfiguration
         $this->container->instance('redirect', new Redirect());
         $this->container->instance('shao', new Shao());
         $this->container->instance('viewFactory', new ViewFactory());
+
+        if (Config::get('env') == 'debug')
+        {
+            $this->configureDebugContainer();
+        }
+    }
+
+    protected function configureDebugContainer()
+    {
+        $this->container->instance('modelFactory', new Factory());
     }
 }
