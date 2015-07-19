@@ -3,7 +3,6 @@
 use Library\Container\Container;
 use Library\Container\ContainerConfiguration;
 use Library\Facades\Request;
-use Library\Facades\Response;
 use Library\Facades\Router;
 use Library\Facades\Facade;
 

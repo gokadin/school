@@ -33,6 +33,11 @@ abstract class Facade
         static::$resolvedInstance = [];
     }
 
+    public static function instance()
+    {
+        return static::resolveFacadeInstance(static::getFacadeAccessor());
+    }
+
     public static function __callStatic($method, $args)
     {
         $instance = static::resolveFacadeInstance(static::getFacadeAccessor());

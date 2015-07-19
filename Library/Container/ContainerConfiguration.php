@@ -1,15 +1,15 @@
 <?php namespace Library\Container;
 
 use Library\Http\Redirect;
-use Library\Request;
-use Library\Response;
+use Library\Http\Request;
+use Library\Http\Response;
 use Library\Routing\Router;
 use Library\Database\Database;
 use Library\Html;
 use Library\Form;
 use Library\Page;
 use Library\Session;
-use Library\Validator;
+use Library\Validation\Validator;
 
 class ContainerConfiguration
 {

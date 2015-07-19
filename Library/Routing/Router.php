@@ -3,8 +3,7 @@
 namespace Library\Routing;
 
 use Library\Facades\Response;
-use Library\Request;
-use SplStack;
+use Library\Http\Request;
 
 class Router
 {
@@ -231,7 +230,8 @@ class Router
         list($controllerName, $methodName) = explode('@', $action);
 
         return function() use ($controllerName, $methodName) {
-            return call_user_func_array([$controllerName, $methodName], $this->currentRoute->parameters());
+            $controller = new $controllerName();
+            return call_user_func_array([$controller, $methodName], $this->currentRoute->parameters());
         };
     }
 }

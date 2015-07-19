@@ -4,7 +4,7 @@ namespace App\Http\Middleware;
 
 use Closure;
 use Library\Facades\Session;
-use Library\Request;
+use Library\Http\Request;
 
 class VerifyCsrfToken
 {

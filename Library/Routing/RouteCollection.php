@@ -2,7 +2,7 @@
 
 namespace Library\Routing;
 
-use Library\Request;
+use Library\Http\Request;
 
 class RouteCollection implements \Countable
 {
