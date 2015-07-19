@@ -2,7 +2,8 @@
 
 namespace Library\Http;
 
-use Library\Shao\Shao;
+use Library\Facades\Shao;
+use Library\Facades\ViewFactory as Factory;
 use Symfony\Component\Yaml\Exception\RuntimeException;
 
 class View
@@ -64,33 +65,37 @@ class View
 
         ob_start();
 
-//        if (file_exists($this->layoutFile))
-//            require $this->layoutFile;
-//        else
-            echo $content;
+        echo $content;
+
+        if (Factory::hasLayout())
+        {
+            require Factory::getLayoutFile();
+        }
 
         return ob_get_clean();
     }
 
     protected function getContentFile($view)
     {
-        if (file_exists($view.'.shao.php'))
+        $validExtensions = ['.php', '.html'];
+        $validShaoExtensions = ['.shao.php', '.shao.html'];
+
+        foreach ($validExtensions as $validExtension)
         {
-            return Shao::parseFile($view.'.shao.php');
-        }
-        else if (file_exists($view.'.shao.html'))
-        {
-            return Shao::parseFile($view.'.shao.html');
-        }
-        else if (file_exists($view.'.php'))
-        {
-            return $view.'.php';
-        }
-        else if (file_exists($view.'.html'))
-        {
-            return $view.'.html';
+            if (file_exists($view.$validExtension))
+            {
+                return $view.$validExtension;
+            }
         }
 
-        throw new RuntimeException('Specified view '.$view.' does not exist.');
+        foreach ($validShaoExtensions as $validShaoExtension)
+        {
+            if (file_exists($view.$validShaoExtension))
+            {
+                return Shao::parseFile($view.$validShaoExtension);
+            }
+        }
+
+        throw new RuntimeException('File '.$view.' does not exist.');
     }
 }

@@ -4,12 +4,14 @@ use Library\Http\Redirect;
 use Library\Http\Request;
 use Library\Http\Response;
 use Library\Http\View;
+use Library\Http\ViewFactory;
 use Library\Routing\Router;
 use Library\Database\Database;
 use Library\Html;
 use Library\Form;
 use Library\Page;
 use Library\Session;
+use Library\Shao\Shao;
 use Library\Validation\Validator;
 
 class ContainerConfiguration
@@ -33,5 +35,7 @@ class ContainerConfiguration
         $this->container->instance('session', new Session());
         $this->container->instance('validator', new Validator());
         $this->container->instance('redirect', new Redirect());
+        $this->container->instance('shao', new Shao());
+        $this->container->instance('viewFactory', new ViewFactory());
     }
 }

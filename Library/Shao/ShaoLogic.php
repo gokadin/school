@@ -2,7 +2,7 @@
 
 class ShaoLogic
 {
-    public static function getValidLogicNames()
+    public function getValidLogicNames()
     {
         return array(
             'if',
@@ -18,7 +18,7 @@ class ShaoLogic
         );
     }
 
-    public static function convertToFunctionName($logicName)
+    public function convertToFunctionName($logicName)
     {
         if (!in_array($logicName, self::getValidLogicNames()))
             return false;
@@ -26,57 +26,57 @@ class ShaoLogic
         return 'logic'.ucfirst(strtolower($logicName));
     }
 
-    public static function logicIf($string)
+    public function logicIf($string)
     {
         return '<?php if ('.$string.') { ?>';
     }
 
-    public static function logicEndif()
+    public function logicEndif()
     {
         return self::closingBracket();
     }
 
-    public static function logicElseif($string)
+    public function logicElseif($string)
     {
         return '<?php } else if ('.$string.') { ?>';
     }
 
-    public static function logicElse()
+    public function logicElse()
     {
         return '<?php } else { ?>';
     }
 
-    public static function logicFor($string)
+    public function logicFor($string)
     {
         return '<?php for ('.$string.') { ?>';
     }
 
-    public static function logicEndfor()
+    public function logicEndfor()
     {
         return self::closingBracket();
     }
 
-    public static function logicForeach($string)
+    public function logicForeach($string)
     {
         return '<?php foreach ('.$string.') { ?>';
     }
 
-    public static function logicEndforeach()
+    public function logicEndforeach()
     {
         return self::closingBracket();
     }
 
-    public static function logicWhile($string)
+    public function logicWhile($string)
     {
         return '<?php while('.$string.') { ?>';
     }
 
-    public static function logicEndwhile()
+    public function logicEndwhile()
     {
         return self::closingBracket();
     }
 
-    private static function closingBracket()
+    private function closingBracket()
     {
         return '<?php } ?>';
     }

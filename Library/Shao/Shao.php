@@ -6,49 +6,59 @@ use Library\Http\View;
 class Shao
 {
     const SHAO_FOLDER = 'Cache/Shao/';
-    const FUNCTIONS_CLASS_NAME = '\Library\Shao\ShaoFunctions';
-    const LOGIC_CLASS_NAME = '\Library\Shao\ShaoLogic';
-    const EMPTY_STRING = 'n/a';
 
-    public static function parseFile($file)
+    protected $shaoLogic;
+    protected $shaoFunctions;
+    protected $currentView;
+
+    public function __construct()
+    {
+        $this->shaoLogic = new ShaoLogic();
+        $this->shaoFunctions = new ShaoFunctions();
+    }
+
+    public function parseFile($file)
     {
         $content = file_get_contents($file);
-        $cachedFileName = self::generateCachedFileName($file, $content);
+        $cachedFileName = $this->generateCachedFileName($file, $content);
 
         if (Config::get('env') != 'debug')
         {
-            if (!self::isFileChanged($cachedFileName))
+            if (!$this->isFileChanged($cachedFileName))
                 return $cachedFileName;
         }
 
-        self::parseRawPhp($content);
-        self::parseEchoAndEscape($content);
-        self::parseEcho($content);
-        self::parseAngularSymbol($content);
-        self::parseLogic($content);
-        self::parseFunctions($content);
+        $this->parseRawPhp($content);
+        $this->parseEchoAndEscape($content);
+        $this->parseEcho($content);
+        $this->parseAngularSymbol($content);
+        $this->parseLogic($content);
+        $this->parseFunctions($content);
 
-        self::deleteOldFiles($cachedFileName);
+        $this->deleteOldFiles($cachedFileName);
         file_put_contents($cachedFileName, $content);
 
         return $cachedFileName;
     }
 
-    private static function isFileChanged($fileName)
+    private function isFileChanged($fileName)
     {
         return !file_exists($fileName);
     }
 
-    private static function generateCachedFileName($file, $content)
+    private function generateCachedFileName($file, $content)
     {
         $fileName = explode('.', explode(View::VIEW_FOLDER.'/', $file)[1])[0];
+
+        $this->currentView = $fileName;
+
         $fileName = str_replace('/', '-', $fileName);
         $fileName .= '-';
 
-        return SELF::SHAO_FOLDER.$fileName.md5($content);
+        return self::SHAO_FOLDER.$fileName.md5($content);
     }
 
-    protected static function deleteOldFiles($fileName)
+    protected function deleteOldFiles($fileName)
     {
         $fileName = substr($fileName, 0, strrpos($fileName, '-'));
 
@@ -59,29 +69,29 @@ class Shao
 
     /* PARSING FUNCTIONS */
 
-    private static function parseEchoAndEscape(&$str)
+    private function parseEchoAndEscape(&$str)
     {
         $str = str_replace('{!!', '<?php echo htmlspecialchars(', $str);
         $str = str_replace('!!}', '); ?>', $str);
     }
 
-    private static function parseRawPhp(&$str)
+    private function parseRawPhp(&$str)
     {
         $str = str_replace('{{{', '<?php ', $str);
         $str = str_replace('}}}', ' ?>', $str);
     }
 
-    private static function parseEcho(&$str)
+    private function parseEcho(&$str)
     {
         $str = preg_replace('/(?<!\@)\{\{([^\}]*)\}\}/', '<?php echo ${1}; ?>', $str);
     }
 
-    private static function parseAngularSymbol(&$str)
+    private function parseAngularSymbol(&$str)
     {
         $str = str_replace('@{{', '{{', $str);
     }
 
-    private static function parseLogic(&$str)
+    private function parseLogic(&$str)
     {
         $logicString = '';
         $bracketCounter = 0;
@@ -154,58 +164,64 @@ class Shao
                 $logicBody = substr(substr(strstr($foundString, '('), 1), 0, -1);
             }
 
-            $functionName = call_user_func(self::LOGIC_CLASS_NAME.'::convertToFunctionName', $logicName);
+            $functionName = $this->shaoLogic->convertToFunctionName($logicName);
             if (!$functionName) continue;
 
             if ($logicBody == null)
-                $result = call_user_func(self::LOGIC_CLASS_NAME.'::'.$functionName);
+                $result = $this->shaoLogic->$functionName();
             else
-                $result = call_user_func(self::LOGIC_CLASS_NAME.'::'.$functionName, $logicBody);
+                $result = $this->shaoLogic->$functionName($logicBody);
 
             $str = str_replace($foundString, $result, $str);
         }
     }
 
-    private static function parseFunctions(&$str)
+    private function parseFunctions(&$str)
     {
-            $functionRegex = '/@[a-zA-Z0-9]+\(\'.+\'\)/';
+        $functionRegex = '/@[a-zA-Z0-9]+\((\'.+\')?\)/';
 
-        $str = preg_replace_callback($functionRegex, 'self::parseFunctionReplaceCallback', $str);
+        $str = preg_replace_callback($functionRegex, [$this, 'parseFunctionReplaceCallback'], $str);
     }
 
-    private static function parseFunctionReplaceCallback($string)
+    private function parseFunctionReplaceCallback($string)
     {
         $string = $string[0];
         $string = trim($string);
-        $functionName = trim(strstr(str_replace('@', self::FUNCTIONS_CLASS_NAME.'::', $string), '(', true));
+        $functionName = trim(strstr(str_replace('@', '', $string), '(', true));
         $functionArgs = substr(substr(strstr($string, '('), 0, -1), 1);
         $functionArgs = explode(',', $functionArgs);
         foreach ($functionArgs as &$functionArg) {
             $functionArg = trim($functionArg);
 
             if (substr($functionArg, 0, 1) == '\'' && substr($functionArg, -1) == '\'')
-                $functionArg = self::removeSingleQuotes($functionArg);
+                $functionArg = $this->removeSingleQuotes($functionArg);
         }
 
-        // Different function names (exceptions):
-        if ($functionName == self::FUNCTIONS_CLASS_NAME.'::include')
-            $functionName = self::FUNCTIONS_CLASS_NAME.'::includeView';
+        // exception
+        if ($functionName == 'yield')
+        {
+            return $this->shaoFunctions->_yield($functionArgs[0], $this->currentView);
+        }
 
-        $classFunctions = get_class_methods(self::FUNCTIONS_CLASS_NAME);
-        foreach($classFunctions as $key => $classFunction)
-            $classFunctions[$key] = self::FUNCTIONS_CLASS_NAME.'::'.$classFunction;
+        if ($functionName == 'include')
+        {
+            return $this->shaoFunctions->_include($functionArgs[0], $this->currentView);
+        }
 
-        if (!in_array($functionName, $classFunctions))
+        if ($functionName == 'layout')
+        {
+            return $this->shaoFunctions->layout($functionArgs[0], $this->currentView);
+        }
+
+        if (!method_exists($this->shaoFunctions, $functionName))
+        {
             return $string;
+        }
 
-        $returnValue = call_user_func_array($functionName, $functionArgs);
-        if (!is_string($returnValue) || empty($returnValue))
-            $returnValue = self::EMPTY_STRING;
-
-        return $returnValue;
+        return call_user_func_array([$this->shaoFunctions, $functionName], $functionArgs);
     }
 
-    private static function removeSingleQuotes($string)
+    private function removeSingleQuotes($string)
     {
         return substr(substr($string, 0, -1), 1);
     }
