@@ -16,29 +16,9 @@ class View
 
     public function __construct($view, array $data = array())
     {
+        $this->vars = $data;
         $this->basePath = __DIR__.'/../../'.self::VIEW_FOLDER;
         $this->content = $this->processView($view);
-        $this->vars = $data;
-    }
-
-    public function with($var, $value = null)
-    {
-        if ($value != null)
-        {
-            if (!is_string($var))
-                return $this;
-
-            $this->vars[$var] = $value;
-            return $this;
-        }
-
-        if (!is_array($var))
-            return $this;
-
-        foreach ($var as $key => $v)
-            $this->vars[$key] = $v;
-
-        return $this;
     }
 
     public function send()
@@ -52,7 +32,7 @@ class View
 
         $contentFile = $this->getContentFile($view);
 
-        if ($this->vars != null)
+        if (!is_null($this->vars))
         {
             extract($this->vars);
         }

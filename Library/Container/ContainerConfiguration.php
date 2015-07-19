@@ -31,7 +31,6 @@ class ContainerConfiguration
         $this->container->instance('database', new Database());
         $this->container->instance('html', new HTML());
         $this->container->instance('form', new Form());
-        $this->container->instance('page', new Page());
         $this->container->instance('session', new Session());
         $this->container->instance('validator', new Validator());
         $this->container->instance('redirect', new Redirect());
