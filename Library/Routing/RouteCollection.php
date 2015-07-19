@@ -26,10 +26,9 @@ class RouteCollection implements \Countable
             $this->routesByMethod[$method][] = $route;
         }
 
-        $action = $route->action();
-        if (is_array($action) && isset($action['as']))
+        if (!is_null($route->name()))
         {
-            $this->nameList[$action['as']] = $route;
+            $this->nameList[$route->name()] = $route;
         }
     }
 
@@ -51,6 +50,11 @@ class RouteCollection implements \Countable
     public function hasNamedRoute($name)
     {
         return isset($this->nameList[$name]);
+    }
+
+    public function getNamedRoute($name)
+    {
+        return isset($this->nameList[$name]) ? $this->nameList[$name] : null;
     }
 
     public function count()

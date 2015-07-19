@@ -12,6 +12,7 @@ class Router
     protected $namespaces;
     protected $prefixes;
     protected $middlewares;
+    protected $names;
 
     public function __construct()
     {
@@ -20,6 +21,7 @@ class Router
         $this->namespaces= array();
         $this->prefixes = array();
         $this->middlewares = array();
+        $this->names = array();
     }
 
     public function get($uri, $action)
@@ -69,6 +71,11 @@ class Router
             array_push($this->middlewares, $params['middleware']);
         }
 
+        if (isset($params['as']))
+        {
+            array_push($this->names, $params['as']);
+        }
+
         $action();
 
         if (isset($params['namespace']))
@@ -85,6 +92,33 @@ class Router
         {
             array_pop($this->middlewares);
         }
+
+        if (isset($params['as']))
+        {
+            array_pop($this->names);
+        }
+    }
+
+    public function getUri($name, array $params = null)
+    {
+        $route = $this->routes->getNamedRoute($name);
+
+        if (is_null($route))
+        {
+            return '';
+        }
+
+        if (is_null($params))
+        {
+            return $route->uri();
+        }
+
+        return $this->resolveUriWithParameters($route->uri(), $params);
+    }
+
+    protected function resolveUriWithParameters($uri, $params)
+    {
+        return preg_replace('/({[a-zA-Z0-9]+})/', $params, $uri);
     }
 
     protected function addRoute($methods, $uri, $action)
@@ -135,7 +169,60 @@ class Router
                 }
             }
         }
-        $this->routes->add(new Route($methods, $uri, $action, $middlewares));
+
+        $name = null;
+        $namePrefix = '';
+        if (sizeof($this->names) > 0)
+        {
+            $namePrefix = implode('.', $this->names).'.';
+        }
+
+        if (!is_callable($action))
+        {
+            if (is_array($action))
+            {
+                if (isset($action['as']))
+                {
+                    $name = $namePrefix.$action['as'];
+                }
+                else
+                {
+                    $name = $this->generateRouteNameFromController($action['uses'], $namePrefix);
+                }
+            }
+            else
+            {
+                $name = $this->generateRouteNameFromController($action, $namePrefix);
+            }
+        }
+
+        $this->routes->add(new Route($methods, $uri, $action, $name, $middlewares));
+    }
+
+    protected function generateRouteNameFromController($controllerAndAction, $prefix)
+    {
+        $name = explode('@', $controllerAndAction)[1];
+
+        if ($prefix != '' || sizeof($this->namespaces) == 0)
+        {
+            return $prefix.$name;
+        }
+
+        foreach ($this->namespaces as $namespace)
+        {
+            if ($namespace == 'App\\Http\\Controllers')
+            {
+                continue;
+            }
+
+            $ns = explode('\\', $namespace);
+            foreach ($ns as $n)
+            {
+                $prefix .= lcfirst($n).'.';
+            }
+        }
+
+        return $prefix.$name;
     }
 
     public function has($name)

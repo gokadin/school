@@ -86,11 +86,16 @@ class ShaoFunctions
 
     public function path($action, $var = null)
     {
-        $url = Router::actionToPath($action);
+        if (is_null($var))
+        {
+            return Router::getUri($action);
+        }
 
-        if ($var != null)
-            return $url.$var;
+        if (!is_array($var))
+        {
+            return Router::getUri($action, [$var]);
+        }
 
-        return $url;
+        return Router::getUri($action, $var);
     }
 }

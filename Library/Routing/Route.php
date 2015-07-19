@@ -10,14 +10,16 @@ class Route
     protected $uri;
     protected $action;
     protected $middlewares;
+    protected $name;
     protected $parameters;
 
-    public function __construct($methods, $uri, $action, $middlewares)
+    public function __construct($methods, $uri, $action, $name, $middlewares)
     {
         $this->methods = $methods;
         $this->uri = $uri;
         $this->action = $action;
         $this->middlewares = $middlewares;
+        $this->name = $name;
         $this->parameters = array();
     }
 
@@ -39,6 +41,11 @@ class Route
     public function middlewares()
     {
         return $this->middlewares;
+    }
+
+    public function name()
+    {
+        return $this->name;
     }
 
     public function parameters()

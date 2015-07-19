@@ -11,7 +11,7 @@ Route::group(['namespace' => 'Frontend'], function() {
         Route::get('/contact-us', 'IndexController@contactUs');
         Route::get('/about', 'IndexController@about');
 
-    Route::group(['prefix' => '/account'], function() {
+    Route::group(['prefix' => '/account', 'as' => 'frontend.account'], function() {
 
         Route::get('/login', 'AccountController@index');
         Route::post('/login', 'AccountController@login');
