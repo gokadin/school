@@ -56,10 +56,10 @@ class AccountController extends BackController
 	
 	public function editProfilePicture()
 	{
-		$target_dir = $_SERVER["DOCUMENT_ROOT"].'/Web/uploads/';
+		$target_dir = $_SERVER["DOCUMENT_ROOT"].'/Web/Uploads/';
 		$extension = pathinfo($_FILES["profilePicture"]["name"], PATHINFO_EXTENSION);
 		$targetFile = $target_dir.'profilePicture_'.$this->currentUser->id.'.'.$extension;
-		$databaseLink = '/Web/uploads/profilePicture_'.$this->currentUser->id.'.'.$extension;
+		$databaseLink = '/Web/Uploads/profilePicture_'.$this->currentUser->id.'.'.$extension;
 		
 	    if(!getimagesize($_FILES["profilePicture"]["tmp_name"])) 
 		{
