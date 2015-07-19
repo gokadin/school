@@ -1,4 +1,8 @@
-{{{ use \Library\Facades\Form; }}}
+@layout('../layout')
+
+@section('content')
+
+@inject('\Library\Facades\Form')
 
 <div class="emailConfirmation">
 
@@ -50,3 +54,5 @@ $('#confirm-form').validate({
     ]
 });
 </script>
+
+@stop()

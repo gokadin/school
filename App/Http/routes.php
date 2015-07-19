@@ -17,7 +17,7 @@ Route::group(['namespace' => 'Frontend'], function() {
         Route::post('/login', 'AccountController@login');
         Route::get('/logout', 'AccountController@logout');
         Route::get('/reset-password', 'AccountController@resetPassword');
-        Route::get('/signup', 'AccountController@signup');
+        Route::get('/signup', 'AccountController@signUp');
         Route::post('/signup', 'AccountController@registerUser');
         Route::get('/signup-land', 'AccountController@signUpLand');
         Route::get('/confirm/{id}-{code}', 'AccountController@emailConfirmation');
