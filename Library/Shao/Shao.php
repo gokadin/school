@@ -1,6 +1,7 @@
 <?php namespace Library\Shao;
 
 use Library\Config;
+use Library\Http\View;
 
 class Shao
 {
@@ -11,69 +12,49 @@ class Shao
 
     public static function parseFile($file)
     {
-        $cachedFileName = self::generateCachedFileName($file);
-        $str = file_get_contents($file);
+        $content = file_get_contents($file);
+        $cachedFileName = self::generateCachedFileName($file, $content);
 
         if (Config::get('env') != 'debug')
         {
-            if (!self::isFileChanged($file, $str))
+            if (!self::isFileChanged($cachedFileName))
                 return $cachedFileName;
         }
 
-        self::createMetadataFile($file, $str);
+        self::parseRawPhp($content);
+        self::parseEchoAndEscape($content);
+        self::parseEcho($content);
+        self::parseAngularSymbol($content);
+        self::parseLogic($content);
+        self::parseFunctions($content);
 
-        self::parseRawPhp($str);
-        self::parseEchoAndEscape($str);
-        self::parseEcho($str);
-        self::parseAngularSymbol($str);
-        self::parseLogic($str);
-        self::parseFunctions($str);
-
-        file_put_contents($cachedFileName, $str);
+        self::deleteOldFiles($cachedFileName);
+        file_put_contents($cachedFileName, $content);
 
         return $cachedFileName;
     }
 
-    private static function isFileChanged($fileName, &$fileContents)
+    private static function isFileChanged($fileName)
     {
-        $metadataFileName = self::generateMetadataFileName($fileName);
-        if (!file_exists($metadataFileName)) {
-            return true;
-        }
-
-        if (crc32($fileContents) != file_get_contents($metadataFileName)) {
-            return true;
-        }
-
-        return false;
+        return !file_exists($fileName);
     }
 
-    private static function createMetadataFile($fileName, &$fileContents)
+    private static function generateCachedFileName($file, $content)
     {
-        $name = self::generateMetadataFileName($fileName);
-        $checksum = crc32($fileContents);
-        file_put_contents($name, $checksum);
+        $fileName = explode('.', explode(View::VIEW_FOLDER.'/', $file)[1])[0];
+        $fileName = str_replace('/', '-', $fileName);
+        $fileName .= '-';
+
+        return SELF::SHAO_FOLDER.$fileName.md5($content);
     }
 
-    private static function generateCachedFileName($file)
+    protected static function deleteOldFiles($fileName)
     {
-        return self::SHAO_FOLDER . str_replace('/', '-', $file);
-    }
+        $fileName = substr($fileName, 0, strrpos($fileName, '-'));
 
-    private static function generateMetadataFileName($file)
-    {
-        $str = self::generateCachedFileName($file);
-        return strstr($str, '.', true) . '.metadata';
-    }
+        $files = glob($fileName.'*');
 
-    public static function clearCache()
-    {
-        $files = glob('Cache/Shao/*');
-        foreach($files as $file)
-        {
-            if(is_file($file))
-                unlink($file);
-        }
+        array_map('unlink', $files);
     }
 
     /* PARSING FUNCTIONS */

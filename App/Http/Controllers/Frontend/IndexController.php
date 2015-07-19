@@ -8,6 +8,8 @@ class IndexController extends Controller
 {
     public function index()
     {
-        return 'hello';
+        return view('frontend.index', ['one' => 'something'])
+            ->with('two', 'something2')
+            ->with(['three' => 'something3']);
     }
 }
