@@ -5,6 +5,7 @@ use Library\Container\ContainerConfiguration;
 use Library\Facades\Request;
 use Library\Facades\Router;
 use Library\Facades\Facade;
+use Library\Http\View;
 
 class Application
 {
@@ -45,14 +46,24 @@ class Application
             require __DIR__ . '/../App/Http/routes.php';
         });
 
-        $response = Router::dispatch(Request::instance());
+        $result = Router::dispatch(Request::instance());
 
-        echo $response;
-        //$this->viewToSend =
+        $this->viewToSend = $result;
     }
 
     public function sendView()
     {
+        if (is_string($this->viewToSend))
+        {
+            echo $this->viewToSend;
+            return;
+        }
 
+        if (!($this->viewToSend instanceof View))
+        {
+            return;
+        }
+
+        $this->viewToSend->send();
     }
 }

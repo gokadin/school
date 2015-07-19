@@ -3,6 +3,7 @@
 use Library\Http\Redirect;
 use Library\Http\Request;
 use Library\Http\Response;
+use Library\Http\View;
 use Library\Routing\Router;
 use Library\Database\Database;
 use Library\Html;
