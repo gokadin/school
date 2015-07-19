@@ -4,7 +4,7 @@ $mysqlDatabase = 'jaggso5_School';
 if (\Library\Config::get('env') == 'debug')
     $mysqlDatabase = 'School';
 if (\Library\Config::get('testing') == 'true')
-    $mysqlDatabase = 'SchoolTest';
+    $mysqlDatabase = 'ApplicationTest';
 else if (\Library\Config::get('frameworkTesting') == 'true')
     $mysqlDatabase = 'FrameworkTest';
 
