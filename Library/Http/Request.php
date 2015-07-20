@@ -124,7 +124,7 @@ class Request
     {
         $requestUri = $_SERVER['REQUEST_URI'];
 
-        if (\Library\Config::get('env') != 'debug')
+        if (\Library\Facades\Config::get('env') != 'debug')
             return $requestUri;
 
         $pos = strpos($requestUri, '?XDEBUG_SESSION_START=');

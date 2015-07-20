@@ -12,7 +12,7 @@ class ShaoFunctions
 {
     public function layout($str, $currentFile)
     {
-        $requestedFile = View::VIEW_FOLDER.'/'.substr($currentFile, 0, strrpos($currentFile, '/')).'/'.$str;
+        $requestedFile = __DIR__.'/../../'.View::VIEW_FOLDER.'/'.substr($currentFile, 0, strrpos($currentFile, '/')).'/'.$str;
 
         $validExtensions = ['.php', '.html'];
         $validShaoExtensions = ['.shao.php', '.shao.html'];

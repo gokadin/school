@@ -5,13 +5,13 @@ use Library\Facades\Facade;
 use PHPUnit_Framework_TestCase;
 use Library\Application;
 
-require __DIR__.'/../../bootstrap/autoload.php';
+require __DIR__ . '/../../Bootstrap/autoload.php';
 
 abstract class BaseTest extends PHPUnit_Framework_TestCase
 {
     public static function setUpBeforeClass()
     {
-        \Library\Config::temporary('frameworkTesting', 'true');
+        \Library\Facades\Config::temporary('frameworkTesting', 'true');
     }
 
     public static function tearDownAfterClass()

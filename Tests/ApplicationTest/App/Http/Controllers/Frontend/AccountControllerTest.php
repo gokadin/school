@@ -5,7 +5,7 @@ namespace Tests\ApplicationTest\App\Http\Controllers\Frontend;
 use App\Http\Controllers\Frontend\AccountController;
 use Models\Teacher;
 use Tests\FrameworkTest\BaseTest;
-use Library\Database\Factory;
+use Library\Facades\ModelFactory as Factory;
 
 class AccountControllerTest extends BaseTest
 {

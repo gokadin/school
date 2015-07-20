@@ -1,6 +1,9 @@
-<?php namespace Config;
+<?php
+
+namespace Config;
 
 use Library\Database\Table;
+use Library\Facades\Config;
 
 class Tables
 {
@@ -46,7 +49,7 @@ class Tables
         $t->string('phone', 32)->nullable();
         $t->integer('type', 5)->default(1);
         $t->boolean('active')->default(1);
-        $t->string('profile_picture', 200)->default('"'.\Library\Config::get('defaultProfilePicturePath').'"');
+        $t->string('profile_picture', 200)->default('"'.Config::get('defaultProfilePicturePath').'"');
         $t->timestamps();
 
         return $t;
@@ -68,7 +71,7 @@ class Tables
         $t->string('phone', 32)->nullable();
         $t->integer('type', 5)->default(1);
         $t->boolean('active')->default(1);
-        $t->string('profile_picture', 200)->default('"'.\Library\Config::get('defaultProfilePicturePath').'"');
+        $t->string('profile_picture', 200)->default('"'.Config::get('defaultProfilePicturePath').'"');
         $t->timestamps();
 
         return $t;

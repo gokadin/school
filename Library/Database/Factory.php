@@ -17,7 +17,7 @@ class Factory
         $this->definitions = array();
 
         $factory = $this;
-        require self::MODEL_FACTORY_DIR.'/modelFactory.php';
+        require __DIR__.'/../../'.self::MODEL_FACTORY_DIR.'/modelFactory.php';
     }
 
     public function define($class, callable $attributes)

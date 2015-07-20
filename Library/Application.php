@@ -1,4 +1,6 @@
-<?php namespace Library;
+<?php
+
+namespace Library;
 
 use Library\Container\Container;
 use Library\Container\ContainerConfiguration;
@@ -20,6 +22,11 @@ class Application
         $this->viewToSend = null;
 
         $this->ConfigureContainer();
+    }
+
+    public function basePath()
+    {
+        return __DIR__.'/../';
     }
 
     protected function ConfigureContainer()

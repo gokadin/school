@@ -1,11 +1,10 @@
 <?php namespace Library\Container;
 
-use Library\Config;
+use Library\Configuration\Config;
 use Library\Database\Factory;
 use Library\Http\Redirect;
 use Library\Http\Request;
 use Library\Http\Response;
-use Library\Http\View;
 use Library\Http\ViewFactory;
 use Library\Routing\Router;
 use Library\Database\Database;
@@ -27,6 +26,7 @@ class ContainerConfiguration
 
     public function configureContainer()
     {
+        $this->container->instance('config', new Config());
         $this->container->instance('request', new Request());
         $this->container->instance('response', new Response());
         $this->container->instance('router', new Router());
@@ -39,7 +39,7 @@ class ContainerConfiguration
         $this->container->instance('shao', new Shao());
         $this->container->instance('viewFactory', new ViewFactory());
 
-        if (Config::get('env') == 'debug')
+        if (env('APP_DEBUG'))
         {
             $this->configureDebugContainer();
         }

@@ -1,7 +1,7 @@
 <?php namespace Library\Database;
 
 use Config\Tables;
-use Library\Config;
+use Library\Facades\Config;
 use Symfony\Component\Yaml\Exception\RuntimeException;
 
 class TableBuilder extends Tables

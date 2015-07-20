@@ -1,6 +1,6 @@
 <?php namespace Library\Shao;
 
-use Library\Config;
+use Library\Facades\Config;
 use Library\Http\View;
 
 class Shao
@@ -55,7 +55,7 @@ class Shao
         $fileName = str_replace('/', '-', $fileName);
         $fileName .= '-';
 
-        return self::SHAO_FOLDER.$fileName.md5($content);
+        return __DIR__.'/../../'.self::SHAO_FOLDER.$fileName.md5($content);
     }
 
     protected function deleteOldFiles($fileName)

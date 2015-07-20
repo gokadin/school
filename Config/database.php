@@ -1,27 +1,29 @@
 <?php
 
+use Library\Facades\Config;
+
 $mysqlDatabase = 'jaggso5_School';
-if (\Library\Config::get('env') == 'debug')
+if (Config::get('env') == 'debug')
     $mysqlDatabase = 'School';
-if (\Library\Config::get('testing') == 'true')
+if (Config::get('testing') == 'true')
     $mysqlDatabase = 'ApplicationTest';
-else if (\Library\Config::get('frameworkTesting') == 'true')
+else if (Config::get('frameworkTesting') == 'true')
     $mysqlDatabase = 'FrameworkTest';
 
 $mysqlUsername = 'jaggso5_guiviko';
-if (\Library\Config::get('env') == 'debug')
+if (Config::get('env') == 'debug')
     $mysqlUsername = 'root';
-if (\Library\Config::get('testing') == 'true')
+if (Config::get('testing') == 'true')
     $mysqlUsername = 'root';
-else if (\Library\Config::get('frameworkTesting') == 'true')
+else if (Config::get('frameworkTesting') == 'true')
     $mysqlUsername = 'root';
 
 $mysqlPassword = 'f10ygs87';
-if (\Library\Config::get('env') == 'debug')
+if (Config::get('env') == 'debug')
     $mysqlPassword = 'f10ygs87';
-if (\Library\Config::get('testing') == 'true')
+if (Config::get('testing') == 'true')
     $mysqlPassword = 'f10ygs87';
-else if (\Library\Config::get('frameworkTesting') == 'true')
+else if (Config::get('frameworkTesting') == 'true')
     $mysqlPassword = 'f10ygs87';
 
 return [

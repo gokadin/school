@@ -1,6 +1,8 @@
 <?php namespace Library;
 
-if(Config::get('testing') != 'true' && Config::get('frameworkTesting') != 'true')
+use Library\Facades\Config as AppConfig;
+
+if(AppConfig::get('testing') != 'true' && AppConfig::get('frameworkTesting') != 'true')
 {
     session_start();
 }
