@@ -1,9 +1,4 @@
 <?xml version="1.0" encoding="iso-8859-1" ?>
 <definitions>
-    /* ENV variable can be set to "debug" or "production" */
-    <define var="env" value="debug" />
-    <define var="testing" value="false" />
-    <define var="frameworkTesting" value="false" />
-
     <define var="defaultProfilePicturePath" value="/Web/images/defaultProfilePicture.png" />
 </definitions>

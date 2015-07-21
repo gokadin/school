@@ -55,7 +55,7 @@ class AccountController extends Controller
             'storageSpace' => '10GB'
         ];
 
-        return view('frontend.account.signup', compact('memberships'));
+        return view('frontend.account.signUp', compact('memberships'));
     }
 
     public function login()

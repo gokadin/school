@@ -1,4 +1,6 @@
-<?php namespace Library\Database;
+<?php
+
+namespace Library\Database;
 
 use Symfony\Component\Yaml\Exception\RuntimeException;
 use Library\Config;
@@ -37,7 +39,7 @@ class Database
             throw new RuntimeException('Invalid module');
 
         $table = strtolower($table);
-        if (Config::get('frameworkTesting') == 'true')
+        if (env('APP_ENV') == 'framework_testing')
             $className = '\\Tests\\FrameworkTest\\Models\\'.ucfirst($table);
         else
             $className = '\\Models\\'.ucfirst($table);

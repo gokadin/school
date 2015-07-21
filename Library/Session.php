@@ -1,8 +1,8 @@
-<?php namespace Library;
+<?php
 
-use Library\Facades\Config as AppConfig;
+namespace Library;
 
-if(AppConfig::get('testing') != 'true' && AppConfig::get('frameworkTesting') != 'true')
+if(env('APP_ENV') != 'testing' && env('APP_ENV') != 'framework_testing')
 {
     session_start();
 }

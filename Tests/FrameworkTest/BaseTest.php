@@ -1,17 +1,15 @@
-<?php namespace Tests\FrameworkTest;
+<?php
+
+namespace Tests\FrameworkTest;
 
 use Library\Facades\DB;
-use Library\Facades\Facade;
-use PHPUnit_Framework_TestCase;
-use Library\Application;
+use Tests\TestCase;
 
-require __DIR__ . '/../../Bootstrap/autoload.php';
-
-abstract class BaseTest extends PHPUnit_Framework_TestCase
+abstract class BaseTest extends TestCase
 {
     public static function setUpBeforeClass()
     {
-        \Library\Facades\Config::temporary('frameworkTesting', 'true');
+
     }
 
     public static function tearDownAfterClass()
@@ -21,8 +19,11 @@ abstract class BaseTest extends PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        Facade::resetResolvedInstances();
-        new Application('test');
+        parent::setUp();
+
+        putenv('APP_ENV=framework_testing');
+
+        $this->createApplication();
 
         \Library\Facades\DB::beginTransaction();
     }

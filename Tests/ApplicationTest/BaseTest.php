@@ -1,14 +1,11 @@
-<?php namespace Tests\ApplicationTest;
+<?php
 
-use Library\Application;
-use PHPUnit_Framework_TestCase;
-
-require __DIR__ . '/../../Bootstrap/autoload.php';
+namespace Tests\ApplicationTest;
 
 abstract class BaseTest extends PHPUnit_Framework_TestCase
 {
     public function setUp()
     {
-        new Application();
+        parent::setUp();
     }
 }

@@ -1,4 +1,6 @@
-<?php namespace Library\Database;
+<?php
+
+namespace Library\Database;
 
 use Library\Facades\DB;
 use Symfony\Component\Yaml\Exception\RuntimeException;
@@ -19,7 +21,7 @@ class Model implements ModelQueryContract
 
     public function __construct(array $data = null)
     {
-        if (\Library\Config::get('frameworkTesting') == 'true')
+        if (env('APP_ENV') == 'framework_testing')
             $this->modelDirectory = '\\Tests\\FrameworkTest\\Models\\';
         else
             $this->modelDirectory = '\\Models\\';

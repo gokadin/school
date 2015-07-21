@@ -1,12 +1,11 @@
 <?php
 
-use Library\Facades\App;
 use Library\Http\View;
 use Library\Facades\ViewFactory;
 
 function asset($file)
 {
-    return App::basePath().'Resources/Assets/'.$file;
+    return '/Assets/'.$file;
 }
 
 function view($viewFile, array $data = array())

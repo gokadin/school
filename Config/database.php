@@ -1,30 +1,22 @@
 <?php
 
-use Library\Facades\Config;
-
 $mysqlDatabase = 'jaggso5_School';
-if (Config::get('env') == 'debug')
+if (env('APP_ENV') == 'local')
     $mysqlDatabase = 'School';
-if (Config::get('testing') == 'true')
+if (env('APP_ENV') == 'testing')
     $mysqlDatabase = 'ApplicationTest';
-else if (Config::get('frameworkTesting') == 'true')
+else if (env('APP_ENV') == 'framework_testing')
     $mysqlDatabase = 'FrameworkTest';
 
 $mysqlUsername = 'jaggso5_guiviko';
-if (Config::get('env') == 'debug')
+if (env('APP_ENV') == 'local')
     $mysqlUsername = 'root';
-if (Config::get('testing') == 'true')
+if (env('APP_ENV') == 'testing')
     $mysqlUsername = 'root';
-else if (Config::get('frameworkTesting') == 'true')
+else if (env('APP_ENV') == 'framework_testing')
     $mysqlUsername = 'root';
 
 $mysqlPassword = 'f10ygs87';
-if (Config::get('env') == 'debug')
-    $mysqlPassword = 'f10ygs87';
-if (Config::get('testing') == 'true')
-    $mysqlPassword = 'f10ygs87';
-else if (Config::get('frameworkTesting') == 'true')
-    $mysqlPassword = 'f10ygs87';
 
 return [
     'mysql' => [

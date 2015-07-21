@@ -24,11 +24,6 @@ class Application
         $this->ConfigureContainer();
     }
 
-    public function basePath()
-    {
-        return __DIR__.'/../';
-    }
-
     protected function ConfigureContainer()
     {
         $this->container->instance('app', $this);

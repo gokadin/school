@@ -2,7 +2,7 @@
 
 namespace Library\Validation;
 
-use Library\Config;
+use Library\Facades\Config;
 use Library\Facades\Request;
 use Library\Facades\Session;
 
@@ -199,7 +199,7 @@ class Validator
     public function unique($value, $modelName, $columnName)
     {
         $model = '\\Models\\'.$modelName;
-        if (Config::get('frameworkTesting') == 'true')
+        if (env('APP_ENV') == 'framework_testing')
             $model = '\\Tests\\FrameworkTest\\Models\\'.$modelName;
 
         return !$model::exists($columnName, $value);

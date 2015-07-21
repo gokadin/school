@@ -7,10 +7,12 @@ function configureEnvironment()
     $content = fopen($envFile, 'r');
     if ($content) {
         while (($line = fgets($content)) !== false) {
-            if (preg_match('/^[a-zA-Z0-9]+\=[a-zA-Z0-9]+$/', $line) != 1)
+                if (preg_match('/[a-zA-Z0-9_-]+\=[a-zA-Z0-9_-]+[\n]?$/', $line) != 1)
             {
                 continue;
             }
+
+            $line = trim(str_replace(PHP_EOL, '', $line));
 
             putenv($line);
         }
