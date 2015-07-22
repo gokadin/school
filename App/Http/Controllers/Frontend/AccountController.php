@@ -86,7 +86,7 @@ class AccountController extends Controller
         }
 
         Session::setFlash('The email or password is incorrect. Please try again.');
-        Response::back();
+        Redirect::back();
     }
 
     public function logout()

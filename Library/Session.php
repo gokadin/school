@@ -62,6 +62,14 @@ class Session
         $_SESSION['authenticated'] = true;
     }
 
+    public function loggedIn()
+    {
+        return isset($_SESSION['id']) &&
+            isset($_SESSION['type']) &&
+            isset($_SESSION['authenticated']) &&
+            $_SESSION['authenticated'] === true;
+    }
+
     public function generateToken()
     {
         if (isset($token))

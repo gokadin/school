@@ -19,10 +19,11 @@ class TestCase extends PHPUnit_Framework_TestCase
 
     public function action($method, $controllerAndAction, $arguments = [], $includeToken = true)
     {
-        list($controllerName, $methodName) = explode($controllerAndAction);
+        list($controllerName, $methodName) = explode('@', $controllerAndAction);
         $controllerName = '\\App\\Http\\Controllers\\'.$controllerName;
         $controller = new $controllerName();
 
+        $_SERVER['REQUEST_METHOD'] = $method;
         switch ($method)
         {
             case 'GET':
