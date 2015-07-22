@@ -1,4 +1,6 @@
-<?php namespace Library\Shao;
+<?php
+
+namespace Library\Shao;
 
 use Library\Facades\Config;
 use Library\Http\View;
@@ -22,7 +24,7 @@ class Shao
         $content = file_get_contents($file);
         $cachedFileName = $this->generateCachedFileName($file, $content);
 
-        if (Config::get('env') != 'debug')
+        if (env('APP_ENV') == 'production')
         {
             if (!$this->isFileChanged($cachedFileName))
                 return $cachedFileName;
@@ -206,11 +208,6 @@ class Shao
         if ($functionName == 'include')
         {
             return $this->shaoFunctions->_include($functionArgs[0], $this->currentView);
-        }
-
-        if ($functionName == 'layout')
-        {
-            return $this->shaoFunctions->layout($functionArgs[0], $this->currentView);
         }
 
         if (!method_exists($this->shaoFunctions, $functionName))

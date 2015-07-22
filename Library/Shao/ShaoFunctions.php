@@ -10,9 +10,9 @@ use Symfony\Component\Yaml\Exception\RuntimeException;
 
 class ShaoFunctions
 {
-    public function layout($str, $currentFile)
+    public function layout($str)
     {
-        $requestedFile = __DIR__.'/../../'.View::VIEW_FOLDER.'/'.substr($currentFile, 0, strrpos($currentFile, '/')).'/'.$str;
+        $requestedFile = __DIR__.'/../../'.View::VIEW_FOLDER.'/'.str_replace('.', '/', $str);
 
         $validExtensions = ['.php', '.html'];
         $validShaoExtensions = ['.shao.php', '.shao.html'];

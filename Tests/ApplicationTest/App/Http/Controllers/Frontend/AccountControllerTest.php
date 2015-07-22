@@ -14,6 +14,8 @@ class AccountControllerTest extends BaseTest
     public function testLoginWithTeacherWhenValid()
     {
         // Arrange
+        $this->beginDatabaseTransaction();
+
         Redirect::mock()
             ->shouldReceive('to')
             ->once()
@@ -37,6 +39,8 @@ class AccountControllerTest extends BaseTest
     public function testLoginWithStudentWhenValid()
     {
         // Arrange
+        $this->beginDatabaseTransaction();
+
         Redirect::mock()
             ->shouldReceive('to')
             ->once()

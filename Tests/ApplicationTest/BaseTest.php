@@ -20,8 +20,6 @@ abstract class BaseTest extends TestCase
         parent::setUp();
 
         $this->createApplication();
-
-        $this->beginDatabaseTransaction();
     }
 
     public function tearDown()
