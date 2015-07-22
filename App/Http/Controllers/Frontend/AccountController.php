@@ -73,6 +73,7 @@ class AccountController extends Controller
         {
             Session::login($teacher->id, 'Teacher');
             Redirect::to('school.teacher.index.index');
+            return;
         }
 
         $student = Student::where('email', '=', Request::data('email'))
@@ -83,10 +84,12 @@ class AccountController extends Controller
         {
             Session::login($student->id, 'Student');
             Redirect::to('school.student.index.index');
+            return;
         }
 
         Session::setFlash('The email or password is incorrect. Please try again.');
         Redirect::back();
+        return;
     }
 
     public function logout()

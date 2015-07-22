@@ -3,6 +3,7 @@
 namespace Library\Testing;
 
 use PHPUnit_Framework_TestCase;
+use Mockery;
 use Library\Facades\Session;
 use Library\Facades\Facade;
 
@@ -45,5 +46,10 @@ class TestCase extends PHPUnit_Framework_TestCase
         }
 
         return $controller->$methodName();
+    }
+
+    public function tearDown()
+    {
+        Mockery::close();
     }
 }
