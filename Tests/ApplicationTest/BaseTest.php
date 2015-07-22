@@ -3,10 +3,13 @@
 namespace Tests\ApplicationTest;
 
 use Library\Facades\DB;
+use Library\Testing\DatabaseTransactions;
 use Tests\TestCase;
 
 abstract class BaseTest extends TestCase
 {
+    use DatabaseTransactions;
+
     public static function setUpBeforeClass()
     {
         parent::setUpBeforeClass();
@@ -17,6 +20,8 @@ abstract class BaseTest extends TestCase
         parent::setUp();
 
         $this->createApplication();
+
+        $this->beginDatabaseTransaction();
     }
 
     public function tearDown()

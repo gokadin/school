@@ -11,6 +11,8 @@ require __DIR__.'/../../Bootstrap/autoload.php';
 
 class TestCase extends PHPUnit_Framework_TestCase
 {
+    protected $tearDownCallbacks = [];
+
     public function setUp()
     {
         putenv('APP_ENV=testing');
@@ -50,6 +52,18 @@ class TestCase extends PHPUnit_Framework_TestCase
 
     public function tearDown()
     {
-        Mockery::close();
+        if (class_exists('Mockery')) {
+            Mockery::close();
+        }
+
+        foreach ($this->tearDownCallbacks as $callback)
+        {
+            call_user_func($callback);
+        }
+    }
+
+    protected function addTearDownCallback(callable $callback)
+    {
+        $this->tearDownCallbacks[] = $callback;
     }
 }
