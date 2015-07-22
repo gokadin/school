@@ -1,6 +1,7 @@
 <?php namespace Library\Facades;
 
 use RuntimeException;
+use Mockery;
 
 abstract class Facade
 {
@@ -57,5 +58,16 @@ abstract class Facade
             default:
                 return call_user_func_array(array($instance, $method), $args);
         }
+    }
+
+    public static function mock()
+    {
+        $class = get_class(static::resolveFacadeInstance(static::getFacadeAccessor()));
+
+        $mock = $class ? Mockery::mock($class) : Mockery::mock();
+
+        static::$resolvedInstance[static::getFacadeAccessor()] = $mock;
+
+        return $mock;
     }
 }
