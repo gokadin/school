@@ -20,6 +20,7 @@ class TestCase extends PHPUnit_Framework_TestCase
     public function action($method, $controllerAndAction, $arguments = [], $includeToken = true)
     {
         list($controllerName, $methodName) = explode($controllerAndAction);
+        $controllerName = '\\App\\Http\\Controllers\\'.$controllerName;
         $controller = new $controllerName();
 
         switch ($method)
