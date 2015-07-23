@@ -8,6 +8,7 @@ use Library\Facades\Request;
 use Library\Facades\Page;
 use Library\Facades\Session;
 use Library\Facades\Redirect;
+use Library\Facades\Sentry;
 use Models\Address;
 use Models\School;
 use Models\Student;
@@ -65,36 +66,35 @@ class AccountController extends Controller
             'password' => 'required'
         ]);
 
-        $teacher = Teacher::where('email', '=', Request::data('email'))
-            ->where('password', '=', md5(Request::data('password')))
-            ->get()->first();
+        $teacher = Sentry::attempt(Teacher::class, [
+            'email' => Request::data('email'),
+            'password' => md5(Request::data('password'))
+        ]);
 
-        if ($teacher != null)
+        if ($teacher != false)
         {
-            Session::login($teacher->id, 'Teacher');
             Redirect::to('school.teacher.index.index');
             return;
         }
 
-        $student = Student::where('email', '=', Request::data('email'))
-            ->where('password', '=', md5(Request::data('password')))
-            ->get()->first();
+        $student = Sentry::attempt(Student::class, [
+            'email' => Request::data('email'),
+            'password' => md5(Request::data('password'))
+        ]);
 
-        if ($student != null)
+        if ($student != false)
         {
-            Session::login($student->id, 'Student');
             Redirect::to('school.student.index.index');
             return;
         }
 
         Session::setFlash('The email or password is incorrect. Please try again.');
         Redirect::back();
-        return;
     }
 
     public function logout()
     {
-        Session::logout();
+        Sentry::logout();
         Redirect::to('frontend.index.index');
     }
 
@@ -211,7 +211,7 @@ class AccountController extends Controller
 
         $tempTeacher->delete();
 
-        Session::login($teacher->id, 'Teacher');
+        Sentry::login($teacher->id, 'Teacher');
         Redirect::to('school.teacher.index.index');
     }
 

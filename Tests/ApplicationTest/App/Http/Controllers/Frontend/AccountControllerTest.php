@@ -3,6 +3,7 @@
 namespace Tests\ApplicationTest\App\Http\Controllers\Frontend;
 
 use Library\Facades\Redirect;
+use Library\Facades\Sentry;
 use Library\Facades\Session;
 use Models\Student;
 use Models\Teacher;
@@ -33,7 +34,8 @@ class AccountControllerTest extends BaseTest
         ]);
 
         // Assert
-        $this->assertTrue(Session::loggedIn());
+        $this->assertTrue(Sentry::loggedIn());
+        $this->assertEquals('Teacher', Sentry::type());
     }
 
     public function testLoginWithStudentWhenValid()
@@ -58,7 +60,8 @@ class AccountControllerTest extends BaseTest
         ]);
 
         // Assert
-        $this->assertTrue(Session::loggedIn());
+        $this->assertTrue(Sentry::loggedIn());
+        $this->assertEquals('Student', Sentry::type());
     }
 
     public function testLoginWithWhenInvalid()
@@ -75,6 +78,6 @@ class AccountControllerTest extends BaseTest
         ]);
 
         // Assert
-        $this->assertFalse(Session::loggedIn());
+        $this->assertFalse(Sentry::loggedIn());
     }
 }

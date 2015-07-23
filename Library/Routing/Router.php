@@ -230,6 +230,11 @@ class Router
         return $this->routes->hasNamedRoute($name);
     }
 
+    public function current()
+    {
+        return $this->currentRoute;
+    }
+
     public function dispatch(Request $request)
     {
         $this->currentRoute = $this->findRoute($request);

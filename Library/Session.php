@@ -55,33 +55,13 @@ class Session
             unset($_SESSION[$key]);
     }
 
-    public function login($id, $type)
-    {
-        $_SESSION['id'] = $id;
-        $_SESSION['type'] = $type;
-        $_SESSION['authenticated'] = true;
-    }
-
-    public function loggedIn()
-    {
-        return isset($_SESSION['id']) &&
-            isset($_SESSION['type']) &&
-            isset($_SESSION['authenticated']) &&
-            $_SESSION['authenticated'] === true;
-    }
-
     public function generateToken()
     {
-        if (isset($token))
-            return $token;
+        if (isset($this->token))
+            return $this->token;
 
-        $token = md5('G2s92!dK2!185fr0?Se0');
-        return $token;
-    }
-    
-    public function logout()
-    {
-        session_destroy();
+        $this->token = md5('G2s92!dK2!185fr0?Se0');
+        return $this->token;
     }
 
     public function setErrors($errors)

@@ -1,4 +1,6 @@
-<?php namespace Library\Container;
+<?php
+
+namespace Library\Container;
 
 use Library\Configuration\Config;
 use Library\Database\Factory;
@@ -11,6 +13,7 @@ use Library\Database\Database;
 use Library\Html;
 use Library\Form;
 use Library\Page;
+use Library\Sentry\Sentry;
 use Library\Session;
 use Library\Shao\Shao;
 use Library\Validation\Validator;
@@ -38,6 +41,7 @@ class ContainerConfiguration
         $this->container->instance('redirect', new Redirect());
         $this->container->instance('shao', new Shao());
         $this->container->instance('viewFactory', new ViewFactory());
+        $this->container->instance('sentry', new Sentry());
 
         if (env('APP_DEBUG'))
         {

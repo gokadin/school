@@ -21,6 +21,11 @@
     <script src="{{ asset('js/validator.js') }}" type="text/javascript"></script>
     <script src="{{ asset('js/app2.js') }}"></script>
 </head>
+
+@inject('\Library\Facades\Sentry')
+@inject('\Library\Facades\Session')
+@inject('\Library\Facades\Router')
+
 <body>
 <div class="header navbar">
     <div class="header-inner">
@@ -32,7 +37,7 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </a>
-                <a href="@path('School.Common/Index.index')" class="navbar-brand">{{ $currentUser->school()->name }}</a>
+                <a href="@path('School.Common/Index.index')" class="navbar-brand">{{ Sentry::user()->school()->name }}</a>
             </div>
             <div id="navbarCollapse" class="collapse navbar-collapse">
                 <form role="search" class="navbar-form navbar-left nav-top-search">
@@ -42,7 +47,7 @@
                     </div>
                 </form>
                 <ul class="nav navbar-nav navbar-right">
-                    {{{ $trialDaysLeft = $currentUser->subscription()->trialDaysLeft(); }}}
+                    {{{ $trialDaysLeft = Sentry::user()->subscription()->trialDaysLeft(); }}}
                     @if ($trialDaysLeft > 0)
                     <li>
                         <a class="top-nav-subscription" href="@path('School#Teacher/Account#subscription')">
@@ -52,14 +57,14 @@
                     @endif
                     <li class="dropdown">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                            <img class="profile-picture-small" src="{{ $currentUser->profile_picture }}" />
-                            {{ $currentUser->name() }}&nbsp;<b class="caret"></b>
+                            <img class="profile-picture-small" src="{{ Sentry::user()->profile_picture }}" />
+                            {{ Sentry::user()->name() }}&nbsp;<b class="caret"></b>
                         </a>
                         <ul class="dropdown-menu">
-                            <li><a href="@path('School#Teacher/Account#index')">My Account</a></li>
+                            <li><a href="@path('school.teacher.account.index')">My Account</a></li>
                             <li><a href="#">Settings</a></li>
                             <li class="divider"></li>
-                            <li><a href="@path('Frontend#Account#logout')">Log out</a></li>
+                            <li><a href="@path('frontend.account.logout')">Log out</a></li>
                         </ul>
                     </li>
                 </ul>
@@ -75,11 +80,11 @@
                 <li class="sidebar-toggler-wrapper">
                     <div class="sidebar-toggler hidden-phone"></div>
                 </li>
-                <li class="start @if ($module == 'Teacher/Index') active @endif">
-                    <a href="@path('School#Teacher/Index#index')">
+                <li class="start @if (Router::current()->name() == 'school.teacher.index.index') active @endif">
+                    <a href="@path('school.teacher.index.index')">
                         <i class="fa fa-home"></i>
                         <span class="title">Home</span>
-                        @if ($module == 'Teacher/Index')
+                        @if (strpos(Router::current()->name(), 'school.teacher.index.') != false)
                         <span class="selected"></span>
                         @endif
                     </a>
@@ -99,60 +104,60 @@
                         </li>
                     </ul>
                 </li>
-                <li class="@if ($module == 'Teacher/Messaging') active @endif">
-                    <a href="@path('School#Teacher/Messaging#index')">
+                <li class="@if (strpos(Router::current()->name(), 'school.teacher.messaging.') != false) active @endif">
+                    <a href="@path('school.teacher.messaging.index')">
                         <i class="fa fa-envelope"></i>
                         <span class="title">Messaging</span>
-                        @if ($module == 'Teacher/Messaging')
+                        @if (strpos(Router::current()->name(), 'school.teacher.messaging.') != false)
                         <span class="selected"></span>
                         @endif
                     </a>
                 </li>
-                <li class="@if ($module == 'Teacher/Activity') active @endif">
+                <li class="@if (strpos(Router::current()->name(), 'school.teacher.activity.') != false) active @endif">
                     <a href="javascript:;">
                         <i class="fa fa-gear"></i>
                         <span class="title">Activities</span>
-                        @if ($module == 'Teacher/Activity')
+                        @if (strpos(Router::current()->name(), 'school.teacher.activity.') != false)
                         <span class="selected"></span>
                         @endif
                         <span class="arrow"></span>
                     </a>
                     <ul class="sub-menu">
-                        <li @if ($module == 'Teacher/Activity' && $action == 'index') class="active" @endif>
-                        <a href="@path('School#Teacher/Activity#index')">
+                        <li @if (Router::current()->name() == 'school.teacher.activity.index') class="active" @endif>
+                        <a href="@path('school.teacher.activity.index')">
                             <span class="title">View activities</span>
                         </a>
                 </li>
-                <li @if ($module == 'Teacher/Activity' && $action == 'create') class="active" @endif>
-                <a href="@path('School#Teacher/Activity#create')">
+                <li @if (Router::current()->name() == 'school.teacher.activity.create') class="active" @endif>
+                <a href="@path('school.teacher.activity.create')">
                     <span class="title">Add an activity</span>
                 </a>
                 </li>
             </ul>
             </li>
-            <li class="@if ($module == 'Teacher/Student') active @endif">
+            <li class="@if (strpos(Router::current()->name(), 'school.teacher.student.')) active @endif">
                 <a href="javascript:;">
                     <i class="fa fa-group"></i>
                     <span class="title">Students</span>
-                    @if ($module == 'Teacher/Student')
+                    @if (strpos(Router::current()->name(), 'school.teacher.student.'))
                     <span class="selected"></span>
                     @endif
                     <span class="arrow"></span>
                 </a>
                 <ul class="sub-menu">
-                    <li @if ($module == 'Teacher/Student' && $action == 'index') class="active" @endif>
-                    <a href="@path('School#Teacher/Student#index')">View students</a>
+                    <li @if (Router::current()->name() == 'school.teacher.student.index') class="active" @endif>
+                    <a href="@path('school.teacher.student.index')">View students</a>
             </li>
-            <li @if ($module == 'Teacher/Student' && $action == 'create') class="active" @endif>
-            <a href="@path('School#Teacher/Student#create')">Add a student</a>
+            <li @if (Router::current()->name() == 'school.teacher.student.create') class="active" @endif>
+            <a href="@path('school.teacher.student.create')">Add a student</a>
             </li>
             </ul>
             </li>
-            <li class="@if ($module == 'Teacher/Calendar') active @endif">
-                <a href="@path('School#Teacher/Calendar#index')">
+            <li class="@if (strpos(Router::current()->name(), 'school.teacher.calendar.')) active @endif">
+                <a href="@path('school.teacher.calendar.index')">
                     <i class="fa fa-calendar"></i>
                     <span class="title">Calendar</span>
-                    @if ($module == 'Teacher/Calendar')
+                    @if (strpos(Router::current()->name(), 'school.teacher.calendar.'))
                     <span class="selected"></span>
                     @endif
                 </a>
@@ -172,15 +177,15 @@
                     </li>
                 </ul>
             </li>
-            <li class="@if ($module == 'Teacher/Payment') active @endif">
+            <li class="@if (strpos(Router::current()->name(), 'school.teacher.payment.')) active @endif">
                 <a href="javascript:;">
                     <i class="fa fa-money"></i>
                     <span class="title">Payments</span>
                     <span class="arrow"></span>
                 </a>
                 <ul class="sub-menu">
-                    <li @if ($module == 'Teacher/Payment' && $action == 'index') class="active" @endif>
-                    <a href="@path('School#Teacher/Payment#index')">Stripe test</a>
+                    <li @if (Router::current()->name() == 'school.teacher.payment.index') class="active" @endif>
+                    <a href="@path('school.teacher.payment.index')">Stripe test</a>
             </li>
             <li>
                 <a href="#">Example</a>
@@ -202,16 +207,16 @@
                     </li>
                 </ul>
             </li>
-            <li class="@if ($module == 'Teacher/Account') active @endif">
-                <a href="@path('School#Teacher/Account#index')">
+            <li class="@if (strpos(Router::current()->name(), 'school.teacher.account.')) active @endif">
+                <a href="@path('school.teacher.account.index')">
                     <i class="fa fa-user"></i>
                     <span class="title">My Account</span>
-                    @if ($module == 'Teacher/Account')
+                    @if (strpos(Router::current()->name(), 'school.teacher.account.'))
                     <span class="selected"></span>
                     @endif
                 </a>
             </li>
-            <li class="last @if ($module == 'Teacher/Setting') active @endif">
+            <li class="last @if (strpos(Router::current()->name(), 'school.teacher.settings.')) active @endif">
                 <a href="#">
                     <i class="fa fa-cogs"></i>
                     <span class="title">Settings</span>
@@ -224,30 +229,14 @@
                 <div class="row">
                     <div class="col-md-12">
                         <h3 class="page-title">
-                            @if (sizeof($breadcrumbs) == 1)
                             Home
-                            @elseif (sizeof($breadcrumbs) > 1)
-                            {{{ $keys = array_keys($breadcrumbs); }}}
-                            {{ $keys[1] }}
-                            @endif
                         </h3>
                         <ul class="page-breadcrumb breadcrumb">
-                            @foreach ($breadcrumbs as $key => $value)
-                            <li>
-                                @if ($key == 'Home')
-                                <i class="fa fa-home"></i>
-                                @endif
-                                <a href="{{ $value }}">{{ $key }}</a>
-                                @if ($value != end($breadcrumbs))
-                                <i class="fa fa-angle-right"></i>
-                                @endif
-                            </li>
-                            @endforeach
+                            Home
                         </ul>
                     </div>
                 </div>
                 <div class="row content">
-                    {{{ use Library\Facades\Session; }}}
                     <div class="col-md-12">
                         @if (Session::hasFlash())
                         <div id="flash" class="active {{ Session::getFlashType() }}">
