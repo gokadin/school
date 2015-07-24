@@ -1,3 +1,7 @@
+@layout('school.layout')
+
+@section('content')
+
 @inject('\Library\Facades\Form')
 
 <div class="row">
@@ -84,13 +88,15 @@
 </div>
 
 <script type="text/javascript">
-$('#create-activity-form').validate({
-    name: [
-        {rule: 'required'}
-    ],
-    defaultRate: [
-        {rule: 'required', message: 'default rate is required'},
-        {rule: 'numeric', message: 'default rate must be a number'}
-    ]
-});
-</script>
+    $('#create-activity-form').validate({
+        name: [
+            {rule: 'required'}
+        ],
+        defaultRate: [
+            {rule: 'required', message: 'default rate is required'},
+            {rule: 'numeric', message: 'default rate must be a number'}
+        ]
+    });
+</script
+
+@stop()

@@ -22,6 +22,8 @@ class Application
         $this->viewToSend = null;
 
         $this->ConfigureContainer();
+
+        $this->loadRoutes();
     }
 
     protected function ConfigureContainer()
@@ -42,12 +44,15 @@ class Application
         return $this->container;
     }
 
-    public function processRoute()
+    private function loadRoutes()
     {
         Router::group(['namespace' => 'App\\Http\\Controllers'], function() {
             require __DIR__ . '/../App/Http/routes.php';
         });
+    }
 
+    public function processRoute()
+    {
         $result = Router::dispatch(Request::instance());
 
         $this->viewToSend = $result;

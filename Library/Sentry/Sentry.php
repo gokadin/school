@@ -61,6 +61,15 @@ class Sentry
 
     public function login($id, $type)
     {
+        $type = ucfirst($type);
+        $modelName = '\\Models\\'.$type;
+        $this->user = $modelName::find($id);
+
+        if (is_null($this->user))
+        {
+            return;
+        }
+
         $_SESSION['id'] = $id;
         $_SESSION['type'] = $type;
         $_SESSION['authenticated'] = true;

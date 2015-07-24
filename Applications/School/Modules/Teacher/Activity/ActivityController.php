@@ -9,48 +9,6 @@ use Models\Activity;
 
 class ActivityController extends BackController
 {
-    public function index()
-    {
-        Page::add('activities', $this->currentUser->activities());
-    }
-
-    public function create()
-    {
-
-    }
-
-    public function store()
-    {
-        $this->validateRequest([
-            'name' => 'required',
-            'defaultRate' => [
-                'required' => 'default rate is required',
-                'numeric' => 'default rate must be numeric'
-            ]
-        ]);
-
-        $activity = Activity::create([
-            'teacher_id' => $this->currentUser->id,
-            'name' => Request::data('name'),
-            'rate' => Request::data('defaultRate'),
-            'period' => Request::data('period'),
-            'location' => Request::data('location')
-        ]);
-
-        if ($activity == null)
-        {
-            Session::setFlash('An error occurred. Activity was not created.');
-            Response::back();
-        }
-
-        Session::setFlash('Activity <b>'.$activity->name.'</b> was created successfully.');
-
-        if (Request::data('createAnother') == 1)
-            Response::toAction('School#Teacher/Activity#create');
-
-        Response::toAction('School#Teacher/Activity#index');
-    }
-
     public function update()
     {
         if (!is_numeric(Request::data('activityId')) || !Activity::exists('id', Request::data('activityId')))

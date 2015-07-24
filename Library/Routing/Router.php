@@ -108,7 +108,7 @@ class Router
             return '';
         }
 
-        if (is_null($params))
+        if (is_null($params) || sizeof($params) == 0)
         {
             return $route->uri();
         }
@@ -233,6 +233,11 @@ class Router
     public function current()
     {
         return $this->currentRoute;
+    }
+
+    public function currentNameContains($str)
+    {
+        return strpos($this->currentRoute->name(), $str) !== false;
     }
 
     public function dispatch(Request $request)

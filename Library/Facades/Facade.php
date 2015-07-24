@@ -60,7 +60,7 @@ abstract class Facade
         }
     }
 
-    public static function mock()
+    public static function shouldReceive($methodName)
     {
         $class = get_class(static::resolveFacadeInstance(static::getFacadeAccessor()));
 
@@ -68,6 +68,6 @@ abstract class Facade
 
         static::$resolvedInstance[static::getFacadeAccessor()] = $mock;
 
-        return $mock;
+        return $mock->shouldReceive($methodName);
     }
 }

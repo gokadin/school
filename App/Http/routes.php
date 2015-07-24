@@ -2,7 +2,7 @@
 
 use Library\Facades\Router as Route;
 
-Route::group(['namespace' => 'Frontend', 'as' => 'frontend'], function() {
+Route::group(['namespace' => 'Frontend', 'as' => 'frontend', 'middleware' => 'VerifyCsrfToken'], function() {
 
     Route::group(['as' => 'index'], function() {
 
@@ -31,7 +31,7 @@ Route::group(['namespace' => 'Frontend', 'as' => 'frontend'], function() {
 
 });
 
-Route::group(['namespace' => 'School', 'prefix' => '/school', 'as' => 'school'], function() {
+Route::group(['namespace' => 'School', 'prefix' => '/school', 'as' => 'school', 'middleware' => 'VerifyCsrfToken'], function() {
 
     Route::group(['namespace' => 'Common', 'as' => 'common'], function() {
 
@@ -55,7 +55,7 @@ Route::group(['namespace' => 'School', 'prefix' => '/school', 'as' => 'school'],
 
         });
 
-        Route::group(['prefix' => '/activities', 'as' => 'activities'], function() {
+        Route::group(['prefix' => '/activities', 'as' => 'activity'], function() {
 
             Route::get('/', 'ActivityController@index');
             Route::get('/create', 'ActivityController@create');

@@ -5,6 +5,7 @@ namespace App\Http\Middleware;
 use Closure;
 use Library\Facades\Session;
 use Library\Http\Request;
+use Symfony\Component\Yaml\Exception\RuntimeException;
 
 class VerifyCsrfToken
 {
@@ -20,7 +21,7 @@ class VerifyCsrfToken
         if (in_array($request->method(), $this->methodsToVerify))
         {
             $token = Session::generateToken();
-            if ($request::data('_token') != $token && $request::header('HTTP_CSRF_TOKEN') != $token)
+            if ($request->data('_token') != $token && $request->header('HTTP_CSRF_TOKEN') != $token)
             {
                 throw new RuntimeException('CSRF token mismatch.');
             }

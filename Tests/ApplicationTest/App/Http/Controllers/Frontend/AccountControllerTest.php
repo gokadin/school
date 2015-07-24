@@ -4,7 +4,6 @@ namespace Tests\ApplicationTest\App\Http\Controllers\Frontend;
 
 use Library\Facades\Redirect;
 use Library\Facades\Sentry;
-use Library\Facades\Session;
 use Models\Student;
 use Models\Teacher;
 use Tests\ApplicationTest\BaseTest;
@@ -17,8 +16,7 @@ class AccountControllerTest extends BaseTest
         // Arrange
         $this->beginDatabaseTransaction();
 
-        Redirect::mock()
-            ->shouldReceive('to')
+        Redirect::shouldReceive('to')
             ->once()
             ->with('school.teacher.index.index');
 
@@ -28,7 +26,7 @@ class AccountControllerTest extends BaseTest
         ]);
 
         // Act
-        $this->action('POST', 'Frontend\\AccountController@login', [
+        $this->post('frontend.account.login', [
             'email' => 'a@b.com',
             'password' => 'admin'
         ]);
@@ -43,8 +41,7 @@ class AccountControllerTest extends BaseTest
         // Arrange
         $this->beginDatabaseTransaction();
 
-        Redirect::mock()
-            ->shouldReceive('to')
+        Redirect::shouldReceive('to')
             ->once()
             ->with('school.student.index.index');
 
@@ -54,7 +51,7 @@ class AccountControllerTest extends BaseTest
         ]);
 
         // Act
-        $this->action('POST', 'Frontend\\AccountController@login', [
+        $this->post('frontend.account.login', [
             'email' => 'a@b.com',
             'password' => 'admin'
         ]);
@@ -64,15 +61,14 @@ class AccountControllerTest extends BaseTest
         $this->assertEquals('Student', Sentry::type());
     }
 
-    public function testLoginWithWhenInvalid()
+    public function testLoginWhenInvalid()
     {
         // Arrange
-        Redirect::mock()
-            ->shouldReceive('back')
+        Redirect::shouldReceive('back')
             ->once();
 
         // Act
-        $this->action('POST', 'Frontend\\AccountController@login', [
+        $this->post('frontend.account.login', [
             'email' => 'a@b.com',
             'password' => 'admin'
         ]);

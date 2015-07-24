@@ -80,11 +80,11 @@
                 <li class="sidebar-toggler-wrapper">
                     <div class="sidebar-toggler hidden-phone"></div>
                 </li>
-                <li class="start @if (Router::current()->name() == 'school.teacher.index.index') active @endif">
+                <li class="start @if (Router::currentNameContains('teacher.index.index')) active @endif">
                     <a href="@path('school.teacher.index.index')">
                         <i class="fa fa-home"></i>
                         <span class="title">Home</span>
-                        @if (strpos(Router::current()->name(), 'school.teacher.index.') != false)
+                        @if (Router::currentNameContains('teacher.index'))
                         <span class="selected"></span>
                         @endif
                     </a>
@@ -104,60 +104,60 @@
                         </li>
                     </ul>
                 </li>
-                <li class="@if (strpos(Router::current()->name(), 'school.teacher.messaging.') != false) active @endif">
+                <li class="@if (Router::currentNameContains('teacher.messaging')) != false) active @endif">
                     <a href="@path('school.teacher.messaging.index')">
                         <i class="fa fa-envelope"></i>
                         <span class="title">Messaging</span>
-                        @if (strpos(Router::current()->name(), 'school.teacher.messaging.') != false)
+                        @if (Router::currentNameContains('teacher.messaging'))
                         <span class="selected"></span>
                         @endif
                     </a>
                 </li>
-                <li class="@if (strpos(Router::current()->name(), 'school.teacher.activity.') != false) active @endif">
+                <li class="@if (Router::currentNameContains('teacher.activity')) active @endif">
                     <a href="javascript:;">
                         <i class="fa fa-gear"></i>
                         <span class="title">Activities</span>
-                        @if (strpos(Router::current()->name(), 'school.teacher.activity.') != false)
+                        @if (Router::currentNameContains('teacher.activity'))
                         <span class="selected"></span>
                         @endif
                         <span class="arrow"></span>
                     </a>
                     <ul class="sub-menu">
-                        <li @if (Router::current()->name() == 'school.teacher.activity.index') class="active" @endif>
+                        <li @if (Router::currentNameContains('teacher.activity.index')) class="active" @endif>
                         <a href="@path('school.teacher.activity.index')">
                             <span class="title">View activities</span>
                         </a>
                 </li>
-                <li @if (Router::current()->name() == 'school.teacher.activity.create') class="active" @endif>
+                <li @if (Router::currentNameContains('teacher.activity.create')) class="active" @endif>
                 <a href="@path('school.teacher.activity.create')">
                     <span class="title">Add an activity</span>
                 </a>
                 </li>
             </ul>
             </li>
-            <li class="@if (strpos(Router::current()->name(), 'school.teacher.student.')) active @endif">
+            <li class="@if (Router::currentNameContains('teacher.student')) active @endif">
                 <a href="javascript:;">
                     <i class="fa fa-group"></i>
                     <span class="title">Students</span>
-                    @if (strpos(Router::current()->name(), 'school.teacher.student.'))
+                    @if (Router::currentNameContains('teacher.student'))
                     <span class="selected"></span>
                     @endif
                     <span class="arrow"></span>
                 </a>
                 <ul class="sub-menu">
-                    <li @if (Router::current()->name() == 'school.teacher.student.index') class="active" @endif>
+                    <li @if (Router::currentNameContains('teacher.student.index')) class="active" @endif>
                     <a href="@path('school.teacher.student.index')">View students</a>
             </li>
-            <li @if (Router::current()->name() == 'school.teacher.student.create') class="active" @endif>
+            <li @if (Router::currentNameContains('teacher.student.create')) class="active" @endif>
             <a href="@path('school.teacher.student.create')">Add a student</a>
             </li>
             </ul>
             </li>
-            <li class="@if (strpos(Router::current()->name(), 'school.teacher.calendar.')) active @endif">
+            <li class="@if (Router::currentNameContains('teacher.calendar')) active @endif">
                 <a href="@path('school.teacher.calendar.index')">
                     <i class="fa fa-calendar"></i>
                     <span class="title">Calendar</span>
-                    @if (strpos(Router::current()->name(), 'school.teacher.calendar.'))
+                    @if (Router::currentNameContains('teacher.calendar'))
                     <span class="selected"></span>
                     @endif
                 </a>
@@ -177,14 +177,14 @@
                     </li>
                 </ul>
             </li>
-            <li class="@if (strpos(Router::current()->name(), 'school.teacher.payment.')) active @endif">
+            <li class="@if (Router::currentNameContains('teacher.payment')) active @endif">
                 <a href="javascript:;">
                     <i class="fa fa-money"></i>
                     <span class="title">Payments</span>
                     <span class="arrow"></span>
                 </a>
                 <ul class="sub-menu">
-                    <li @if (Router::current()->name() == 'school.teacher.payment.index') class="active" @endif>
+                    <li @if (Router::currentNameContains('teacher.payment.index')) class="active" @endif>
                     <a href="@path('school.teacher.payment.index')">Stripe test</a>
             </li>
             <li>
@@ -207,16 +207,16 @@
                     </li>
                 </ul>
             </li>
-            <li class="@if (strpos(Router::current()->name(), 'school.teacher.account.')) active @endif">
+            <li class="@if (Router::currentNameContains('teacher.account')) active @endif">
                 <a href="@path('school.teacher.account.index')">
                     <i class="fa fa-user"></i>
                     <span class="title">My Account</span>
-                    @if (strpos(Router::current()->name(), 'school.teacher.account.'))
+                    @if (Router::currentNameContains('teacher.account'))
                     <span class="selected"></span>
                     @endif
                 </a>
             </li>
-            <li class="last @if (strpos(Router::current()->name(), 'school.teacher.settings.')) active @endif">
+            <li class="last @if (Router::currentNameContains('teacher.settings')) active @endif">
                 <a href="#">
                     <i class="fa fa-cogs"></i>
                     <span class="title">Settings</span>
