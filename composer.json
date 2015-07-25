@@ -11,7 +11,8 @@
     "stripe/stripe-php": "2.*",
     "swiftmailer/swiftmailer": "^5.4",
     "fzaninotto/faker": "^1.5",
-    "mockery/mockery": "^0.9.4"
+    "mockery/mockery": "^0.9.4",
+    "symfony/console": "^2.7"
   },
   "autoload": {
     "psr-0": {"": ""}
