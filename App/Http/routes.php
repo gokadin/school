@@ -25,7 +25,7 @@ Route::group(['namespace' => 'Frontend', 'as' => 'frontend', 'middleware' => 'Ve
     });
 });
 
-Route::group(['namespace' => 'School', 'prefix' => '/school', 'as' => 'school', 'middleware' => 'VerifyCsrfToken'], function() {
+Route::group(['namespace' => 'School', 'prefix' => '/school', 'as' => 'school', 'middleware' => ['VerifyCsrfToken', 'VerifyAuthentication']], function() {
     Route::group(['namespace' => 'Common', 'as' => 'common'], function() {
         Route::get('/', 'IndexController@index');
     });
