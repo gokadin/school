@@ -37,7 +37,7 @@ class Job
 
     public function getExecutionDate()
     {
-        return $this->executionDate();
+        return $this->executionDate;
     }
 
     public function getQueueName()

@@ -3,8 +3,9 @@
 use Symfony\Component\Yaml\Exception\RuntimeException;
 use IteratorAggregate;
 use ArrayIterator;
+use JsonSerializable;
 
-class ModelCollection implements IteratorAggregate
+class ModelCollection implements IteratorAggregate, JsonSerializable
 {
     protected $models;
 
@@ -158,9 +159,7 @@ class ModelCollection implements IteratorAggregate
         return $this;
     }
 
-    /* JSON */
-
-    public function json(array $toExclude = null)
+    public function jsonSerialize(array $toExclude = null)
     {
         $json = '[';
 
@@ -168,7 +167,7 @@ class ModelCollection implements IteratorAggregate
         $modelCount = $this->count();
         foreach ($this->models as $model)
         {
-            $json .= $model->json($toExclude);
+            $json .= json_encode($model, $toExclude);
             if ($i < $modelCount - 1)
                 $json .= ',';
 

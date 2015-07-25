@@ -10,14 +10,13 @@ class SendWelcomeEmail extends Job
 {
     protected $user;
 
-    public function __construct(TempTeacher $user)
+    public function __construct(TempTeacher $user, $num, $str)
     {
         $this->user = $user;
     }
 
     public function handle()
     {
-        echo 'INSIDE JOB HANDLE';
         Log::info('Executed queue job! : temp user -> '.$this->user->email);
     }
 }

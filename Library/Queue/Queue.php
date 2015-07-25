@@ -32,7 +32,7 @@ class Queue
         }
     }
 
-    public function push(Job $job)
+    public function push($job)
     {
         $this->driver->push($job);
     }

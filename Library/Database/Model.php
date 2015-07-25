@@ -5,19 +5,20 @@ namespace Library\Database;
 use Library\Facades\DB;
 use Symfony\Component\Yaml\Exception\RuntimeException;
 use Carbon\Carbon;
+use JsonSerializable;
 
-class Model implements ModelQueryContract
+class Model implements ModelQueryContract, JsonSerializable
 {
-    private $query;
+    protected $query;
     protected $vars = array();
     protected $fillable = array();
     protected $tableName;
     protected $modelName;
     protected $modelDirectory;
     protected $primaryKeyName;
-    private $columns;
+    protected $columns;
     protected $columnNames;
-    private $hasTimestamps;
+    protected $hasTimestamps;
 
     public function __construct(array $data = null)
     {
@@ -123,7 +124,7 @@ class Model implements ModelQueryContract
             return $this->update();
     }
 
-    private function update()
+    protected function update()
     {
         if ($this->isMissingRequiredColumn())
             throw new RuntimeException('A required column is missing from table ' . $this->tableName);
@@ -164,7 +165,7 @@ class Model implements ModelQueryContract
             ->delete();
     }
 
-    private function insert()
+    protected function insert()
     {
         if ($this->isMissingRequiredColumn())
             throw new RuntimeException('A required column is missing from table ' . $this->tableName);
@@ -372,9 +373,7 @@ class Model implements ModelQueryContract
         return $results;
     }
 
-    /* JSON */
-
-    public function json(array $toExclude = null)
+    public function jsonSerialize(array $toExclude = null)
     {
         if ($toExclude == null)
         {
@@ -389,5 +388,10 @@ class Model implements ModelQueryContract
         }
 
         return json_encode($vars);
+    }
+
+    public function __sleep()
+    {
+        return array('vars');
     }
 }

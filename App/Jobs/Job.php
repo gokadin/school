@@ -2,9 +2,9 @@
 
 namespace App\Jobs;
 
-use Library\Queue\Job as QueueJob;
+use Library\Queue\Queueable;
 
-abstract class Job extends QUeueJob
+abstract class Job
 {
-
+    use Queueable;
 }

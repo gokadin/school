@@ -13,7 +13,7 @@ class IndexController extends Controller
     {
         $t = TempTeacher::find(1);
 
-        Queue::push(new SendWelcomeEmail($t));
+        Queue::push(new SendWelcomeEmail($t, 3, 'text'));
 
         return view('frontend.index.index');
     }

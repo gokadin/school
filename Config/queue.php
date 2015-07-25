@@ -2,7 +2,7 @@
 
 return [
 
-    'use' => 'sync',
+    'use' => 'database',
 
     'connections' => [
 
