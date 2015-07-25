@@ -8,11 +8,13 @@ class Job
 {
     protected $executionDate;
     protected $queueName;
+    protected $maxAttempts;
 
     public function __construct()
     {
         $this->executionDate = Carbon::now();
         $this->queueName = null;
+        $this->maxAttempts = 3;
     }
 
     public function after($seconds)
@@ -27,13 +29,24 @@ class Job
         return $this;
     }
 
-    public function executionDate()
+    public function maxAttempts($count)
+    {
+        $this->maxAttempts = $count;
+        return $this;
+    }
+
+    public function getExecutionDate()
     {
         return $this->executionDate();
     }
 
-    public function queueName()
+    public function getQueueName()
     {
         return $this->queueName;
+    }
+
+    public function getMaxAttempts()
+    {
+        return $this->maxAttempts;
     }
 }
