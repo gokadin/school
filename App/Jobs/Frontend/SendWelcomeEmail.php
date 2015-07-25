@@ -4,12 +4,13 @@ namespace App\Jobs\Frontend;
 
 use App\Jobs\Job;
 use Library\Facades\Log;
+use Models\TempTeacher;
 
 class SendWelcomeEmail extends Job
 {
     protected $user;
 
-    public function __construct($user)
+    public function __construct(TempTeacher $user)
     {
         $this->user = $user;
     }
