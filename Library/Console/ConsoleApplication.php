@@ -14,7 +14,7 @@ class ConsoleApplication
     {
         $this->app = new Application();
 
-        require __DIR__.'/../../Bootstrap/env.php';
+        require $this->app->basePath().'Bootstrap/env.php';
 
         $this->addRequiredModules();
     }
@@ -31,6 +31,11 @@ class ConsoleApplication
 
     protected function addRequiredModules()
     {
-        $this->addModule(new QueueListener());
+        $this->addModule(new QueueListener($this->app));
+    }
+
+    protected function app()
+    {
+        return $this->app;
     }
 }

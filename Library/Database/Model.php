@@ -394,4 +394,9 @@ class Model implements ModelQueryContract, JsonSerializable
     {
         return array('vars');
     }
+
+    public function __wakeUp()
+    {
+        $this->vars['test'] = 'tests';
+    }
 }

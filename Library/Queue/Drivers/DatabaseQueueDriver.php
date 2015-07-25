@@ -21,12 +21,15 @@ class DatabaseQueueDriver
 
     public function push($job)
     {
-        $serializedData = json_encode([
-            'className' => get_class($job),
-            'data' => serialize($job)
-        ]);
+        $serializedData = serialize($job);
 
-        $this->insertJobInDatabase($job, $serializedData);
+        //$this->insertJobInDatabase($job, $serializedData);
+
+        $x = DB::query('SELECT * FROM jobs '.
+            'ORDER BY execution_date DESC LIMIT 1');
+        $res = $x->fetch();
+        $data = $res['data'];
+        $ser = unserialize($data); // just tested this... move to listener
     }
 
     protected function insertJobInDatabase($job, $data)
@@ -34,21 +37,19 @@ class DatabaseQueueDriver
         $executionDate = Carbon::now();
         $executionDate->addSeconds($job->delay);
 
-        DB::exec('INSERT INTO '.$this->queueTable.' (name, max_attempts, execution_date, serializedData) VALUES('.
-            '\''.str_replace('\\', '\\\\', get_class($job)).'\''.', '.
+        DB::exec('INSERT INTO '.$this->queueTable.' (max_attempts, execution_date, data) VALUES('.
             $job->maxAttempts.', '.
             '\''.$executionDate.'\', '.
-            '\''.$data.'\')');
+            '\''.str_replace('\\', '\\\\', $data).'\')');
     }
 
     protected function createTables()
     {
         DB::exec('CREATE TABLE IF NOT EXISTS '.$this->queueTable.'('.
-            'id INT(11) AUTO_INCREMENT PRIMARY KEY,'.
-            'name VARCHAR(255) NOT NULL, '.
+            'id INT(11) AUTO_INCREMENT PRIMARY KEY, '.
             'max_attempts INT(11) NOT NULL, '.
             'execution_date DATETIME NOT NULL, '.
-            'serializedData TEXT NOT NULL'.
+            'data TEXT NOT NULL'.
             ')');
 
         //DB::exec('CREATE TABLE IF NOT EXISTS '.$this->failedTable.'('.);

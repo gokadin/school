@@ -11,6 +11,7 @@ use Library\Http\View;
 
 class Application
 {
+    protected $basePath;
     protected $container;
     protected $viewToSend;
 
@@ -20,6 +21,7 @@ class Application
 
         $this->container = new Container();
         $this->viewToSend = null;
+        $this->basePath = __DIR__.'/../';
 
         $this->ConfigureContainer();
 
@@ -72,5 +74,10 @@ class Application
         }
 
         $this->viewToSend->send();
+    }
+
+    public function basePath()
+    {
+        return $this->basePath;
     }
 }

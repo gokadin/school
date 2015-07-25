@@ -2,11 +2,16 @@
 
 namespace Library\Log;
 
-class Log
+class Log // UNFIUNISHED ***********************
 {
     const LOG_FOLDER = 'Storage/Logs';
 
     public function info($message)
+    {
+        $this->writeLog($message);
+    }
+
+    public function error($message)
     {
         $this->writeLog($message);
     }
