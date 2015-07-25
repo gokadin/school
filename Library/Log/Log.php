@@ -27,6 +27,6 @@ class Log
 
     protected function generateFileName()
     {
-        return 'log-'.date('d-m-Y');
+        return __DIR__.'/../../'.self::LOG_FOLDER.'/log-'.date('d-m-Y');
     }
 }

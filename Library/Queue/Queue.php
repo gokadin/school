@@ -2,33 +2,38 @@
 
 namespace Library\Queue;
 
-use Library\Facades\DB;
-use ReflectionClass;
+use Library\Queue\Drivers\SyncQueueDriver;
+use Library\Queue\Drivers\DatabaseQueueDriver;
 
 class Queue
 {
-    public function push(Job $job)
+    protected $driver;
+
+    public function __construct()
     {
-        $this->getSerializedArguments($job);
+        $settings = require __DIR__.'/../../Config/queue.php';
+
+        $this->setDriver($settings);
     }
 
-    protected function getSerializedArguments(Job $job)
+    protected function setDriver($settings)
     {
-        $r = new ReflectionClass($job);
-
-        $parameters = $r->getConstructor()->getParameters();
-
-        foreach ($parameters as $parameter)
+        switch ($settings['use'])
         {
-            
+            case 'sync':
+                $this->driver = new SyncQueueDriver();
+                break;
+            case 'database':
+                $this->driver = new DatabaseQueueDriver($settings['connections']['database']);
+                break;
+            default:
+                $this->driver = null;
+                break;
         }
     }
 
-    protected function insertJob(Job $job)
+    public function push(Job $job)
     {
-        DB::exec('INSERT INTO '.env('QUEUE_TABLE').' (name, max_attempts, execution_date) VALUES('.
-            get_class($job).', '.
-            $job->getMaxAttempts().', '.
-            $job->getExecutionDate().')');
+        $this->driver->push($job);
     }
 }

@@ -17,6 +17,7 @@ class SendWelcomeEmail extends Job
 
     public function handle()
     {
+        echo 'INSIDE JOB HANDLE';
         Log::info('Executed queue job! : temp user -> '.$this->user->email);
     }
 }
