@@ -21,6 +21,8 @@ class Database
         $this->dao->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
 
         $this->tables = new TableBuilder($this);
+
+        $this->handleQueueTable();
     }
 
     public function dao()
@@ -45,6 +47,23 @@ class Database
             $className = '\\Models\\'.ucfirst($table);
 
         return new $className();
+    }
+
+    protected function handleQueueTable()
+    {
+        $name = env('QUEUE_TABLE');
+
+        if (!$name)
+        {
+            return;
+        }
+
+        $this->exec('CREATE TABLE IF NOT EXISTS '.$name.'('.
+            ' id INT(11) AUTO_INCREMENT PRIMARY KEY,'.
+            ' name VARCHAR(32) NOT NULL,'.
+            ' max_attempts INT(11) NOT NULL,'.
+            ' execution_date DATETIME NOT NULL'.
+            ')');
     }
 
     public function query($sql)

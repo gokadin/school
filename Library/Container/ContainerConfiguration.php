@@ -8,6 +8,8 @@ use Library\Http\Redirect;
 use Library\Http\Request;
 use Library\Http\Response;
 use Library\Http\ViewFactory;
+use Library\Log\Log;
+use Library\Queue\Queue;
 use Library\Routing\Router;
 use Library\Database\Database;
 use Library\Html;
@@ -42,6 +44,8 @@ class ContainerConfiguration
         $this->container->instance('shao', new Shao());
         $this->container->instance('viewFactory', new ViewFactory());
         $this->container->instance('sentry', new Sentry());
+        $this->container->instance('log', new Log());
+        $this->container->instance('queue', new Queue());
 
         if (env('APP_DEBUG'))
         {

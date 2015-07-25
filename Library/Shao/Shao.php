@@ -2,12 +2,11 @@
 
 namespace Library\Shao;
 
-use Library\Facades\Config;
 use Library\Http\View;
 
 class Shao
 {
-    const SHAO_FOLDER = 'Cache/Shao/';
+    const SHAO_FOLDER = 'Storage/Framework/Shao/';
 
     protected $shaoLogic;
     protected $shaoFunctions;
