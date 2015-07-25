@@ -2,6 +2,7 @@
 
 namespace Library\Console;
 
+use Library\Console\Modules\Queue\QueueListener;
 use Library\Console\Modules\Routing;
 use Symfony\Component\Console\Application;
 
@@ -13,7 +14,9 @@ class ConsoleApplication
     {
         $this->app = new Application();
 
-        $this->bootstrapModules();
+        require __DIR__.'/../../Bootstrap/env.php';
+
+        $this->addRequiredModules();
     }
 
     public function run()
@@ -21,8 +24,13 @@ class ConsoleApplication
         $this->app->run();
     }
 
-    protected function bootstrapModules()
+    public function addModule($module)
     {
-        $this->app->add(new Routing());
+        $this->app->add($module);
+    }
+
+    protected function addRequiredModules()
+    {
+        $this->addModule(new QueueListener());
     }
 }
