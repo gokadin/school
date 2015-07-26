@@ -2,6 +2,7 @@
 
 namespace Library\Database;
 
+use Library\Facades\App;
 use Symfony\Component\Yaml\Exception\RuntimeException;
 use Library\Config;
 
@@ -12,7 +13,7 @@ class Database
 
     public function __construct()
     {
-        $settings = require __DIR__.'/../../Config/database.php';
+        $settings = require App::basePath().'Config/database.php';
 
         $this->dao = new \PDO($settings['mysql']['driver'].':host='.$settings['mysql']['host'].';dbname='.$settings['mysql']['database'],
             $settings['mysql']['username'],

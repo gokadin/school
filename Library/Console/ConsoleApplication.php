@@ -3,18 +3,17 @@
 namespace Library\Console;
 
 use Library\Console\Modules\Queue\QueueListener;
-use Library\Console\Modules\Routing;
 use Symfony\Component\Console\Application;
 
 class ConsoleApplication
 {
     protected $app;
+    protected $framework;
 
     public function __construct()
     {
         $this->app = new Application();
-
-        require $this->app->basePath().'Bootstrap/env.php';
+        $this->framework = new \Library\Application();
 
         $this->addRequiredModules();
     }
@@ -31,11 +30,11 @@ class ConsoleApplication
 
     protected function addRequiredModules()
     {
-        $this->addModule(new QueueListener($this->app));
+        $this->app->add(new QueueListener($this->framework));
     }
 
-    protected function app()
+    protected function framework()
     {
-        return $this->app;
+        return $this->framework;
     }
 }

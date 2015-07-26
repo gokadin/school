@@ -2,25 +2,31 @@
 
 namespace Library\Console\Modules\Queue;
 
+use Library\Facades\Log;
 use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Exception;
 
 class QueueListener extends Command
 {
     const SLEEP_DURATION_SEC = 2;
 
-    protected $app;
+    protected $framework;
     protected $dao;
     protected $queueTable;
-    // protected $failedTable;
+    protected $failedTable;
 
-    public function __construct($app)
+    public function __construct($framework)
     {
-        $this->app = $app;
+        parent::__construct();
+
+        $this->framework = $framework;
         $this->dao = $this->getDbConnection();
-        $this->queueTable = $this->getQueueTableName();
+
+        $settings = require $this->framework->basePath().'Config/queue.php';
+        $this->queueTable = $settings['connections']['database']['table'];
+        $this->failedTable = $settings['connections']['database']['failedTable'];
     }
 
     protected function configure()
@@ -32,28 +38,49 @@ class QueueListener extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        $attempts = 0;
         while (true)
         {
-            $job = $this->getNextJob();
+            list($id, $maxAttempts, $job) = $this->getNextJobArray();
 
             if (is_null($job))
             {
+                $output->writeln('<comment>Waiting for new job...</comment>');
                 sleep(self::SLEEP_DURATION_SEC);
+                continue;
             }
 
-            $job->handle();
+            try
+            {
+                $job->handle();
+                $attempts = 0;
+                $this->removeJob($id);
+            }
+            catch (Exception $e)
+            {
+                $attempts++;
+                $output->writeln('<error>Failed processing job #'.$id.' : '.
+                    get_class($job).' (attempt '.$attempts.').</error>');
 
-            // write log if job was run
+                Log::error('Failed processing job #'.$id.' : '.
+                    get_class($job).' (attempt '.$attempts.'), message: '.$e->getMessage());
 
-            // write log saying its alive
+                if ($attempts >= $maxAttempts)
+                {
+                    $this->handleFailedJob($job);
+                    $this->removeJob($id);
+                    $attempts = 0;
+                }
+            }
 
+            $output->writeln('<info>Processed job #'.$id.' : '.get_class($job).'.</info>');
             sleep(self::SLEEP_DURATION_SEC);
         }
     }
 
     protected function getDbConnection()
     {
-        $settings = include $this->app->basePath().'Config/database.php';
+        $settings = include $this->framework->basePath().'Config/database.php';
 
         $dao = new \PDO($settings['mysql']['driver'].':host='.$settings['mysql']['host'].';dbname='.$settings['mysql']['database'],
             $settings['mysql']['username'],
@@ -64,19 +91,41 @@ class QueueListener extends Command
         return $dao;
     }
 
-    protected function getQueueTableName()
+    protected function getNextJobArray()
     {
-        $settings = require $this->app->basePath().'Config/query.php';
-        return $settings['connections']['database']['table'];
-    }
-
-    protected function getNextJob()
-    {
-        $query = $this->dao->prepare('SELECT FROM '.$this->queueTable.' '.
+        $query = $this->dao->prepare('SELECT * FROM '.$this->queueTable.' '.
+            'WHERE execution_date <= NOW()'.
             'ORDER BY execution_date ASC LIMIT 1');
 
         $query->execute();
 
-        $row = $query->fetch();
+        if ($row = $query->fetch())
+        {
+            $job = unserialize($row['data']);
+            if ($job == null)
+            {
+                $this->removeJob($row['id']);
+                return null;
+            }
+
+            return [
+                $row['id'],
+                $row['max_attempts'],
+                $job
+            ];
+        }
+
+        return null;
+    }
+
+    protected function removeJob($id)
+    {
+        $this->dao->exec('DELETE FROM '.$this->queueTable.' WHERE id='.$id);
+    }
+
+    protected function handleFailedJob($job)
+    {
+        $this->dao->exec('INSERT INTO '.$this->failedTable.' (data) VALUES('.
+            '\''.str_replace('\\', '\\\\', serialize($job)).'\')');
     }
 }

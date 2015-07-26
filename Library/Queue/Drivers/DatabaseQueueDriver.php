@@ -23,13 +23,7 @@ class DatabaseQueueDriver
     {
         $serializedData = serialize($job);
 
-        //$this->insertJobInDatabase($job, $serializedData);
-
-        $x = DB::query('SELECT * FROM jobs '.
-            'ORDER BY execution_date DESC LIMIT 1');
-        $res = $x->fetch();
-        $data = $res['data'];
-        $ser = unserialize($data); // just tested this... move to listener
+        $this->insertJobInDatabase($job, $serializedData);
     }
 
     protected function insertJobInDatabase($job, $data)
@@ -45,13 +39,15 @@ class DatabaseQueueDriver
 
     protected function createTables()
     {
-        DB::exec('CREATE TABLE IF NOT EXISTS '.$this->queueTable.'('.
+        DB::exec('CREATE TABLE IF NOT EXISTS '.$this->queueTable.' ('.
             'id INT(11) AUTO_INCREMENT PRIMARY KEY, '.
             'max_attempts INT(11) NOT NULL, '.
             'execution_date DATETIME NOT NULL, '.
             'data TEXT NOT NULL'.
             ')');
 
-        //DB::exec('CREATE TABLE IF NOT EXISTS '.$this->failedTable.'('.);
+        DB::exec('CREATE TABLE IF NOT EXISTS '.$this->failedTable.' ('.
+            'id INT(11) AUTO_INCREMENT PRIMARY KEY, '.
+            'data TEXT NOT NULL)');
     }
 }

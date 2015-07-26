@@ -22,6 +22,22 @@ class Model implements ModelQueryContract, JsonSerializable
 
     public function __construct(array $data = null)
     {
+        if ($data != null)
+        {
+            foreach ($data as $key => $value)
+            {
+                if (in_array($key, $this->fillable))
+                    $this->__set($key, $value);
+                else
+                    throw new RuntimeException('Model '.$this->modelName.' does not accept mass assigned value of '.$key);
+            }
+        }
+
+        $this->initialize();
+    }
+
+    protected function initialize()
+    {
         if (env('APP_ENV') == 'framework_testing')
             $this->modelDirectory = '\\Tests\\FrameworkTest\\Models\\';
         else
@@ -39,17 +55,6 @@ class Model implements ModelQueryContract, JsonSerializable
             else {
                 $this->columns[] = $column;
                 $this->columnNames[] = $column->getName();
-            }
-        }
-
-        if ($data != null)
-        {
-            foreach ($data as $key => $value)
-            {
-                if (in_array($key, $this->fillable))
-                    $this->__set($key, $value);
-                else
-                    throw new RuntimeException('Model '.$this->modelName.' does not accept mass assigned value of '.$key);
             }
         }
 
@@ -397,6 +402,11 @@ class Model implements ModelQueryContract, JsonSerializable
 
     public function __wakeUp()
     {
-        $this->vars['test'] = 'tests';
+        if (!is_null($this->modelName))
+        {
+            return;
+        }
+
+        $this->initialize();
     }
 }

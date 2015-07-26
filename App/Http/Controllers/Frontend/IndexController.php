@@ -11,11 +11,7 @@ class IndexController extends Controller
 {
     public function index()
     {
-        $t = TempTeacher::find(1);
 
-        Queue::push(new SendWelcomeEmail($t, 3, 'text'));
-
-        return view('frontend.index.index');
     }
 
     public function features()
