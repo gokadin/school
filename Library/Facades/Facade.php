@@ -26,7 +26,7 @@ abstract class Facade
         if (isset(static::$resolvedInstance[$name]))
             return static::$resolvedInstance[$name];
 
-        return static::$resolvedInstance[$name] = static::$app->container()->make($name);
+        return static::$resolvedInstance[$name] = static::$app->container()->resolveInstance($name);
     }
 
     public static function resetResolvedInstances()

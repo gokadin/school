@@ -30,9 +30,12 @@ class Application
 
     protected function ConfigureContainer()
     {
-        $this->container->instance('app', $this);
+        $this->container->registerInstance('app', $this);
         $containerConfiguration = new ContainerConfiguration($this->container);
         $containerConfiguration->configureContainer();
+
+        $appContainerConfiguration = new \Config\ContainerConfiguration($this->container);
+        $appContainerConfiguration->configureContainer();
     }
 
     public function container()

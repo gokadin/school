@@ -2,8 +2,11 @@
 
 namespace Library\Routing;
 
+use Library\Facades\App;
 use Library\Facades\Redirect;
+use Library\Facades\Validator;
 use Library\Http\Request;
+use Symfony\Component\Yaml\Exception\RuntimeException;
 
 class Router
 {
@@ -326,9 +329,83 @@ class Router
     {
         list($controllerName, $methodName) = explode('@', $action);
 
-        return function() use ($controllerName, $methodName) {
+        $parameters = $this->getResolvedParameters($controllerName, $methodName, $this->currentRoute->parameters());
+
+        return function() use ($controllerName, $methodName, $parameters) {
             $controller = new $controllerName();
-            return call_user_func_array([$controller, $methodName], $this->currentRoute->parameters());
+            return call_user_func_array([$controller, $methodName], $parameters);
         };
+    }
+
+    protected function getResolvedParameters($controllerName, $methodName, $routeParameters)
+    {
+        $parameters = [];
+        $r = new \ReflectionMethod($controllerName, $methodName);
+
+        foreach ($r->getParameters() as $parameter)
+        {
+            $class = $parameter->getClass()->name;
+            if (!is_null($class))
+            {
+                if (class_exists($class))
+                {
+                    $instance = $this->getInstance($class);
+                    if (!is_null($instance))
+                    {
+                        $parameters[] = $instance;
+                    }
+                }
+                else
+                {
+                    throw new RuntimeException('Could not resolve class '.$class);
+                }
+
+                continue;
+            }
+
+            if (in_array($parameter->getName(), keys($routeParameters)))
+            {
+                $parameters[] = $routeParameters[$parameter->getName()];
+            }
+            else
+            {
+                throw new RuntimeException('Could not resolve parameter '.$parameter->getName());
+            }
+        }
+
+        return $parameters;
+    }
+
+    protected function getInstance($class)
+    {
+        if ($class == 'Library\Http\Request')
+        {
+            return \Library\Facades\Request::instance();
+        }
+
+        if (strpos($class, 'App\\Http\\Requests\\') !== false)
+        {
+            $instance = new $class();
+            return $this->processRequest($instance) ? $instance : null;
+        }
+
+        return App::container()->resolve($class);
+    }
+
+    protected function processRequest($request)
+    {
+        if (!$request->authorize())
+        {
+            Redirect::back();
+            return false;
+        }
+
+        if (!Validator::make($request->all(), $request->rules()))
+        {
+            Redirect::back();
+            return false;
+        }
+
+        return true;
     }
 }

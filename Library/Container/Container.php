@@ -1,60 +1,129 @@
-<?php namespace Library\Container;
+<?php
 
-use ArrayAccess;
-use Symfony\Component\Yaml\Exception\RuntimeException;
+namespace Library\Container;
 
-class Container implements ArrayAccess
+use ReflectionClass;
+
+class Container
 {
-    protected $resolved = [];
     protected $instances = [];
+    protected $registeredInterfaces = [];
 
-    public function instance($abstract, $instance)
+    protected $resolvedConcretes = [];
+    protected $resolvedInterfaces = [];
+
+    public function registerInstance($name, $instance)
     {
-        $this->instances[$abstract] = $instance;
+        $this->instances[$name] = $instance;
     }
 
-    public function make($abstract, $parameters = [])
+    public function registerInterface($interface, $concrete)
     {
-        if (isset($this->instances[$abstract]))
+        if (is_object($concrete))
         {
-            return $this->instances[$abstract];
+            $this->registeredInterfaces[$interface] = get_class($concrete);
+            $this->resolvedInterfaces[$interface] = $concrete;
+            return;
         }
 
-        throw new RuntimeException('Could not resolve '.$abstract.'.');
+        $this->registeredInterfaces[$interface] = $concrete;
     }
 
-    public function resolved($abstract)
+    public function resolveInstance($name)
     {
-        return isset($this->resolved[$abstract]) || isset($this->instances[$abstract]);
+        if (isset($this->instances[$name]))
+        {
+            return $this->instances[$name];
+        }
+
+        throw new ContainerException('Could not resolve '.$name.'.');
     }
 
-    public function offsetGet($key)
+    public function resolve($interface, $concrete = null)
     {
-        return $this->make($key);
+        if (!is_null($concrete))
+        {
+            return $this->resolveInterface($interface, $concrete);
+        }
+
+        return $this->resolveConcrete($interface);
     }
 
-    public function offsetSet($key, $value)
+    protected function resolveInterface($interface)
     {
-        $this->instance($key, $value);
+        if (isset($this->resolvedInterfaces[$interface]))
+        {
+            return $this->resolvedInterfaces[$interface];
+        }
+
+        if (!isset($this->registeredInterfaces[$interface]))
+        {
+            return null;
+        }
+
+        $concrete = $this->registeredInterfaces[$interface];
+
+        return $this->resolvedInterfaces[$interface] = $this->resolveClassRecursive($concrete);
     }
 
-    public function offsetExists($key)
+    protected function resolveConcrete($concrete)
     {
-        return isset($this->instances[$key]);
+        if (is_object($concrete))
+        {
+            return $concrete;
+        }
+
+        if ($this->resolvedConcretes[$concrete])
+        {
+            return $this->resolvedConcretes[$concrete];
+        }
+
+        return $this->resolvedConcretes[$concrete] = $this->resolveClassRecursive($concrete);
     }
 
-    public function offsetUnset($key)
+    protected function resolveClassRecursive($class)
     {
-        unset($this->instances[$key]);
-    }
+        $r = new ReflectionClass($class);
 
-    public function __get($key)
-    {
-        return $this[$key];
-    }
+        if (!$r->isInstantiable())
+        {
+            throw new ContainerException('Class '.$class.' cannot be instantiated.');
+            return null;
+        }
 
-    public function __set($key, $value)
-    {
-        $this[$key] = $value;
+        if ($r->isInterface())
+        {
+            return $this->resolveInterface($class);
+        }
+
+        $constructor = $r->getConstructor();
+
+        if (is_null($constructor))
+        {
+            return $r->newInstanceWithoutConstructor();
+        }
+
+        $parameters = $constructor->getParameters();
+        $resolvedParameters = array();
+
+        foreach ($parameters as $parameter)
+        {
+            if (is_null($parameter->getClass()))
+            {
+                if (!$parameter->isOptional())
+                {
+                    throw new ContainerException('Parameter '.$parameter->getName().' of class '.$class.' cannot be resolved.');
+                    return null;
+                }
+                else
+                {
+                    $resolvedParameters[] = $parameter->getDefaultValue();
+                }
+            }
+
+            $resolvedParameters[] = $this->resolveClassRecursive($parameter->getClass()->getName());
+        }
+
+        return $r->newInstanceArgs($resolvedParameters);
     }
 }

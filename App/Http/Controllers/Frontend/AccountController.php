@@ -3,17 +3,16 @@
 namespace App\Http\Controllers\Frontend;
 
 use App\Http\Controllers\Controller;
-use Library\Facades\DB;
-use Library\Facades\Request;
+use Library\Http\Request;
+use App\Http\Requests\Frontend\PreRegistrationRequest;
+use App\Http\Requests\Frontend\LoginRequest;
+use App\Repositories\Contracts\IUserRepository;
 use Library\Facades\Page;
 use Library\Facades\Session;
 use Library\Facades\Redirect;
 use Library\Facades\Sentry;
-use Models\Address;
-use Models\School;
 use Models\Student;
 use Models\Teacher;
-use Models\TeacherSetting;
 use Models\TempTeacher;
 use Models\Subscription;
 
@@ -26,49 +25,16 @@ class AccountController extends Controller
 
     public function signup()
     {
-        $memberships = array();
-
-        $memberships[] = [
-            'name' => 'Basic',
-            'price' => 'FREE',
-            'numStudents' => 5,
-            'storageSpace' => '1GB'
-        ];
-
-        $memberships[] = [
-            'name' => 'Silver',
-            'price' => '14.99 / month',
-            'numStudents' => 20,
-            'storageSpace' => '5GB'
-        ];
-
-        $memberships[] = [
-            'name' => 'Gold',
-            'price' => '25.99 / month',
-            'numStudents' => 50,
-            'storageSpace' => '7GB'
-        ];
-
-        $memberships[] = [
-            'name' => 'Platinum',
-            'price' => '39.99 / month',
-            'numStudents' => 'unlimited',
-            'storageSpace' => '10GB'
-        ];
+        $memberships = Subscription::getMembershipsArray();
 
         return view('frontend.account.signUp', compact('memberships'));
     }
 
-    public function login()
+    public function login(LoginRequest $request)
     {
-        $this->validateRequest([
-            'email' => ['required', 'email'],
-            'password' => 'required'
-        ]);
-
         $teacher = Sentry::attempt(Teacher::class, [
-            'email' => Request::data('email'),
-            'password' => md5(Request::data('password'))
+            'email' => $request->email,
+            'password' => md5($request->password)
         ]);
 
         if ($teacher != false)
@@ -78,8 +44,8 @@ class AccountController extends Controller
         }
 
         $student = Sentry::attempt(Student::class, [
-            'email' => Request::data('email'),
-            'password' => md5(Request::data('password'))
+            'email' => $request->email,
+            'password' => md5($request->password)
         ]);
 
         if ($student != false)
@@ -103,113 +69,49 @@ class AccountController extends Controller
         return view('frontend.account.resetPassword');
     }
 
-    public function registerUser()
+    public function preRegisterTeacher(PreRegistrationRequest $request, IUserRepository $userRepository)
     {
-        $this->validateRequest([
-            'firstName' => ['required' => 'first name is required'],
-            'lastName' => ['required' => 'last name is required'],
-            'email' => ['email', 'unique:Teacher,email', 'unique:Student,email'],
-            'subscriptionType' => 'required'
-        ]);
-
-        DB::beginTransaction();
-
-        try
+        if (!$userRepository->preRegisterTeacher($request->all()))
         {
-            $subscription = Subscription::create([
-                'type' => Request::data('subscriptionType')
-            ]);
-
-            $confirmationCode = md5(rand(999, 999999));
-
-            TempTeacher::create([
-                'subscription_id' => $subscription->id,
-                'first_name' => Request::data('firstName'),
-                'last_name' => Request::data('lastName'),
-                'email' => Request::data('email'),
-                'confirmation_code' => $confirmationCode
-            ]);
-        }
-        catch (\PDOException $e)
-        {
-            DB::rollBack();
             Session::setFlash('An error occurred. Please try again.');
             Response::back();
         }
 
-        DB::commit();
+        // Event::fire(...); // send email
+
         Redirect::to('frontend.account.signUpLand');
     }
 
-    public function emailConfirmation()
+    public function emailConfirmation(IUserRepository $userRepository, $id, $code)
     {
-        $tempTeacher = TempTeacher::find(Request::data('id'));
+        $tempTeacher = $userRepository->findTempTeacher($id);
         if ($tempTeacher == null)
         {
             Session::setFlash('Your account no longer exists in our database');
-            Redirect::to('Frontend#Account#signup');
+            Redirect::to('frontend.account.signUp');
         }
 
-        if ($tempTeacher->confirmation_code !== Request::data('code'))
+        if ($tempTeacher->confirmation_code != $code)
         {
             Session::setFlash('The confirmation code is invalid');
             Redirect::to('frontend.account.signUp');
         }
 
-        Page::add('tempTeacher', $tempTeacher);
+        return view('frontend.account.emailConfirmation', compact('tempTeacher'));
     }
 
-    public function completeRegistration()
+    public function registerTeacher(RegistrationRequest $request, IUserRepository $userRepository)
     {
-        $this->validateRequest([
-            'password' => 'required',
-            'confirmPassword' => ['required', 'equalsField:password' => 'passwords don\'t match']
-        ]);
-
-        $tempTeacher = TempTeacher::find(Request::data('tempTeacherId'));
-        if ($tempTeacher == null)
+        $teacher = $userRepository->registerTeacher($request->tempTeacherId);
+        if (!$teacher)
         {
             Session::setFlash('Your account no longer exists. Please try signing up again.');
             Redirect::to('frontend.account.signUp');
         }
 
-        $subscription = Subscription::find($tempTeacher->subscription_id);
-        if ($subscription == null)
-        {
-            Session::setFlash('An error occurred. Please try signing up again.');
-            Redirect::to('frontend.account.signUp');
-        }
-
-        DB::beginTransaction();
-
-        try
-        {
-            $school = School::create([
-                'name' => 'Your School',
-                'address_id' => Address::create()->id
-            ]);
-
-            $teacher = Teacher::create([
-                'subscription_id' => $subscription->id,
-                'address_id' => Address::create()->id,
-                'teacher_setting_id' => TeacherSetting::create()->id,
-                'school_id' => $school->id,
-                'first_name' => $tempTeacher->first_name,
-                'last_name' => $tempTeacher->last_name,
-                'email' => $tempTeacher->email,
-                'password' => md5(Request::data('password')),
-            ]);
-        }
-        catch (\PDOException $e)
-        {
-            DB::rollBack();
-            Session::setFlash('An error occurred. Please try signing up again.');
-            Redirect::to('frontend.account.signUp');
-        }
-
-        DB::commit();
-
-        $tempTeacher->delete();
+//        Event::fire(TeacherHasRegistered::class,
+//            $userRepository->findTempTeacher($request->tempTeacherId),
+//            $teacher);
 
         Sentry::login($teacher->id, 'Teacher');
         Redirect::to('school.teacher.index.index');

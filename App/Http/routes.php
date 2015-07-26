@@ -18,10 +18,10 @@ Route::group(['namespace' => 'Frontend', 'as' => 'frontend', 'middleware' => 'Ve
         Route::get('/logout', 'AccountController@logout');
         Route::get('/reset-password', 'AccountController@resetPassword');
         Route::get('/signup', 'AccountController@signUp');
-        Route::post('/signup', 'AccountController@registerUser');
+        Route::post('/signup', 'AccountController@preRegisterTeacher');
         Route::get('/signup-land', 'AccountController@signUpLand');
         Route::get('/confirm/{id}-{code}', 'AccountController@emailConfirmation');
-        Route::post('/confirm', 'AccountController@completeRegistration');
+        Route::post('/confirm', 'AccountController@registerTeacher');
     });
 });
 

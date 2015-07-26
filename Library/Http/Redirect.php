@@ -10,7 +10,7 @@ class Redirect
 {
     public function back()
     {
-        header('Location: '.$_SESSION['HTTP_REFERER']);
+        header('Location: '.$_SERVER['HTTP_REFERER']);
         exit();
     }
 

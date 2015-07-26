@@ -1,4 +1,6 @@
-<?php namespace Tests\FrameworkTest\Database;
+<?php
+
+namespace Tests\FrameworkTest\Database;
 
 use Tests\FrameworkTest\BaseTest;
 use Tests\FrameworkTest\Models\Activity;

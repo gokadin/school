@@ -30,20 +30,20 @@ class ContainerConfiguration
 
     public function configureContainer()
     {
-        $this->container->instance('config', new Config());
-        $this->container->instance('request', new Request());
-        $this->container->instance('response', new Response());
-        $this->container->instance('router', new Router());
-        $this->container->instance('database', new Database());
-        $this->container->instance('form', new Form());
-        $this->container->instance('session', new Session());
-        $this->container->instance('validator', new Validator());
-        $this->container->instance('redirect', new Redirect());
-        $this->container->instance('shao', new Shao());
-        $this->container->instance('viewFactory', new ViewFactory());
-        $this->container->instance('sentry', new Sentry());
-        $this->container->instance('log', new Log());
-        $this->container->instance('queue', new Queue());
+        $this->container->registerInstance('config', new Config());
+        $this->container->registerInstance('request', new Request());
+        $this->container->registerInstance('response', new Response());
+        $this->container->registerInstance('router', new Router());
+        $this->container->registerInstance('database', new Database());
+        $this->container->registerInstance('form', new Form());
+        $this->container->registerInstance('session', new Session());
+        $this->container->registerInstance('validator', new Validator());
+        $this->container->registerInstance('redirect', new Redirect());
+        $this->container->registerInstance('shao', new Shao());
+        $this->container->registerInstance('viewFactory', new ViewFactory());
+        $this->container->registerInstance('sentry', new Sentry());
+        $this->container->registerInstance('log', new Log());
+        $this->container->registerInstance('queue', new Queue());
 
         if (env('APP_DEBUG'))
         {
@@ -53,6 +53,6 @@ class ContainerConfiguration
 
     protected function configureDebugContainer()
     {
-        $this->container->instance('modelFactory', new Factory());
+        $this->container->registerInstance('modelFactory', new Factory());
     }
 }

@@ -3,15 +3,12 @@
 namespace App\Http\Controllers\Frontend;
 
 use App\Http\Controllers\Controller;
-use App\Jobs\Frontend\SendWelcomeEmail;
-use Library\Facades\Queue;
-use Models\TempTeacher;
 
 class IndexController extends Controller
 {
     public function index()
     {
-
+        return view('frontend.index.index');
     }
 
     public function features()

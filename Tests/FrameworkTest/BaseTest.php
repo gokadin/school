@@ -23,6 +23,8 @@ abstract class BaseTest extends TestCase
 
     public function tearDown()
     {
+        parent::tearDown();
+
         DB::dropAllTables();
     }
 

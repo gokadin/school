@@ -15,12 +15,6 @@ class ActivityControllerTest extends BaseTest
         $this->authenticateTeacher();
     }
 
-    public function testIndexSoThatOnlyCurrentTeacherActivitiesAreSelected()
-    {
-        // and make authentication middleware....
-        $this->assertTrue(false);
-    }
-
     public function testCreateWhenValidAndCreateAnotherIsChecked()
     {
         // Arrange

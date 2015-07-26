@@ -13,11 +13,6 @@ abstract class BaseTest extends TestCase
 {
     use DatabaseTransactions;
 
-    public static function setUpBeforeClass()
-    {
-        parent::setUpBeforeClass();
-    }
-
     public function setUp()
     {
         parent::setUp();
@@ -28,11 +23,6 @@ abstract class BaseTest extends TestCase
     public function tearDown()
     {
         parent::tearDown();
-    }
-
-    public static function tearDownAfterClass()
-    {
-        parent::tearDownAfterClass();
 
         DB::dropAllTables();
     }
