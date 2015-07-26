@@ -30,7 +30,7 @@ class ConsoleApplication
 
     protected function addRequiredModules()
     {
-        $this->app->add(new QueueListener($this->framework));
+        $this->app->add(new QueueListener());
     }
 
     protected function framework()

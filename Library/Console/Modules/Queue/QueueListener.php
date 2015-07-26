@@ -2,6 +2,7 @@
 
 namespace Library\Console\Modules\Queue;
 
+use Library\Facades\App;
 use Library\Facades\Log;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -12,19 +13,17 @@ class QueueListener extends Command
 {
     const SLEEP_DURATION_SEC = 2;
 
-    protected $framework;
     protected $dao;
     protected $queueTable;
     protected $failedTable;
 
-    public function __construct($framework)
+    public function __construct()
     {
         parent::__construct();
 
-        $this->framework = $framework;
         $this->dao = $this->getDbConnection();
 
-        $settings = require $this->framework->basePath().'Config/queue.php';
+        $settings = require App::basePath().'Config/queue.php';
         $this->queueTable = $settings['connections']['database']['table'];
         $this->failedTable = $settings['connections']['database']['failedTable'];
     }
@@ -80,7 +79,7 @@ class QueueListener extends Command
 
     protected function getDbConnection()
     {
-        $settings = include $this->framework->basePath().'Config/database.php';
+        $settings = include App::basePath().'Config/database.php';
 
         $dao = new \PDO($settings['mysql']['driver'].':host='.$settings['mysql']['host'].';dbname='.$settings['mysql']['database'],
             $settings['mysql']['username'],
