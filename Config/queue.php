@@ -2,7 +2,7 @@
 
 return [
 
-    'use' => 'database',
+    'use' => env('QUEUE_DRIVER'),
 
     'connections' => [
 

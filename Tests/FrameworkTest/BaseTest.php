@@ -3,19 +3,12 @@
 namespace Tests\FrameworkTest;
 
 use Library\Facades\DB;
+use Library\Testing\DatabaseTransactions;
 use Tests\TestCase;
 
 abstract class BaseTest extends TestCase
 {
-    public static function setUpBeforeClass()
-    {
-
-    }
-
-    public static function tearDownAfterClass()
-    {
-        \Library\Facades\DB::dropAllTables();
-    }
+    use DatabaseTransactions;
 
     public function setUp()
     {
@@ -25,12 +18,12 @@ abstract class BaseTest extends TestCase
 
         $this->createApplication();
 
-        \Library\Facades\DB::beginTransaction();
+        $this->beginDatabaseTransaction();
     }
 
     public function tearDown()
     {
-        \Library\Facades\DB::rollBack();
+        DB::dropAllTables();
     }
 
     public function getRowCount($tableName)

@@ -2,7 +2,18 @@
 
 function configureEnvironment()
 {
+    $definedAppEnv = env('APP_ENV');
+
     $envFile = __DIR__.'/../../.env';
+
+    if ($definedAppEnv == 'framework_testing')
+    {
+        $envFile = __DIR__.'/../../.env.testing.framework';
+    }
+    else if ($definedAppEnv == 'testing')
+    {
+        $envFile = __DIR__.'/../../.env.testing';
+    }
 
     $content = fopen($envFile, 'r');
     if ($content) {
