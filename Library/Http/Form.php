@@ -1,4 +1,6 @@
-<?php namespace Library;
+<?php
+
+namespace Library\Http;
 
 use Library\Facades\Session;
 

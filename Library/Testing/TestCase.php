@@ -9,8 +9,6 @@ use PHPUnit_Framework_TestCase;
 use Mockery;
 use Library\Facades\Facade;
 
-require __DIR__.'/../../Bootstrap/autoload.php';
-
 class TestCase extends PHPUnit_Framework_TestCase
 {
     protected $tearDownCallbacks = [];

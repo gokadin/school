@@ -1,4 +1,6 @@
-<?php namespace Tests\FrameworkTest\Library;
+<?php
+
+namespace Tests\FrameworkTest\Validation;
 
 use Library\Facades\Session;
 use Library\Facades\Validator;

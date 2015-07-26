@@ -2,18 +2,40 @@
 
 namespace Library\Log;
 
-class Log // UNFIUNISHED ***********************
+class Log
 {
-    const LOG_FOLDER = 'Storage/Logs';
+    const DEFAULT_LOG_FOLDER = 'Storage/Logs';
+
+    protected $logFolder;
+
+    public function __construct()
+    {
+        $this->logFolder = self::DEFAULT_LOG_FOLDER;
+    }
+
+    public function setLogFolder($str)
+    {
+        if (substr($str, -1) == '/')
+        {
+            $str = substr($str, 0, strlen($str) - 1);
+        }
+
+        $this->logFolder = $str;
+    }
+
+    public function getLogFolder()
+    {
+        return $this->logFolder;
+    }
 
     public function info($message)
     {
-        $this->writeLog($message);
+        $this->writeLog('[info]'.$message);
     }
 
     public function error($message)
     {
-        $this->writeLog($message);
+        $this->writeLog('[error]'.$message);
     }
 
     protected function writeLog($message)
@@ -25,13 +47,18 @@ class Log // UNFIUNISHED ***********************
             return;
         }
 
-        fwrite($handle, $message.PHP_EOL);
+        fwrite($handle, $this->getMessagePrefix().$message.PHP_EOL);
 
         fclose($handle);
     }
 
     protected function generateFileName()
     {
-        return __DIR__.'/../../'.self::LOG_FOLDER.'/log-'.date('d-m-Y');
+        return __DIR__.'/../../'.$this->logFolder.'/log-'.date('d-m-Y');
+    }
+
+    protected function getMessagePrefix()
+    {
+        return '['.date('d-m-Y G:i:s').']';
     }
 }

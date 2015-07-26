@@ -378,21 +378,9 @@ class Model implements ModelQueryContract, JsonSerializable
         return $results;
     }
 
-    public function jsonSerialize(array $toExclude = null)
+    public function jsonSerialize()
     {
-        if ($toExclude == null)
-        {
-            return json_encode($this->vars);
-        }
-
-        $vars = array();
-        foreach ($this->vars as $key => $value)
-        {
-            if (!in_array($key, $toExclude))
-                $vars[$key] = $value;
-        }
-
-        return json_encode($vars);
+        return $this->vars;
     }
 
     public function __sleep()

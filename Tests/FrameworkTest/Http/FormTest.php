@@ -1,4 +1,6 @@
-<?php namespace Tests\FrameworkTest\Library;
+<?php
+
+namespace Tests\FrameworkTest\Http;
 
 use Library\Facades\Form;
 use Tests\FrameworkTest\BaseTest;

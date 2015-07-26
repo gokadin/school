@@ -1,48 +1,54 @@
 <?php
 
-function configureEnvironment()
+if (!function_exists('configureEnvironment'))
 {
-    $definedAppEnv = env('APP_ENV');
-
-    $envFile = __DIR__.'/../../.env';
-
-    if ($definedAppEnv == 'framework_testing')
+    function configureEnvironment()
     {
-        $envFile = __DIR__.'/../../.env.testing.framework';
-    }
-    else if ($definedAppEnv == 'testing')
-    {
-        $envFile = __DIR__.'/../../.env.testing';
-    }
+        $definedAppEnv = env('APP_ENV');
 
-    $content = fopen($envFile, 'r');
-    if ($content) {
-        while (($line = fgets($content)) !== false) {
-                if (preg_match('/[a-zA-Z0-9_-]+\=[a-zA-Z0-9_-]+[\r]?[\n]?$/', $line) != 1)
-            {
-                continue;
-            }
+        $envFile = __DIR__.'/../../.env';
 
-            $line = trim(str_replace(PHP_EOL, '', $line));
-
-            putenv($line);
+        if ($definedAppEnv == 'framework_testing')
+        {
+            $envFile = __DIR__.'/../../.env.testing.framework';
+        }
+        else if ($definedAppEnv == 'testing')
+        {
+            $envFile = __DIR__.'/../../.env.testing';
         }
 
-        fclose($content);
+        $content = fopen($envFile, 'r');
+        if ($content) {
+            while (($line = fgets($content)) !== false) {
+                if (preg_match('/[a-zA-Z0-9_-]+\=[a-zA-Z0-9_-]+[\r]?[\n]?$/', $line) != 1)
+                {
+                    continue;
+                }
+
+                $line = trim(str_replace(PHP_EOL, '', $line));
+
+                putenv($line);
+            }
+
+            fclose($content);
+        }
     }
 }
 
-function env($name)
+if (!function_exists('env'))
 {
-    $value = getenv($name);
-
-    switch (strtolower($value))
+    function env($name)
     {
-        case 'true':
-            return true;
-        case 'false':
-            return false;
-    }
+        $value = getenv($name);
 
-    return $value;
+        switch (strtolower($value))
+        {
+            case 'true':
+                return true;
+            case 'false':
+                return false;
+        }
+
+        return $value;
+    }
 }

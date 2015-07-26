@@ -3,27 +3,42 @@
 use Library\Http\View;
 use Library\Facades\ViewFactory;
 
-function asset($file)
+if (!function_exists('asset'))
 {
-    return '/Assets/'.$file;
+    function asset($file)
+    {
+        return '/Assets/'.$file;
+    }
 }
 
-function view($viewFile, array $data = array())
+if (!function_exists('view'))
 {
-    return new View($viewFile, $data);
+    function view($viewFile, array $data = array())
+    {
+        return new View($viewFile, $data);
+    }
 }
 
-function viewFactoryStartSection($name)
+if (!function_exists('viewFactoryStartSection'))
 {
-    ViewFactory::startSection($name);
+    function viewFactoryStartSection($name)
+    {
+        ViewFactory::startSection($name);
+    }
 }
 
-function viewFactoryEndSection()
+if (!function_exists('viewFactoryEndSection'))
 {
-    ViewFactory::endSection();
+    function viewFactoryEndSection()
+    {
+        ViewFactory::endSection();
+    }
 }
 
-function viewFactoryYield($name)
+if (!function_exists('viewFactoryYield'))
 {
-    echo ViewFactory::getSection($name);
+    function viewFactoryYield($name)
+    {
+        echo ViewFactory::getSection($name);
+    }
 }

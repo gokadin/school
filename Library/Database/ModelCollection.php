@@ -159,21 +159,8 @@ class ModelCollection implements IteratorAggregate, JsonSerializable
         return $this;
     }
 
-    public function jsonSerialize(array $toExclude = null)
+    public function jsonSerialize()
     {
-        $json = '[';
-
-        $i = 0;
-        $modelCount = $this->count();
-        foreach ($this->models as $model)
-        {
-            $json .= json_encode($model, $toExclude);
-            if ($i < $modelCount - 1)
-                $json .= ',';
-
-            $i++;
-        }
-
-        return $json.']';
+        return $this->models;
     }
 }

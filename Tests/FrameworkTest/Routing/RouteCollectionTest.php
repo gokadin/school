@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\FrameworkTest\Library\Routing;
+namespace Tests\FrameworkTest\Routing;
 
 use Library\Routing\Route;
 use Library\Routing\RouteCollection;
@@ -14,7 +14,7 @@ class RouteCollectionTest extends BaseTest
         $collection = new RouteCollection();
 
         // Act
-        $collection->add(new Route(['GET'], '/test', 'controller@action'));
+        $collection->add(new Route(['GET'], '/test', 'controller@action', '', []));
 
         // Assert
         $this->assertEquals(1, count($collection));

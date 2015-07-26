@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\FrameworkTest\Library\Routing;
+namespace Tests\FrameworkTest\Routing;
 
 use Library\Facades\Request;
 use Tests\FrameworkTest\BaseTest;
@@ -13,7 +13,7 @@ class RouteTest extends BaseTest
         // Arrange
         $_SERVER['REQUEST_URI'] = '/test';
         $_SERVER['REQUEST_METHOD'] = 'GET';
-        $route = new Route(['GET'], '/test', 'controller@action');
+        $route = new Route(['GET'], '/test', 'controller@action', '', []);
 
         // Assert
         $this->assertTrue($route->matches(Request::instance()));

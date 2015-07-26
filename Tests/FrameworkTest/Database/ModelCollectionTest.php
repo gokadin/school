@@ -121,38 +121,16 @@ class ModelCollectionTest extends BaseTest
         $collection = new ModelCollection([$test1, $test2, $test3]);
 
         // Act
-        $json = $collection->json();
-        $deserializedJson = json_decode($json);
+        $json = json_encode($collection);
+        $deserializedJson = json_decode($json, true);
 
         // Assert
         $this->assertEquals(3, count($deserializedJson));
-        $this->assertEquals('str1', $deserializedJson[0]->col1);
-        $this->assertEquals('11', $deserializedJson[0]->col2);
-        $this->assertEquals('str2', $deserializedJson[1]->col1);
-        $this->assertEquals('12', $deserializedJson[1]->col2);
-        $this->assertEquals('str3', $deserializedJson[2]->col1);
-        $this->assertEquals('13', $deserializedJson[2]->col2);
-    }
-
-    public function testJsonWorksWithExcludedVariables()
-    {
-        // Arrange
-        $test1 = new Test(['col1' => 'str1', 'col2' => 11]);
-        $test2 = new Test(['col1' => 'str2', 'col2' => 12]);
-        $test3 = new Test(['col1' => 'str3', 'col2' => 13]);
-        $collection = new ModelCollection([$test1, $test2, $test3]);
-
-        // Act
-        $json = $collection->json(['col1']);
-        $deserializedJson = json_decode($json);
-
-        // Assert
-        $this->assertFalse(isset($deserializedJson[0]->col1));
-        $this->assertFalse(isset($deserializedJson[1]->col1));
-        $this->assertFalse(isset($deserializedJson[2]->col1));
-        $this->assertEquals(3, count($deserializedJson));
-        $this->assertEquals('11', $deserializedJson[0]->col2);
-        $this->assertEquals('12', $deserializedJson[1]->col2);
-        $this->assertEquals('13', $deserializedJson[2]->col2);
+        $this->assertEquals('str1', $deserializedJson[0]['col1']);
+        $this->assertEquals('11', $deserializedJson[0]['col2']);
+        $this->assertEquals('str2', $deserializedJson[1]['col1']);
+        $this->assertEquals('12', $deserializedJson[1]['col2']);
+        $this->assertEquals('str3', $deserializedJson[2]['col1']);
+        $this->assertEquals('13', $deserializedJson[2]['col2']);
     }
 }

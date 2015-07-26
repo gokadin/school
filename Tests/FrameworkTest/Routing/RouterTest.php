@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\FrameworkTest\Library\Routing;
+namespace Tests\FrameworkTest\Routing;
 
 use Library\Routing\Router;
 use Tests\FrameworkTest\BaseTest;

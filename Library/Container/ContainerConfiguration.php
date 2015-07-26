@@ -12,8 +12,7 @@ use Library\Log\Log;
 use Library\Queue\Queue;
 use Library\Routing\Router;
 use Library\Database\Database;
-use Library\Html;
-use Library\Form;
+use Library\Http\Form;
 use Library\Page;
 use Library\Sentry\Sentry;
 use Library\Session;
@@ -36,7 +35,6 @@ class ContainerConfiguration
         $this->container->instance('response', new Response());
         $this->container->instance('router', new Router());
         $this->container->instance('database', new Database());
-        $this->container->instance('html', new HTML());
         $this->container->instance('form', new Form());
         $this->container->instance('session', new Session());
         $this->container->instance('validator', new Validator());
