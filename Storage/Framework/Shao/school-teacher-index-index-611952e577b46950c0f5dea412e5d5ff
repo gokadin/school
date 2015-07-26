@@ -1,7 +1,0 @@
-
-
-<?php viewFactoryStartSection('content'); ?>
-
-inside teacher index
-
-<?php viewFactoryEndSection(); ?>
