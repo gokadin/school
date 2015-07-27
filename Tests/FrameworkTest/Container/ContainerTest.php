@@ -215,4 +215,18 @@ class ContainerTest extends BaseTest
         $this->assertTrue($resolved instanceof ConcreteWithDefaultInterface);
         $this->assertNull($resolved->getA());
     }
+
+    public function testResolveForConcreteWhenAParameterIsRegisteredAsInstance()
+    {
+        // Arrange
+        $container = new Container();
+        $container->registerInstance('test', new ConcreteNoConstructor());
+
+        // Act
+        $resolved = $container->resolve(ConcreteWithSimpleTypeHint::class);
+
+        // Assert
+        $this->assertTrue($resolved instanceof ConcreteWithSimpleTypeHint);
+        $this->assertTrue($resolved->getA() instanceof ConcreteNoConstructor);
+    }
 }

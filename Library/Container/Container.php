@@ -14,7 +14,10 @@ class Container
 
     public function registerInstance($name, $instance)
     {
-        $this->instances[$name] = $instance;
+        $this->instances[$name] = [
+            'class' => get_class($instance),
+            'instance' => $instance
+        ];
     }
 
     public function registerInterface($interface, $concrete)
@@ -33,7 +36,7 @@ class Container
     {
         if (isset($this->instances[$name]))
         {
-            return $this->instances[$name];
+            return $this->instances[$name]['instance'];
         }
 
         throw new ContainerException('Could not resolve '.$name.'.');
@@ -97,6 +100,14 @@ class Container
         if (isset($this->resolvedConcretes[$concrete]))
         {
             return $this->resolvedConcretes[$concrete];
+        }
+
+        foreach ($this->instances as $registeredInstance)
+        {
+            if ($registeredInstance['class'] == $concrete)
+            {
+                return $registeredInstance['instance'];
+            }
         }
 
         return $this->resolvedConcretes[$concrete] = $this->resolveClassRecursive($concrete, $r);

@@ -7,6 +7,7 @@ use Library\Facades\Redirect;
 use Library\Facades\Validator;
 use Library\Http\Request;
 use Symfony\Component\Yaml\Exception\RuntimeException;
+use ReflectionMethod;
 
 class Router
 {
@@ -339,57 +340,46 @@ class Router
 
     protected function getResolvedParameters($controllerName, $methodName, $routeParameters)
     {
-        $parameters = [];
-        $r = new \ReflectionMethod($controllerName, $methodName);
+        $resolvedParameters = [];
+        $r = new ReflectionMethod($controllerName, $methodName);
 
         foreach ($r->getParameters() as $parameter)
         {
-            $class = $parameter->getClass()->name;
+            $class = $parameter->getClass();
             if (!is_null($class))
             {
-                if (class_exists($class))
-                {
-                    $instance = $this->getInstance($class);
-                    if (!is_null($instance))
-                    {
-                        $parameters[] = $instance;
-                    }
-                }
-                else
-                {
-                    throw new RuntimeException('Could not resolve class '.$class);
-                }
-
+                $resolvedParameters[] = $this->getInstance($class->getName());
                 continue;
             }
 
-            if (in_array($parameter->getName(), keys($routeParameters)))
+            if (in_array($parameter->getName(), $routeParameters))
             {
-                $parameters[] = $routeParameters[$parameter->getName()];
+                $resolvedParameters[] = $routeParameters[$parameter->getName()];
+                continue;
             }
-            else
+
+            if ($parameter->isOptional())
             {
-                throw new RuntimeException('Could not resolve parameter '.$parameter->getName());
+                continue;
             }
+
+            throw new RuntimeException('Could not resolve parameter '.$parameter->getName().' for route method '.$methodName);
+            return [];
         }
 
-        return $parameters;
+        return $resolvedParameters;
     }
 
     protected function getInstance($class)
     {
-        if ($class == 'Library\Http\Request')
+        $instance = App::container()->resolve($class);
+
+        if ($instance instanceof \App\Http\Requests\Request)
         {
-            return \Library\Facades\Request::instance();
+            $this->processRequest($instance);
         }
 
-        if (strpos($class, 'App\\Http\\Requests\\') !== false)
-        {
-            $instance = new $class();
-            return $this->processRequest($instance) ? $instance : null;
-        }
-
-        return App::container()->resolve($class);
+        return $instance;
     }
 
     protected function processRequest($request)
@@ -397,15 +387,11 @@ class Router
         if (!$request->authorize())
         {
             Redirect::back();
-            return false;
         }
 
         if (!Validator::make($request->all(), $request->rules()))
         {
             Redirect::back();
-            return false;
         }
-
-        return true;
     }
 }

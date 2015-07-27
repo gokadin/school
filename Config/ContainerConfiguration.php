@@ -2,6 +2,9 @@
 
 namespace Config;
 
+use App\Repositories\Contracts\IUserRepository;
+use App\Repositories\UserRepository;
+
 class ContainerConfiguration
 {
     protected $container;

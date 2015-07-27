@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Frontend;
 
 use App\Http\Controllers\Controller;
-use Library\Http\Request;
 use App\Http\Requests\Frontend\PreRegistrationRequest;
 use App\Http\Requests\Frontend\LoginRequest;
 use App\Repositories\Contracts\IUserRepository;
@@ -13,7 +12,6 @@ use Library\Facades\Redirect;
 use Library\Facades\Sentry;
 use Models\Student;
 use Models\Teacher;
-use Models\TempTeacher;
 use Models\Subscription;
 
 class AccountController extends Controller

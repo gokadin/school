@@ -3,7 +3,9 @@
 namespace App\Repositories;
 
 use App\Repositories\Contracts\IUserRepository;
+use Library\Facades\DB;
 use Models\TempTeacher;
+use Models\Subscription;
 use PDOException;
 
 class UserRepository implements IUserRepository

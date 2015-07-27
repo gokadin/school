@@ -175,7 +175,7 @@ class Subscription extends Model
         return $daysLeft;
     }
 
-    public function getMembershipsArray()
+    public static function getMembershipsArray()
     {
         $memberships = array();
 
