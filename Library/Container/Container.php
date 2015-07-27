@@ -39,17 +39,35 @@ class Container
         throw new ContainerException('Could not resolve '.$name.'.');
     }
 
-    public function resolve($interface, $concrete = null)
+    public function resolve($class)
     {
-        if (!is_null($concrete))
+        if (is_object($class))
         {
-            return $this->resolveInterface($interface, $concrete);
+            return $class;
         }
 
-        return $this->resolveConcrete($interface);
+       return $this->resolveParameter($class);
     }
 
-    protected function resolveInterface($interface)
+    protected function resolveParameter($class, $interfaceDefault = null, $useInterfaceDefault = false)
+    {
+        $r = new ReflectionClass($class);
+
+        if ($r->isInterface())
+        {
+            return $this->resolveInterface($class, $interfaceDefault, $useInterfaceDefault);
+        }
+
+        if (!$r->isInstantiable())
+        {
+            throw new ContainerException('Class '.$class.' cannot be instantiated.');
+            return null;
+        }
+
+        return $this->resolveConcrete($class, $r);
+    }
+
+    protected function resolveInterface($interface, $default, $useDefault)
     {
         if (isset($this->resolvedInterfaces[$interface]))
         {
@@ -58,44 +76,34 @@ class Container
 
         if (!isset($this->registeredInterfaces[$interface]))
         {
+            if ($useDefault)
+            {
+                return $default;
+            }
+
+            throw new ContainerException('Interface '.$interface.' is not registered.');
             return null;
         }
 
         $concrete = $this->registeredInterfaces[$interface];
 
-        return $this->resolvedInterfaces[$interface] = $this->resolveClassRecursive($concrete);
+        $r = new ReflectionClass($concrete);
+
+        return $this->resolvedInterfaces[$interface] = $this->resolveClassRecursive($concrete, $r);
     }
 
-    protected function resolveConcrete($concrete)
+    protected function resolveConcrete($concrete, ReflectionClass $r)
     {
-        if (is_object($concrete))
-        {
-            return $concrete;
-        }
-
-        if ($this->resolvedConcretes[$concrete])
+        if (isset($this->resolvedConcretes[$concrete]))
         {
             return $this->resolvedConcretes[$concrete];
         }
 
-        return $this->resolvedConcretes[$concrete] = $this->resolveClassRecursive($concrete);
+        return $this->resolvedConcretes[$concrete] = $this->resolveClassRecursive($concrete, $r);
     }
 
-    protected function resolveClassRecursive($class)
+    protected function resolveClassRecursive($class, ReflectionClass $r)
     {
-        $r = new ReflectionClass($class);
-
-        if (!$r->isInstantiable())
-        {
-            throw new ContainerException('Class '.$class.' cannot be instantiated.');
-            return null;
-        }
-
-        if ($r->isInterface())
-        {
-            return $this->resolveInterface($class);
-        }
-
         $constructor = $r->getConstructor();
 
         if (is_null($constructor))
@@ -118,10 +126,18 @@ class Container
                 else
                 {
                     $resolvedParameters[] = $parameter->getDefaultValue();
+                    continue;
                 }
             }
 
-            $resolvedParameters[] = $this->resolveClassRecursive($parameter->getClass()->getName());
+            $defaultValue = null;
+            $useDefault = $parameter->isOptional();
+            if ($useDefault)
+            {
+                $defaultValue = $parameter->getDefaultValue();
+            }
+
+            $resolvedParameters[] = $this->resolveParameter($parameter->getClass()->getName(), $defaultValue, $useDefault);
         }
 
         return $r->newInstanceArgs($resolvedParameters);

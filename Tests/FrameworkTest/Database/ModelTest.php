@@ -2,6 +2,7 @@
 
 namespace Tests\FrameworkTest\Database;
 
+use Library\Testing\DatabaseTransactions;
 use Tests\FrameworkTest\BaseTest;
 use Tests\FrameworkTest\Models\Activity;
 use Tests\FrameworkTest\Models\Post;
@@ -15,6 +16,17 @@ use Tests\FrameworkTest\Models\ActivityStudent;
 
 class ModelTest extends BaseTest
 {
+    use DatabaseTransactions;
+
+    public function setUp()
+    {
+        parent::setUp();
+
+        $this->beginDatabaseTransaction();
+
+        $this->createApplication();
+    }
+
     public function testThatNewModelCanBeProperlySaved()
     {
         // Arrange

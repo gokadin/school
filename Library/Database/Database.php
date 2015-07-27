@@ -5,6 +5,7 @@ namespace Library\Database;
 use Library\Facades\App;
 use Symfony\Component\Yaml\Exception\RuntimeException;
 use Library\Config;
+use PDO;
 
 class Database
 {
@@ -15,11 +16,11 @@ class Database
     {
         $settings = require App::basePath().'Config/database.php';
 
-        $this->dao = new \PDO($settings['mysql']['driver'].':host='.$settings['mysql']['host'].';dbname='.$settings['mysql']['database'],
+        $this->dao = new PDO($settings['mysql']['driver'].':host='.$settings['mysql']['host'].';dbname='.$settings['mysql']['database'],
             $settings['mysql']['username'],
             $settings['mysql']['password']);
 
-        $this->dao->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
+        $this->dao->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
         $this->tables = new TableBuilder($this);
     }

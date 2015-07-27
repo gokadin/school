@@ -1,11 +1,24 @@
 <?php namespace Tests\FrameworkTest\Database;
 
 use Library\Database\ModelCollection;
+use Library\Facades\DB;
+use Library\Testing\DatabaseTransactions;
 use Tests\FrameworkTest\BaseTest;
 use Tests\FrameworkTest\Models\Test;
 
 class ModelCollectionTest extends BaseTest
 {
+    use DatabaseTransactions;
+
+    public function setUp()
+    {
+        parent::setUp();
+
+        $this->createApplication();
+
+        $this->beginDatabaseTransaction();
+    }
+
     public function testThatCollectionsAreBeingCorrectlyInitializedWithoutParameters()
     {
         // Arrange

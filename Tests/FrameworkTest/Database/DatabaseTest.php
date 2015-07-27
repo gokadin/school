@@ -1,10 +1,19 @@
-<?php namespace Tests\FrameworkTest\Database;
+<?php
+
+namespace Tests\FrameworkTest\Database;
 
 use Library\Facades\DB;
 use Tests\FrameworkTest\BaseTest;
 
 class DatabaseTest extends BaseTest
 {
+    public function setUp()
+    {
+        parent::setUp();
+
+        $this->createApplication();
+    }
+
     public function testThatTablesAreProperlyFound()
     {
         // Arrange

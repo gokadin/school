@@ -7,6 +7,13 @@ use Tests\FrameworkTest\BaseTest;
 
 class FormTest extends BaseTest
 {
+    public function setUp()
+    {
+        parent::setUp();
+
+        $this->createApplication();
+    }
+
     public function testThatSimpleFormIsCorrectlyGenerated()
     {
         // Arrange

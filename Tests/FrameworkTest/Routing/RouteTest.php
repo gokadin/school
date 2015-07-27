@@ -2,7 +2,7 @@
 
 namespace Tests\FrameworkTest\Routing;
 
-use Library\Facades\Request;
+use Library\Http\Request;
 use Tests\FrameworkTest\BaseTest;
 use Library\Routing\Route;
 
@@ -11,11 +11,10 @@ class RouteTest extends BaseTest
     public function testMatchWithSimpleRequestWhenValid()
     {
         // Arrange
-        $_SERVER['REQUEST_URI'] = '/test';
-        $_SERVER['REQUEST_METHOD'] = 'GET';
+        $request = new Request('GET', '/test', []);
         $route = new Route(['GET'], '/test', 'controller@action', '', []);
 
         // Assert
-        $this->assertTrue($route->matches(Request::instance()));
+        $this->assertTrue($route->matches($request));
     }
 }

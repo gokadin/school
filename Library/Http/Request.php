@@ -4,8 +4,16 @@ namespace Library\Http;
 
 class Request
 {
-    protected $data = null;
-    protected $method = null;
+    protected $method;
+    protected $uri;
+    protected $data;
+
+    public function __construct($method = null, $uri = null, $data = null)
+    {
+        $this->method = $method;
+        $this->uri = $uri;
+        $this->data = $data;
+    }
 
     protected function getDataFromSource()
     {
@@ -122,16 +130,12 @@ class Request
 
     public function uri()
     {
-        $requestUri = $_SERVER['REQUEST_URI'];
+        if (!is_null($this->uri))
+        {
+            return $this->uri;
+        }
 
-        if (\Library\Facades\Config::get('env') != 'debug')
-            return $requestUri;
-
-        $pos = strpos($requestUri, '?XDEBUG_SESSION_START=');
-        if ($pos !== false)
-            $requestUri = substr($requestUri, 0, $pos);
-
-        return $requestUri;
+        return $this->uri = $_SERVER['REQUEST_URI'];
     }
 
     public function header($key)
