@@ -2,17 +2,18 @@
 
 namespace Library\Queue\Drivers;
 
+use Library\Facades\App;
 use Library\Facades\Log;
-use Library\Queue\Job;
 use Exception;
 
 class SyncQueueDriver
 {
-    public function push(Job $job)
+    public function push($job)
     {
         try
         {
-            $job->handle();
+            $parameters = App::container()->resolveMethodParameters($job, 'handle');
+            call_user_func_array([$job, 'handle'], $parameters);
         }
         catch (Exception $e)
         {

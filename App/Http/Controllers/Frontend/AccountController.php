@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Frontend;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Frontend\PreRegistrationRequest;
 use App\Http\Requests\Frontend\LoginRequest;
+use App\Jobs\Frontend\PreRegisterTeacher;
 use App\Repositories\Contracts\IUserRepository;
 use Library\Facades\Page;
 use Library\Facades\Session;
@@ -67,15 +68,9 @@ class AccountController extends Controller
         return view('frontend.account.resetPassword');
     }
 
-    public function preRegisterTeacher(PreRegistrationRequest $request, IUserRepository $userRepository)
+    public function preRegisterTeacher(PreRegistrationRequest $request)
     {
-        if (!$userRepository->preRegisterTeacher($request->all()))
-        {
-            Session::setFlash('An error occurred. Please try again.');
-            Response::back();
-        }
-
-        // Event::fire(...); // send email
+        $this->dispatchJob(new PreRegisterTeacher($request->all()));
 
         Redirect::to('frontend.account.signUpLand');
     }

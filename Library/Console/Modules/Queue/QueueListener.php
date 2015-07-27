@@ -9,7 +9,6 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Exception;
-use ReflectionMethod;
 
 class QueueListener extends Command
 {
@@ -53,8 +52,8 @@ class QueueListener extends Command
 
             try
             {
-                $parameters = $this->getResolvedParameters($job, 'handle');
-                $job->handle($parameters);
+                $parameters = App::container()->resolveMethodParameters($job, 'handle');
+                call_user_func_array([$job, 'handle'], $parameters);
                 $attempts = 0;
                 $this->removeJob($id);
             }
@@ -129,33 +128,5 @@ class QueueListener extends Command
     {
         $this->dao->exec('INSERT INTO '.$this->failedTable.' (data) VALUES('.
             '\''.str_replace('\\', '\\\\', serialize($job)).'\')');
-    }
-
-    protected function getResolvedParameters($job, $methodName)
-    {
-        $r = new ReflectionMethod($job, $methodName);
-
-        $resolvedParameters = [];
-        $parameters = $r->getParameters();
-
-        foreach ($parameters as $parameter)
-        {
-            $class = $parameter->getClass();
-            if (!is_null($class))
-            {
-                $resolvedParameters[] = App::container()->resolve($class->getName());
-                continue;
-            }
-
-            if ($parameter->isOptional())
-            {
-                $resolvedParameters[] = $parameter->getDefaultValue();
-                continue;
-            }
-
-            throw new ContainerException('Could not resolve parameter '.$parameter->getName().' for job '.get_class($job));
-        }
-
-        return $resolvedParameters;
     }
 }

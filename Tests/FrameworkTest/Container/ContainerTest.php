@@ -16,6 +16,7 @@ use Tests\FrameworkTest\TestData\Container\ConcreteWithMixedButValidIncludingInt
 use Tests\FrameworkTest\TestData\Container\ConcreteWithMultipleComplexTypeHint;
 use Tests\FrameworkTest\TestData\Container\ConcreteWithMultipleSimpleTypeHint;
 use Tests\FrameworkTest\TestData\Container\ConcreteWithSimpleTypeHint;
+use Tests\FrameworkTest\TestData\Container\ConcreteWithMethodParameters;
 use Tests\FrameworkTest\TestData\Container\InterfaceOne;
 
 class ContainerTest extends BaseTest
@@ -228,5 +229,91 @@ class ContainerTest extends BaseTest
         // Assert
         $this->assertTrue($resolved instanceof ConcreteWithSimpleTypeHint);
         $this->assertTrue($resolved->getA() instanceof ConcreteNoConstructor);
+    }
+
+    public function testResolveMethodParametersWithoutParameters()
+    {
+        // Arrange
+        $container = new Container();
+
+        // Act
+        $resolvedParameters = $container->resolveMethodParameters(ConcreteWithMethodParameters::class, 'noParameters');
+
+        // Assert
+        $this->assertEquals(0, sizeof($resolvedParameters));
+    }
+
+    public function testResolveMethodParametersWithSimpleDefault()
+    {
+        // Arrange
+        $container = new Container();
+
+        // Act
+        $resolvedParameters = $container->resolveMethodParameters(ConcreteWithMethodParameters::class, 'withDefault');
+
+        // Assert
+        $this->assertEquals(1, sizeof($resolvedParameters));
+        $this->assertEquals(3, $resolvedParameters[0]);
+    }
+
+    /**
+     * @expectedException \Library\Container\ContainerException
+     */
+    public function testResolveMethodParametersWithSimpleWithoutDefault()
+    {
+        // Arrange
+        $container = new Container();
+
+        // Act
+        $resolvedParameters = $container->resolveMethodParameters(ConcreteWithMethodParameters::class, 'withoutDefault');
+
+        // Assert
+        $this->assertEquals(0, sizeof($resolvedParameters));
+    }
+
+    public function testResolveMethodParametersWithSimpleTypeHint()
+    {
+        // Arrange
+        $container = new Container();
+
+        // Act
+        $resolvedParameters = $container->resolveMethodParameters(ConcreteWithMethodParameters::class, 'withConcrete');
+        $class = new ConcreteWithMethodParameters();
+        $value = call_user_func_array([$class, 'withConcrete'], $resolvedParameters);
+
+        // Assert
+        $this->assertEquals(1, sizeof($resolvedParameters));
+        $this->assertTrue($value instanceof ConcreteNoConstructor);
+    }
+
+    public function testResolveMethodParametersWithInterface()
+    {
+        // Arrange
+        $container = new Container();
+        $container->registerInterface(InterfaceOne::class, ConcreteImplementingInterfaceOne::class);
+
+        // Act
+        $resolvedParameters = $container->resolveMethodParameters(ConcreteWithMethodParameters::class, 'withInterface');
+        $class = new ConcreteWithMethodParameters();
+        $value = call_user_func_array([$class, 'withInterface'], $resolvedParameters);
+
+        // Assert
+        $this->assertEquals(1, sizeof($resolvedParameters));
+        $this->assertTrue($value instanceof ConcreteImplementingInterfaceOne);
+    }
+
+    public function testResolveMethodParametersWithInterfaceDefault()
+    {
+        // Arrange
+        $container = new Container();
+
+        // Act
+        $resolvedParameters = $container->resolveMethodParameters(ConcreteWithMethodParameters::class, 'withDefaultInterface');
+        $class = new ConcreteWithMethodParameters();
+        $value = call_user_func_array([$class, 'withDefaultInterface'], $resolvedParameters);
+
+        // Assert
+        $this->assertEquals(1, sizeof($resolvedParameters));
+        $this->assertNull($value);
     }
 }

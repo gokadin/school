@@ -1,6 +1,6 @@
 <?php
 
-namespace Library\Controller\Traits;
+namespace Library\Controller;
 
 use Library\Facades\Redirect;
 use Library\Facades\Request;

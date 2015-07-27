@@ -16,7 +16,7 @@ class PreRegistrationRequest extends Request
         return [
             'firstName' => ['required' => 'first name is required'],
             'lastName' => ['required' => 'last name is required'],
-            'email' => ['email', 'unique:Teacher,email', 'unique:Student,email'],
+            'email' => ['email', 'unique:Teacher,email', 'unique:Student,email', 'unique:TempTeacher,email'],
             'subscriptionType' => 'required'
         ];
     }

@@ -8,21 +8,21 @@ use Library\Queue\Drivers\DatabaseQueueDriver;
 class Queue
 {
     protected $driver;
+    protected $syncDriver;
 
     public function __construct()
     {
         $settings = require __DIR__.'/../../Config/queue.php';
 
-        $this->setDriver($settings);
+        $this->setDrivers($settings);
     }
 
-    protected function setDriver($settings)
+    protected function setDrivers($settings)
     {
+        $this->syncDriver = new SyncQueueDriver();
+
         switch ($settings['use'])
         {
-            case 'sync':
-                $this->driver = new SyncQueueDriver();
-                break;
             case 'database':
                 $this->driver = new DatabaseQueueDriver($settings['connections']['database']);
                 break;
@@ -35,5 +35,10 @@ class Queue
     public function push($job)
     {
         $this->driver->push($job);
+    }
+
+    public function pushSync($job)
+    {
+        $this->syncDriver->push($job);
     }
 }

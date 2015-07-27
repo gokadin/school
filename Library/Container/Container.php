@@ -3,6 +3,7 @@
 namespace Library\Container;
 
 use ReflectionClass;
+use ReflectionMethod;
 
 class Container
 {
@@ -30,6 +31,41 @@ class Container
         }
 
         $this->registeredInterfaces[$interface] = $concrete;
+    }
+
+    public function resolveMethodParameters($class, $methodName)
+    {
+        $r = new ReflectionMethod($class, $methodName);
+
+        $resolvedParameters = [];
+        $parameters = $r->getParameters();
+
+        foreach ($parameters as $parameter)
+        {
+            $class = $parameter->getClass();
+            if (!is_null($class))
+            {
+                $defaultValue = null;
+                $useDefault = $parameter->isOptional();
+                if ($useDefault)
+                {
+                    $defaultValue = $parameter->getDefaultValue();
+                }
+
+                $resolvedParameters[] = $this->resolveParameter($class->getName(), $defaultValue, $useDefault);
+                continue;
+            }
+
+            if ($parameter->isOptional())
+            {
+                $resolvedParameters[] = $parameter->getDefaultValue();
+                continue;
+            }
+
+            throw new ContainerException('Could not resolve parameter '.$parameter->getName().' for class '.get_class($class));
+        }
+
+        return $resolvedParameters;
     }
 
     public function resolveInstance($name)
