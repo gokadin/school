@@ -2,12 +2,17 @@
 
 namespace App\Jobs\Frontend;
 
+use App\Events\Frontend\TeacherPreRegistered;
 use App\Jobs\Job;
 use App\Repositories\Contracts\IUserRepository;
+use Library\Events\FiresEvents;
+use Library\Queue\JobFailedException;
 use Library\Queue\ShouldQueue;
 
 class PreRegisterTeacher extends Job implements ShouldQueue
 {
+    use FiresEvents;
+
     protected $data;
 
     public function __construct(array $data)
@@ -17,8 +22,14 @@ class PreRegisterTeacher extends Job implements ShouldQueue
 
     public function handle(IUserRepository $userRepository)
     {
-        $userRepository->preRegisterTeacher($this->data);
+        $tempTeacher = $userRepository->preRegisterTeacher($this->data);
 
-        // fire event
+        if (!$tempTeacher)
+        {
+            throw new JobFailedException('Could not register temp teacher. Repository returned false.');
+            return;
+        }
+
+        $this->fireEvent(new TeacherPreRegistered($tempTeacher));
     }
 }

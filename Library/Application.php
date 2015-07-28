@@ -2,6 +2,7 @@
 
 namespace Library;
 
+use Config\EventRegistration;
 use Library\Container\Container;
 use Library\Container\ContainerConfiguration;
 use Library\Facades\Request;
@@ -23,12 +24,13 @@ class Application
         $this->viewToSend = null;
         $this->basePath = __DIR__.'/../';
 
-        $this->ConfigureContainer();
+        $this->configureContainer();
+        $this->configureEvents();
 
         $this->loadRoutes();
     }
 
-    protected function ConfigureContainer()
+    protected function configureContainer()
     {
         $this->container->registerInstance('app', $this);
         $containerConfiguration = new ContainerConfiguration($this->container);
@@ -47,6 +49,13 @@ class Application
         }
 
         return $this->container;
+    }
+
+    protected function configureEvents()
+    {
+        $eventRegistration = new EventRegistration($this->container()->resolveInstance('eventManager'));
+
+        $eventRegistration->registerEvents();
     }
 
     private function loadRoutes()

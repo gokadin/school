@@ -27,7 +27,7 @@ class UserRepository implements IUserRepository
 
             $confirmationCode = md5(rand(999, 999999));
 
-            TempTeacher::create([
+            $tempTeacher = TempTeacher::create([
                 'subscription_id' => $subscription->id,
                 'first_name' => $data['firstName'],
                 'last_name' => $data['lastName'],
@@ -36,7 +36,7 @@ class UserRepository implements IUserRepository
             ]);
 
             DB::commit();
-            return true;
+            return $tempTeacher;
         }
         catch (PDOException $e)
         {

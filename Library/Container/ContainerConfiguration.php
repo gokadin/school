@@ -4,6 +4,7 @@ namespace Library\Container;
 
 use Library\Configuration\Config;
 use Library\Database\Factory;
+use Library\Events\EventManager;
 use Library\Http\Redirect;
 use Library\Http\Request;
 use Library\Http\Response;
@@ -44,6 +45,7 @@ class ContainerConfiguration
         $this->container->registerInstance('sentry', new Sentry());
         $this->container->registerInstance('log', new Log());
         $this->container->registerInstance('queue', new Queue());
+        $this->container->registerInstance('eventManager', new EventManager());
 
         if (env('APP_DEBUG'))
         {
