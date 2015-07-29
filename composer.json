@@ -12,7 +12,8 @@
     "swiftmailer/swiftmailer": "^5.4",
     "fzaninotto/faker": "^1.5",
     "mockery/mockery": "^0.9.4",
-    "symfony/console": "^2.7"
+    "symfony/console": "^2.7",
+    "predis/predis": "^1.0"
   },
   "autoload": {
     "psr-0": {"": ""}
