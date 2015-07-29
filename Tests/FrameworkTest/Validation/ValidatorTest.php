@@ -2,6 +2,7 @@
 
 namespace Tests\FrameworkTest\Validation;
 
+use Library\Testing\DatabaseTransactions;
 use Library\Validation\Validator;
 use Library\Facades\Session;
 use Tests\FrameworkTest\BaseTest;
@@ -9,6 +10,8 @@ use Tests\FrameworkTest\Models\Test;
 
 class ValidatorTest extends BaseTest
 {
+    use DatabaseTransactions;
+
     public function setUp()
     {
         parent::setUp();
@@ -346,6 +349,8 @@ class ValidatorTest extends BaseTest
 
     public function testUniqueWorksWhenInvalid()
     {
+        $this->beginDatabaseTransaction();
+
         // Arrange
         $validator = new Validator();
         Test::create(['col1' => 'str', 'col2' => 1]);

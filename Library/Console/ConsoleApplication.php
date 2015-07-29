@@ -15,6 +15,8 @@ class ConsoleApplication
         $this->app = new Application();
         $this->framework = new \Library\Application();
 
+        putenv('CONSOLE=true');
+
         $this->addRequiredModules();
     }
 

@@ -41,7 +41,7 @@ class QueueListener extends Command
         $attempts = 0;
         while (true)
         {
-            list($id, $maxAttempts, $job) = $this->getNextJobArray();
+            list($id, $maxAttempts, $job, $handler, $type) = $this->getNextJobArray();
 
             if (is_null($job))
             {
@@ -52,8 +52,16 @@ class QueueListener extends Command
 
             try
             {
-                $parameters = App::container()->resolveMethodParameters($job, 'handle');
-                call_user_func_array([$job, 'handle'], $parameters);
+                switch ($type)
+                {
+                    case 'job':
+                        $this->executeJob($job);
+                        break;
+                    case 'eventListener':
+                        $this->executeEventListener($job, $handler);
+                        break;
+                }
+
                 $attempts = 0;
                 $this->removeJob($id);
             }
@@ -79,6 +87,17 @@ class QueueListener extends Command
         }
     }
 
+    protected function executeJob($job)
+    {
+        $parameters = App::container()->resolveMethodParameters($job, 'handle');
+        call_user_func_array([$job, 'handle'], $parameters);
+    }
+
+    protected function executeEventListener($job, $handler)
+    {
+        $handler->handle($job);
+    }
+
     protected function getDbConnection()
     {
         $settings = include App::basePath().'Config/database.php';
@@ -102,17 +121,30 @@ class QueueListener extends Command
 
         if ($row = $query->fetch())
         {
-            $job = unserialize($row['data']);
+            $job = unserialize($row['job']);
             if ($job == null)
             {
                 $this->removeJob($row['id']);
                 return null;
             }
 
+            $handler = null;
+            if ($row['type'] == 'eventListener')
+            {
+                $handler = unserialize($row['handler']);
+                if ($handler == null)
+                {
+                    $this->removeJob($row['id']);
+                    return null;
+                }
+            }
+
             return [
                 $row['id'],
                 $row['max_attempts'],
-                $job
+                $job,
+                $handler,
+                $row['type']
             ];
         }
 
@@ -124,9 +156,17 @@ class QueueListener extends Command
         $this->dao->exec('DELETE FROM '.$this->queueTable.' WHERE id='.$id);
     }
 
-    protected function handleFailedJob($job)
+    protected function handleFailedJob($job, $handler)
     {
-        $this->dao->exec('INSERT INTO '.$this->failedTable.' (data) VALUES('.
-            '\''.str_replace('\\', '\\\\', serialize($job)).'\')');
+        if ($handler != null)
+        {
+            $this->dao->exec('INSERT INTO '.$this->failedTable.' (job, handler) VALUES('.
+                '\''.str_replace('\\', '\\\\', serialize($job)).'\', '.
+                '\''.str_replace('\\', '\\\\', serialize($handler)).'\')');
+            return;
+        }
+
+        $this->dao->exec('INSERT INTO '.$this->failedTable.' (job, handler) VALUES('.
+            '\''.str_replace('\\', '\\\\', serialize($job)).'\', \'undefined\')');
     }
 }

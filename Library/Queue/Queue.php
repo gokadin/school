@@ -32,13 +32,19 @@ class Queue
         }
     }
 
-    public function push($job)
+    public function push($job, $handler = null)
     {
-        $this->driver->push($job);
+        if (env('CONSOLE'))
+        {
+            $this->pushSync($job, $handler);
+            return;
+        }
+
+        $this->driver->push($job, $handler);
     }
 
-    public function pushSync($job)
+    public function pushSync($job, $handler = null)
     {
-        $this->syncDriver->push($job);
+        $this->syncDriver->push($job, $handler);
     }
 }

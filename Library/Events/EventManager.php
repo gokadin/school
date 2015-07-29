@@ -3,6 +3,7 @@
 namespace Library\Events;
 
 use Library\Facades\App;
+use Library\Queue\ShouldQueue;
 
 class EventManager
 {
@@ -64,7 +65,24 @@ class EventManager
         {
             $resolvedListener = App::container()->resolve($listener);
 
+            if ($resolvedListener instanceof ShouldQueue)
+            {
+                $this->pushToQueue($event, $resolvedListener);
+                continue;
+            }
+
             $resolvedListener->handle($event);
         }
+    }
+
+    /**
+     * Pushes the listener on the queue
+     *
+     * @param $event
+     * @param $listener
+     */
+    protected function pushToQueue($event, $listener)
+    {
+        App::container()->resolveInstance('queue')->push($event, $listener);
     }
 }

@@ -3,11 +3,12 @@
 namespace App\Listeners\Frontend;
 
 use App\Events\Frontend\TeacherPreRegistered;
+use App\Listeners\Listener;
 use App\Repositories\Contracts\IUserRepository;
 use Library\Facades\Log;
 use Library\Queue\ShouldQueue;
 
-class EmailPreRegisteredTeacher implements ShouldQueue
+class EmailPreRegisteredTeacher extends Listener implements ShouldQueue
 {
     protected $r;
 
