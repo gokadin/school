@@ -34,6 +34,19 @@
     </nav>
     <hr class="fade-out-separator" />
     <div id="content">
+        <script src="{{ asset('js/socket.io.js') }}"></script>
+
+        <script type="text/javascript">
+            $(function() {
+                var socket = io('http://localhost:3000');
+
+                socket.on('test-channel', function(message) {alert('1');
+                    console.log('Message: ' + message);
+
+                    alert('TEST');
+                });
+            });
+        </script>
         @yield('content')
     </div>
 </div>

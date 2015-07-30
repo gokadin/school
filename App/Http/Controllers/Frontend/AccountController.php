@@ -14,6 +14,7 @@ use Library\Facades\Sentry;
 use Models\Student;
 use Models\Teacher;
 use Models\Subscription;
+use Predis\Connection\Aggregate\PredisCluster;
 
 class AccountController extends Controller
 {
@@ -24,6 +25,9 @@ class AccountController extends Controller
 
     public function signup()
     {
+        $redis = new \Predis\Client();
+        $redis->publish('test-channel', 'the message right here');
+
         $memberships = Subscription::getMembershipsArray();
 
         return view('frontend.account.signUp', compact('memberships'));
