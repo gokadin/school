@@ -1,0 +1,131 @@
+@inject('\Library\Facades\Form')
+
+@layout('school.layout')
+
+@section('content')
+
+<div class="row">
+    <div class="col-md-7">
+        <div class="create-form">
+            {{ Form::open('', 'POST', ['id' => 'create-student-form']) }}
+            <div class="create-form-title">Add a student</div>
+            <div class="create-form-body">
+                <div class="row create-form-input-row">
+                    <div class="col-md-4 create-form-label">First name<span class="required">*</span></div>
+                    <div class="col-md-7 create-form-input">
+                        <div class="input-icon">
+                            <i class="fa fa-warning"></i>
+                            <input type="text" class="form-control" id="firstName" name="firstName" placeholder="First name" />
+                        </div>
+                        <span class="input-message">First name is required.</span>
+                    </div>
+                    <div class="col-md-1"></div>
+                </div>
+
+                <div class="row create-form-input-row">
+                    <div class="col-md-4 create-form-label">Last name<span class="required">*</span></div>
+                    <div class="col-md-7 create-form-input">
+                        <div class="input-icon">
+                            <i class="fa fa-warning"></i>
+                            <input type="text" class="form-control" id="lastName" name="lastName" placeholder="Last name" />
+                        </div>
+                        <span class="input-message">Last name is required.</span>
+                    </div>
+                    <div class="col-md-1"></div>
+                </div>
+
+                <div class="row create-form-input-row">
+                    <div class="col-md-4 create-form-label">Email<span class="required">*</span></div>
+                    <div class="col-md-7 create-form-input">
+                        <div class="input-icon">
+                            <i class="fa fa-warning"></i>
+                            <input type="email" class="form-control" id="email" name="email" placeholder="Email" />
+                        </div>
+                        <span class="input-message">Email is required.</span>
+                        <span class="input-message">Email address is already registered.</span>
+                    </div>
+                    <div class="col-md-1"></div>
+                </div>
+
+                <div class="row create-form-input-row">
+                    <div class="col-md-4 create-form-label">Activity<span class="required">*</span></div>
+                    <div class="col-md-3 create-form-input">
+                        <select class="form-control" id="activity" name="activity" onchange="setDefaultRate()">
+                            @foreach ($activities as $activity)
+                            <option value="{{ $activity->id }}">{{ $activity->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="col-md-1 create-form-label">Rate<span class="required">*</span></div>
+                    <div class="col-md-3 create-form-input">
+                        <div class="input-icon">
+                            <i class="fa fa-warning"></i>
+                            <input type="text" class="form-control" id="rate" name="rate" placeholder="Rate" />
+                        </div>
+                        <span class="input-message">Rate is required.</span>
+                        <span class="input-message">Must be numeric.</span>
+                    </div>
+                    <div class="col-md-1"></div>
+                </div>
+
+                <div class="row create-form-input-row">
+                    <div class="col-md-4 create-form-label">Phone<span class="required">*</span></div>
+                    <div class="col-md-7 create-form-input">
+                        <input type="text" class="form-control" id="phone" name="phone" placeholder="Phone" />
+                    </div>
+                    <div class="col-md-1"></div>
+                </div>
+            </div>
+            <div class="create-form-footer">
+                <div class="col-md-7">
+                    <div class="checkbox create-another">
+                        <label for="createAnother">
+                            <input type="checkbox" id="createAnother" name="createAnother" value="1" />Create another
+                        </label>
+                    </div>
+                </div>
+                <div class="col-md-5">
+                    <a href="@path('School#Teacher/Student#index')"><button class="btn btn-default" type="button">Cancel</button></a>
+                    <button id="create-activity-submit-button" class="btn btn-success" type="submit">Create</button>
+                </div>
+            </div>
+            </form>
+        </div>
+    </div>
+    <div class="col-md-5">
+        <div class="side-info">
+            <div class="side-info-title">
+                <span class="fa fa-question-circle"></span>
+                Adding a student
+            </div>
+            <div class="side-info-body">
+                ***Activities can be used for categorizing students and managing their recurring schedules
+                and payment plans with your school.<br /><br />
+                Each activity has a <b>default rate</b> which can be overriden by a student's
+                <b>custom rate</b> for that activity.<br /><br />
+                <b>Deleting</b> and activity will remove all associated future events and pending payments.
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript" src="/Applications/Modules/Teacher/Student/Views/js/studentValidation.js"></script>
+
+<script type="text/javascript">
+    setDefaultRate();
+
+    function setDefaultRate() {
+        var selectedId = $('#activity').val();
+
+    <?php foreach ($activities as $activity) { ?>
+            var id = "<?php echo $activity->id; ?>";
+
+            if (id == selectedId) {
+                var rate = "<?php echo $activity->rate; ?>";
+                $('#rate').val(rate);
+            }
+        <?php } ?>
+    }
+</script>
+
+@stop()

@@ -1,3 +1,7 @@
+@layout('school.layout')
+
+@section('content')
+
 <div class="row data-table">
     <div class="col-md-12">
         <div class="data-table-header">
@@ -129,48 +133,50 @@
 <script type="text/javascript" src="/Resources/Assets/js/sorttable/sorttable.js"></script>
 
 <script>
-var currentForm = '';
+    var currentForm = '';
 
-function showConfirmModal(e) {
-    currentForm = e.children[0];
+    function showConfirmModal(e) {
+        currentForm = e.children[0];
 
-    $('#confirm-modal').modal('show');
-    return false;
-}
+        $('#confirm-modal').modal('show');
+        return false;
+    }
 
-function confirmCallBack() {
-    currentForm.submit();
-}
+    function confirmCallBack() {
+        currentForm.submit();
+    }
 
-$('#table-search').keyup(function() {
-    var value = this.value;
+    $('#table-search').keyup(function() {
+        var value = this.value;
 
-    $('#student-table').find('tr').each(function(index) {
-        if (index === 0) return;
-        var id = $(this).find('td').first().text();
-        $(this).toggle(id.toLowerCase().indexOf(value.toLowerCase()) !== -1);
+        $('#student-table').find('tr').each(function(index) {
+            if (index === 0) return;
+            var id = $(this).find('td').first().text();
+            $(this).toggle(id.toLowerCase().indexOf(value.toLowerCase()) !== -1);
+        });
     });
-});
 
-function showEditModal(e) {
-    currentForm = e.children[0];
-    var editModal = $('#edit-modal');
+    function showEditModal(e) {
+        currentForm = e.children[0];
+        var editModal = $('#edit-modal');
 
-    editModal.find('input').removeClass('valid').removeClass('invalid');
-    editModal.find('input').parent().removeClass('show');
-    editModal.find('input').parent().nextAll('span').removeClass('show');
+        editModal.find('input').removeClass('valid').removeClass('invalid');
+        editModal.find('input').parent().removeClass('show');
+        editModal.find('input').parent().nextAll('span').removeClass('show');
 
-    $('#edit-modal-firstName').val(currentForm.elements['firstName'].value);
-    $('#edit-modal-lastName').val(currentForm.elements['lastName'].value);
+        $('#edit-modal-firstName').val(currentForm.elements['firstName'].value);
+        $('#edit-modal-lastName').val(currentForm.elements['lastName'].value);
 
-    editModal.modal('show');
-    return false;
-}
+        editModal.modal('show');
+        return false;
+    }
 
-function editCallBack() {
-    currentForm.elements['firstName'].value = $('#edit-modal-firstName').val();
-    currentForm.elements['lastName'].value = $('#edit-modal-lastName').val();
+    function editCallBack() {
+        currentForm.elements['firstName'].value = $('#edit-modal-firstName').val();
+        currentForm.elements['lastName'].value = $('#edit-modal-lastName').val();
 
-    currentForm.submit();
-}
+        currentForm.submit();
+    }
 </script>
+
+@stop()

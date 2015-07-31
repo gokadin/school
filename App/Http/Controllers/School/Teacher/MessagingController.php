@@ -1,9 +1,14 @@
-<?php namespace Applications\School\Modules\Teacher\Messaging;
+<?php
 
-use Library\BackController;
+namespace App\Http\Controllers\School\Teacher;
+
+use App\Http\Controllers\Controller;
+use App\Http\Requests\School\StoreMessageRequest;
+use App\Repositories\MessageRepository;
 use Library\Facades\DB;
 use Library\Facades\Page;
 use Library\Facades\Request;
+use Library\Facades\Sentry;
 use Models\StudentMessage;
 use Models\StudentMessageIn;
 use Models\TeacherMessageIn;
@@ -11,12 +16,12 @@ use Models\TeacherMessageOut;
 use Models\Student;
 use Models\Teacher;
 
-class MessagingController extends BackController
+class MessagingController extends Controller
 {
-	public function index()
-	{
-        $messagesOut = TeacherMessageOut::where('teacher_id', '=', $this->currentUser->id)->get();
-        $messagesIn = TeacherMessageIn::where('teacher_id', '=', $this->currentUser->id)->get();
+    public function index()
+    {
+        $messagesOut = TeacherMessageOut::where('teacher_id', '=', Sentry::user()->id)->get();
+        $messagesIn = TeacherMessageIn::where('teacher_id', '=', Sentry::user()->id)->get();
 
         $messagesWithTeachers = array();
         $messagesWithStudents = array();
@@ -91,57 +96,17 @@ class MessagingController extends BackController
             ];
         }
 
-        Page::add('userMessagesJson', json_encode($userMessages));
-        Page::add('students', $this->currentUser->students());
-	}
+        return view('school.teacher.messaging.index', [
+            'userMessagesJson' => json_encode($userMessages),
+            'students' => Sentry::user()->students()
+        ]);
+    }
 
     /* AJAX */
 
-    public function ajaxStore()
+    public function ajaxStore(StoreMessageRequest $request, MessageRepository $messageRepository)
     {
-        if (!$this->validateRequest([
-            'to_id' => ['required', 'numeric'],
-            'to_type' => 'required',
-            'content' => 'required'
-        ], false))
-        {
-            exit(false);
-        }
-
-        DB::beginTransaction();
-
-        try
-        {
-            TeacherMessageOut::create([
-                'teacher_id' => $this->currentUser->id,
-                'to_id' => Request::data('to_id'),
-                'to_type' => Request::data('to_type'),
-                'content' => Request::data('content')
-            ]);
-
-            if (Request::data('to_type') == 'Teacher')
-                TeacherMessageIn::create([
-                    'teacher_id' => Request::data('to_id'),
-                    'from_id' => $this->currentUser->id,
-                    'from_type' => 'Teacher',
-                    'content' => Request::data('content')
-                ]);
-            else if (Request::data('to_type') == 'Student')
-                StudentMessageIn::create([
-                    'student_id' => Request::data('to_id'),
-                    'from_id' => $this->currentUser->id,
-                    'from_type' => 'Student',
-                    'content' => Request::data('content')
-                ]);
-        }
-        catch (\PDOException $e)
-        {
-            DB::rollBack();
-            exit(false);
-        }
-
-        DB::commit();
-        exit(true);
+        return $messageRepository->AddMessageFromTeacher($request->all());
     }
 
     public function ajaxDestroyConversation()

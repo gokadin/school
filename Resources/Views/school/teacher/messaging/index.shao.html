@@ -1,7 +1,12 @@
-<link rel="stylesheet" href="/Resources/Assets/css/specific/messaging.css" type="text/css" />
-<link rel="stylesheet" href="/Resources/Assets/css/specific/messagingResponsive.css" type="text/css" />
-
 @inject('\Library\Facades\Form')
+@inject('\Library\Facades\Sentry')
+
+@layout('school.layout')
+
+@section('content')
+
+<link rel="stylesheet" href="{{ asset('css/specific/messaging.css') }}" type="text/css" />
+<link rel="stylesheet" href="{{ asset('css/specific/messagingResponsive.css') }}" type="text/css" />
 
 <div id="messaging-index">
     {{ Form::open('', 'POST', ['v-on' => 'submit: submitForm', 'id' => 'new-message-form'], false) }}
@@ -96,8 +101,8 @@
 
 </div>
 
-<link rel="stylesheet" type="text/css" href="/Resources/Assets/css/select2.min.css">
-<script type="text/javascript" src="/Resources/Assets/js/select2.min.js"></script>
+<link rel="stylesheet" type="text/css" href="{{ asset('css/select2.min.css') }}">
+<script type="text/javascript" src="{{ asset('js/select2.min.js') }}"></script>
 
 <script type="text/javascript">
     $('#student-ids').select2({
@@ -137,7 +142,7 @@
 
             userMessages: JSON.parse('{{ $userMessagesJson }}'),
 
-            currentUserName: '{{ $currentUser->name() }}'
+            currentUserName: '{{ Sentry::user()->name() }}'
         },
 
         ready: function() {
@@ -225,3 +230,5 @@
         }
     });
 </script>
+
+@stop()

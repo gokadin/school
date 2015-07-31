@@ -49,7 +49,7 @@ Route::group(['namespace' => 'School', 'prefix' => '/school', 'as' => 'school', 
             Route::delete('/delete', 'ActivityController@destroy');
         });
 
-        Route::group(['prefix' => '/students', 'as' => 'students'], function() {
+        Route::group(['prefix' => '/students', 'as' => 'student'], function() {
             Route::get('/', 'StudentController@index');
             Route::get('/create', 'StudentController@create');
             Route::post('/create', 'StudentController@store');

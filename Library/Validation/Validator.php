@@ -2,7 +2,6 @@
 
 namespace Library\Validation;
 
-use Library\Facades\Config;
 use Library\Facades\Request;
 use Library\Facades\Session;
 

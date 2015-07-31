@@ -74,7 +74,7 @@ class Application
 
     public function sendView()
     {
-        if (is_string($this->viewToSend))
+        if (is_string($this->viewToSend) || is_bool($this->viewToSend))
         {
             echo $this->viewToSend;
             return;
