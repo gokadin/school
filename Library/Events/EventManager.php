@@ -54,6 +54,11 @@ class EventManager
      */
     public function fire($event)
     {
+        if ($event instanceof ShouldBroadcast)
+        {
+            $this->broadcastEvent($event);
+        }
+
         $eventClassName = get_class($event);
 
         if (!isset($this->listeners[$eventClassName]))
@@ -84,5 +89,22 @@ class EventManager
     protected function pushToQueue($event, $listener)
     {
         App::container()->resolveInstance('queue')->push($event, $listener);
+    }
+
+    /**
+     * Broadcasts the event
+     *
+     * @param $event
+     */
+    protected function broadcastEvent($event)
+    {
+        $data = $event->broadcastOn();
+
+        $redis = App::container()->resolveInstance('redis');
+
+        foreach ($data as $channel => $payload)
+        {
+            $redis->publish($channel, json_encode($payload));
+        }
     }
 }

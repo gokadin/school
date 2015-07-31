@@ -103,6 +103,7 @@
 
 <link rel="stylesheet" type="text/css" href="{{ asset('css/select2.min.css') }}">
 <script type="text/javascript" src="{{ asset('js/select2.min.js') }}"></script>
+<script src="{{ asset('js/socket.io.js') }}"></script>
 
 <script type="text/javascript">
     $('#student-ids').select2({
@@ -130,7 +131,7 @@
         }
     })
 
-    new Vue({
+    var test = new Vue({
         el: '#messaging-index',
 
         data: {
@@ -142,14 +143,32 @@
 
             userMessages: JSON.parse('{{ $userMessagesJson }}'),
 
-            currentUserName: '{{ Sentry::user()->name() }}'
+            currentUserName: '{{ Sentry::user()->name() }}',
+            currentId: '{{ Sentry::user()->id }}',
+            currentType: '{{ Sentry::type() }}'
         },
 
         ready: function() {
             this.userMessages[0].show_messages = true;
+
+            var socket = io('http://localhost:3000');
+
+            socket.on('messaging.newMessageReceived', function(payload) {
+                var payload = JSON.parse(payload);
+
+                test.receiveNewMessage(payload);
+            });
         },
 
         methods: {
+            receiveNewMessage: function(payload) {
+                if (this.currentId != payload.toId || this.currentType != payload.toType) {
+                    return;
+                }
+
+                alert(payload.message);
+            },
+
             showDeleteConfirmationModal: function(userMessage) {
                 $('#confirm-delete-modal-user-id').val(userMessage.id);
                 $('#confirm-delete-modal-user-type').val(userMessage.user_type);

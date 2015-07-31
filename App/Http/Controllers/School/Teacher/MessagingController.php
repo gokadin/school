@@ -4,13 +4,12 @@ namespace App\Http\Controllers\School\Teacher;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\School\StoreMessageRequest;
-use App\Repositories\MessageRepository;
+use App\Jobs\School\ReceiveNewMessage;
 use Library\Facades\DB;
 use Library\Facades\Page;
 use Library\Facades\Request;
 use Library\Facades\Sentry;
 use Models\StudentMessage;
-use Models\StudentMessageIn;
 use Models\TeacherMessageIn;
 use Models\TeacherMessageOut;
 use Models\Student;
@@ -104,9 +103,9 @@ class MessagingController extends Controller
 
     /* AJAX */
 
-    public function ajaxStore(StoreMessageRequest $request, MessageRepository $messageRepository)
+    public function ajaxStore(StoreMessageRequest $request)
     {
-        return $messageRepository->AddMessageFromTeacher($request->all());
+        $this->dispatchJob(new ReceiveNewMessage($request->content, $request->to_id, $request->to_type));
     }
 
     public function ajaxDestroyConversation()

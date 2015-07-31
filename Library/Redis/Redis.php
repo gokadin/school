@@ -8,13 +8,9 @@ class Redis
 {
     protected $predis;
 
-    public function __construct($host = '10.0.0.1', $port = 6378)
+    public function __construct()
     {
-        $this->predis = new PredisClient([
-            'scheme' => 'tcp',
-            'host' => $host,
-            'port' => $port
-        ]);
+        $this->predis = new PredisClient();
     }
 
     public function __call($name, $arguments)
