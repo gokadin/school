@@ -352,7 +352,7 @@ class Router
                 continue;
             }
 
-            if (in_array($parameter->getName(), $routeParameters))
+            if (in_array($parameter->getName(), array_keys($routeParameters)))
             {
                 $resolvedParameters[] = $routeParameters[$parameter->getName()];
                 continue;

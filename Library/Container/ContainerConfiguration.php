@@ -11,6 +11,7 @@ use Library\Http\Response;
 use Library\Http\ViewFactory;
 use Library\Log\Log;
 use Library\Queue\Queue;
+use Library\Redis\Redis;
 use Library\Routing\Router;
 use Library\Database\Database;
 use Library\Http\Form;
@@ -46,6 +47,7 @@ class ContainerConfiguration
         $this->container->registerInstance('log', new Log());
         $this->container->registerInstance('queue', new Queue());
         $this->container->registerInstance('eventManager', new EventManager());
+        $this->container->registerInstance('redis', new Redis());
 
         if (env('APP_DEBUG'))
         {

@@ -6,6 +6,10 @@ use App\Repositories\Contracts\IUserRepository;
 use Library\Facades\DB;
 use Models\TempTeacher;
 use Models\Subscription;
+use Models\Address;
+use Models\Teacher;
+use Models\TeacherSetting;
+use Models\School;
 use PDOException;
 
 class UserRepository implements IUserRepository

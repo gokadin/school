@@ -11,7 +11,7 @@ redis.subscribe('test-channel', function(err, count) {
 redis.on('message', function(channel, message) {
     console.log('Message received -> channel: ' + channel + ', message: ' + message);
 
-    io.emit(channel + ':' + message);
+    io.emit(channel, message);
 });
 
 http.listen(3000, function() {

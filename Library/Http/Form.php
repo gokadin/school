@@ -11,7 +11,7 @@ class Form
         $needHiddenMethod = false;
         $str = '<form action="';
         if (!empty($action))
-            $str .= \Library\Facades\Redirect::to($action);
+            $str .= \Library\Facades\Router::getUri($action);
         $str .= '"';
 
         if ($method == 'GET' || $method == 'POST')

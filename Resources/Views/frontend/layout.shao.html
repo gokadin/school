@@ -40,10 +40,8 @@
             $(function() {
                 var socket = io('http://localhost:3000');
 
-                socket.on('test-channel', function(message) {alert('1');
+                socket.on('test-channel', function(message) {
                     console.log('Message: ' + message);
-
-                    alert('TEST');
                 });
             });
         </script>

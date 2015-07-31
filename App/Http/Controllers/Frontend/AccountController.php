@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Frontend;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Frontend\PreRegistrationRequest;
 use App\Http\Requests\Frontend\LoginRequest;
+use App\Http\Requests\Frontend\RegistrationRequest;
 use App\Jobs\Frontend\PreRegisterTeacher;
 use App\Repositories\Contracts\IUserRepository;
 use Library\Facades\Page;
@@ -14,7 +15,6 @@ use Library\Facades\Sentry;
 use Models\Student;
 use Models\Teacher;
 use Models\Subscription;
-use Predis\Connection\Aggregate\PredisCluster;
 
 class AccountController extends Controller
 {
@@ -25,9 +25,6 @@ class AccountController extends Controller
 
     public function signup()
     {
-        $redis = new \Predis\Client();
-        $redis->publish('test-channel', 'the message right here');
-
         $memberships = Subscription::getMembershipsArray();
 
         return view('frontend.account.signUp', compact('memberships'));
@@ -99,16 +96,12 @@ class AccountController extends Controller
 
     public function registerTeacher(RegistrationRequest $request, IUserRepository $userRepository)
     {
-        $teacher = $userRepository->registerTeacher($request->tempTeacherId);
+        $teacher = $userRepository->registerTeacher($request->all());
         if (!$teacher)
         {
             Session::setFlash('Your account no longer exists. Please try signing up again.');
             Redirect::to('frontend.account.signUp');
         }
-
-//        Event::fire(TeacherHasRegistered::class,
-//            $userRepository->findTempTeacher($request->tempTeacherId),
-//            $teacher);
 
         Sentry::login($teacher->id, 'Teacher');
         Redirect::to('school.teacher.index.index');

@@ -3,9 +3,8 @@
 namespace App\Events\Frontend;
 
 use App\Events\Event;
-use Library\Events\ShouldBroadcast;
 
-class TeacherPreRegistered extends Event implements ShouldBroadcast
+class TeacherPreRegistered extends Event
 {
     protected $teacher;
 
@@ -17,12 +16,5 @@ class TeacherPreRegistered extends Event implements ShouldBroadcast
     public function teacher()
     {
         return $this->teacher;
-    }
-
-    public function broadcastOn()
-    {
-        return [
-            'test'
-        ];
     }
 }

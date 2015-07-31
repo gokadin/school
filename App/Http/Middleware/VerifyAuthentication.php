@@ -5,6 +5,7 @@ namespace App\Http\Middleware;
 use Library\Facades\Redirect;
 use Library\Facades\Router;
 use Library\Facades\Sentry;
+use Library\Http\Request;
 use Closure;
 
 class VerifyAuthentication

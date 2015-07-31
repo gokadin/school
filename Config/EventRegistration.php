@@ -16,8 +16,8 @@ class EventRegistration
 
     public function registerEvents()
     {
-        $this->eventManager->register(TeacherPreRegistered::class, [
-            EmailPreRegisteredTeacher::class
-        ]);
+//        $this->eventManager->register(TeacherPreRegistered::class, [
+//            EmailPreRegisteredTeacher::class
+//        ]);
     }
 }
