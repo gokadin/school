@@ -27,7 +27,10 @@ Route::group(['namespace' => 'Frontend', 'as' => 'frontend', 'middleware' => 'Ve
 
 Route::group(['namespace' => 'School', 'prefix' => '/school', 'as' => 'school', 'middleware' => ['VerifyCsrfToken', 'VerifyAuthentication']], function() {
     Route::group(['namespace' => 'Common', 'as' => 'common'], function() {
-        Route::get('/', 'IndexController@index');
+        Route::group(['prefix' => '/messaging', 'as' => 'messaging'], function() {
+            Route::get('/', 'MessagingController@index');
+            Route::post('/ajax/store', 'MessagingController@ajaxStore');
+        });
     });
 
     Route::group(['namespace' => 'Teacher', 'prefix' => '/teacher', 'as' => 'teacher'], function() {
@@ -74,11 +77,9 @@ Route::group(['namespace' => 'School', 'prefix' => '/school', 'as' => 'school', 
         });
 
         Route::group(['prefix' => '/ajax', 'as' => 'ajax'], function() {
-
             Route::post('/email-exists', 'AjaxController@emailExists');
             Route::post('/add-event', 'AjaxController@addEvent');
             Route::post('/change-event-date', 'AjaxController@changeEventDate');
-
         });
     });
 

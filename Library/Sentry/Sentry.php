@@ -41,6 +41,7 @@ class Sentry
                 {
                     return false;
                 }
+                $i++;
                 continue;
             }
 
@@ -96,5 +97,15 @@ class Sentry
     public function type()
     {
         return isset($_SESSION['type']) ? $_SESSION['type'] : '';
+    }
+
+    public function is($type)
+    {
+        return isset($_SESSION['type']) && $_SESSION['type'] == $type;
+    }
+
+    public function id()
+    {
+        return $this->loggedIn() ? $this->user->id : 0;
     }
 }

@@ -49,6 +49,16 @@ class Teacher extends Model
         return $this->hasOne('TeacherSetting');
     }
 
+    public function messagesOut()
+    {
+        return $this->hasMany('TeacherMessageOut');
+    }
+
+    public function messagesIn()
+    {
+        return $this->hasMany('TeacherMessageIn');
+    }
+
     public function events()
     {
         return $this->hasMany('TeacherEvent');

@@ -47,7 +47,7 @@ class Tables
         $t->string('email')->unique();
         $t->string('password');
         $t->string('phone', 32)->nullable();
-        $t->integer('type', 5)->default(1);
+        $t->string('type', 32)->default('Teacher');
         $t->boolean('active')->default(1);
         $t->string('profile_picture', 200)->default('"'.Config::get('defaultProfilePicturePath').'"');
         $t->timestamps();
@@ -69,7 +69,7 @@ class Tables
         $t->string('email')->unique();
         $t->string('password');
         $t->string('phone', 32)->nullable();
-        $t->integer('type', 5)->default(1);
+        $t->string('type', 32)->default('Student');
         $t->boolean('active')->default(1);
         $t->string('profile_picture', 200)->default('"'.Config::get('defaultProfilePicturePath').'"');
         $t->timestamps();
@@ -248,6 +248,45 @@ class Tables
         $t->string('from_type', 32);
         $t->text('content');
         $t->boolean('is_read')->default(0);
+        $t->timestamps();
+
+        return $t;
+    }
+
+    protected function conversations()
+    {
+        $t = new Table('Conversation');
+
+        $t->increments('id');
+        $t->boolean('is_visible')->default(1);
+        $t->timestamps();
+
+        return $t;
+    }
+
+    protected function conversation_messages()
+    {
+        $t = new Table('ConversationMessage');
+
+        $t->increments('id');
+        $t->integer('conversation_id');
+        $t->integer('from_id');
+        $t->string('from_type', 32);
+        $t->text('content');
+        $t->boolean('is_read')->default(0);
+        $t->timestamps();
+
+        return $t;
+    }
+
+    protected function user_conversations()
+    {
+        $t = new Table('UserConversation');
+
+        $t->increments('id');
+        $t->integer('user_id');
+        $t->string('user_type', 32);
+        $t->integer('conversation_id');
         $t->timestamps();
 
         return $t;

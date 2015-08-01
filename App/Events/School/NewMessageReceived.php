@@ -4,6 +4,7 @@ namespace App\Events\School;
 
 use App\Events\Event;
 use Library\Events\ShouldBroadcast;
+use Library\Facades\Sentry;
 
 class NewMessageReceived extends Event implements ShouldBroadcast
 {
@@ -24,7 +25,9 @@ class NewMessageReceived extends Event implements ShouldBroadcast
             'messaging.newMessageReceived' => [
                 'message' => $this->message,
                 'toId' => $this->toId,
-                'toType' => $this->toType
+                'toType' => $this->toType,
+                'fromId' => Sentry::id(),
+                'fromType' => Sentry::type()
             ]
         ];
     }

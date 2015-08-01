@@ -1,0 +1,270 @@
+@inject('\Library\Facades\Form')
+@inject('\Library\Facades\Sentry')
+
+@layout('school.layout')
+
+@section('content')
+
+<link rel="stylesheet" href="{{ asset('css/specific/messaging.css') }}" type="text/css" />
+<link rel="stylesheet" href="{{ asset('css/specific/messagingResponsive.css') }}" type="text/css" />
+
+<div id="messaging-index">
+    {{ Form::open('', 'POST', ['v-on' => 'submit: submitForm', 'id' => 'new-message-form'], false) }}
+
+    <div class="form-row">
+        <select id="student-ids" class="js-example-basic-multiple form-control" multiple="multiple">
+            @foreach ($students as $student)
+            <option value="{{ $student->id }}" data-picture="{{ $student->profile_picture }}">{{ $student->name() }}</option>
+            @endforeach
+        </select>
+    </div>
+
+    <div class="form-row">
+        {{ Form::textarea('content', null, ['v-model' => 'newMessage.content']) }}
+        {{ Form::button('Send', ['type' => 'submit', 'class' => 'btn btn-primary']) }}
+    </div>
+
+    {{ Form::close() }}
+
+    <hr>
+
+    <div id="messaging-user-rows">
+
+        <div class="messaging-user-row" v-repeat="userMessage: userMessages">
+
+            <div class="col-md-12 messaging-user-info" v-class="open: userMessage.show_messages" v-on="click: revealMessages(userMessage)">
+                <span id="messaging-user-rows-picture">
+                    <img src="@{{ userMessage.profile_picture }}" height="60" width="auto" />
+                </span>
+                <span id="messaging-user-rows-name">
+                    @{{ userMessage.name }}
+                </span>
+                <span id="messaging-user-rows-delete">
+                    <a v-on="click: showDeleteConfirmationModal(userMessage)">
+                        <img src="/Resources/Assets/images/icons/delete-conversation.png" width="30" height="30" />
+                    </a>
+                </span>
+            </div>
+
+            <div class="col-md-12 messaging-user-messages" v-if="userMessage.show_messages" v-transition="expand">
+                <div class="col-md-12 messaging-user-messages-inner-container">
+                    <div class="col-md-12" v-repeat="message: userMessage.messages">
+                        <div class="user-messaging-message-inner-container" v-class="is-outgoing: message.is_outgoing">
+                            <div class="messaging-user-title">
+                                <b>@{{ message.is_outgoing ? currentUserName : cuserMessage.name }}</b> - @{{ message.created_at | formatDateForMessage }}
+                            </div>
+                            <div class="messaging-user-message">
+                                @{{ message.content }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-12 messaging-user-new-message">
+                    <hr>
+
+                    {{ Form::open('', 'POST', ['v-on' => 'submit: submitFormWithUser($event, userMessage)'], false) }}
+
+                    {{ Form::text('content', null, ['v-model' => 'userMessage.new_message_content', 'class' => 'new-message-input']) }}
+                    {{ Form::button('Send', ['type' => 'submit', 'class' => 'new-message-button']) }}
+
+                    {{ Form::close() }}
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="modal fade" id="confirm-delete-modal" tabindex="-1" role="dialog">
+        {{ Form::hidden('user_id', '', ['id' => 'confirm-delete-modal-user-id']) }}
+        {{ Form::hidden('user_type', '', ['id' => 'confirm-delete-modal-user-type']) }}
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    Confirm delete
+                </div>
+                <div class="modal-body">
+                    Are you sure you want to delete this conversation?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">
+                        Cancel
+                    </button>
+                    <button type="button" class="btn btn-danger" v-on="click: deleteConversation()">
+                        Delete
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<link rel="stylesheet" type="text/css" href="{{ asset('css/select2.min.css') }}">
+<script type="text/javascript" src="{{ asset('js/select2.min.js') }}"></script>
+<script src="{{ asset('js/socket.io.js') }}"></script>
+
+<script type="text/javascript">
+    $('#student-ids').select2({
+        placeholder: "Select students",
+        templateResult: formatStudent
+    });
+
+    function formatStudent (student) {
+        var $student = $(
+                '<span><img src="' + $(student.element).data("picture") + '" width="20" /> ' + student.text + '</span>'
+        );
+        return $student;
+    }
+
+    function scrollDownMessages() {
+        var scrollables = document.getElementsByClassName('messaging-user-messages-inner-container');
+        for (var i = 0; i < scrollables.length; i++) {
+            scrollables[i].scrollTop = scrollables[i].scrollHeight;
+        }
+    }
+
+    Vue.transition('expand', {
+        enter: function () {
+            scrollDownMessages();
+        }
+    })
+
+    var test = new Vue({
+        el: '#messaging-index',
+
+        data: {
+            newMessage: {
+                content: '',
+                to_id: '',
+                to_type: ''
+            },
+
+            userMessages: JSON.parse('{{ $userMessagesJson }}'),
+
+            currentUserName: '{{ Sentry::user()->name() }}',
+            currentId: '{{ Sentry::id() }}',
+            currentType: '{{ Sentry::type() }}'
+        },
+
+        ready: function() {
+            $.each(this.userMessages, function(key, value) {
+                value.show_messages = true;
+
+                return false;
+            });
+
+            var socket = io('http://localhost:3000');
+
+            socket.on('messaging.newMessageReceived', function(payload) {
+                var payload = JSON.parse(payload);
+
+                test.receiveNewMessage(payload);
+            });
+        },
+
+        methods: {
+            receiveNewMessage: function(payload) {
+                if (this.currentId != payload.toId || this.currentType != payload.toType) {
+                    return;
+                }
+
+                var userMessage = this.userMessages[payload.fromType + '.' + payload.fromId];
+                userMessage.messages.push({
+                    content: payload.message,
+                    is_read: false,
+                    is_outgoing: false,
+                    created_at: buildPhpDateTime(new Date())
+                });
+
+                userMessage.show_messages = false;
+                userMessage.show_messages = true;
+
+                Vue.nextTick(function() {
+                    scrollDownMessages();
+                });
+            },
+
+            showDeleteConfirmationModal: function(userMessage) {
+                $('#confirm-delete-modal-user-id').val(userMessage.id);
+                $('#confirm-delete-modal-user-type').val(userMessage.user_type);
+                $('#confirm-delete-modal').modal('show');
+            },
+
+            deleteConversation: function() {
+                var user_id = $('#confirm-delete-modal-user-id').val();
+                var user_type = $('#confirm-delete-modal-user-type').val();
+
+                this.userMessages.forEach(function(userMessage, index, userMessages) {
+                    if (userMessage.id == user_id && userMessage.user_type == user_type) {
+                        userMessages.$remove(index);
+                        return false;
+                    }
+                });
+
+                this.$http.delete('/school/messaging/ajax/destroyConversation', {user_id: user_id, user_type: user_type});
+
+                $('#confirm-delete-modal').modal('hide');
+            },
+
+            revealMessages: function(userMessage) {
+                if (userMessage.show_messages) {
+                    userMessage.show_messages = false;
+                    return;
+                }
+
+                $.each(this.userMessages, function(key, value) {
+                    value.show_messages = false;
+                });
+
+                userMessage.show_messages = true;
+            },
+
+            submitForm: function(e) {
+                e.preventDefault();
+
+                var message = this.newMessage;
+                message.to_id = $('#student-ids').select2('val')[0];
+                message.to_type = 'Student';
+                this.newMessage = {content: '', to_id: '', to_type: ''};
+
+                this.$http.post('/school/messaging/ajax/store', message);
+            },
+
+            submitFormWithUser: function(e, userMessage) {
+                e.preventDefault();
+
+                if (userMessage.new_message_content == '') {
+                    return;
+                }
+
+                var message = {
+                    content: userMessage.new_message_content,
+                    to_id: userMessage.id,
+                    to_type: userMessage.user_type
+                };
+
+                userMessage.new_message_content = '';
+
+                userMessage.messages.push({
+                    content: message.content,
+                    is_read: false,
+                    is_outgoing: true,
+                    created_at: buildPhpDateTime(new Date())
+                });
+
+                userMessage.show_messages = false;
+                userMessage.show_messages = true;
+
+                this.$http.post('/school/messaging/ajax/store', message);
+
+                Vue.nextTick(function() {
+                    scrollDownMessages();
+                });
+            }
+        }
+    });
+</script>
+
+@stop()

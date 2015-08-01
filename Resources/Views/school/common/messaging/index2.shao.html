@@ -30,9 +30,9 @@
 
     <div id="messaging-user-rows">
 
-        <div class="messaging-user-row" v-repeat="userMessage: userMessages">
+        <div class="messaging-user-row" v-repeat="conversation: conversations">
 
-            <div class="col-md-12 messaging-user-info" v-class="open: userMessage.show_messages" v-on="click: revealMessages(userMessage)">
+            <div class="col-md-12 messaging-user-info" v-class="open: conversation.isVisible" v-on="click: revealMessages(conversation)">
                 <span id="messaging-user-rows-picture">
                     <img src="@{{ userMessage.profile_picture }}" height="60" width="auto" />
                 </span>
@@ -141,22 +141,28 @@
                 to_type: ''
             },
 
-            userMessages: JSON.parse('{{ $userMessagesJson }}'),
+            conversations: JSON.parse('{{ $conversationsJson }}'),
 
             currentUserName: '{{ Sentry::user()->name() }}',
-            currentId: '{{ Sentry::user()->id }}',
+            currentId: '{{ Sentry::id() }}',
             currentType: '{{ Sentry::type() }}'
         },
 
         ready: function() {
-            this.userMessages[0].show_messages = true;
+            $.each(this.conversations, function(value) {
+                value.isVisible = false
+            });
+
+            if (this.conversations.length > 0) {
+                this.conversations[0].isVisible = true;
+            }
 
             var socket = io('http://localhost:3000');
 
             socket.on('messaging.newMessageReceived', function(payload) {
                 var payload = JSON.parse(payload);
 
-                test.receiveNewMessage(payload);
+                //test.receiveNewMessage(payload);
             });
         },
 
@@ -166,7 +172,20 @@
                     return;
                 }
 
-                alert(payload.message);
+                var userMessage = this.userMessages[payload.fromType + '.' + payload.fromId];
+                userMessage.messages.push({
+                    content: payload.message,
+                    is_read: false,
+                    is_outgoing: false,
+                    created_at: buildPhpDateTime(new Date())
+                });
+
+                userMessage.show_messages = false;
+                userMessage.show_messages = true;
+
+                Vue.nextTick(function() {
+                    scrollDownMessages();
+                });
             },
 
             showDeleteConfirmationModal: function(userMessage) {
@@ -186,22 +205,22 @@
                     }
                 });
 
-                this.$http.delete('/school/teacher/messaging/ajax/destroyConversation', {user_id: user_id, user_type: user_type});
+                this.$http.delete('/school/messaging/ajax/destroyConversation', {user_id: user_id, user_type: user_type});
 
                 $('#confirm-delete-modal').modal('hide');
             },
 
-            revealMessages: function(userMessage) {
-                if (userMessage.show_messages) {
-                    userMessage.show_messages = false;
+            revealMessages: function(conversation) {
+                if (conversation.isVisible) {
+                    conversation.isVisible = false;
                     return;
                 }
 
-                this.userMessages.forEach(function(userMessage) {
-                    userMessage.show_messages = false;
+                $.each(this.conversations, function(value) {
+                    value.isVisible = false;
                 });
 
-                userMessage.show_messages = true;
+                conversation.isVisible = true;
             },
 
             submitForm: function(e) {
@@ -212,7 +231,7 @@
                 message.to_type = 'Student';
                 this.newMessage = {content: '', to_id: '', to_type: ''};
 
-                this.$http.post('/school/teacher/messaging/ajax/store', message);
+                this.$http.post('/school/messaging/ajax/store', message);
             },
 
             submitFormWithUser: function(e, userMessage) {
@@ -240,7 +259,7 @@
                 userMessage.show_messages = false;
                 userMessage.show_messages = true;
 
-                this.$http.post('/school/teacher/messaging/ajax/store', message);
+                this.$http.post('/school/messaging/ajax/store', message);
 
                 Vue.nextTick(function() {
                     scrollDownMessages();

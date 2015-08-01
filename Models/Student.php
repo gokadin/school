@@ -1,6 +1,7 @@
 <?php namespace Models;
 
 use Library\Database\Model;
+use Library\Database\ModelCollection;
 
 class Student extends Model
 {
@@ -37,6 +38,37 @@ class Student extends Model
     public function settings()
     {
         return $this->hasOne('StudentSetting');
+    }
+
+    public function messagesOut()
+    {
+        return $this->hasMany('StudentMessageOut');
+    }
+
+    public function messagesIn()
+    {
+        return $this->hasMany('StudentMessageIn');
+    }
+
+    public function conversations()
+    {
+        $conversationIds = UserConversation::where('user_id', '=', $this->primaryKeyValue())
+            ->where('user_type', '=', 'Student')
+            ->get('conversation_id');
+
+        if (is_null($conversationIds) || sizeof($conversationIds) == 0)
+        {
+            return new ModelCollection();
+        }
+
+        $conversations = Conversation::where('id', 'in', '('.implode(',', $conversationIds).')')->get();
+
+        if (!($conversations instanceof ModelCollection))
+        {
+            return new ModelCollection([$conversations]);
+        }
+
+        return $conversations;
     }
 
     public function name()

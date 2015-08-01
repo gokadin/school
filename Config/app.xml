@@ -1,4 +1,4 @@
 <?xml version="1.0" encoding="iso-8859-1" ?>
 <definitions>
-    <define var="defaultProfilePicturePath" value="/Web/images/defaultProfilePicture.png" />
+    <define var="defaultProfilePicturePath" value="/Assets/images/defaultProfilePicture.png" />
 </definitions>
