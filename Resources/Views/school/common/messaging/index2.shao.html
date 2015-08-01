@@ -32,26 +32,26 @@
 
         <div class="messaging-user-row" v-repeat="conversation: conversations">
 
-            <div class="col-md-12 messaging-user-info" v-class="open: conversation.isVisible" v-on="click: revealMessages(conversation)">
+            <div class="col-md-12 messaging-user-info" v-class="open: conversation.show" v-on="click: revealMessages(conversation)">
                 <span id="messaging-user-rows-picture">
-                    <img src="@{{ userMessage.profile_picture }}" height="60" width="auto" />
+                    <img src="@{{ conversation.otherUsers.length == 1 ? conversation.otherUsers[0].profile_picture : test }}" height="60" width="auto" />
                 </span>
                 <span id="messaging-user-rows-name">
-                    @{{ userMessage.name }}
+                    @{{ conversation.otherUsers[0].name }}
                 </span>
                 <span id="messaging-user-rows-delete">
-                    <a v-on="click: showDeleteConfirmationModal(userMessage)">
-                        <img src="/Resources/Assets/images/icons/delete-conversation.png" width="30" height="30" />
+                    <a v-on="click: showDeleteConfirmationModal(conversation)">
+                        <img src="{{ asset('images/icons/delete-conversation.png') }}" width="30" height="30" />
                     </a>
                 </span>
             </div>
 
-            <div class="col-md-12 messaging-user-messages" v-if="userMessage.show_messages" v-transition="expand">
+            <div class="col-md-12 messaging-user-messages" v-if="conversation.show" v-transition="expand">
                 <div class="col-md-12 messaging-user-messages-inner-container">
-                    <div class="col-md-12" v-repeat="message: userMessage.messages">
-                        <div class="user-messaging-message-inner-container" v-class="is-outgoing: message.is_outgoing">
+                    <div class="col-md-12" v-repeat="message: conversation.messages">
+                        <div class="user-messaging-message-inner-container" v-class="is-outgoing: (message.from_id == currentId && message.from_type == currentType)">
                             <div class="messaging-user-title">
-                                <b>@{{ message.is_outgoing ? currentUserName : cuserMessage.name }}</b> - @{{ message.created_at | formatDateForMessage }}
+                                <b>@{{ getMessageUserName(conversation, message) }}</b> - @{{ message.created_at | formatDateForMessage }}
                             </div>
                             <div class="messaging-user-message">
                                 @{{ message.content }}
@@ -63,9 +63,9 @@
                 <div class="col-md-12 messaging-user-new-message">
                     <hr>
 
-                    {{ Form::open('', 'POST', ['v-on' => 'submit: submitFormWithUser($event, userMessage)'], false) }}
+                    {{ Form::open('', 'POST', ['v-on' => 'submit: submitFormWithUser($event, conversation)'], false) }}
 
-                    {{ Form::text('content', null, ['v-model' => 'userMessage.new_message_content', 'class' => 'new-message-input']) }}
+                    {{ Form::text('content', null, ['v-model' => 'conversation.new_message_content', 'class' => 'new-message-input']) }}
                     {{ Form::button('Send', ['type' => 'submit', 'class' => 'new-message-button']) }}
 
                     {{ Form::close() }}
@@ -149,12 +149,8 @@
         },
 
         ready: function() {
-            $.each(this.conversations, function(value) {
-                value.isVisible = false
-            });
-
             if (this.conversations.length > 0) {
-                this.conversations[0].isVisible = true;
+                this.conversations[0].show = true;
             }
 
             var socket = io('http://localhost:3000');
@@ -162,26 +158,35 @@
             socket.on('messaging.newMessageReceived', function(payload) {
                 var payload = JSON.parse(payload);
 
-                //test.receiveNewMessage(payload);
+                test.receiveNewMessage(payload);
             });
         },
 
         methods: {
             receiveNewMessage: function(payload) {
-                if (this.currentId != payload.toId || this.currentType != payload.toType) {
+                var conversationIndex = -1;
+                for (var i = 0; i < this.conversations.length; i++) {
+                    if (this.conversations[i].id == payload.conversation_id) {
+                        conversationIndex = i;
+                        break;
+                    }
+                }
+
+                if (conversationIndex == -1) {
                     return;
                 }
 
-                var userMessage = this.userMessages[payload.fromType + '.' + payload.fromId];
-                userMessage.messages.push({
-                    content: payload.message,
-                    is_read: false,
-                    is_outgoing: false,
+                if (payload.from_id == this.currentId && payload.from_type == this.currentType) {
+                    return;
+                }
+
+                this.conversations[conversationIndex].messages.push({
+                    conversation_id: payload.conversation_id,
+                    from_id: payload.from_id,
+                    from_type: payload.from_type,
+                    content: payload.content,
                     created_at: buildPhpDateTime(new Date())
                 });
-
-                userMessage.show_messages = false;
-                userMessage.show_messages = true;
 
                 Vue.nextTick(function() {
                     scrollDownMessages();
@@ -211,16 +216,16 @@
             },
 
             revealMessages: function(conversation) {
-                if (conversation.isVisible) {
-                    conversation.isVisible = false;
+                if (conversation.show) {
+                    conversation.show = false;
                     return;
                 }
 
                 $.each(this.conversations, function(value) {
-                    value.isVisible = false;
+                    value.show = false;
                 });
 
-                conversation.isVisible = true;
+                conversation.show = true;
             },
 
             submitForm: function(e) {
@@ -234,36 +239,50 @@
                 this.$http.post('/school/messaging/ajax/store', message);
             },
 
-            submitFormWithUser: function(e, userMessage) {
+            submitFormWithUser: function(e, conversation) {
                 e.preventDefault();
 
-                if (userMessage.new_message_content == '') {
+                if (conversation.new_message_content == '') {
                     return;
                 }
 
-                var message = {
-                    content: userMessage.new_message_content,
-                    to_id: userMessage.id,
-                    to_type: userMessage.user_type
+                var newMessage = {
+                    conversation_id: conversation.id,
+                    content: conversation.new_message_content
                 };
 
-                userMessage.new_message_content = '';
+                conversation.new_message_content = '';
 
-                userMessage.messages.push({
-                    content: message.content,
-                    is_read: false,
-                    is_outgoing: true,
+                conversation.messages.push({
+                    conversation_id: conversation.id,
+                    from_id: this.currentId,
+                    from_type: this.currentType,
+                    content: newMessage.content,
                     created_at: buildPhpDateTime(new Date())
                 });
 
-                userMessage.show_messages = false;
-                userMessage.show_messages = true;
-
-                this.$http.post('/school/messaging/ajax/store', message);
+                this.$http.post('/school/messaging/ajax/store', newMessage);
 
                 Vue.nextTick(function() {
                     scrollDownMessages();
                 });
+            },
+
+            getMessageUserName: function(conversation, message) {
+                var result = 'unknown';
+
+                if (message.from_id == this.currentId && message.from_type == this.currentType) {
+                    return this.currentUserName;
+                }
+
+                $.each(conversation.otherUsers, function(key, value) {
+                    if (value.id == message.from_id && value.type == message.from_type) {
+                        result = value.name;
+                        return false;
+                    }
+                });
+
+                return result;
             }
         }
     });

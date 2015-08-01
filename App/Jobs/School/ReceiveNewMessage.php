@@ -5,6 +5,7 @@ namespace App\Jobs\School;
 use App\Events\School\NewMessageReceived;
 use App\Jobs\Job;
 use App\Repositories\MessageRepository;
+use Carbon\Carbon;
 use Library\Events\FiresEvents;
 use Library\Facades\Sentry;
 
@@ -13,28 +14,26 @@ class ReceiveNewMessage extends Job
     use FiresEvents;
 
     protected $conversationId;
-    protected $message;
-    protected $toId;
-    protected $toType;
+    protected $content;
+    protected $created_at;
 
-    public function __construct($conversationId, $message, $toId, $toType)
+    public function __construct($conversationId, $content)
     {
         $this->conversationId = $conversationId;
-        $this->message = $message;
-        $this->toId = $toId;
-        $this->toType = $toType;
+        $this->content = $content;
+        $this->created_at = Carbon::now();
     }
 
     public function handle(MessageRepository $messageRepository)
     {
-        $this->fireEvent(new NewMessageReceived($this->message, $this->toId, $this->toType));
+        $this->fireEvent(new NewMessageReceived($this->conversationId, $this->content, $this->created_at));
 
         $this->addToRepository2($messageRepository);
     }
 
     protected function addToRepository2(MessageRepository $messageRepository)
     {
-        $messageRepository->addNewMessage($this->conversationId, $this->message);
+        $messageRepository->addNewMessage($this->conversationId, $this->content);
     }
 
     protected function addToRepository(MessageRepository $messageRepository)
@@ -44,21 +43,21 @@ class ReceiveNewMessage extends Job
             case 'Teacher':
                 if ($this->toType == 'Teacher')
                 {
-                    $messageRepository->addMessageFromTeacherToTeacher($this->message, $this->toId);
+                    $messageRepository->addMessageFromTeacherToTeacher($this->content, $this->toId);
                 }
                 else if ($this->toType == 'Student')
                 {
-                    $messageRepository->addMessageFromTeacherToStudent($this->message, $this->toId);
+                    $messageRepository->addMessageFromTeacherToStudent($this->content, $this->toId);
                 }
                 break;
             case 'Student':
                 if ($this->toType == 'Teacher')
                 {
-                    $messageRepository->addMessageFromStudentToTeacher($this->message, $this->toId);
+                    $messageRepository->addMessageFromStudentToTeacher($this->content, $this->toId);
                 }
                 else if ($this->toType == 'Student')
                 {
-                    $messageRepository->addMessageFromStudentToStudent($this->message, $this->toId);
+                    $messageRepository->addMessageFromStudentToStudent($this->content, $this->toId);
                 }
             break;
         }

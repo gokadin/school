@@ -22,6 +22,6 @@ class MessagingController extends Controller
 
     public function ajaxStore(StoreMessageRequest $request)
     {
-        $this->dispatchJob(new ReceiveNewMessage($request->content, $request->to_id, $request->to_type));
+        $this->dispatchJob(new ReceiveNewMessage($request->conversation_id, $request->content));
     }
 }

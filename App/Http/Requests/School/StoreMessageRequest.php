@@ -14,8 +14,7 @@ class StoreMessageRequest extends Request
     public function rules()
     {
         return [
-            'to_id' => ['required', 'numeric'],
-            'to_type' => 'required',
+            'conversation_id' => ['required', 'numeric'],
             'content' => 'required'
         ];
     }

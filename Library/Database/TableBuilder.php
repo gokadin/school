@@ -100,7 +100,15 @@ class TableBuilder extends Tables
 
         if (!is_null($column->getDefault()))
         {
-            $str .= ' DEFAULT '.$column->getDefault();
+            $str .= ' DEFAULT ';
+            if (is_string($column->getDefault()))
+            {
+                $str .= '\''.$column->getDefault().'\'';
+            }
+            else
+            {
+                $str .= $column->getDefault();
+            }
         }
 
         $str .= ',  ';

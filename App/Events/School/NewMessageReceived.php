@@ -8,26 +8,26 @@ use Library\Facades\Sentry;
 
 class NewMessageReceived extends Event implements ShouldBroadcast
 {
-    protected $message;
-    protected $toId;
-    protected $toType;
+    protected $conversationId;
+    protected $content;
+    protected $created_at;
 
-    public function __construct($message, $toId, $toType)
+    public function __construct($conversationId, $content, $created_at)
     {
-        $this->message = $message;
-        $this->toId = $toId;
-        $this->toType = $toType;
+        $this->conversationId = $conversationId;
+        $this->content = $content;
+        $this->created_at = $created_at;
     }
 
     public function broadcastOn()
     {
         return [
             'messaging.newMessageReceived' => [
-                'message' => $this->message,
-                'toId' => $this->toId,
-                'toType' => $this->toType,
-                'fromId' => Sentry::id(),
-                'fromType' => Sentry::type()
+                'conversation_id' => $this->conversationId,
+                'from_id' => Sentry::id(),
+                'from_type' => Sentry::type(),
+                'content' => $this->content,
+                'created_at' => $this->created_at
             ]
         ];
     }

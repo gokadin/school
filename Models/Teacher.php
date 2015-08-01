@@ -1,6 +1,9 @@
-<?php namespace Models;
+<?php
+
+namespace Models;
 
 use Library\Database\Model;
+use Library\Database\ModelCollection;
 
 class Teacher extends Model
 {
@@ -62,6 +65,27 @@ class Teacher extends Model
     public function events()
     {
         return $this->hasMany('TeacherEvent');
+    }
+
+    public function conversations()
+    {
+        $conversationIds = UserConversation::where('user_id', '=', $this->primaryKeyValue())
+            ->where('user_type', '=', 'Teacher')
+            ->get('conversation_id');
+
+        if (is_null($conversationIds) || sizeof($conversationIds) == 0)
+        {
+            return new ModelCollection();
+        }
+
+        $conversations = Conversation::where('id', 'in', '('.implode(',', $conversationIds).')')->get();
+
+        if (!($conversations instanceof ModelCollection))
+        {
+            return new ModelCollection([$conversations]);
+        }
+
+        return $conversations;
     }
 
     public function name()

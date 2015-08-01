@@ -226,14 +226,17 @@ class MessageRepository
 
         foreach ($conversations as &$conversation)
         {
-            $conversation->users = $this->getConversationUsers();
+            $conversation->show = false;
+            $conversation->currentUser = Sentry::user();
+            $conversation->otherUsers = $this->getConversationOtherUsers($conversation->id);
             $conversation->messages = $conversation->messages();
+            $conversation->new_message_content = '';
         }
 
         return json_encode($conversations);
     }
 
-    protected function getConversationUsers($conversationId)
+    protected function getConversationOtherUsers($conversationId)
     {
         $users = new ModelCollection();
 
@@ -246,6 +249,12 @@ class MessageRepository
 
         foreach ($teachers as $teacher)
         {
+            if (Sentry::is('Teacher') && Sentry::id() == $teacher->id)
+            {
+                continue;
+            }
+
+            $teacher->name = $teacher->name();
             $users->add($teacher);
         }
 
@@ -258,6 +267,12 @@ class MessageRepository
 
         foreach ($students as $student)
         {
+            if (Sentry::is('Student') && Sentry::id() == $student->id)
+            {
+                continue;
+            }
+
+            $student->name = $student->name();
             $users->add($student);
         }
 
