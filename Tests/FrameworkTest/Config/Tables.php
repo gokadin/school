@@ -28,6 +28,16 @@ class Tables
         return $t;
     }
 
+    public function model_with_appends()
+    {
+        $t = new Table('ModelWithAppends');
+
+        $t->increments('id');
+        $t->string('col1');
+
+        return $t;
+    }
+
     public function teachers()
     {
         $t = new Table('Teacher');

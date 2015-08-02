@@ -30,28 +30,28 @@
 
     <div id="messaging-user-rows">
 
-        <div class="messaging-user-row" v-repeat="userMessage: userMessages">
+        <div class="messaging-user-row" v-repeat="conversation: conversations">
 
-            <div class="col-md-12 messaging-user-info" v-class="open: userMessage.show_messages" v-on="click: revealMessages(userMessage)">
+            <div class="col-md-12 messaging-user-info" v-class="open: conversation.show" v-on="click: revealMessages(conversation)">
                 <span id="messaging-user-rows-picture">
-                    <img src="@{{ userMessage.profile_picture }}" height="60" width="auto" />
+                    <img src="@{{ conversation.otherUsers.length == 1 ? conversation.otherUsers[0].profile_picture : test }}" height="60" width="auto" />
                 </span>
                 <span id="messaging-user-rows-name">
-                    @{{ userMessage.name }}
+                    @{{ conversation.otherUsers[0].name }}
                 </span>
                 <span id="messaging-user-rows-delete">
-                    <a v-on="click: showDeleteConfirmationModal(userMessage)">
-                        <img src="/Resources/Assets/images/icons/delete-conversation.png" width="30" height="30" />
+                    <a v-on="click: showDeleteConfirmationModal(conversation)">
+                        <img src="{{ asset('images/icons/delete-conversation.png') }}" width="30" height="30" />
                     </a>
                 </span>
             </div>
 
-            <div class="col-md-12 messaging-user-messages" v-if="userMessage.show_messages" v-transition="expand">
+            <div class="col-md-12 messaging-user-messages" v-if="conversation.show" v-transition="expand">
                 <div class="col-md-12 messaging-user-messages-inner-container">
-                    <div class="col-md-12" v-repeat="message: userMessage.messages">
-                        <div class="user-messaging-message-inner-container" v-class="is-outgoing: message.is_outgoing">
+                    <div class="col-md-12" v-repeat="message: conversation.messages">
+                        <div class="user-messaging-message-inner-container" v-class="is-outgoing: (message.from_id == currentId && message.from_type == currentType)">
                             <div class="messaging-user-title">
-                                <b>@{{ message.is_outgoing ? currentUserName : cuserMessage.name }}</b> - @{{ message.created_at | formatDateForMessage }}
+                                <b>@{{ getMessageUserName(conversation, message) }}</b> - @{{ message.created_at | formatDateForMessage }}
                             </div>
                             <div class="messaging-user-message">
                                 @{{ message.content }}
@@ -63,9 +63,9 @@
                 <div class="col-md-12 messaging-user-new-message">
                     <hr>
 
-                    {{ Form::open('', 'POST', ['v-on' => 'submit: submitFormWithUser($event, userMessage)'], false) }}
+                    {{ Form::open('', 'POST', ['v-on' => 'submit: submitFormWithUser($event, conversation)'], false) }}
 
-                    {{ Form::text('content', null, ['v-model' => 'userMessage.new_message_content', 'class' => 'new-message-input']) }}
+                    {{ Form::text('content', null, ['v-model' => 'conversation.new_message_content', 'class' => 'new-message-input']) }}
                     {{ Form::button('Send', ['type' => 'submit', 'class' => 'new-message-button']) }}
 
                     {{ Form::close() }}
@@ -103,6 +103,8 @@
 
 <link rel="stylesheet" type="text/css" href="{{ asset('css/select2.min.css') }}">
 <script type="text/javascript" src="{{ asset('js/select2.min.js') }}"></script>
+<script src="http://cdn.jsdelivr.net/vue/0.12.9/vue.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/vue-resource/0.1.10/vue-resource.min.js"></script>
 <script src="{{ asset('js/socket.io.js') }}"></script>
 
 <script type="text/javascript">
@@ -125,6 +127,19 @@
         }
     }
 
+    Vue.http.headers.common['CSRF-TOKEN'] = $('#csrf-token').attr('content');
+
+    function buildPhpDateTime(value) {
+        var year = value.getFullYear();
+        var month = value.getMonth() + 1;
+        var day = value.getDate();
+        var hour = value.getHours();
+        var minute = value.getMinutes();
+        var second = value.getSeconds();
+
+        return year + '-' + month + '-' + day + ' ' + hour + ':' + minute + ':' + second;
+    }
+
     Vue.transition('expand', {
         enter: function () {
             scrollDownMessages();
@@ -141,7 +156,7 @@
                 to_type: ''
             },
 
-            userMessages: JSON.parse('{{ $userMessagesJson }}'),
+            conversations: JSON.parse('{{ $conversationsJson }}'),
 
             currentUserName: '{{ Sentry::user()->name() }}',
             currentId: '{{ Sentry::id() }}',
@@ -149,11 +164,9 @@
         },
 
         ready: function() {
-            $.each(this.userMessages, function(key, value) {
-                value.show_messages = true;
-
-                return false;
-            });
+            if (this.conversations.length > 0) {
+                this.conversations[0].show = true;
+            }
 
             var socket = io('http://localhost:3000');
 
@@ -164,22 +177,76 @@
             });
         },
 
+        filters: {
+            formatDateForMessage: function(value) {
+                if (!value) {
+                    return value;
+                }
+
+                var dateAndTime = value.split(' ');
+                var dateOnly = dateAndTime[0].split('-');
+                var timeOnly = dateAndTime[1].split(':');
+
+                var date = new Date(dateOnly[0],
+                        (parseInt(dateOnly[1]) - 1),
+                        dateOnly[2],
+                        timeOnly[0],
+                        timeOnly[1],
+                        timeOnly[2]);
+                var now = new Date();
+                var delta = new Date(now - date);
+
+                var hours = date.getHours();
+                var minutes = date.getMinutes();
+
+                if (hours < 10) {
+                    hours = '0' + hours.toString();
+                }
+                if (minutes < 10) {
+                    minutes = '0' + minutes.toString();
+                }
+
+                var dateString = hours + ':' + minutes;
+                if (delta < 86400000) {
+                    return dateString;
+                }
+
+                dateString = getMonthName(date.getMonth() + 1, true) + ' ' + date.getDate() + ' ' + dateString;
+                if (delta < 1892160000000) {
+                    return dateString;
+                }
+
+                return date.getFullYear() + ' ' + dateString;
+
+                return delta;
+            }
+        },
+
         methods: {
             receiveNewMessage: function(payload) {
-                if (this.currentId != payload.toId || this.currentType != payload.toType) {
+                var conversationIndex = -1;
+                for (var i = 0; i < this.conversations.length; i++) {
+                    if (this.conversations[i].id == payload.conversation_id) {
+                        conversationIndex = i;
+                        break;
+                    }
+                }
+
+                if (conversationIndex == -1) {
                     return;
                 }
 
-                var userMessage = this.userMessages[payload.fromType + '.' + payload.fromId];
-                userMessage.messages.push({
-                    content: payload.message,
-                    is_read: false,
-                    is_outgoing: false,
+                if (payload.from_id == this.currentId && payload.from_type == this.currentType) {
+                    return;
+                }
+
+                this.conversations[conversationIndex].messages.push({
+                    conversation_id: payload.conversation_id,
+                    from_id: payload.from_id,
+                    from_type: payload.from_type,
+                    content: payload.content,
                     created_at: buildPhpDateTime(new Date())
                 });
-
-                userMessage.show_messages = false;
-                userMessage.show_messages = true;
 
                 Vue.nextTick(function() {
                     scrollDownMessages();
@@ -208,17 +275,17 @@
                 $('#confirm-delete-modal').modal('hide');
             },
 
-            revealMessages: function(userMessage) {
-                if (userMessage.show_messages) {
-                    userMessage.show_messages = false;
+            revealMessages: function(conversation) {
+                if (conversation.show) {
+                    conversation.show = false;
                     return;
                 }
 
-                $.each(this.userMessages, function(key, value) {
-                    value.show_messages = false;
+                $.each(this.conversations, function(value) {
+                    value.show = false;
                 });
 
-                userMessage.show_messages = true;
+                conversation.show = true;
             },
 
             submitForm: function(e) {
@@ -232,39 +299,82 @@
                 this.$http.post('/school/messaging/ajax/store', message);
             },
 
-            submitFormWithUser: function(e, userMessage) {
+            submitFormWithUser: function(e, conversation) {
                 e.preventDefault();
 
-                if (userMessage.new_message_content == '') {
+                if (conversation.new_message_content == '') {
                     return;
                 }
 
-                var message = {
-                    content: userMessage.new_message_content,
-                    to_id: userMessage.id,
-                    to_type: userMessage.user_type
+                var newMessage = {
+                    conversation_id: conversation.id,
+                    content: conversation.new_message_content
                 };
 
-                userMessage.new_message_content = '';
+                conversation.new_message_content = '';
 
-                userMessage.messages.push({
-                    content: message.content,
-                    is_read: false,
-                    is_outgoing: true,
+                conversation.messages.push({
+                    conversation_id: conversation.id,
+                    from_id: this.currentId,
+                    from_type: this.currentType,
+                    content: newMessage.content,
                     created_at: buildPhpDateTime(new Date())
                 });
 
-                userMessage.show_messages = false;
-                userMessage.show_messages = true;
-
-                this.$http.post('/school/messaging/ajax/store', message);
+                this.$http.post('/school/messaging/ajax/store', newMessage);
 
                 Vue.nextTick(function() {
                     scrollDownMessages();
                 });
+            },
+
+            getMessageUserName: function(conversation, message) {
+                var result = 'unknown';
+
+                if (message.from_id == this.currentId && message.from_type == this.currentType) {
+                    return this.currentUserName;
+                }
+
+                $.each(conversation.otherUsers, function(key, value) {
+                    if (value.id == message.from_id && value.type == message.from_type) {
+                        result = value.name;
+                        return false;
+                    }
+                });
+
+                return result;
             }
         }
     });
+
+    function getMonthName(number, isShort) {
+        switch (number) {
+            case 1:
+                return isShort ? 'Jan' : 'January';
+            case 2:
+                return isShort ? 'Feb' : 'February';
+            case 3:
+                return isShort ? 'Mar' : 'March';
+            case 4:
+                return isShort ? 'Apr' : 'April';
+            case 5:
+                return isShort ? 'May' : 'May';
+            case 6:
+                return isShort ? 'Jun' : 'June';
+            case 7:
+                return isShort ? 'Jul' : 'July';
+            case 8:
+                return isShort ? 'Aug' : 'August';
+            case 9:
+                return isShort ? 'Sept' : 'September';
+            case 10:
+                return isShort ? 'Oct' : 'October';
+            case 11:
+                return isShort ? 'Nov' : 'November';
+            case 12:
+                return isShort ? 'Dec' : 'December';
+        }
+    }
 </script>
 
 @stop()

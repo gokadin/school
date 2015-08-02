@@ -5,6 +5,7 @@ namespace Tests\FrameworkTest\Database;
 use Library\Testing\DatabaseTransactions;
 use Tests\FrameworkTest\BaseTest;
 use Tests\FrameworkTest\Models\Activity;
+use Tests\FrameworkTest\Models\ModelWithAppends;
 use Tests\FrameworkTest\Models\Post;
 use Tests\FrameworkTest\Models\School;
 use Tests\FrameworkTest\Models\Test;
@@ -22,9 +23,9 @@ class ModelTest extends BaseTest
     {
         parent::setUp();
 
-        $this->beginDatabaseTransaction();
-
         $this->createApplication();
+
+        $this->beginDatabaseTransaction();
     }
 
     public function testThatNewModelCanBeProperlySaved()
@@ -107,6 +108,31 @@ class ModelTest extends BaseTest
     {
         // Assert
         MassAssignmentTest::create(['col1' => 'str1', 'col2' => 'str2', 'col3' => 'str3']);
+    }
+
+    public function testAccessorWhenFound()
+    {
+        // Arrange
+        $test = Test::create(['col1' => 'str', 'col2' => 10]);
+
+        // Act
+        $value = $test->accessorTest;
+
+        // Assert
+        $this->assertNotFalse($value);
+        $this->assertEquals('test', $value);
+    }
+
+    public function testAccessorWhenNotFound()
+    {
+        // Arrange
+        $test = Test::create(['col1' => 'str', 'col2' => 10]);
+
+        // Act
+        $value = $test->nonExistant;
+
+        // Assert
+        $this->assertFalse($value);
     }
 
     public function testThatTouchIsWorkingCorrectly()
@@ -388,5 +414,19 @@ class ModelTest extends BaseTest
         $this->assertEquals($test->id, $deserializedJson['id']);
         $this->assertEquals($test->updated_at, $deserializedJson['updated_at']);
         $this->assertEquals($test->created_at, $deserializedJson['created_at']);
+    }
+
+    public function testJsonWorksCorrectlyWithAppendedAttributes()
+    {
+        // Arrange
+        $test = ModelWithAppends::create(['col1' => 'str1']);
+
+        // Act
+        $json = json_encode($test);
+        $deserializedJson = json_decode($json, true);
+
+        // Assert
+        $this->assertEquals($test->col1, $deserializedJson['col1']);
+        $this->assertEquals('test', $deserializedJson['appendedValue']);
     }
 }

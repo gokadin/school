@@ -64,7 +64,7 @@ Route::group(['namespace' => 'School', 'prefix' => '/school', 'as' => 'school', 
             Route::get('/', 'CalendarController@index');
         });
 
-        Route::group(['prefix' => '/payments', 'as' => 'payments'], function() {
+        Route::group(['prefix' => '/payments', 'as' => 'payment'], function() {
             Route::get('/', 'PaymentController@index');
         });
 

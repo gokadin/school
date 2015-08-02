@@ -12,9 +12,7 @@ class MessagingController extends Controller
 {
     public function index(MessageRepository $messageRepository, SchoolRepository $schoolRepository)
     {
-        $x = $messageRepository->getUserConversationsJson();
-
-        return view('school.common.messaging.index2', [
+        return view('school.common.messaging.index', [
             'conversationsJson' => $messageRepository->getUserConversationsJson(),
             'students' => $schoolRepository->getAllCurrentSchoolUsersExceptCurrent()
         ]);

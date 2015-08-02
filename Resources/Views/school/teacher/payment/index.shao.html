@@ -1,0 +1,62 @@
+@layout('school.layout')
+
+@section('content')
+
+<div id="payment">
+    <div class="p-activity" v-repeat="activity: activities">
+        <payment-activity activity="@{{ activity }}"></payment-activity>
+    </div>
+</div>
+
+<script id="payment-activity-template" type="x-template">
+    <div class="p-activity-header" v-on="click: isOpen = !isOpen">
+        @{{ activity.name }}
+    </div>
+    <div class="p-activity-body" v-show="isOpen">
+        <table>
+            <thead>
+            <tr>
+                <th></th>
+                <th></th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr></tr>
+            <tr v-repeat="student: activity.students">
+                <td>
+                    @{{ student.name }}
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</script>
+
+<script src="http://cdn.jsdelivr.net/vue/0.12.9/vue.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/vue-resource/0.1.10/vue-resource.min.js"></script>
+
+<script type="text/javascript">
+    Vue.http.headers.common['CSRF-TOKEN'] = $('#csrf-token').attr('content');
+
+    Vue.component('payment-activity', {
+        template: '#payment-activity-template',
+
+        props: ['activity'],
+
+        data: function() {
+            return {
+                isOpen: true
+            }
+        }
+    });
+
+    new Vue({
+        el: '#payment',
+
+        data: {
+            activities: JSON.parse('{{ $activities }}')
+        }
+    });
+</script>
+
+@stop()

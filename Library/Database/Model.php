@@ -12,6 +12,7 @@ class Model implements ModelQueryContract, JsonSerializable
     protected $query;
     protected $vars = array();
     protected $fillable = array();
+    protected $appends = array();
     protected $tableName;
     protected $modelName;
     protected $modelDirectory;
@@ -111,6 +112,8 @@ class Model implements ModelQueryContract, JsonSerializable
     {
         if (isset($this->vars[$var]))
             return $this->vars[$var];
+
+        return $this->tryExecuteAccessor($var);
     }
 
     public function __isset($var)
@@ -119,6 +122,17 @@ class Model implements ModelQueryContract, JsonSerializable
             return true;
 
         return false;
+    }
+
+    public function tryExecuteAccessor($attributeName)
+    {
+        $accessorName = 'get'.ucfirst($attributeName).'Attribute';
+        if (!method_exists($this, $accessorName))
+        {
+            return false;
+        }
+
+        return $result[$attributeName] = $this->$accessorName();
     }
 
     public function save()
@@ -378,9 +392,32 @@ class Model implements ModelQueryContract, JsonSerializable
         return $results;
     }
 
+    public function getSerializableAttributes()
+    {
+        $result = [];
+
+        foreach ($this->vars as $key => $value)
+        {
+            $result[$key] = $value;
+        }
+
+        foreach ($this->appends as $attributeName)
+        {
+            $value = $this->tryExecuteAccessor($attributeName);
+            if (!$value)
+            {
+                continue;
+            }
+
+            $result[$attributeName] = $value;
+        }
+
+        return $result;
+    }
+
     public function jsonSerialize()
     {
-        return $this->vars;
+        return $this->getSerializableAttributes();
     }
 
     public function __sleep()

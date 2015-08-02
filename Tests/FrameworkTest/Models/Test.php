@@ -8,4 +8,9 @@ class Test extends Model
         'col1',
         'col2'
     ];
+
+    public function getAccessorTestAttribute()
+    {
+        return 'test';
+    }
 }
