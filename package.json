@@ -6,6 +6,7 @@
   "dependencies": {
     "laravel-elixir": "laravel/elixir",
     "vue": "^0.12.9",
-    "vue-resource": "^0.1.10"
+    "vue-resource": "^0.1.10",
+    "vue-ui": "^0.1.3"
   }
 }
