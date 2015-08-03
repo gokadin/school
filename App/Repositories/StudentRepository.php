@@ -2,6 +2,7 @@
 
 namespace App\Repositories;
 
+use PDOException;
 use Library\Facades\DB;
 use Library\Facades\Sentry;
 use Models\Student;
@@ -40,7 +41,7 @@ class StudentRepository
             DB::commit();
             return $student;
         }
-        catch (\PDOException $e)
+        catch (PDOException $e)
         {
             DB::rollBack();
             return false;
