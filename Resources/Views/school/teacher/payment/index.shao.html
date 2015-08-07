@@ -2,9 +2,11 @@
 
 @section('content')
 
-<div id="payment">
-    <payment-activity class="p-activity" v-repeat="activity: activities"></payment-activity>
-</div>
+<script id="payment-template" type="x-template">
+    <div id="payment">
+        <component is="paymentActivity" class="p-activity" v-repeat="activity: activities"></component>
+    </div>
+</script>
 
 <script id="payment-activity-template" type="x-template">
     <div class="p-activity-header" v-on="click: isOpen = !isOpen" v-class="open: isOpen">
@@ -18,6 +20,7 @@
                     <th width="5%"></th>
                     <th>Student</th>
                     <th>Status</th>
+                    <th></th>
                 </tr>
                 </thead>
                 <tbody>
@@ -25,9 +28,9 @@
                 </tbody>
             </table>
             <div class="p-activity-footer">
-                <span class="p-check-all">
-                    <input type="checkbox" v-model="checkAll" />
-                </span>
+            <span class="p-check-all">
+                <input type="checkbox" v-model="checkAll" />
+            </span>
             </div>
         </div>
 
@@ -50,51 +53,14 @@
         <td>
             <img src="{{ asset('images/icons/paid-icon.png') }}" width="35" />
         </td>
+        <td>
+            <i class="fa fa-gear"></i>
+        </td>
     </tr>
 </script>
 
-<script src="http://cdn.jsdelivr.net/vue/0.12.9/vue.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/vue-resource/0.1.10/vue-resource.min.js"></script>
-
 <script type="text/javascript">
-    Vue.http.headers.common['CSRF-TOKEN'] = $('#csrf-token').attr('content');
-
-    new Vue({
-        el: '#payment',
-
-        data: {
-            activities: JSON.parse('{{ $activities }}')
-        },
-
-        components: {
-            paymentActivity: {
-                template: '#payment-activity-template',
-
-                props: ['activity'],
-
-                data: function() {
-                    return {
-                        isOpen: true,
-                        checkAll: false
-                    }
-                },
-
-                components: {
-                    paymentStudent: {
-                        template: '#payment-student-template',
-
-                        props: ['isChecked'],
-
-                        data: function() {
-                            return {
-
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    });
+    var activities = JSON.parse('{{ $activities }}');
 </script>
 
 @stop()

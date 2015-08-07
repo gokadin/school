@@ -12,12 +12,10 @@
     <link rel="stylesheet" href="{{ asset('css/responsive.css') }}" type="text/css" />
     <link rel="stylesheet" href="{{ asset('css/default.css') }}" type="text/css" />
     <link rel="stylesheet" href="{{ asset('css/school.css') }}" type="text/css" />
-    <script src="https://code.jquery.com/jquery-1.11.2.min.js" type="text/javascript"></script>
-    <script src="https://code.jquery.com/ui/1.10.4/jquery-ui.min.js" type="text/javascript"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
-    <script src="{{ asset('js/bundle.js') }}"></script>    <script src="{{ asset('js/validator.js') }}" type="text/javascript"></script>
     <link rel="stylesheet" href="{{ asset('css/bundle.css') }}" type="text/css" />
-    <script src="{{ asset('js/app2.js') }}"></script>
+    <link rel="stylesheet" href="{{ asset('js/semantic.min.css') }}" type="text/css" />
+    <link rel="stylesheet" href="{{ asset('js/semantic-modules.min.css') }}" type="text/css" />
+    <link rel="stylesheet" href="{{ asset('js/jquery.webui-popover.css') }}" type="text/css" />
 </head>
 
 @inject('\Library\Facades\Sentry')
@@ -249,6 +247,8 @@
                     </div>
                     <div id="content" class="col-md-12">
                         @yield('content')
+                        {{{ $vueComponent = 'schoolTeacherPayment'; }}}
+                        <component is="{{ $vueComponent }}"></component>
                     </div>
                 </div>
             </div>
@@ -258,6 +258,15 @@
 <div class="footer">
 
 </div>
+
+<script src="https://code.jquery.com/jquery-1.11.2.min.js" type="text/javascript"></script>
+<script src="https://code.jquery.com/ui/1.10.4/jquery-ui.min.js" type="text/javascript"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
+<script src="{{ asset('js/validator.js') }}" type="text/javascript"></script>
+<script src="{{ asset('js/app2.js') }}"></script>
+<script src="{{ asset('js/bundle.js') }}"></script>
+
+@yield('scripts')
 
 <script>
     jQuery(document).ready(function() {

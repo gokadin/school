@@ -1,16 +1,17 @@
 var Vue = require('vue');
 
-Vue.use(require('vue-resource'));
+Vue.use(require('vue-resource'))
 
 Vue.http.headers.common['CSRF-TOKEN'] = $('#csrf-token').attr('content');
 
-function buildPhpDateTime(value) {
-    var year = value.getFullYear();
-    var month = value.getMonth() + 1;
-    var day = value.getDate();
-    var hour = value.getHours();
-    var minute = value.getMinutes();
-    var second = value.getSeconds();
+new Vue({
+    el: '#content',
 
-    return year + '-' + month + '-' + day + ' ' + hour + ':' + minute + ':' + second;
-}
+    components: {
+        schoolTeacherPayment: require('./school/teacher/payment/payment.js')
+    },
+
+    filters: {
+        formatDateForMessage: require('./filters/formatDateForMessage.js')
+    }
+});

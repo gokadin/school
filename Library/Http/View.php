@@ -45,8 +45,6 @@ class View
 
         ob_start();
 
-        echo $content;
-
         if (Factory::hasLayout())
         {
             require Factory::getLayoutFile();
