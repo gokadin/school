@@ -24,9 +24,11 @@
                 <thead>
                 <tr>
                     <th width="5%"></th>
-                    <th>Student</th>
-                    <th>Status</th>
-                    <th></th>
+                    <th width="30%">Student</th>
+                    <th width="20%">Due date</th>
+                    <th width="20%">Balance</th>
+                    <th width="20%">Status</th>
+                    <th width="5%"></th>
                 </tr>
                 </thead>
                 <tbody>
@@ -57,13 +59,18 @@
             @{{ student.name }}
         </td>
         <td>
+
+        </td>
+        <td>
+            @{{ student.rate }}
+        </td>
+        <td>
             <img src="{{ asset('images/icons/paid-icon.png') }}" width="35" />
         </td>
         <td>
             <div class="payment-options-container">
-                <popover></popover>
+                <popover on-mark-paid="@{{ markPaid }}"></popover>
             </div>
-            @{{ fullyPaid }}
         </td>
     </tr>
 </script>
@@ -73,7 +80,7 @@
         <i class="fa fa-gear popover-template-trigger" v-on="click: toggleShown"></i>
         <div v-if="isShown">
             <div class="popover-template-options">
-                <div v-on="click: ">Mark paid</div>
+                <div v-on="click: onMarkPaid">Mark paid</div>
                 <div>Cancel payment</div>
             </div>
         </div>

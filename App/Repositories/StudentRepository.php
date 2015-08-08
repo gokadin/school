@@ -35,7 +35,8 @@ class StudentRepository
 
             ActivityStudent::create([
                 'activity_id' => $data['activity'],
-                'student_id' => $student->id
+                'student_id' => $student->id,
+                'rate' => $data['customRate']
             ]);
 
             DB::commit();

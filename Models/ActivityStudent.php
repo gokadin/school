@@ -6,6 +6,7 @@ class ActivityStudent extends Model
 {
     protected $fillable = [
         'activity_id',
-        'student_id'
+        'student_id',
+        'rate'
     ];
 }

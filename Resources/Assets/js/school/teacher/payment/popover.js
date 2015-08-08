@@ -1,6 +1,8 @@
 module.exports = {
     template: '#popover-template',
 
+    props: ['on-mark-paid'],
+
     data: function() {
         return  {
             isShown: false,

@@ -141,6 +141,7 @@ class Tables
         $t->increments('id');
         $t->integer('activity_id');
         $t->integer('student_id');
+        $t->decimal('rate', 6, 2);
         $t->timestamps();
 
         return $t;
