@@ -60,9 +60,24 @@
             <img src="{{ asset('images/icons/paid-icon.png') }}" width="35" />
         </td>
         <td>
-            <i class="fa fa-gear"></i>
+            <div class="payment-options-container">
+                <popover></popover>
+            </div>
+            @{{ fullyPaid }}
         </td>
     </tr>
+</script>
+
+<script id="popover-template" type="x-template">
+    <div id="popover-template-container">
+        <i class="fa fa-gear" v-on="click: isShown = !isShown"></i>
+        <div v-if="isShown">
+            <div>
+                <div v-on="click: ">Mark paid</div>
+                <div>Cancel payment</div>
+            </div>
+        </div>
+    </div>
 </script>
 
 <script type="text/javascript">
@@ -76,7 +91,15 @@
 <script src="{{ asset('js/vendor/jquery.webui-popover.js') }}"></script>
 
 <script type="text/javascript">
-    $('i').webuiPopover({title:'Title',content:'Content'});
+    $('ip').webuiPopover({
+        content: $('#payment-options').html(),
+        placement: 'top',
+        width: 100
+    });
+
+    function dosome() {
+        alert('did some');
+    }
 </script>
 
 @stop()
