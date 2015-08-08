@@ -69,10 +69,10 @@
 </script>
 
 <script id="popover-template" type="x-template">
-    <div id="popover-template-container">
-        <i class="fa fa-gear" v-on="click: isShown = !isShown"></i>
+    <div class="popover-template-container">
+        <i class="fa fa-gear popover-template-trigger" v-on="click: toggleShown"></i>
         <div v-if="isShown">
-            <div>
+            <div class="popover-template-options">
                 <div v-on="click: ">Mark paid</div>
                 <div>Cancel payment</div>
             </div>

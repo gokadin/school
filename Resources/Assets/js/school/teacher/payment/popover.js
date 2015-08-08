@@ -3,19 +3,44 @@ module.exports = {
 
     data: function() {
         return  {
-            isShown: false
+            isShown: false,
+            lastState: false
         }
     },
 
     ready: function() {
-        $(document).mouseup(function(e) {alert(this.isShown);
-            //var container = $('#popover-template');
+        var that = this;
 
-            //if (!container.is(e.target) // if the target of the click isn't the container...
-            //    && container.has(e.target).length === 0) // ... nor a descendant of the container
-            //{
-                this.isShown = false;
-            //}
+        $(document).mouseup(function(e) {
+            var container = $('.popover-template-options');
+            var trigger = $('.popover-template-trigger');
+
+            if (trigger.is(e.target))
+            {
+                that.isShown = false;
+                return;
+            }
+
+            if (container.is(e.target) || container.has(e.target).length > 0) {
+                return;
+            }
+
+            that.isShown = false;
+            that.lastState = false;
         });
+
+        $(document).keyup(function(e) {
+            if (e.keyCode == 27) {
+                that.isShown = false;
+                that.lastState = false;
+            }
+        });
+    },
+
+    methods: {
+        toggleShown: function() {
+            this.isShown = !this.lastState;
+            this.lastState = this.isShown;
+        }
     }
 };
