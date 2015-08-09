@@ -1,3 +1,6 @@
+.create-student-form {
+  width: 60%; }
+
 #payment .p-activity-header {
   margin-top: 10px;
   height: 50px;
@@ -109,5 +112,88 @@
   border-bottom: 1px solid #ddd; }
   .table-style-1 tbody tr td {
     padding: 5px 0; }
+
+/* FORMS */
+.form-1 .form-1-header {
+  height: 40px;
+  line-height: 40px;
+  color: white;
+  background-color: #67b168;
+  font-size: 22px;
+  padding-left: 10px; }
+
+.form-1 .form-1-body {
+  border: 1px solid #67b168;
+  border-bottom: 1px solid #cccccc;
+  padding-top: 20px;
+  padding-bottom: 20px; }
+  .form-1 .form-1-body .form-1-row {
+    margin: 10px 0; }
+    .form-1 .form-1-body .form-1-row label {
+      height: 35px;
+      line-height: 35px;
+      width: 30%;
+      text-align: right;
+      margin-right: 10px;
+      font-size: 18px;
+      font-weight: normal; }
+    .form-1 .form-1-body .form-1-row label.required:after {
+      content: "*";
+      color: #b94a48; }
+    .form-1 .form-1-body .form-1-row .form-error {
+      color: #b94a48;
+      margin-left: 30%;
+      padding-left: 16px; }
+    .form-1 .form-1-body .form-1-row input[type="text"],
+    .form-1 .form-1-body .form-1-row input[type="password"],
+    .form-1 .form-1-body .form-1-row input[type="email"] {
+      height: 34px;
+      border: 1px solid #cccccc;
+      width: 50%;
+      padding: 6px 12px;
+      font-size: 16px; }
+    .form-1 .form-1-body .form-1-row input[type="text"]:focus,
+    .form-1 .form-1-body .form-1-row input[type="password"]:focus,
+    .form-1 .form-1-body .form-1-row input[type="email"]:focus,
+    .form-1 .form-1-body .form-1-row textarea:focus {
+      border-color: #5c5c5c; }
+    .form-1 .form-1-body .form-1-row input[type="text"].valid,
+    .form-1 .form-1-body .form-1-row input[type="password"].valid,
+    .form-1 .form-1-body .form-1-row input[type="email"].valid
+textarea.valid {
+      border-color: #67b168; }
+    .form-1 .form-1-body .form-1-row input[type="text"].invalid,
+    .form-1 .form-1-body .form-1-row input[type="password"].invalid,
+    .form-1 .form-1-body .form-1-row input[type="email"].invalid
+textarea.invalid {
+      border-color: #b94a48; }
+
+.form-1 .form-1-footer {
+  height: 50px;
+  border: 1px solid #67b168;
+  border-top: none; }
+  .form-1 .form-1-footer button {
+    background-color: #67b168;
+    border: 1px solid #CCCCCC;
+    width: 80px;
+    height: 30px;
+    color: white;
+    font-size: 17px; }
+  .form-1 .form-1-footer .form-1-create-another label {
+    height: 50px;
+    line-height: 50px;
+    margin-left: 20px;
+    font-weight: normal; }
+  .form-1 .form-1-footer .form-1-create-another input[type="checkbox"] {
+    margin-left: 5px;
+    margin-top: 0;
+    position: relative;
+    vertical-align: middle; }
+  .form-1 .form-1-footer .form-1-cancel {
+    margin-left: 30%; }
+    .form-1 .form-1-footer .form-1-cancel button {
+      background-color: #b94a48; }
+  .form-1 .form-1-footer .form-1-submit {
+    margin-left: 5px; }
 
 /*# sourceMappingURL=bundle.css.map */

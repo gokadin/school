@@ -8,7 +8,8 @@ new Vue({
     el: '#content',
 
     components: {
-        schoolTeacherPayment: require('./school/teacher/payment/payment.js')
+        schoolTeacherStudentCreate: require('./school/teacher/student/create.js'),
+        schoolTeacherPaymentIndex: require('./school/teacher/payment/payment.js')
     },
 
     filters: {

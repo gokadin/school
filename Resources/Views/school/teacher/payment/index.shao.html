@@ -10,6 +10,7 @@
 
 <script id="payment-template" type="x-template">
     <div id="payment">
+        <h1>January < ></h1>
         <component is="paymentActivity" class="p-activity" v-repeat="activity: activities"></component>
     </div>
 </script>
@@ -24,11 +25,11 @@
                 <thead>
                 <tr>
                     <th width="5%"></th>
-                    <th width="30%">Student</th>
+                    <th width="25%">Student</th>
                     <th width="20%">Due date</th>
                     <th width="20%">Balance</th>
                     <th width="20%">Status</th>
-                    <th width="5%"></th>
+                    <th width="10%"></th>
                 </tr>
                 </thead>
                 <tbody>
@@ -59,7 +60,7 @@
             @{{ student.name }}
         </td>
         <td>
-
+            @{{ student.payment_day }}
         </td>
         <td>
             @{{ student.rate }}
@@ -89,24 +90,6 @@
 
 <script type="text/javascript">
     var activities = JSON.parse('{{ $activities }}');
-</script>
-
-@stop()
-
-@section('scripts')
-
-<script src="{{ asset('js/vendor/jquery.webui-popover.js') }}"></script>
-
-<script type="text/javascript">
-    $('ip').webuiPopover({
-        content: $('#payment-options').html(),
-        placement: 'top',
-        width: 100
-    });
-
-    function dosome() {
-        alert('did some');
-    }
 </script>
 
 @stop()

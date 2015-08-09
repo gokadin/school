@@ -248,7 +248,7 @@
                     </div>
                     <div id="content" class="col-md-12">
                         @yield('content')
-                        {{{ $vueComponent = 'schoolTeacherPayment'; }}}
+                        {{{ $vueComponent = lcfirst(str_replace(' ', '', ucwords(str_replace('.', ' ', Router::current()->name())))); }}}
                         <component is="{{ $vueComponent }}"></component>
                     </div>
                 </div>

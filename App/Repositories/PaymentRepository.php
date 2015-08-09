@@ -2,14 +2,26 @@
 
 namespace App\Repositories;
 
-use Library\Database\Model;
+use Carbon\Carbon;
 use Library\Database\ModelCollection;
 use Library\Facades\Sentry;
+use Models\ActivityPayment;
 use Models\ActivityStudent;
 use Models\Student;
 
 class PaymentRepository
 {
+    public function initiateNewStudentRecord(Student $student)
+    {
+        foreach ($student->activities() as $activity)
+        {
+            switch ($activity->period)
+            {
+
+            }
+        }
+    }
+
     public function prepareJsonForIndex()
     {
         $activities = Sentry::user()->activities();
@@ -46,6 +58,7 @@ class PaymentRepository
             foreach ($students as &$student)
             {
                 $student->rate = $studentCustomRates[$student->id];
+                $student->payment_day = Carbon::parse($student->created_at)->day;
             }
 
             $activity->students = $students;

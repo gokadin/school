@@ -142,6 +142,7 @@ class Tables
         $t->integer('activity_id');
         $t->integer('student_id');
         $t->decimal('rate', 6, 2);
+        $t->integer('start_day', 2)->default(0);
         $t->timestamps();
 
         return $t;
@@ -288,6 +289,24 @@ class Tables
         $t->integer('user_id');
         $t->string('user_type', 32);
         $t->integer('conversation_id');
+        $t->timestamps();
+
+        return $t;
+    }
+
+    public function activity_payments()
+    {
+        $t = new Table('ActivityPayment');
+
+        $t->increments('id');
+        $t->integer('teacher_id');
+        $t->integer('student_id');
+        $t->integer('activity_id');
+        $t->datetime('due_date');
+        $t->datetime('payment_date');
+        $t->decimal('due_amount', 6, 2);
+        $t->decimal('amount', 6, 2);
+        $t->string('method')->default('cash');
         $t->timestamps();
 
         return $t;

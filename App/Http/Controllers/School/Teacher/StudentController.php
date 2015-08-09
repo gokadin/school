@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\School\Teacher;
 
 use App\Http\Controllers\Controller;
-use App\Repositories\StudentRepository;
+use App\Jobs\School\RegisterStudent;
 use App\Http\Requests\School\StoreStudentRequest;
 use Library\Facades\Redirect;
 use Library\Facades\Sentry;
@@ -25,21 +25,13 @@ class StudentController extends Controller
     public function create()
     {
         return view('school.teacher.student.create', [
-            'activities' => Sentry::user()->activities()
+            'activities' => json_encode(Sentry::user()->activities())
         ]);
     }
 
-    public function store(StoreStudentRequest $request, StudentRepository $studentRepository)
+    public function store(StoreStudentRequest $request)
     {
-        $student = $studentRepository->addNewStudent($request->all());
-
-        if (!$student)
-        {
-            Session::setFlash('An error has occurred. Could not add student.');
-            Redirect::back();
-        }
-
-        Session::setFlash('Student <b>'.$student->name().'</b> was added successfully.');
+        $this->dispatchJob(new RegisterStudent($request->all()));
 
         if (Request::data('createAnother') == 1)
             Redirect::to('school.teacher.student.create');
