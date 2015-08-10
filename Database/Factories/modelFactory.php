@@ -25,3 +25,28 @@ $factory->define(\Models\Student::class, function($faker) {
         'password' => md5($faker->word)
     ];
 });
+
+$factory->define(\Models\Activity::class, function($faker) {
+    return [
+        'teacher_id' => 1,
+        'name' => $faker->word,
+        'rate' => 60,
+        'period' => 1
+    ];
+});
+
+$factory->define(\Models\School::class, function($faker) {
+    return [
+        'address_id' => 1,
+        'name' => $faker->word
+    ];
+});
+
+$factory->define(\Models\ActivityStudent::class, function($faker) {
+    return [
+        'student_id' => 1,
+        'activity_id' => 1,
+        'rate' => 60,
+        'start_day' => 15
+    ];
+});

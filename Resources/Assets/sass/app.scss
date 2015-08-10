@@ -113,6 +113,13 @@ body {
       textarea.invalid {
         border-color: $color-error
       }
+
+      select {
+        height: 34px;
+        width: 50%;
+        border: 1px solid #cccccc;
+        background-color: white;
+      }
     }
   }
 

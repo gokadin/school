@@ -6,6 +6,7 @@ use Library\Facades\DB;
 use Library\Facades\ModelFactory as Factory;
 use Library\Facades\Sentry;
 use Library\Testing\DatabaseTransactions;
+use Models\School;
 use Models\Teacher;
 use Tests\TestCase;
 
@@ -29,7 +30,10 @@ abstract class BaseTest extends TestCase
 
     public function authenticateTeacher()
     {
-        $teacher = Factory::of(Teacher::class)->create();
+        $school = Factory::of(School::class)->create();
+        $teacher = Factory::of(Teacher::class)->create([
+            'school_id' => $school->id
+        ]);
         Sentry::login($teacher->id, 'Teacher');
     }
 }

@@ -1,5 +1,25 @@
 .create-student-form {
   width: 60%; }
+  .create-student-form .student-form-activity label,
+  .create-student-form .student-form-rate label {
+    width: 10% !important; }
+  .create-student-form .student-form-activity input,
+  .create-student-form .student-form-activity select,
+  .create-student-form .student-form-rate input,
+  .create-student-form .student-form-rate select {
+    width: 121px !important; }
+  .create-student-form .student-form-rate .form-error {
+    margin-left: 40% !important;
+    padding-left: 155px !important; }
+  .create-student-form .additional-activities span:first-child {
+    margin-left: 30%;
+    padding-left: 14px; }
+  .create-student-form .fa-plus {
+    cursor: pointer;
+    color: #67b168;
+    font-size: 20px;
+    margin-left: 30%;
+    padding-left: 15px; }
 
 #payment .p-activity-header {
   margin-top: 10px;
@@ -167,6 +187,11 @@ textarea.valid {
     .form-1 .form-1-body .form-1-row input[type="email"].invalid
 textarea.invalid {
       border-color: #b94a48; }
+    .form-1 .form-1-body .form-1-row select {
+      height: 34px;
+      width: 50%;
+      border: 1px solid #cccccc;
+      background-color: white; }
 
 .form-1 .form-1-footer {
   height: 50px;

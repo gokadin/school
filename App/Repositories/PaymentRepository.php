@@ -11,14 +11,48 @@ use Models\Student;
 
 class PaymentRepository
 {
+    const MONTHS_IN_ADVANCE = 3;
+
     public function initiateNewStudentRecord(Student $student)
     {
         foreach ($student->activities() as $activity)
         {
+            $activityStudent = ActivityStudent::where('student_id', '=', $student->id)
+                ->where('activity_id', '=', $activity->id)
+                ->get()->first();
+
             switch ($activity->period)
             {
-
+                case 1:
+                    $this->initiateMonthlyActivityPayments($student->id,
+                        $activity->id,
+                        $activityStudent->start_day,
+                        $activityStudent->rate);
+                    break;
             }
+        }
+    }
+
+    protected function initiateMonthlyActivityPayments($studentId, $activityId, $startDay, $rate)
+    {
+        $date = Carbon::now();
+
+        for ($i = 0; $i < self::MONTHS_IN_ADVANCE; $i++)
+        {
+            $date->day = $startDay;
+
+            if ($i > 0 || $date->lt(Carbon::now()))
+            {
+                $date->addMonth(1);
+            }
+
+            ActivityPayment::create([
+                'teacher_id' => Sentry::id(),
+                'student_id' => $studentId,
+                'activity_id' => $activityId,
+                'due_date' => $date,
+                'due_amount' => $rate
+            ]);
         }
     }
 

@@ -33,6 +33,20 @@
                 {{ Form::error('email') }}
             </div>
 
+            <div class="form-1-row">
+                {{ Form::label('activity', 'Activity', ['class' => 'required']) }}
+                <span class="student-form-activity">
+                    <select name="activity" v-model="selectedActivity" v-on="change: selectedActivityChanged">
+                        <option v-repeat="activity: activities" value="@{{ activity.id }}">@{{ activity.name }}</option>
+                    </select>
+                </span>
+                <span class="student-form-rate">
+                    <label class="required">Rate</label>
+                    {{ Form::text('rate', null, ['placeholder' => 'Rate', 'v-model' => 'rate']) }}
+                    {{ Form::error('rate') }}
+                </span>
+            </div>
+
         </div>
 
         <div class="form-1-footer">
@@ -40,12 +54,14 @@
             <span class="form-1-create-another">
                 <label>
                     Create another
-                    <input type="checkbox" />
+                    <input type="checkbox" name="createAnother" value="1" />
                 </label>
             </span>
 
             <span class="form-1-cancel">
-                {{ Form::button('Cancel') }}
+                <a href="@path('school.teacher.student.index')">
+                    {{ Form::button('Cancel', ['type' => 'button']) }}
+                </a>
             </span>
 
             <span class="form-1-submit">
@@ -57,6 +73,10 @@
         {{ Form::close() }}
 
     </div>
+</script>
+
+<script type="text/javascript">
+    var activities = JSON.parse('{{ $activities }}');
 </script>
 
 @stop()
@@ -77,6 +97,10 @@
             {rule: 'unique:Teacher,email'},
             {rule: 'unique:Student,email'},
             {rule: 'unique:TempTeacher,email'}
+        ],
+        rate: [
+            {rule: 'required'},
+            {rule: 'numeric'}
         ]
     })
 </script>

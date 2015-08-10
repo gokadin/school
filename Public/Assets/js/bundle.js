@@ -198,7 +198,40 @@ module.exports = {
 'use strict';
 
 module.exports = {
-    template: '#create-template'
+    template: '#create-template',
+
+    data: function data() {
+        return {
+            activities: activities,
+            selectedActivity: 0,
+            rate: 0
+        };
+    },
+
+    ready: function ready() {
+        if (activities.length == 0) {
+            return;
+        }
+
+        this.selectedActivity = this.activities[0].id;
+        this.rate = this.activities[0].rate;
+    },
+
+    methods: {
+        selectedActivityChanged: function selectedActivityChanged() {
+            var selectedValue = this.selectedActivity;
+            var rate = 0;
+
+            $.each(activities, function (index, value) {
+                if (value.id == selectedValue) {
+                    rate = value.rate;
+                    return false;
+                }
+            });
+
+            this.rate = rate;
+        }
+    }
 };
 
 },{}],8:[function(require,module,exports){

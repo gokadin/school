@@ -303,9 +303,9 @@ class Tables
         $t->integer('student_id');
         $t->integer('activity_id');
         $t->datetime('due_date');
-        $t->datetime('payment_date');
+        $t->datetime('payment_date')->nullable();
         $t->decimal('due_amount', 6, 2);
-        $t->decimal('amount', 6, 2);
+        $t->decimal('amount', 6, 2)->default(0);
         $t->string('method')->default('cash');
         $t->timestamps();
 

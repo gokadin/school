@@ -17,8 +17,7 @@ class StoreStudentRequest extends Request
             'firstName' => ['required' => 'first name is required'],
             'lastName' => ['required' => 'last name is required'],
             'email' => ['required', 'email', 'unique:Student,email', 'unique:Teacher,email'],
-            'rate' => ['required', 'numeric'],
-            'phone' => ['required', 'numeric']
+            'rate' => ['required', 'numeric']
         ];
     }
 }

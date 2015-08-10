@@ -2,6 +2,7 @@
 
 namespace App\Repositories;
 
+use Carbon\Carbon;
 use PDOException;
 use Library\Facades\DB;
 use Library\Facades\Sentry;
@@ -29,14 +30,14 @@ class StudentRepository
                 'first_name' => $data['firstName'],
                 'last_name' => $data['lastName'],
                 'email' => $data['email'],
-                'password' => md5($generatedPassword),
-                'phone' => $data['phone']
+                'password' => md5($generatedPassword)
             ]);
 
             ActivityStudent::create([
                 'activity_id' => $data['activity'],
                 'student_id' => $student->id,
-                'rate' => $data['customRate']
+                'rate' => $data['rate'],
+                'start_day' => Carbon::now()->day
             ]);
 
             DB::commit();
