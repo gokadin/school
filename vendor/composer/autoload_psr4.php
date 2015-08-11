@@ -6,11 +6,15 @@ $vendorDir = dirname(dirname(__FILE__));
 $baseDir = dirname($vendorDir);
 
 return array(
+    'Tests\\' => array($baseDir . '/tests'),
     'Symfony\\Component\\Yaml\\' => array($vendorDir . '/symfony/yaml'),
     'Symfony\\Component\\Translation\\' => array($vendorDir . '/symfony/translation'),
     'Symfony\\Component\\Console\\' => array($vendorDir . '/symfony/console'),
     'Stripe\\' => array($vendorDir . '/stripe/stripe-php/lib'),
     'Predis\\' => array($vendorDir . '/predis/predis/src'),
+    'Library\\' => array($baseDir . '/library'),
     'Faker\\' => array($vendorDir . '/fzaninotto/faker/src/Faker'),
     'Doctrine\\Instantiator\\' => array($vendorDir . '/doctrine/instantiator/src/Doctrine/Instantiator'),
+    'Config\\' => array($baseDir . '/config'),
+    'App\\' => array($baseDir . '/app'),
 );
