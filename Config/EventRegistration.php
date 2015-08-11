@@ -2,8 +2,9 @@
 
 namespace Config;
 
-use App\Events\Frontend\TeacherPreRegistered;
-use App\Listeners\Frontend\EmailPreRegisteredTeacher;
+use App\Events\School\StudentRegistered;
+
+use App\Listeners\School\InitiatePaymentRecord;
 
 class EventRegistration
 {
@@ -16,8 +17,8 @@ class EventRegistration
 
     public function registerEvents()
     {
-//        $this->eventManager->register(TeacherPreRegistered::class, [
-//            EmailPreRegisteredTeacher::class
-//        ]);
+        $this->eventManager->register(StudentRegistered::class, [
+            InitiatePaymentRecord::class
+        ]);
     }
 }

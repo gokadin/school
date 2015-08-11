@@ -2,7 +2,6 @@
 
 namespace App\Repositories;
 
-use App\Repositories\Contracts\IUserRepository;
 use Library\Facades\DB;
 use Models\TempTeacher;
 use Models\Subscription;
@@ -12,7 +11,7 @@ use Models\TeacherSetting;
 use Models\School;
 use PDOException;
 
-class UserRepository implements IUserRepository
+class UserRepository
 {
     public function findTempTeacher($id)
     {

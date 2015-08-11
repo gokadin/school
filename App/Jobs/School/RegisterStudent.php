@@ -6,6 +6,7 @@ use App\Events\School\StudentRegistered;
 use App\Jobs\Job;
 use App\Repositories\StudentRepository;
 use Library\Events\FiresEvents;
+use Library\Facades\Session;
 
 class RegisterStudent extends Job
 {
