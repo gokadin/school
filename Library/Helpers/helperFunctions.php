@@ -7,7 +7,7 @@ if (!function_exists('asset'))
 {
     function asset($file)
     {
-        return '/Assets/'.$file;
+        return '/assets/'.$file;
     }
 }
 

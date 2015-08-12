@@ -8,7 +8,7 @@ use Symfony\Component\Yaml\Exception\RuntimeException;
 
 class View
 {
-    const VIEW_FOLDER = 'Resources/Views';
+    const VIEW_FOLDER = 'resources/views';
 
     protected $basePath;
     protected $content;
