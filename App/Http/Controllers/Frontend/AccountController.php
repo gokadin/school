@@ -7,7 +7,6 @@ use App\Http\Requests\Frontend\PreRegistrationRequest;
 use App\Http\Requests\Frontend\LoginRequest;
 use App\Http\Requests\Frontend\RegistrationRequest;
 use App\Jobs\Frontend\PreRegisterTeacher;
-use App\Repositories\Contracts\IUserRepository;
 use Library\Facades\Page;
 use Library\Facades\Session;
 use Library\Facades\Redirect;
