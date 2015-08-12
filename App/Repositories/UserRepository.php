@@ -2,6 +2,8 @@
 
 namespace App\Repositories;
 
+use Carbon\Carbon;
+use Library\Facades\App;
 use Library\Facades\DB;
 use Models\TempTeacher;
 use Models\Subscription;
@@ -15,37 +17,44 @@ class UserRepository
 {
     public function findTempTeacher($id)
     {
-        return TempTeacher::find($id);
+        $r = App::container()->resolveInstance('redis');
+        return $r->hgetall('tempTeacher:'.$id);
     }
 
     public function preRegisterTeacher(array $data)
     {
-        DB::beginTransaction();
+        $r = App::container()->resolveInstance('redis');
 
-        try
-        {
-            $subscription = Subscription::create([
-                'type' => $data['subscriptionType']
-            ]);
+        $subscriptionId = $r->incr('next_subscription_id');
+        $r->hmset('subscription:'.$subscriptionId, [
+            'type' => $data['subscriptionType'],
+            'created_at' => Carbon::now()
+        ]);
 
-            $confirmationCode = md5(rand(999, 999999));
+        $confirmationCode = md5(rand(999, 999999));
+        $r->hmset('tempTeacher:'.$r->incr('next_temp_teacher_id'), [
+            'subscription_id' => $subscriptionId,
+            'first_name' => $data['firstName'],
+            'last_name' => $data['lastName'],
+            'email' => $data['email'],
+            'confirmation_code' => $confirmationCode
+        ]);
 
-            $tempTeacher = TempTeacher::create([
-                'subscription_id' => $subscription->id,
-                'first_name' => $data['firstName'],
-                'last_name' => $data['lastName'],
-                'email' => $data['email'],
-                'confirmation_code' => $confirmationCode
-            ]);
+        return $r->get('next_temp_teacher_id');
 
-            DB::commit();
-            return $tempTeacher;
-        }
-        catch (PDOException $e)
-        {
-            DB::rollBack();
-            return false;
-        }
+//            $subscription = Subscription::create([
+//                'type' => $data['subscriptionType']
+//            ]);
+//
+//            $confirmationCode = md5(rand(999, 999999));
+//
+//            $tempTeacher = TempTeacher::create([
+//                'subscription_id' => $subscription->id,
+//                'first_name' => $data['firstName'],
+//                'last_name' => $data['lastName'],
+//                'email' => $data['email'],
+//                'confirmation_code' => $confirmationCode
+//            ]);
     }
 
     public function registerTeacher(array $data)
