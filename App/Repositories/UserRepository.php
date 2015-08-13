@@ -5,6 +5,8 @@ namespace App\Repositories;
 use Carbon\Carbon;
 use Library\Facades\App;
 use Library\Facades\DB;
+use Library\Facades\Redis;
+use Library\Redis\RedisModel;
 use Models\TempTeacher;
 use Models\Subscription;
 use Models\Address;
@@ -17,13 +19,13 @@ class UserRepository
 {
     public function findTempTeacher($id)
     {
-        $r = App::container()->resolveInstance('redis');
-        return $r->hgetall('tempTeacher:'.$id);
+        $r = Redis::getRedis();
+        return new RedisModel($r->hgetall('tempTeacher:'.$id));
     }
 
     public function preRegisterTeacher(array $data)
     {
-        $r = App::container()->resolveInstance('redis');
+        $r = Redis::getRedis();
 
         $subscriptionId = $r->incr('next_subscription_id');
         $r->hmset('subscription:'.$subscriptionId, [

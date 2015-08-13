@@ -10,12 +10,15 @@ class Redis
 
     public function __construct()
     {
-        $this->predis = new PredisClient();
-    }
+        $database = 0;
+        if (env('APP_ENV') == 'testing' || env('APP_ENV') == 'framework_testing')
+        {
+            $database = 1;
+        }
 
-    public function __call($name, $arguments)
-    {
-        return call_user_func_array([$this->predis, $name], $arguments);
+        $this->predis = new PredisClient([
+            'database' => $database
+        ]);
     }
 
     public function getRedis()
