@@ -3,7 +3,6 @@
 namespace App\Repositories;
 
 use Carbon\Carbon;
-use Library\Facades\App;
 use Library\Facades\DB;
 use Library\Facades\Redis;
 use Library\Redis\RedisModel;

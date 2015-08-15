@@ -2,6 +2,7 @@
 
 namespace Library\Validation;
 
+use Library\Facades\Redis;
 use Library\Facades\Request;
 use Library\Facades\Session;
 
@@ -197,11 +198,20 @@ class Validator
 
     public function unique($value, $modelName, $columnName)
     {
-        $model = '\\Models\\'.$modelName;
-        if (env('APP_ENV') == 'framework_testing')
-            $model = '\\Tests\\FrameworkTest\\Models\\'.$modelName;
+        // refactor this later
 
-        return !$model::exists($columnName, $value);
+        if ($columnName != 'email')
+        {
+            return false;
+        }
+
+        $redis = Redis::getRedis();
+
+//        $model = '\\Models\\'.$modelName;
+//        if (env('APP_ENV') == 'framework_testing')
+//            $model = '\\Tests\\FrameworkTest\\Models\\'.$modelName;
+//
+//        return !$model::exists($columnName, $value);
     }
 
     public function equalsField($value, $fieldName)

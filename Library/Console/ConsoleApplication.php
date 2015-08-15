@@ -2,6 +2,7 @@
 
 namespace Library\Console;
 
+use Library\Console\Modules\DataMapper\DataMapper;
 use Library\Console\Modules\Queue\QueueListener;
 use Symfony\Component\Console\Application;
 
@@ -33,6 +34,7 @@ class ConsoleApplication
     protected function addRequiredModules()
     {
         $this->app->add(new QueueListener());
+        $this->app->add(new DataMapper());
     }
 
     protected function framework()

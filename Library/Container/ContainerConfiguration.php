@@ -3,6 +3,7 @@
 namespace Library\Container;
 
 use Library\Configuration\Config;
+use Library\Database\DataMapper\DataMapper;
 use Library\Database\Factory;
 use Library\Events\EventManager;
 use Library\Http\Redirect;
@@ -36,7 +37,9 @@ class ContainerConfiguration
         $this->container->registerInstance('request', new Request());
         $this->container->registerInstance('response', new Response());
         $this->container->registerInstance('router', new Router());
-        $this->container->registerInstance('database', new Database());
+        $this->container->registerInstance('redis', new Redis());
+        $database = new Database();
+        $this->container->registerInstance('database', $database);
         $this->container->registerInstance('form', new Form());
         $this->container->registerInstance('session', new Session());
         $this->container->registerInstance('validator', new Validator());
@@ -47,7 +50,7 @@ class ContainerConfiguration
         $this->container->registerInstance('log', new Log());
         $this->container->registerInstance('queue', new Queue());
         $this->container->registerInstance('eventManager', new EventManager());
-        $this->container->registerInstance('redis', new Redis());
+        $this->container->registerInstance('dataMapper', new DataMapper($database->driver()));
 
         if (env('APP_DEBUG'))
         {

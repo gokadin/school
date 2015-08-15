@@ -2,7 +2,6 @@
 
 namespace Library\Console\Modules\Queue;
 
-use Library\Container\ContainerException;
 use Library\Facades\App;
 use Library\Facades\Log;
 use Symfony\Component\Console\Command\Command;

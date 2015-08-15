@@ -2,6 +2,7 @@
 
 namespace Library\Database;
 
+use Library\Database\Drivers\RedisDatabaseDriver;
 use Library\Facades\App;
 use Symfony\Component\Yaml\Exception\RuntimeException;
 use Library\Config;
@@ -11,6 +12,7 @@ class Database
 {
     protected $dao;
     protected $tables;
+    protected $driver;
 
     public function __construct()
     {
@@ -23,6 +25,24 @@ class Database
         $this->dao->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
         $this->tables = new TableBuilder($this);
+    }
+
+    protected function initializeDriver($driverName)
+    {
+        switch ($driverName)
+        {
+            case 'redis':
+                $this->driver = new RedisDatabaseDriver(App::container()->resolveInstance('redis'));
+                break;
+            default:
+                $this->driver = null;
+                break;
+        }
+    }
+
+    public function driver()
+    {
+        return $this->driver;
     }
 
     public function dao()
