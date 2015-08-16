@@ -2,6 +2,7 @@
 
 namespace Library\Console\Modules\Queue;
 
+use Library\Database\Database;
 use Library\Facades\App;
 use Library\Facades\Log;
 use Symfony\Component\Console\Command\Command;
@@ -13,15 +14,15 @@ class QueueListener extends Command
 {
     const SLEEP_DURATION_SEC = 2;
 
-    protected $dao;
+    protected $database;
     protected $queueTable;
     protected $failedTable;
 
-    public function __construct()
+    public function __construct(Database $database)
     {
         parent::__construct();
 
-        $this->dao = $this->getDbConnection();
+        $this->database = $database;
 
         $settings = require App::basePath().'Config/queue.php';
         $this->queueTable = $settings['connections']['database']['table'];
@@ -97,22 +98,9 @@ class QueueListener extends Command
         $handler->handle($job);
     }
 
-    protected function getDbConnection()
-    {
-        $settings = include App::basePath().'Config/database.php';
-
-        $dao = new \PDO($settings['mysql']['driver'].':host='.$settings['mysql']['host'].';dbname='.$settings['mysql']['database'],
-            $settings['mysql']['username'],
-            $settings['mysql']['password']);
-
-        $dao->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
-
-        return $dao;
-    }
-
     protected function getNextJobArray()
     {
-        $query = $this->dao->prepare('SELECT * FROM '.$this->queueTable.' '.
+        $query = $this->database->prepare('SELECT * FROM '.$this->queueTable.' '.
             'WHERE execution_date <= NOW()'.
             'ORDER BY execution_date ASC LIMIT 1');
 
@@ -152,20 +140,20 @@ class QueueListener extends Command
 
     protected function removeJob($id)
     {
-        $this->dao->exec('DELETE FROM '.$this->queueTable.' WHERE id='.$id);
+        $this->database->exec('DELETE FROM '.$this->queueTable.' WHERE id='.$id);
     }
 
     protected function handleFailedJob($job, $handler)
     {
         if ($handler != null)
         {
-            $this->dao->exec('INSERT INTO '.$this->failedTable.' (job, handler) VALUES('.
+            $this->database->exec('INSERT INTO '.$this->failedTable.' (job, handler) VALUES('.
                 '\''.str_replace('\\', '\\\\', serialize($job)).'\', '.
                 '\''.str_replace('\\', '\\\\', serialize($handler)).'\')');
             return;
         }
 
-        $this->dao->exec('INSERT INTO '.$this->failedTable.' (job, handler) VALUES('.
+        $this->database->exec('INSERT INTO '.$this->failedTable.' (job, handler) VALUES('.
             '\''.str_replace('\\', '\\\\', serialize($job)).'\', \'undefined\')');
     }
 }

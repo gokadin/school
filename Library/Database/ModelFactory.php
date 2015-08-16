@@ -4,7 +4,7 @@ namespace Library\Database;
 
 use Faker\Factory as FakerFactory;
 
-class Factory
+class ModelFactory
 {
     const MODEL_FACTORY_DIR = 'Database/Factories';
 

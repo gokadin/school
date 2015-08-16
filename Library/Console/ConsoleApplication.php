@@ -33,8 +33,11 @@ class ConsoleApplication
 
     protected function addRequiredModules()
     {
-        $this->app->add(new QueueListener());
-        $this->app->add(new DataMapper());
+        $database = $this->framework->container()->resolveInstance('database');
+        $this->app->add(new QueueListener($database));
+
+        $dataMapperSettings = require $this->framework->basePath().'Config/datamapper.php';
+        $this->app->add(new DataMapper($database, $dataMapperSettings));
     }
 
     protected function framework()

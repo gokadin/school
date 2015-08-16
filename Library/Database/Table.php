@@ -1,85 +1,78 @@
-<?php namespace Library\Database;
+<?php
+
+namespace Library\Database;
 
 class Table
 {
     const CREATED_AT = 'created_at';
     const UPDATED_AT = 'updated_at';
 
-    protected $modelName;
-    protected $tableName;
-    protected $columns;
+    protected $name;
+    protected $columns = [];
 
-    public function __construct($modelName)
+    public function __construct($name)
     {
-        $this->modelName = $modelName;
-        $this->columns = array();
+        $this->name = $name;
     }
 
-    public function setTable($name)
+    public function name()
     {
-        $this->tableName = $name;
+        return $this->name;
     }
 
     public function increments($name)
     {
         $column = new Column($name, 'integer', 11);
         $column->primaryKey();
-        return $this->columns[] = $column;
+        return $this->columns[$name] = $column;
     }
 
     public function integer($name, $size = 11)
     {
-        return $this->columns[] = new Column($name, 'integer', $size);
+        return $this->columns[$name] = new Column($name, 'integer', $size);
     }
 
     public function decimal($name, $size = 11, $precision = 2)
     {
         $column = new Column($name, 'decimal', $size);
         $column->precision($precision);
-        return $this->columns[] = $column;
+        return $this->columns[$name] = $column;
     }
 
     public function string($name, $size = 50)
     {
-        return $this->columns[] = new Column($name, 'string', $size);
+        return $this->columns[$name] = new Column($name, 'string', $size);
     }
 
     public function text($name)
     {
-        return $this->columns[] = new Column($name, 'text', 0);
+        return $this->columns[$name] = new Column($name, 'text', 0);
     }
 
     public function boolean($name)
     {
-        return $this->columns[] = new Column($name, 'boolean', 1);
+        return $this->columns[$name] = new Column($name, 'boolean', 1);
     }
     
     public function datetime($name)
     {
-        return $this->columns[] = new Column($name, 'datetime', 0);
+        return $this->columns[$name] = new Column($name, 'datetime', 0);
     }
 
     public function timestamps()
     {
-        $this->columns[] = new Column(self::UPDATED_AT, 'datetime');
-        $this->columns[] = new Column(self::CREATED_AT, 'datetime');
-    }
-
-    /* ACCESSORS */
-
-    public function modelName()
-    {
-        return $this->modelName;
-    }
-
-    public function tableName()
-    {
-        return $this->tableName;
+        $this->columns[self::UPDATED_AT] = new Column(self::UPDATED_AT, 'datetime');
+        $this->columns[self::CREATED_AT] = new Column(self::CREATED_AT, 'datetime');
     }
 
     public function columns()
     {
         return $this->columns;
+    }
+
+    public function column($columnName)
+    {
+        return isset($this->columns[$columnName]) ? $this->columns[$columnName] : null;
     }
 
     public function hasColumn($name)

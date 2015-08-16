@@ -1,6 +1,6 @@
 <?php
 
-namespace FrameworkTest\TestData\Console\DataMapper;
+namespace Tests\FrameworkTest\TestData\Console\DataMapper;
 
 class EmptyEntity
 {

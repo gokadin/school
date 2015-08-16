@@ -3,36 +3,30 @@
 namespace Library\Database;
 
 use Library\Database\Drivers\RedisDatabaseDriver;
-use Library\Facades\App;
-use Symfony\Component\Yaml\Exception\RuntimeException;
 use Library\Config;
-use PDO;
 
 class Database
 {
-    protected $dao;
-    protected $tables;
+//    protected $dao;
     protected $driver;
 
-    public function __construct()
+    public function __construct($settings)
     {
-        $settings = require App::basePath().'Config/database.php';
-
-        $this->dao = new PDO($settings['mysql']['driver'].':host='.$settings['mysql']['host'].';dbname='.$settings['mysql']['database'],
-            $settings['mysql']['username'],
-            $settings['mysql']['password']);
-
-        $this->dao->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-
-        $this->tables = new TableBuilder($this);
+//        $this->dao = new PDO($settings['mysql']['driver'].':host='.$settings['mysql']['host'].';dbname='.$settings['mysql']['database'],
+//            $settings['mysql']['username'],
+//            $settings['mysql']['password']);
+//
+//        $this->dao->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+//
+        $this->initializeDriver($settings);
     }
 
-    protected function initializeDriver($driverName)
+    protected function initializeDriver($settings)
     {
-        switch ($driverName)
+        switch ($settings['driver'])
         {
             case 'redis':
-                $this->driver = new RedisDatabaseDriver(App::container()->resolveInstance('redis'));
+                $this->driver = new RedisDatabaseDriver($settings['redis']);
                 break;
             default:
                 $this->driver = null;
@@ -40,69 +34,59 @@ class Database
         }
     }
 
-    public function driver()
+    /* SCHEMA QUERIES */
+
+    public function createTableIfNotExists()
     {
-        return $this->driver;
+        if ($this->driver instanceof RedisDatabaseDriver)
+        {
+            return;
+        }
+
+        $this->driver->createIfNotExists();
     }
 
-    public function dao()
+    public function drop($tableName)
     {
-        return $this->dao;
+        if ($this->driver instanceof RedisDatabaseDriver)
+        {
+            return;
+        }
+
+        $this->driver->drop($tableName);
     }
 
-    public function getTable($modelName)
+    /* DEPRECATED */
+
+    public function exec()
     {
-        return $this->tables->getTable($modelName);
+
     }
 
-    public function table($table)
+    public function prepare()
     {
-        if (!is_string($table) || empty($table))
-            throw new RuntimeException('Invalid module');
 
-        $table = strtolower($table);
-        if (env('APP_ENV') == 'framework_testing')
-            $className = '\\Tests\\FrameworkTest\\Models\\'.ucfirst($table);
-        else
-            $className = '\\Models\\'.ucfirst($table);
-
-        return new $className();
     }
 
-    public function query($sql)
-    {
-        $query = $this->dao->prepare($sql);
-        $query->execute();
-        return $query;
-    }
+//    public function query($sql)
+//    {
+//        $query = $this->dao->prepare($sql);
+//        $query->execute();
+//        return $query;
+//    }
 
-    public function exec($sql)
-    {
-        return $this->dao->exec($sql);
-    }
-
-    public function dropAllTables()
-    {
-        return $this->tables->dropAllTables();
-    }
-
-    public function dropTable($tableName)
-    {
-        return $this->tables->dropTable($tableName);
-    }
-
-    public function beginTransaction()
-    {
-        $this->dao->beginTransaction();
-    }
-
-    public function commit()
-    {
-        $this->dao->commit();
-    }
-
-    public function rollBack()
-    {
-        $this->dao->rollBack();
-    }
+//    public function beginTransaction()
+//    {
+//        $this->dao->beginTransaction();
+//    }
+//
+//    public function commit()
+//    {
+//        $this->dao->commit();
+//    }
+//
+//    public function rollBack()
+//    {
+//        $this->dao->rollBack();
+//    }
 }

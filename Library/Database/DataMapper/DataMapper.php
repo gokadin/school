@@ -2,16 +2,16 @@
 
 namespace Library\Database\DataMapper;
 
-use Library\Database\Drivers\IDatabaseDriver;
+use Library\Database\Database;
 
 class DataMapper
 {
-    protected $driver;
+    protected $database;
     protected $commands = [];
 
-    public function __construct(IDatabaseDriver $driver)
+    public function __construct(Database $database)
     {
-        $this->driver = $driver;
+        $this->database = $database;
     }
 
     public function persist($object)
@@ -25,11 +25,11 @@ class DataMapper
         {
             if (is_null($data))
             {
-                $this->driver->$name();
+                $this->database->$name();
                 continue;
             }
 
-            $this->driver->$name($data);
+            $this->database->$name($data);
         }
     }
 

@@ -81,6 +81,11 @@ class Column
         return $this->size;
     }
 
+    public function getPrecision()
+    {
+        return $this->precision;
+    }
+
     public function isNullable()
     {
         return $this->canBeNull;

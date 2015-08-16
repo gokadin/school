@@ -8,9 +8,11 @@ class RedisDatabaseDriver implements IDatabaseDriver
 {
     protected $redis;
 
-    public function __construct(PredisClient $redis)
+    public function __construct($settings)
     {
-        $this->redis = $redis;
+        $this->redis = new PredisClient([
+            'database' => $settings['database']
+        ]);
     }
 
     public function persist($object)

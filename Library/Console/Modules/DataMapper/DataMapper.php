@@ -2,16 +2,22 @@
 
 namespace Library\Console\Modules\DataMapper;
 
+use Library\Database\Database;
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Output\OutputInterface;
 
 class DataMapper extends Command
 {
+    protected $database;
     protected $mappingDriver;
     protected $cacheDriver;
 
-    public function __construct()
+    public function __construct(Database $database, $settings)
     {
-        $settings = require App::basePath().'Config/datamapper.php';
+        parent::__construct();
+
+        $this->database = $database;
 
         $this->initializeDrivers($settings);
     }
@@ -27,7 +33,7 @@ class DataMapper extends Command
         switch ($settings['config']['mappingDriver'])
         {
             default:
-                $this->mappingDriver = new AnnotationDriver($settings['classes']);
+                $this->mappingDriver = new AnnotationDriver($this->database, $settings['classes']);
                 break;
         }
     }
@@ -51,11 +57,13 @@ class DataMapper extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        // step 1: build mapping in memory
-        $this->mappingDriver->build();
+        $output->writeln('<info>Creating schema...</info>');
+        $schema = $this->mappingDriver->build();
+        $schema->createAll();
+        $output->writeln('<info>Schema created.</info>');
 
-        // step 2: insert mapping into cache
-
-        // step 3: create schema if needed
+        $output->writeln('<info>Loading schema into cache...</info>');
+        $this->cacheDriver->loadSchema($schema);
+        $output->writeln('<info>Schema loaded.</info>');
     }
 }

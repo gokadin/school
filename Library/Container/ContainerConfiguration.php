@@ -4,7 +4,7 @@ namespace Library\Container;
 
 use Library\Configuration\Config;
 use Library\Database\DataMapper\DataMapper;
-use Library\Database\Factory;
+use Library\Database\ModelFactory;
 use Library\Events\EventManager;
 use Library\Http\Redirect;
 use Library\Http\Request;
@@ -33,13 +33,17 @@ class ContainerConfiguration
 
     public function configureContainer()
     {
+        $app = $this->container->resolveInstance('app');
+
+        $settings = require $app->basePath().'Config/database.php';
+        $database = new Database($settings);
+        $this->container->registerInstance('database', $database);
+
         $this->container->registerInstance('config', new Config());
         $this->container->registerInstance('request', new Request());
         $this->container->registerInstance('response', new Response());
         $this->container->registerInstance('router', new Router());
         $this->container->registerInstance('redis', new Redis());
-        $database = new Database();
-        $this->container->registerInstance('database', $database);
         $this->container->registerInstance('form', new Form());
         $this->container->registerInstance('session', new Session());
         $this->container->registerInstance('validator', new Validator());
@@ -50,7 +54,7 @@ class ContainerConfiguration
         $this->container->registerInstance('log', new Log());
         $this->container->registerInstance('queue', new Queue());
         $this->container->registerInstance('eventManager', new EventManager());
-        $this->container->registerInstance('dataMapper', new DataMapper($database->driver()));
+        $this->container->registerInstance('dataMapper', new DataMapper($database));
 
         if (env('APP_DEBUG'))
         {
@@ -60,6 +64,6 @@ class ContainerConfiguration
 
     protected function configureDebugContainer()
     {
-        $this->container->registerInstance('modelFactory', new Factory());
+        $this->container->registerInstance('modelFactory', new ModelFactory());
     }
 }
