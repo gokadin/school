@@ -10,6 +10,7 @@ class Column
     protected $canBeNull;
     protected $isUnique;
     protected $default;
+    protected $hasIndex;
 
     public function __construct($name, $type, $size = -1)
     {
@@ -21,6 +22,7 @@ class Column
         $this->isPrimaryKey = false;
         $this->isUnique = false;
         $this->default = null;
+        $this->hasIndex = false;
     }
 
     public function primaryKey()
@@ -57,6 +59,12 @@ class Column
     {
         if ($name === 'default' && sizeof($args) == 1)
             return $this->_default($args[0]);
+    }
+
+    public function addIndex()
+    {
+        $this->hasIndex = true;
+        return $this;
     }
 
     /* Accessor functions */
@@ -113,5 +121,10 @@ class Column
     public function getDefault()
     {
         return $this->default;
+    }
+
+    public function hasIndex()
+    {
+        return $this->hasIndex;
     }
 }

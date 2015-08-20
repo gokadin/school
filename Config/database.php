@@ -12,7 +12,7 @@ return [
     ],
 
     'redis' => [
-        'database' => 0
+        'database' => env('REDIS_DATABASE')
     ]
 
 ];

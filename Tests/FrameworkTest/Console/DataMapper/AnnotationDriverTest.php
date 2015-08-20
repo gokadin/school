@@ -169,4 +169,18 @@ class AnnotationDriverTest extends BaseTest
         $this->assertNotNull($schema->table('simpleEntity')->column('decimal1'));
         $this->assertEquals(3, $schema->table('simpleEntity')->column('decimal2')->getPrecision());
     }
+
+    public function testBuildForIndexedColumns()
+    {
+        // Arrange
+        $driver = new AnnotationDriver(new Database($this->databaseSettings), [
+            SimpleEntity::class
+        ]);
+
+        // Act
+        $schema = $driver->build();
+
+        // Assert
+        $this->assertTrue($schema->table('simpleEntity')->column('one')->hasIndex());
+    }
 }

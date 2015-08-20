@@ -8,16 +8,10 @@ class Redis
 {
     protected $predis;
 
-    public function __construct()
+    public function __construct($settings)
     {
-        $database = 0;
-        if (env('APP_ENV') == 'testing' || env('APP_ENV') == 'framework_testing')
-        {
-            $database = 1;
-        }
-
         $this->predis = new PredisClient([
-            'database' => $database
+            'database' => $settings['redis']['database']
         ]);
     }
 

@@ -14,7 +14,7 @@ class SimpleEntity
     /** @Id */
     protected $id;
 
-    /** @Column(type="integer") */
+    /** @Column(type="integer", indexed="true") */
     protected $one;
 
     /** @Column(name="customName", type="integer", size="12") */

@@ -42,7 +42,7 @@ class AnnotationDriver
     {
         $r = new ReflectionClass($class);
 
-        $t = new Table($this->getName($r));
+        $t = new Table($this->getName($r), $r->getShortName());
 
         $this->buildColumns($r, $t);
 
@@ -84,37 +84,48 @@ class AnnotationDriver
             $columnArgs = $parsed['Column'];
             $columnName = $this->getColumnName($property, $columnArgs);
             $columnType = strtolower($parsed['Column']['type']);
+            $addedColumn = null;;
             switch ($columnType)
             {
                 case 'integer':
                     isset($parsed['Column']['size'])
-                        ? $table->integer($columnName, $columnArgs['size'])
-                        : $table->integer($columnName);
+                        ? $addedColumn = $table->integer($columnName, $columnArgs['size'])
+                        : $addedColumn = $table->integer($columnName);
                     break;
                 case 'string':
                     isset($columnArgs['size'])
-                        ? $table->string($columnName, $columnArgs['size'])
-                        : $table->string($columnName);
+                        ? $addedColumn = $table->string($columnName, $columnArgs['size'])
+                        : $addedColumn = $table->string($columnName);
                     break;
                 case 'decimal':
                     isset($columnArgs['size'])
                         ? (isset($columnArgs['precision'])
-                            ? $table->decimal($columnName, $columnArgs['size'], $columnArgs['precision'])
-                            : $table->decimal($columnName, $columnArgs['size']))
-                        : $table->decimal($columnName);
+                            ? $addedColumn = $table->decimal($columnName, $columnArgs['size'], $columnArgs['precision'])
+                            : $addedColumn = $table->decimal($columnName, $columnArgs['size']))
+                        : $addedColumn = $table->decimal($columnName);
                     break;
                 case 'text':
-                    $table->text($columnName);
+                    $addedColumn = $table->text($columnName);
                     break;
                 case 'boolean':
-                    $table->boolean($columnName);
+                    $addedColumn = $table->boolean($columnName);
                     break;
                 case 'datetime':
-                    $table->datetime($columnName);
+                    $addedColumn = $table->datetime($columnName);
                     break;
                 default:
                     continue;
                     break;
+            }
+
+            if (is_null($addedColumn))
+            {
+                continue;
+            }
+
+            if (isset($columnArgs['indexed']) && $columnArgs['indexed'])
+            {
+                $addedColumn->addIndex();
             }
         }
     }

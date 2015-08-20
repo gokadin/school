@@ -2,22 +2,17 @@
 
 namespace Library\Database;
 
+use Library\Database\Drivers\PdoDatabaseDriver;
 use Library\Database\Drivers\RedisDatabaseDriver;
 use Library\Config;
+use Symfony\Component\Yaml\Exception\RuntimeException;
 
 class Database
 {
-//    protected $dao;
     protected $driver;
 
     public function __construct($settings)
     {
-//        $this->dao = new PDO($settings['mysql']['driver'].':host='.$settings['mysql']['host'].';dbname='.$settings['mysql']['database'],
-//            $settings['mysql']['username'],
-//            $settings['mysql']['password']);
-//
-//        $this->dao->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-//
         $this->initializeDriver($settings);
     }
 
@@ -28,8 +23,11 @@ class Database
             case 'redis':
                 $this->driver = new RedisDatabaseDriver($settings['redis']);
                 break;
+            case 'mysql':
+                $this->driver = new PdoDatabaseDriver($settings['mysql']);
+                break;
             default:
-                $this->driver = null;
+                throw new RuntimeException('No database configured.');
                 break;
         }
     }
@@ -54,6 +52,23 @@ class Database
         }
 
         $this->driver->drop($tableName);
+    }
+
+    public function dropAll()
+    {
+        $this->driver->dropAll();
+    }
+
+    /* QUERIES */
+
+    public function insert(Table $table, $values)
+    {
+        $this->driver->insert($table, $values);
+    }
+
+    public function select($tableName)
+    {
+        $this->driver->select($tableName);
     }
 
     /* DEPRECATED */
