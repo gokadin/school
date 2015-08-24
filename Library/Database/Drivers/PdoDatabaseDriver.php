@@ -2,13 +2,15 @@
 
 namespace Library\Database\Drivers;
 
+use Library\Database\Table;
 use PDO;
+use Symfony\Component\Yaml\Exception\RuntimeException;
 
 class PdoDatabaseDriver implements IDatabaseDriver
 {
     protected $dao;
     protected $databaseName;
-    protected $select = null;
+    protected $table = null;
     protected $wheres = [];
 
     public function __construct($settings)
@@ -21,24 +23,28 @@ class PdoDatabaseDriver implements IDatabaseDriver
         $this->dao->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     }
 
-    public function insert($table, array $data)
+    public function table($table)
     {
-        $str = 'INSERT INTO '.$table;
+        $this->table = $table;
+        return $this;
+    }
+
+    public function insert(array $data)
+    {
+        $str = 'INSERT INTO '.$this->table;
         $str .= ' ('.implode(',', array_keys($data)).')';
 
-        array_walk($data, function(&$key, $value) {
-            $key = ':'.$key;
-        });
+        $processed = [];
+        foreach ($data as $key => $value)
+        {
+            $processed[':'.$key] = $value;
+        }
+        $data = $processed;
 
         $str .= ' VALUES('.implode(',', array_keys($data)).')';
 
         $stmt = $this->dao->prepare($str);
         $stmt->execute($data);
-    }
-
-    public function select($table)
-    {
-        return $this;
     }
 
     public function where($var, $operator, $value = null)
@@ -59,28 +65,118 @@ class PdoDatabaseDriver implements IDatabaseDriver
         return $this;
     }
 
-    public function get(array $fields = ['*'])
+    public function select(array $fields = ['*'])
     {
-        if (is_null($this->select))
-        {
-            return [];
-        }
+        $this->validateTable();
 
         $str = ' SELECT';
         $str .= ' '.implode(',', $fields);
-        $str .= ' FROM '.$this->select;
+        $str .= ' FROM '.$this->table;
         $str .= $this->buildWheres();
 
         $stmt = $this->dao->prepare($str);
         $stmt->execute();
 
+        $this->clean();
+
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function update(array $data)
+    {
+        $this->validateTable();
+
+        $str = 'UPDATE '.$this->table.' SET ';
+
+        $i = 0;
+        foreach ($data as $key => $value)
+        {
+            $i == 0 ? $i++ : $str .= '.';
+
+            $str .= $key.' = '.$value;
+        }
+
+        $str .= $this->buildWheres();
+
+        $stmt = $this->dao->prepare($str);
+        $stmt->execute();
+
+        $this->clean();
+    }
+
+    public function delete()
+    {
+        $this->validateTable();
+
+        $str = 'DELETE FROM '.$this->table;
+
+        $str .= $this->buildWheres();
+
+        $this->clean();
+
+        return $this->dao->exec($str);
     }
 
     public function dropAll()
     {
         $this->dao->exec('DROP DATABASE '.$this->databaseName);
         $this->dao->exec('CREATE DATABASE '.$this->databaseName);
+    }
+
+    public function drop($table)
+    {
+        $this->dao->exec('DROP TABLE '.$table);
+    }
+
+    public function create(Table $table)
+    {
+        $str = 'CREATE TABLE IF NOT EXISTS '.$table->name();
+
+        $primaryKeyStr = '';
+        $columnsStr = [];
+        foreach ($table->columns() as $column)
+        {
+            if ($column->isPrimaryKey())
+            {
+                $primaryKeyStr = $column->getName();
+                $primaryKeyStr .= ' '.$this->getColumnTypeString($column->getType());
+                $primaryKeyStr .= '('.$column->getSize().')';
+                $primaryKeyStr .= ' UNSIGNED AUTO_INCREMENT PRIMARY KEY';
+                continue;
+            }
+
+            $columnStr = $column->getName();
+            $columnStr .= ' '.$this->getColumnTypeString($column->getType());
+            if ($column->getSize() > 0)
+                $columnStr .= '('.$column->getSize().')';
+            if (!$column->isNullable())
+                $columnStr .= ' NOT NULL';
+            if (!is_null($column->getDefault()))
+            {
+                $str .= ' DEFAULT';
+                is_string($column->getDefault())
+                    ? $str .= '\' '.$column->getDefault().'\''
+                    : $str .= ' '.$column->getDefault();
+            }
+
+            $columnsStr[] = $columnStr;
+        }
+
+        $str .= ' (';
+        $str .= $primaryKeyStr.',';
+        $str .= ' '.implode(', ', $columnsStr);
+
+        foreach ($table->columns() as $column)
+        {
+            if ($column->isUnique())
+            {
+                $str .= ', UNIQUE ('.$column->getName().')';
+            }
+        }
+
+        $str .= ')';
+
+        return $this->dao->exec($str);
     }
 
     public function beginTransaction()
@@ -136,5 +232,41 @@ class PdoDatabaseDriver implements IDatabaseDriver
         }
 
         return $str;
+    }
+
+    protected function getColumnTypeString($type)
+    {
+        switch ($type)
+        {
+            case 'integer':
+                return 'INT';
+            case 'decimal':
+                return 'DECIMAL';
+            case 'string':
+                return 'VARCHAR';
+            case 'text':
+                return 'TEXT';
+            case 'boolean':
+                return 'TINYINT';
+            case 'datetime':
+                return 'DATETIME';
+            default:
+                throw new RuntimeException('Unknown column type: '.$type);
+                break;
+        }
+    }
+
+    protected function clean()
+    {
+        $this->table = null;
+        $this->wheres = [];
+    }
+
+    protected function validateTable()
+    {
+        if (is_null($this->table))
+        {
+            throw new RuntimeException('PdoDatabaseDriver.Get : the table was not specified.');
+        }
     }
 }

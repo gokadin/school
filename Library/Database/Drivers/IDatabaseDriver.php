@@ -2,11 +2,21 @@
 
 namespace Library\Database\Drivers;
 
+use Library\Database\Table;
+
 interface IDatabaseDriver
 {
-    function insert($table, array $data);
+    function table($table);
 
-    function select($table);
+    function insert(array $data);
+
+    function select(array $data);
+
+    function update(array $data);
+
+    function delete();
+
+    function create(Table $table);
 
     function dropAll();
 

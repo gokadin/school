@@ -34,14 +34,14 @@ class Schema
             return;
         }
 
-        $this->database->createTableIfNotExists($this->tables[$tableName]);
+        $this->database->create($this->tables[$tableName]);
     }
 
     public function createAll()
     {
         foreach ($this->tables as $table)
         {
-            $this->database->createTableIfNotExists($this->tables[$table->name()]);
+            $this->database->create($this->tables[$table->name()]);
         }
     }
 

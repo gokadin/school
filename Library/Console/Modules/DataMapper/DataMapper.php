@@ -43,7 +43,7 @@ class DataMapper extends Command
         switch ($settings['config']['cacheDriver'])
         {
             default:
-                $this->cacheDriver = new RedisCacheDriver();
+                $this->cacheDriver = new DataMapperRedisCacheDriver();
                 break;
         }
     }

@@ -5,7 +5,7 @@ namespace Library\Console\Modules\DataMapper;
 use Library\Database\Schema;
 use Predis\Client as PredisClient;
 
-class RedisCacheDriver
+class DataMapperRedisCacheDriver
 {
     protected $redis;
 

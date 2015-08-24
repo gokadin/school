@@ -34,14 +34,14 @@ class Database
 
     /* SCHEMA QUERIES */
 
-    public function createTableIfNotExists()
+    public function create(Table $table)
     {
         if ($this->driver instanceof RedisDatabaseDriver)
         {
             return;
         }
 
-        $this->driver->createIfNotExists();
+        $this->driver->create($table);
     }
 
     public function drop($tableName)
