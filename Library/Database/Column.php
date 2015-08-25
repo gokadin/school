@@ -1,7 +1,12 @@
-<?php namespace Library\Database;
+<?php
+
+namespace Library\Database;
 
 class Column
 {
+    const UPDATED_AT = 'updated_at';
+    const CREATED_AT = 'created_at';
+
     protected $name;
     protected $isPrimaryKey;
     protected $type;
@@ -34,6 +39,12 @@ class Column
     public function nullable()
     {
         $this->canBeNull = true;
+        return $this;
+    }
+
+    public function size($value)
+    {
+        $this->size = $value;
         return $this;
     }
 
@@ -101,8 +112,8 @@ class Column
 
     public function isRequired()
     {
-        if ($this->name === QueryBuilder::UPDATED_AT ||
-            $this->name === QueryBuilder::CREATED_AT)
+        if ($this->name === self::UPDATED_AT ||
+            $this->name === self::CREATED_AT)
             return false;
 
         return !$this->isNullable() && !$this->isDefault();

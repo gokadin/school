@@ -44,13 +44,81 @@ class RedisDatabaseDriver implements IDatabaseDriver
                 'type' => $column->getType(),
                 'size' => $column->getSize(),
                 'precision' => $column->getPrecision(),
-                'isNullable' => $column->isNullable(),
-                'isRequired' => $column->isRequired(),
-                'isUnique' => $column->isUnique(),
-                'isDefault' => $column->isDefault(),
-                'defaultValue' => $column->getDefault()
+                'isNullable' => $column->isNullable() ? 1 : 0,
+                'isRequired' => $column->isRequired() ? 1 : 0,
+                'isUnique' => $column->isUnique() ? 1 : 0,
+                'isDefault' => $column->isDefault() ? 1 : 0,
+                'defaultValue' => $column->getDefault(),
+                'hasIndex' => $column->hasIndex() ? 1 : 0
             ]);
         }
+    }
+
+    protected function accessTable($table)
+    {
+        $t = new Table($table);
+
+        $columnNames = $this->redis->smembers(self::SCHEMA_PREFIX.':'.$table.':columns');
+
+        foreach ($columnNames as $columnName)
+        {
+            $columnProperties = $this->redis->hgetall(self::SCHEMA_PREFIX.':'.$table.':column:'.$columnName);
+
+            if ($columnProperties['isPrimaryKey'])
+            {
+                $t->increments($columnName);
+                continue;
+            }
+
+            $column = null;
+            switch ($columnProperties['type'])
+            {
+                case 'integer':
+                    $t->integer($columnName);
+                    break;
+                case 'string':
+                    $t->string($columnName);
+                    break;
+                case 'text':
+                    $t->text($columnName);
+                    break;
+                case 'decimal':
+                    $t->decimal($columnName);
+                    break;
+                case 'boolean':
+                    $t->boolean($columnName);
+                    break;
+                case 'datetime':
+                    $t->datetime($columnName);
+                    break;
+            }
+
+            if (is_null($column))
+            {
+                continue;
+            }
+
+            $column = $column->size($columnProperties['size']);
+            $column = $column->precision($columnProperties['precision']);
+            if ($columnProperties['isNullable'] == 1)
+            {
+                $column = $column->nullable();
+            }
+            if ($columnProperties['isDefault'] == 1)
+            {
+                $column = $column->default($columnProperties['defaultValue']);
+            }
+            if ($columnProperties['isUnique'] == 1)
+            {
+                $column = $column->unique();
+            }
+            if ($columnProperties['hasIndex'] == 1)
+            {
+                $column->addIndex();
+            }
+        }
+
+        return $t;
     }
 
     public function insert(array $data)
@@ -59,7 +127,9 @@ class RedisDatabaseDriver implements IDatabaseDriver
 
         $this->redis->hmset($this->table.':'.self::ID_ACCESSOR.':'.$id, $data);
 
-        $this->insertIndexedColumns($table, $dictionary, $id);
+        $this->insertIndexedColumns($this->accessTable($this->table), $data, $id);
+
+        $this->clean();
     }
 
     public function dropAll()
@@ -72,7 +142,7 @@ class RedisDatabaseDriver implements IDatabaseDriver
         return $this->redis->incr(self::ID_PREFIX.':'.$key);
     }
 
-    protected function insertIndexedColumns(Table $table, $dictionary, $id)
+    protected function insertIndexedColumns($table, $data, $id)
     {
         foreach ($table->columns() as $column)
         {
@@ -81,5 +151,40 @@ class RedisDatabaseDriver implements IDatabaseDriver
                 $this->redis->sadd($table->name().':'.$column->getName().':'.$dictionary[$column->getName()], $id);
             }
         }
+    }
+
+    protected function clean()
+    {
+        $this->table = null;
+    }
+
+    function select(array $data)
+    {
+        // TODO: Implement select() method.
+    }
+
+    function update(array $data)
+    {
+        // TODO: Implement update() method.
+    }
+
+    function delete()
+    {
+        // TODO: Implement delete() method.
+    }
+
+    function beginTransaction()
+    {
+        // TODO: Implement beginTransaction() method.
+    }
+
+    function commit()
+    {
+        // TODO: Implement commit() method.
+    }
+
+    function rollBack()
+    {
+        // TODO: Implement rollBack() method.
     }
 }
