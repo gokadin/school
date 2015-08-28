@@ -127,6 +127,8 @@ class AnnotationDriver
             {
                 $addedColumn->addIndex();
             }
+
+            $addedColumn->propertyname($property->getName());
         }
     }
 

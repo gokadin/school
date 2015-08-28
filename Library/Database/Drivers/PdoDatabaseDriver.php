@@ -45,6 +45,8 @@ class PdoDatabaseDriver implements IDatabaseDriver
 
         $stmt = $this->dao->prepare($str);
         $stmt->execute($data);
+
+        return $this->dao->lastInsertId();
     }
 
     public function where($var, $operator, $value = null)

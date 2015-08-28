@@ -7,12 +7,16 @@ use Predis\Client as PredisClient;
 
 class RedisDatabaseDriver implements IDatabaseDriver
 {
-    const ID_PREFIX = 'nextId';
-    const ID_ACCESSOR = 'id';
-    const SCHEMA_PREFIX = 'SCHEMA';
+    const NEXT_ID = '_nextId';
+    const ID = '_id';
+    const IDS = '_ids';
+    const SCHEMA = '_SCHEMA';
+    const COLUMNS = '_columns';
+    const COLUMN = '_column';
 
     protected $redis;
     protected $table;
+    protected $wheres = [];
 
     public function __construct($settings)
     {
@@ -35,12 +39,12 @@ class RedisDatabaseDriver implements IDatabaseDriver
             $columnNames[] = $column->getName();
         }
 
-        $this->redis->sadd(self::SCHEMA_PREFIX.':'.$table->name().':columns', $columnNames);
+        $this->redis->sadd(self::SCHEMA.':'.$table->name().':columns', $columnNames);
 
         foreach ($table->columns() as $column)
         {
-            $this->redis->hmset(self::SCHEMA_PREFIX.':'.$table->name().':column:'.$column->getName(), [
-                'isPrimaryKey' => $column->isPrimaryKey(),
+            $this->redis->hmset(self::SCHEMA.':'.$table->name().':column:'.$column->getName(), [
+                'isPrimaryKey' => $column->isPrimaryKey() ? 1 : 0,
                 'type' => $column->getType(),
                 'size' => $column->getSize(),
                 'precision' => $column->getPrecision(),
@@ -58,11 +62,11 @@ class RedisDatabaseDriver implements IDatabaseDriver
     {
         $t = new Table($table);
 
-        $columnNames = $this->redis->smembers(self::SCHEMA_PREFIX.':'.$table.':columns');
+        $columnNames = $this->redis->smembers(self::SCHEMA.':'.$table.':columns');
 
         foreach ($columnNames as $columnName)
         {
-            $columnProperties = $this->redis->hgetall(self::SCHEMA_PREFIX.':'.$table.':column:'.$columnName);
+            $columnProperties = $this->redis->hgetall(self::SCHEMA.':'.$table.':column:'.$columnName);
 
             if ($columnProperties['isPrimaryKey'])
             {
@@ -74,22 +78,22 @@ class RedisDatabaseDriver implements IDatabaseDriver
             switch ($columnProperties['type'])
             {
                 case 'integer':
-                    $t->integer($columnName);
+                    $column = $t->integer($columnName);
                     break;
                 case 'string':
-                    $t->string($columnName);
+                    $column = $t->string($columnName);
                     break;
                 case 'text':
-                    $t->text($columnName);
+                    $column = $t->text($columnName);
                     break;
                 case 'decimal':
-                    $t->decimal($columnName);
+                    $column = $t->decimal($columnName);
                     break;
                 case 'boolean':
-                    $t->boolean($columnName);
+                    $column = $t->boolean($columnName);
                     break;
                 case 'datetime':
-                    $t->datetime($columnName);
+                    $column = $t->datetime($columnName);
                     break;
             }
 
@@ -125,11 +129,13 @@ class RedisDatabaseDriver implements IDatabaseDriver
     {
         $id = $this->getNextId($this->table);
 
-        $this->redis->hmset($this->table.':'.self::ID_ACCESSOR.':'.$id, $data);
+        $this->redis->hmset($this->table.':'.self::ID.':'.$id, $data);
 
         $this->insertIndexedColumns($this->accessTable($this->table), $data, $id);
 
         $this->clean();
+
+        return $id;
     }
 
     public function dropAll()
@@ -139,16 +145,22 @@ class RedisDatabaseDriver implements IDatabaseDriver
 
     protected function getNextId($key)
     {
-        return $this->redis->incr(self::ID_PREFIX.':'.$key);
+        return $this->redis->incr(self::NEXT_ID.':'.$key);
     }
 
     protected function insertIndexedColumns($table, $data, $id)
     {
         foreach ($table->columns() as $column)
         {
+            if ($column->isPrimaryKey())
+            {
+                $this->redis->sadd($table->name().':'.self::IDS, $id);
+                continue;
+            }
+
             if ($column->hasIndex())
             {
-                $this->redis->sadd($table->name().':'.$column->getName().':'.$dictionary[$column->getName()], $id);
+                $this->redis->sadd($table->name().':'.$column->getName().':'.$data[$column->getName()], $id);
             }
         }
     }
@@ -156,34 +168,37 @@ class RedisDatabaseDriver implements IDatabaseDriver
     protected function clean()
     {
         $this->table = null;
+        $this->wheres = [];
     }
 
-    function select(array $data)
+    public function select(array $data)
     {
-        // TODO: Implement select() method.
+        // ...
+
+        $this->clean();
     }
 
-    function update(array $data)
+    public function update(array $data)
     {
         // TODO: Implement update() method.
     }
 
-    function delete()
+    public function delete()
     {
         // TODO: Implement delete() method.
     }
 
-    function beginTransaction()
+    public function beginTransaction()
     {
         // TODO: Implement beginTransaction() method.
     }
 
-    function commit()
+    public function commit()
     {
         // TODO: Implement commit() method.
     }
 
-    function rollBack()
+    public function rollBack()
     {
         // TODO: Implement rollBack() method.
     }

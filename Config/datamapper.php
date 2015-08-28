@@ -3,7 +3,7 @@
 return [
 
     'config' => [
-        'databaseDriver' => 'redis',
+        'databaseDriver' => 'mysql',
         'cacheDriver' => 'redis',
         'mappingDriver' => 'annotation'
     ],

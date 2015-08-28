@@ -8,6 +8,7 @@ class Column
     const CREATED_AT = 'created_at';
 
     protected $name;
+    protected $propertyName;
     protected $isPrimaryKey;
     protected $type;
     protected $size;
@@ -20,6 +21,7 @@ class Column
     public function __construct($name, $type, $size = -1)
     {
         $this->name = $name;
+        $this->propertyName = null;
         $this->type = $type;
         $this->canBeNull = false;
         $this->size = $size;
@@ -34,6 +36,11 @@ class Column
     {
         $this->isPrimaryKey = true;
         return $this;
+    }
+
+    public function propertyName($name)
+    {
+        $this->propertyName = $name;
     }
 
     public function nullable()
@@ -79,6 +86,11 @@ class Column
     }
 
     /* Accessor functions */
+
+    public function getPropertyName()
+    {
+        return $this->propertyName;
+    }
 
     public function getName()
     {

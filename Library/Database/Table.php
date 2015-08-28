@@ -30,6 +30,7 @@ class Table
     public function increments($name)
     {
         $column = new Column($name, 'integer', 11);
+        $column->addIndex();
         $column->primaryKey();
         return $this->columns[$name] = $column;
     }

@@ -61,14 +61,9 @@ class Database
 
     /* QUERIES */
 
-    public function insert(Table $table, $values)
+    public function table($table)
     {
-        $this->driver->insert($table, $values);
-    }
-
-    public function select($tableName)
-    {
-        $this->driver->select($tableName);
+        return $this->driver->table($table);
     }
 
     /* DEPRECATED */

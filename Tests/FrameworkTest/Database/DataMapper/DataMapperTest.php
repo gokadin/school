@@ -16,8 +16,8 @@ class DataMapperTest extends BaseTest
         parent::setUp();
 
         $databaseSettings = [
-            'driver' => 'redis',
-            'redis' => [
+            'driver' => 'mysql',
+            'redis' => [// change...................
                 'database' => 1
             ]
         ];
@@ -35,7 +35,12 @@ class DataMapperTest extends BaseTest
 
     public function testPersistWhenInsertingANewObject()
     {
-        $this->assertTrue(false);
+        // Arrange
+        $this->dm->persist()
+
+        // Act
+
+        // Assert
     }
 
     public function testFind()
