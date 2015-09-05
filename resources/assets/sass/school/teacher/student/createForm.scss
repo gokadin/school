@@ -1,0 +1,37 @@
+.create-student-form {
+  width: 60%;
+
+  .student-form-activity,
+  .student-form-rate {
+    label {
+      width: 10% !important;
+    }
+
+    input,
+    select {
+      width: 121px !important;
+    }
+  }
+
+  .student-form-rate {
+    .form-error {
+      margin-left: 40% !important;
+      padding-left: 155px !important;
+    }
+  }
+
+  .additional-activities {
+    span:first-child {
+      margin-left: 30%;
+      padding-left: 14px;
+    }
+  }
+
+  .fa-plus {
+    cursor: pointer;
+    color: $color-main;
+    font-size: 20px;
+    margin-left: 30%;
+    padding-left: 15px;
+  }
+}

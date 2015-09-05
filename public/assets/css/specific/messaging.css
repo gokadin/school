@@ -1,0 +1,163 @@
+#new-message-form .select2.select2-container
+{
+    width: 50% !important;
+}
+
+#new-message-form textarea
+{
+    width: 60%;
+}
+
+#new-message-form button
+{
+    width: 100px;
+    height: 40px;
+}
+
+/* USER LIST */
+
+.messaging-user-info
+{
+    border-top: 1px solid black;
+    border-bottom: 1px solid black;
+    height: 80px;
+    background-color: #67b168;
+    color: white;
+    margin-bottom: 8px;
+    cursor: pointer;
+    transition: border-bottom .3s;
+}
+
+.messaging-user-info.open
+{
+    border-bottom: 1px solid #ccc;
+    transition: border-bottom .3s;
+}
+
+#messaging-user-rows-picture img
+{
+    margin-top: 10px;
+}
+
+#messaging-user-rows-name
+{
+    font-size: 24px;
+    margin-left: 10px;
+}
+
+#messaging-user-rows-delete
+{
+    float: right;
+    display: none;
+    margin-right: 5%;
+}
+
+#messaging-user-rows-delete img
+{
+    margin-top: 25px;
+}
+
+#messaging-user-rows div:hover span:last-child
+{
+    display: inline-block;
+}
+
+.expand-transition
+{
+    transition: height .3s ease;
+    height: 500px;
+    overflow: hidden;
+}
+.expand-enter, .expand-leave
+{
+    height: 0px;
+}
+
+.messaging-user-messages
+{
+    position: relative;
+    margin: 10px 0;
+    border-left: 1px solid #ccc;
+    border-right: 1px solid #ccc;
+}
+
+.messaging-user-messages:after
+{
+    content:'';
+    width: 50px;
+    height: 1px;
+    background: #ccc;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+}
+
+.messaging-user-messages:before
+{
+    content: '';
+    width: 50px;
+    height: 1px;
+    background: #ccc;
+    position: absolute;
+    bottom: 0;
+    right: 0;
+}
+
+.messaging-user-messages-inner-container
+{
+    height: 400px;
+    overflow-y: auto;
+}
+
+.new-message-button
+{
+    height: 45px;
+    width: 7%;
+    float: right;
+    background-color: #67b168;
+    border: 1px solid #ccc;
+    color: white;
+    font-size: 20px;
+}
+
+.new-message-input
+{
+    height: 45px;
+    width: 92%;
+    font-size: 18px;
+    padding: 0 10px;
+}
+
+.new-message-input:hover,
+.new-message-input:focus
+{
+    border: 1px solid gray;
+}
+
+.messaging-user-title
+{
+    color: #67b168;
+    margin-left: 5px;
+    margin-top: 10px;
+}
+
+.messaging-user-message
+{
+    border: 3px solid #ccc;
+    border-radius: 4px;
+    padding: 10px;
+    margin: 0 0 10px 0;
+    width: 100%;
+    clear: both;
+    float: left;
+}
+
+.user-messaging-message-inner-container
+{
+    width: 40%;
+}
+
+.user-messaging-message-inner-container.is-outgoing
+{
+    float: right;
+}

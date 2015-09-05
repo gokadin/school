@@ -17,4 +17,9 @@ class Redis
     {
         return call_user_func_array([$this->predis, $name], $arguments);
     }
+
+    public function getRedis()
+    {
+        return $this->predis;
+    }
 }

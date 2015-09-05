@@ -1,0 +1,138 @@
+@layout('frontend.layout')
+
+@section('content')
+
+<div class="main-banner-container">
+    <div class="main-banner-images-container">
+        <div class="banner-images">
+            <!--
+            <img class="banner-image1 active" src="/Web/images/slideshow1.png" />
+            <img class="banner-image2" src="/Web/images/slideshow2.png" />
+            <img class="banner-image3" src="/Web/images/slideshow3.png" />
+            -->
+            <div class="banner-image1 active"></div>
+            <div class="banner-image2"></div>
+            <div class="banner-image3"></div>
+        </div>
+        <div class="banner-arrows">
+            <a href="#" onclick="showPreviousImage();return false;" class="previous-arrow">&lt;</a>
+            <a href="#" onclick="showNextImage();return false;" class="next-arrow">&gt;</a>
+        </div>
+    </div>
+    <div class="banner-bullets">
+        <a href="#" onclick="changeImage(1);return false;" class="banner-bullet1 active"><span>Bullet</span></a>
+        <a href="#" onclick="changeImage(2);return false;" class="banner-bullet2"><span>Bullet</span></a>
+        <a href="#" onclick="changeImage(3);return false;" class="banner-bullet3"><span>Bullet</span></a>
+    </div>
+</div>
+
+<div class="supported">
+    <table cellspacing="0">
+        <tbody>
+        <tr>
+            <td>
+                <img src="" width="100" height="100" />
+                <div class="name">Name1</div>
+            </td>
+            <td>
+                <img src="" width="100" height="100" />
+                <div class="name">Name2</div>
+            </td>
+            <td>
+
+            </td>
+        </tr>
+        <tr>
+            <td>
+
+            </td>
+            <td>
+
+            </td>
+            <td>
+
+            </td>
+        </tr>
+        <tr>
+            <td>
+
+            </td>
+            <td>
+
+            </td>
+            <td>
+
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+<script type="text/javascript">
+    var bannerTimer = 0;
+    var imagesTotal = 3;
+    var currentImage = 1;
+
+    function showPreviousImage() {
+        resetBannerTimer(bannerTimer);
+        removeActiveBannerImage();
+
+        currentImage--;
+        if (currentImage == 0) {
+            currentImage = imagesTotal;
+        }
+
+        addActiveBannerImage();
+    }
+
+    function showNextImage() {
+        resetBannerTimer(bannerTimer);
+        removeActiveBannerImage();
+
+        currentImage++;
+        if (currentImage == imagesTotal + 1) {
+            currentImage = 1;
+        }
+
+        addActiveBannerImage();
+    }
+
+    function changeImage(imageNumber) {
+        if (imageNumber == currentImage) {
+            return;
+        }
+
+        resetBannerTimer(bannerTimer);
+        removeActiveBannerImage();
+
+        currentImage = imageNumber;
+
+        addActiveBannerImage();
+    }
+
+    function removeActiveBannerImage()
+    {
+        $('img.banner-image' + currentImage).removeClass('active');
+        $('a.banner-bullet' + currentImage).removeClass('active');
+        $('img.banner-image' + currentImage).fadeOut(1000);
+    }
+
+    function addActiveBannerImage()
+    {
+        $('img.banner-image' + currentImage).addClass('active');
+        $('a.banner-bullet' + currentImage).addClass('active');
+        $('img.banner-image' + currentImage).fadeIn(1000);
+    }
+
+    function resetBannerTimer()
+    {
+        clearInterval(bannerTimer);
+        //bannerTimer = setInterval(function() { showNextImage(); }, 1000);
+    }
+
+    $(function() {
+        resetBannerTimer();
+    });
+</script>
+
+@stop()

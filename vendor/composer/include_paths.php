@@ -7,8 +7,8 @@ $baseDir = dirname($vendorDir);
 
 return array(
     $vendorDir . '/phpunit/php-file-iterator',
-    $vendorDir . '/phpunit/phpunit-selenium',
-    $vendorDir . '/phpunit/phpunit-story',
     $vendorDir . '/phpunit/dbunit',
     $vendorDir . '/symfony/yaml',
+    $vendorDir . '/phpunit/phpunit-selenium',
+    $vendorDir . '/phpunit/phpunit-story',
 );
