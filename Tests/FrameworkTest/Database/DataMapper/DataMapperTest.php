@@ -2,6 +2,7 @@
 
 namespace FrameworkTest\Database\DataMapper;
 
+use FrameworkTest\TestData\Database\DataMapper\SimpleEntity;
 use Library\Database\Database;
 use Library\Database\DataMapper\DataMapper;
 use Tests\FrameworkTest\BaseTest;
@@ -17,8 +18,11 @@ class DataMapperTest extends BaseTest
 
         $databaseSettings = [
             'driver' => 'mysql',
-            'redis' => [// change...................
-                'database' => 1
+            'mysql' => [
+                'host' => 'localhost',
+                'database' => 'FrameworkTest',
+                'username' => 'root',
+                'password' => 'f10ygs87'
             ]
         ];
 
@@ -35,12 +39,15 @@ class DataMapperTest extends BaseTest
 
     public function testPersistWhenInsertingANewObject()
     {
-        // Arrange
-        $this->dm->persist()
-
         // Act
+        $this->dm->persist(new Entity(1, 2));
+        $results = $this->database->table('simpleEntity')->get();
 
         // Assert
+        $this->assertNotNull($results);
+        $this->assertEquals(1, sizeof($results));
+        $this->assertEquals(1, $results[0]->one());
+        $this->assertEquals(2, $results[0]->two());
     }
 
     public function testFind()
