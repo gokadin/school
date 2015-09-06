@@ -3,7 +3,6 @@
 namespace FrameworkTest\Console\DataMapper;
 
 use Library\Console\Modules\DataMapper\DataMapperRedisCacheDriver;
-use Library\Database\Column;
 use Library\Database\Database;
 use Library\Database\Schema;
 use Library\Database\Table;

@@ -42,7 +42,7 @@ class AnnotationDriver
     {
         $r = new ReflectionClass($class);
 
-        $t = new Table($this->getName($r), $r->getShortName());
+        $t = new Table($this->getName($r), $r->getName());
 
         $this->buildColumns($r, $t);
 
@@ -77,7 +77,8 @@ class AnnotationDriver
 
             if (isset($parsed['Id']))
             {
-                $table->increments($this->getColumnName($property, $parsed['Id']));
+                $column = $table->increments($this->getColumnName($property, $parsed['Id']));
+                $column->propertyName($property->getName());
                 continue;
             }
 
@@ -126,6 +127,11 @@ class AnnotationDriver
             if (isset($columnArgs['indexed']) && $columnArgs['indexed'])
             {
                 $addedColumn->addIndex();
+            }
+
+            if (isset($columnArgs['nullable']) && $columnArgs['nullable'])
+            {
+                $addedColumn->nullable();
             }
 
             $addedColumn->propertyname($property->getName());

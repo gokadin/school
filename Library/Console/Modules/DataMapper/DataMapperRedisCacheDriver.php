@@ -3,6 +3,7 @@
 namespace Library\Console\Modules\DataMapper;
 
 use Library\Database\Schema;
+use Library\Database\Table;
 use Predis\Client as PredisClient;
 
 class DataMapperRedisCacheDriver
@@ -70,7 +71,8 @@ class DataMapperRedisCacheDriver
 
             if ($columnProperties['isPrimaryKey'])
             {
-                $t->increments($columnName);
+                $column = $t->increments($columnName);
+                $column->propertyName($columnProperties['propertyName']);
                 continue;
             }
 

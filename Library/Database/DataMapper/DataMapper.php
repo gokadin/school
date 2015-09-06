@@ -2,7 +2,9 @@
 
 namespace Library\Database\DataMapper;
 
+use Carbon\Carbon;
 use Library\Console\Modules\DataMapper\DataMapperRedisCacheDriver;
+use Library\Database\Column;
 use Library\Database\Database;
 use Library\Database\Table;
 use Symfony\Component\Yaml\Exception\RuntimeException;
@@ -11,6 +13,7 @@ use ReflectionException;
 
 class DataMapper
 {
+    protected $entities = [];
     protected $database;
     protected $cacheDriver;
     protected $classes;
@@ -21,15 +24,15 @@ class DataMapper
         $this->database = $database;
         $this->classes = $settings['classes'];
 
-        $this->initializeCacheDriver($settings['config']['cacheDriver']);
+        $this->initializeCacheDriver($settings);
     }
 
-    protected function initializeCacheDriver($cacheDriver)
+    protected function initializeCacheDriver($settings)
     {
-        switch ($cacheDriver)
+        switch ($settings['config']['cacheDriver'])
         {
             default:
-                $this->cacheDriver = new DataMapperRedisCacheDriver();
+                $this->cacheDriver = new DataMapperRedisCacheDriver($settings['config']['redisDatabase']);
                 break;
         }
     }
@@ -80,7 +83,7 @@ class DataMapper
         foreach ($this->commands as $name => $data)
         {
             $commandName = 'execute'.ucfirst($name);
-            is_null($data) ? $this->commandName() : $this->commandName($data);
+            is_null($data) ? $this->$commandName() : $this->$commandName($data);
         }
     }
 
@@ -121,7 +124,9 @@ class DataMapper
         }
 
         $r = new ReflectionClass($object);
-        if (is_null($r->getProperty($table->getPrimaryKey()->getPropertyName())->getValue($object)))
+        $primaryKey = $r->getProperty($table->getPrimaryKey()->getPropertyName());
+        $primaryKey->setAccessible(true);
+        if (is_null($primaryKey->getValue($object)))
         {
             $this->insert($object, $table, $r);
         }
@@ -132,11 +137,12 @@ class DataMapper
     protected function insert($object, $table, ReflectionClass $r)
     {
         $data = [];
-        foreach ($table->columns as $column)
+        foreach ($table->columns() as $column)
         {
             try
             {
                 $property = $r->getProperty($column->getPropertyName());
+                $property->setAccessible(true);
             }
             catch (ReflectionException $e)
             {
@@ -144,10 +150,21 @@ class DataMapper
             }
 
             $value = $property->getValue($object);
+            if (is_null($value))
+            {
+                if ($column->getName() == Column::CREATED_AT || $column->getName() == Column::UPDATED_AT)
+                {
+                    $data[$column->getName()] = Carbon::now();
+                    continue;
+                }
+            }
+
             $data[$column->getName()] = $value;
         }
 
-        $this->database->table($table)->insert($data);
+        $this->database->table($table->name())->insert($data);
+
+        $this->entities[$r->getName()][$data[$table->getPrimaryKey()->getPropertyName()]] = $object;
     }
 
     protected function update($object, $table)
