@@ -1,6 +1,7 @@
 <?php
 
 namespace Tests\FrameworkTest\TestData\Console\DataMapper;
+
 use Library\Database\DataMapper\DataMapperTimestamps;
 
 /**

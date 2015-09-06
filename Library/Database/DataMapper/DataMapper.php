@@ -138,7 +138,7 @@ class DataMapper
             {
                 $property = $r->getProperty($column->getPropertyName());
             }
-            catch (ReflectionException)
+            catch (ReflectionException $e)
             {
                 continue;
             }

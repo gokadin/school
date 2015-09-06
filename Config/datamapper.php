@@ -5,6 +5,7 @@ return [
     'config' => [
         'databaseDriver' => 'mysql',
         'cacheDriver' => 'redis',
+        'redisDatabase' => 15,
         'mappingDriver' => 'annotation'
     ],
 

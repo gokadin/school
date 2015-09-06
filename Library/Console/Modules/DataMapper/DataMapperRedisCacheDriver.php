@@ -7,12 +7,14 @@ use Predis\Client as PredisClient;
 
 class DataMapperRedisCacheDriver
 {
+    const SCHEMA = '_SCHEMA';
+
     protected $redis;
 
-    public function __construct()
+    public function __construct($database)
     {
         $this->redis = new PredisClient([
-            'database' => 15
+            'database' => $database
         ]);
     }
 

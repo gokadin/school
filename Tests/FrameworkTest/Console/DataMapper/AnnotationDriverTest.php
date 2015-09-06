@@ -17,7 +17,7 @@ class AnnotationDriverTest extends BaseTest
         parent::setUp();
 
         $this->databaseSettings = [
-            'driver' => 'redis',
+            'driver' => 'redis', // does not matter for this class
             'redis' => [
                 'database' => 0
             ]
