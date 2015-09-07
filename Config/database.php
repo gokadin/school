@@ -2,7 +2,7 @@
 
 return [
 
-    'driver' => 'redis',
+    'driver' => 'mysql',
 
     'mysql' => [
         'host' => env('DATABASE_HOST'),

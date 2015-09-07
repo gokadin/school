@@ -93,7 +93,9 @@ class PdoDatabaseDriver implements IDatabaseDriver
         $i = 0;
         foreach ($data as $key => $value)
         {
-            $i == 0 ? $i++ : $str .= '.';
+            $i == 0 ? $i++ : $str .= ',';
+
+            $value = '\''.$value.'\'';
 
             $str .= $key.' = '.$value;
         }
@@ -230,7 +232,17 @@ class PdoDatabaseDriver implements IDatabaseDriver
 
             $str .= ' '.$this->wheres[$i]['var'];
             $str .= ' '.$this->wheres[$i]['operator'];
-            $str .= ' '.$this->wheres[$i]['value'];
+
+            $value = $this->wheres[$i]['value'];
+            if (trim($this->wheres[$i]['operator']) != 'in')
+            {
+                if (substr($value, 0, 1) != '\'' && substr($value, -1) != '\'')
+                {
+                    $value = '\''.$value.'\'';
+                }
+            }
+
+            $str .= ' '.$value;
         }
 
         return $str;

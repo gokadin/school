@@ -21,6 +21,8 @@ class DataMapperRedisCacheDriver
 
     public function loadSchema(Schema $schema)
     {
+        $this->redis->flushdb();
+
         foreach ($schema->tables() as $table)
         {
             $this->redis->set($table->modelName().':table', $table->name());

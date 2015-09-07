@@ -13,7 +13,6 @@ use ReflectionException;
 
 class DataMapper
 {
-    protected $entities = [];
     protected $database;
     protected $cacheDriver;
     protected $classes;
@@ -44,12 +43,12 @@ class DataMapper
             return;
         }
 
-        $this->addCommand('persist', $object);
+        $this->addCommand('persist', get_class($object), [$object]);
     }
 
     public function find($class, $id)
     {
-        if (!isset($this->classes[$class]))
+        if (!in_array($class, $this->classes))
         {
             return null;
         }
@@ -57,14 +56,14 @@ class DataMapper
         $table = $this->cacheDriver->getTableByClass($class);
         $data = $this->database->table($table->name())
             ->where($table->getPrimaryKey()->getName(), $id)
-            ->get();
+            ->select();
 
         if (sizeof($data) == 0)
         {
             return null;
         }
 
-        return $this->buildEntity($table, $data);
+        return $this->buildEntity($class, $table, $data[0]);
     }
 
     public function findOrFail($class, $id)
@@ -78,37 +77,63 @@ class DataMapper
         return $entity;
     }
 
+    public function delete($classOrObject, $id = 0)
+    {
+        if (is_object($classOrObject))
+        {
+            $this->addCommand('delete', get_class($classOrObject), [$classOrObject]);
+            return;
+        }
+
+        $this->addCommand('delete', $classOrObject, [$classOrObject, $id]);
+    }
+
     public function flush()
     {
-        foreach ($this->commands as $name => $data)
+        foreach ($this->commands as $command => $classes)
         {
-            $commandName = 'execute'.ucfirst($name);
-            is_null($data) ? $this->$commandName() : $this->$commandName($data);
+            foreach ($classes as $class => $data)
+            {
+                foreach ($data as $args)
+                {
+                    switch ($command)
+                    {
+                        case 'persist':
+                            $this->executePersist($args[0]);
+                            break;
+                        case 'delete':
+                            sizeof($args) == 1
+                                ? $this->executeDeleteOnObject($args[0])
+                                : $this->executeDeleteOnClass($args[0], $args[1]);
+                            break;
+                    }
+                }
+            }
         }
     }
 
-    protected function addCommand($name, $data = null)
+    protected function addCommand($name, $class, array $args = [])
     {
-        $this->commands[$name] = $data;
+        $this->commands[$name][$class][] = $args;
     }
 
-    protected function buildEntity(Table $table, $data)
+    protected function buildEntity($class, Table $table, $data)
     {
-        $entityName = $table->modelName();
-        $entity = new $entityName();
-        $r = new ReflectionClass($entity);
+        $r = new ReflectionClass($class);
+        $entity = $r->newInstanceWithoutConstructor();
 
-        $properties = $r->getProperties();
-
-        $columnPropertyNames = array_keys($table->columns());
-        foreach ($properties as $property)
+        foreach ($table->columns() as $column)
         {
-            if (!in_array($property->getName(), $columnPropertyNames))
+            $property = $r->getProperty($column->getPropertyName());
+            $property->setAccessible(true);
+
+            if (!array_key_exists($column->getName(), $data))
             {
-                continue;
+                throw new RuntimeException('Could not build entity '.$class
+                    .'. Column '.$column->getName().' was not found in the database.');
             }
 
-            $r->getProperty($property->getName())->setValue($data[$table->columns()[$property->getName()]->getName()]);
+            $property->setValue($entity, $data[$column->getName()]);
         }
 
         return $entity;
@@ -116,11 +141,12 @@ class DataMapper
 
     protected function executePersist($object)
     {
-        $table = $this->cacheDriver->getTableByClass(get_class($object));
+        $class = get_class($object);
+        $table = $this->cacheDriver->getTableByClass($class);
 
         if (is_null($table))
         {
-            throw new RuntimeException('Could not persist entity '.get_class($object).'. Entity record not found.');
+            throw new RuntimeException('Could not persist entity '.$class.'. Entity record not found.');
         }
 
         $r = new ReflectionClass($object);
@@ -128,10 +154,10 @@ class DataMapper
         $primaryKey->setAccessible(true);
         if (is_null($primaryKey->getValue($object)))
         {
-            $this->insert($object, $table, $r);
+            return $this->insert($object, $table, $r);
         }
 
-        $this->update($object, $table);
+        return $this->update($object, $table, $r);
     }
 
     protected function insert($object, $table, ReflectionClass $r)
@@ -139,6 +165,11 @@ class DataMapper
         $data = [];
         foreach ($table->columns() as $column)
         {
+            if ($column->isPrimaryKey())
+            {
+                continue;
+            }
+
             try
             {
                 $property = $r->getProperty($column->getPropertyName());
@@ -162,13 +193,77 @@ class DataMapper
             $data[$column->getName()] = $value;
         }
 
-        $this->database->table($table->name())->insert($data);
+        $id = $this->database->table($table->name())->insert($data);
 
-        $this->entities[$r->getName()][$data[$table->getPrimaryKey()->getPropertyName()]] = $object;
+        $primaryKey = $r->getProperty($table->getPrimaryKey()->getPropertyName());
+        $primaryKey->setAccessible(true);
+        $primaryKey->setValue($object, $id);
     }
 
-    protected function update($object, $table)
+    protected function update($object, $table, ReflectionClass $r)
     {
+        $id = 0;
+        foreach ($table->columns() as $column)
+        {
+            try
+            {
+                $property = $r->getProperty($column->getPropertyName());
+                $property->setAccessible(true);
+            }
+            catch (ReflectionException $e)
+            {
+                continue;
+            }
 
+            if ($column->getName() == Column::UPDATED_AT)
+            {
+                $data[$column->getName()] = Carbon::now();
+                continue;
+            }
+
+            if ($column->isPrimaryKey())
+            {
+                $id = $property->getValue($object);
+                continue;
+            }
+
+            $value = $property->getValue($object);
+
+            $data[$column->getName()] = $value;
+        }
+
+        if ($id == 0)
+        {
+            return false;
+        }
+
+        $this->database->table($table->name())
+            ->where($table->getPrimaryKey()->getName(), $id)
+            ->update($data);
+    }
+
+    protected function executeDeleteOnObject($object)
+    {
+        $r = new ReflectionClass($object);
+
+        $table = $this->cacheDriver->getTableByClass(get_class($object));
+
+        $primaryKeyColumn = $table->getPrimaryKey();
+        $primaryKey = $r->getProperty($primaryKeyColumn->getPropertyName());
+        $primaryKey->setAccessible(true);
+        $id = $primaryKey->getValue($object);
+
+        $this->database->table($table->name())
+            ->where($primaryKeyColumn->getName(), $id)
+            ->delete();
+    }
+
+    protected function executeDeleteOnClass($class, $id)
+    {
+        $table = $this->cacheDriver->getTableByClass($class);
+
+        $this->database->table($table->name())
+            ->where($table->getPrimarykey()->getName(), $id)
+            ->delete();
     }
 }

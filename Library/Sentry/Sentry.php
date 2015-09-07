@@ -2,18 +2,28 @@
 
 namespace Library\Sentry;
 
+use Library\Database\DataMapper\DataMapper;
+
 class Sentry
 {
     protected $user;
 
-    public function __construct()
+    public function __construct(DataMapper $dm)
     {
         $user = null;
 
         if ($this->loggedIn())
         {
-            $class = '\\Models\\'.$_SESSION['type'];
-            $this->user = $class::find($_SESSION['id']);
+            $userClass = '';
+            switch ($_SESSION['type'])
+            {
+                case 'Teacher':
+                    $userClass = 'Teacher';
+                    break;
+            }
+
+            $class = 'App\\Domain\\Users\\'.$userClass;
+            $this->user = $dm->findOrFail($class, $_SESSION['id']);
             if (is_null($this->user))
             {
                 $this->logout();

@@ -37,6 +37,8 @@ class ContainerConfiguration
 
         $databaseSettings = require $app->basePath().'Config/database.php';
         $database = new Database($databaseSettings);
+        $datamapperSettings = require $app->basePath().'Config/datamapper.php';
+        $dm = new DataMapper($database, $datamapperSettings);
         $this->container->registerInstance('database', $database);
 
         $this->container->registerInstance('config', new Config());
@@ -50,7 +52,7 @@ class ContainerConfiguration
         $this->container->registerInstance('redirect', new Redirect());
         $this->container->registerInstance('shao', new Shao());
         $this->container->registerInstance('viewFactory', new ViewFactory());
-        $this->container->registerInstance('sentry', new Sentry());
+        $this->container->registerInstance('sentry', new Sentry($dm));
         $this->container->registerInstance('log', new Log());
         $this->container->registerInstance('queue', new Queue());
         $this->container->registerInstance('eventManager', new EventManager());

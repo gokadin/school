@@ -47,9 +47,24 @@ class SimpleEntity
         $this->str2 = $str2;
     }
 
+    public function setId($id)
+    {
+        $this->id = $id;
+    }
+
+    public function getId()
+    {
+        return $this->id;
+    }
+
     public function setOne($one)
     {
         $this->one = $one;
+    }
+
+    public function getOne()
+    {
+        return $this->one;
     }
 
     public function setTwo($two)
@@ -57,14 +72,29 @@ class SimpleEntity
         $this->two = $two;
     }
 
+    public function getTwo()
+    {
+        return $this->two;
+    }
+
     public function setStr1($str1)
     {
         $this->str1 = $str1;
     }
 
+    public function getStr1()
+    {
+        return $this->str1;
+    }
+
     public function setStr2($str2)
     {
         $this->str2 = $str2;
+    }
+
+    public function getStr2()
+    {
+        return $this->str2;
     }
 
     public function setText1($text1)
