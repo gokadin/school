@@ -1,0 +1,201 @@
+.memberships {
+  margin-top: 40px;
+  margin-left: 2%;
+  margin-right: 2%;
+  clear: both;
+  text-align: center; }
+
+.membership {
+  width: 300px;
+  display: inline-block;
+  border: 3px solid #ccc;
+  margin-right: 10px;
+  margin-bottom: 10px; }
+
+@media (max-width: 767px) {
+  .membership {
+    clear: both; } }
+@media (min-width: 768px) {
+  .membership {
+    width: 260px; } }
+.membership-header {
+  height: 60px;
+  line-height: 60px;
+  font-size: 26px;
+  background-color: #CFCFCF; }
+
+.membership-pricing {
+  color: #999999;
+  font-size: 30px;
+  height: 80px;
+  line-height: 80px;
+  border-bottom: 1px solid #ccc; }
+
+.membership-description table {
+  width: 100%;
+  padding: 10px;
+  text-align: left;
+  font-size: 18px; }
+
+.membership-description table .fa {
+  color: #67b168;
+  width: 100%;
+  text-align: center;
+  margin-right: 5px; }
+
+.membership-footer {
+  height: 50px;
+  line-height: 50px; }
+
+.membership-footer button {
+  width: 100px;
+  height: 40px;
+  background-color: #67b168;
+  cursor: pointer;
+  font-size: 18px;
+  color: white; }
+
+.membership:hover,
+.memberships .active {
+  border-color: #67b168; }
+
+.membership:hover .membership-header,
+.memberships .active .membership-header {
+  background-color: #67b168;
+  color: #f5f5f5; }
+
+.membership:hover .membership-pricing,
+.memberships .active .membership-pricing {
+  color: #67b168; }
+
+.signup {
+  margin-top: 30px; }
+
+#signup-form {
+  width: 300px;
+  margin: 0 auto;
+  border: 5px solid #ccc;
+  border-radius: 20px; }
+
+.g-form-header {
+  font-size: 36px;
+  text-align: center;
+  padding-top: 5px;
+  padding-bottom: 20px;
+  color: #67b168; }
+
+.g-form-label {
+  display: none;
+  text-align: right;
+  font-size: 22px;
+  line-height: 30px;
+  width: 160px;
+  vertical-align: top;
+  margin-top: 10px; }
+
+.g-form-label .required {
+  color: #b94a48; }
+
+@media (min-width: 768px) {
+  #signup-form {
+    width: 500px; }
+
+  .g-form-label {
+    display: inline-block; } }
+.g-form-text {
+  display: inline-block;
+  clear: both;
+  display: none;
+  text-align: left;
+  font-size: 22px;
+  line-height: 40px;
+  width: 160px;
+  margin-left: 10px;
+  color: #999; }
+
+.g-form-input {
+  display: inline-block;
+  clear: both;
+  margin-bottom: 5px;
+  margin-top: 5px; }
+
+.g-form-input input {
+  color: #333;
+  padding-right: 30px;
+  border-radius: 0;
+  border: 1px solid #ccc;
+  width: 250px;
+  height: 40px;
+  padding-left: 5px;
+  margin-left: 5px;
+  font-size: 20px; }
+
+.g-form-input textarea {
+  width: 279px;
+  border-radius: 0;
+  border: 1px solid #ccc;
+  margin-left: 5px;
+  padding: 3px; }
+
+.g-form-input input:focus {
+  border-color: #999;
+  outline: 0 none;
+  box-shadow: none !important; }
+
+.g-form-input textarea:focus {
+  border-color: #999;
+  outline: 0 none; }
+
+.g-form-input input.valid,
+.g-form-input textarea.valid {
+  border-color: #8aac3a; }
+
+.g-form-input input.invalid,
+.g-form-input textarea.invalid {
+  border-color: #b94a48; }
+
+.g-form-input .input-icon i {
+  float: right;
+  display: none;
+  margin: 15px 10px 0 -25px;
+  width: 18px;
+  height: 18px;
+  font-size: 18px;
+  text-align: center;
+  color: #b94a48; }
+
+@media (min-width: 768px) {
+  .g-form-input .input-icon i {
+    margin: 13px 20px 4px -25px; } }
+.g-form-input .input-icon.show i {
+  display: block; }
+
+.g-form-input .input-message {
+  color: #b94a48;
+  padding-left: 7px;
+  display: none; }
+
+.g-form-input .input-message.show {
+  display: inline-block; }
+
+.g-form-footer {
+  margin-top: 20px;
+  height: 70px; }
+
+.g-form-footer button {
+  width: 100%;
+  height: 70px;
+  border-radius: 0;
+  border: 1px solid #67b168;
+  border-top: 1px solid #303030;
+  border-bottom-left-radius: 16px;
+  border-bottom-right-radius: 16px;
+  background-color: #67b168;
+  color: #f5f5f5;
+  font-size: 28px;
+  cursor: pointer; }
+
+.g-form-footer button:hover {
+  background-color: #85C186;
+  border: 1px solid #85C186;
+  border-top: 1px solid #303030; }

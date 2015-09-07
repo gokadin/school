@@ -1,8 +1,8 @@
 $color-main: #67b168;
 $color-error: #b94a48;
 
-@import 'school/teacher/student/createForm.scss';
-@import 'school/teacher/payment.scss';
+@import './node_modules/font-awesome/scss/font-awesome';
+@import 'frontend/layout';
 
 body {
 
@@ -165,4 +165,250 @@ body {
       margin-left: 5px;
     }
   }
+}
+
+a
+{
+  outline: 0;
+}
+
+
+a:hover, a:active, a:focus {
+  outline: 0;
+}
+
+.modal-dialog
+{
+  z-index: 1050;
+}
+
+input[type="file"]:focus,
+input[type="radio"]:focus,
+input[type="checkbox"]:focus
+{
+  outline: none;
+}
+
+/* DEFAULT LAYOUTS */
+
+.default-center
+{
+  margin-left: 2%;
+  margin-right: 2%;
+  margin-top: 20px;
+}
+
+.default-wide
+{
+  margin-left: 2%;
+  margin-right: 2%;
+  margin-top: 20px;
+}
+
+/* FORMS */
+
+/* Custom style 1 */
+
+.custom-1 .form-row
+{
+
+}
+
+.custom-1 label
+{
+  display: inline-block;
+  text-align: right;
+  font-size: 22px;
+  line-height: 40px;
+  height: 40px;
+  width: 35%;
+  font-weight: normal;
+}
+
+.custom-1 label.required:after
+{
+  content: "*";
+  color: darkred;
+}
+
+.custom-1 input
+{
+  display: inline-block;
+  clear: both;
+  margin-bottom: 5px;
+  margin-top: 5px;
+  color: #333;
+  padding-right: 5px;
+  border-radius: 0;
+  border: 1px solid #CCC;
+  width: 55%;
+  height: 40px;
+  padding-left: 5px;
+  margin-left: 5px;
+  font-size: 20px;
+}
+
+.custom-1 select
+{
+  display: inline-block;
+  clear: both;
+  margin-bottom: 5px;
+  margin-top: 5px;
+  border-radius: 0;
+  border: 1px solid #CCC;
+  width: 55%;
+  height: 40px;
+  font-size: 17px;
+  margin-left: 5px;
+  padding-left: 5px;
+  padding-right: 5px;
+  background-color: white;
+}
+
+.custom-1 input.valid
+{
+  border-color: #67b168 !important;
+}
+
+.custom-1 input.invalid
+{
+  border-color: darkred !important;
+}
+
+.custom-1 input[type=text]:focus,
+.custom-1 input[type=email]:focus,
+.custom-1 input[type=password]:focus
+{
+  border-color: #666666;
+}
+
+.custom-1 .form-row div.form-error
+{
+  color: darkred;
+  font-size: 14px;
+  margin-left: 35%;
+  padding-left: 10px;
+}
+
+/* JQUERY UI TABS */
+
+.tabs-styled
+{
+  border: none;
+  padding: 0;
+}
+
+.tabs-styled .ui-tabs-nav
+{
+  background: none;
+  border: none;
+  border-bottom: 1px solid #ccc;
+  border-radius: 0px;
+  padding-left: 0px;
+}
+
+.tabs-styled .ui-tabs-nav li
+{
+  border-radius: 0px;
+  width: 120px;
+  height: 40px;
+  padding-bottom: 40px !important;
+  background: white !important;
+}
+
+.tabs-styled .ui-tabs-nav li:hover
+{
+  border: 1px solid #ccc;
+  border-bottom: none;
+}
+
+.tabs-styled .ui-tabs-nav li.ui-tabs-active
+{
+  padding-bottom: 40px;
+  border: none;
+  border-top: 3px solid #D11919;
+  border-left: 1px solid #ccc;
+  border-right: 1px solid #ccc;
+}
+
+.tabs-styled .ui-tabs-nav .ui-tabs-anchor
+{
+  width: 120px;
+  padding: 0;
+  line-height: 35px;
+  text-align: center;
+  font-size: 18px;
+  font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+}
+
+.tabs-styled.ui-tabs div.ui-tabs-panel
+{
+  padding: 0 !important;
+  padding-top: 20px !important;
+}
+
+/* FLASH */
+
+#flash
+{
+  display: none;
+}
+
+#flash.active
+{
+  display: block;
+  height: 50px;
+  background-color: #ccc;
+  font-size: 22px;
+  text-align: left;
+  line-height: 50px;
+  padding-right: 15px;
+  padding-left: 15px;
+  margin-bottom: 10px;
+  border-radius: 3px;
+}
+
+#flash.active span
+{
+  float: right;
+}
+
+#flash.success
+{
+  background-color: green;
+}
+
+#flash.error
+{
+
+}
+
+.flash-close
+{
+
+}
+
+/* DISABLED BUTTON */
+
+button:disabled
+{
+  pointer-events: auto !important;
+  cursor: not-allowed;
+}
+
+/* SELECT2 */
+
+.select2.select2-container
+{
+  width: 100% !important;
+  margin-bottom: 5px !important;
+}
+
+.select2-search__field
+{
+  width: 100% !important;
+}
+
+.select2-container--default .select2-selection--multiple {
+  border-radius: 0px !important;
 }

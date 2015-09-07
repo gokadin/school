@@ -28,5 +28,4 @@ _ReSharper*/
 [Tt]est[Rr]esult*
 _ide_helper.php
 .env*
-todo
-todo~
+.sass-cache

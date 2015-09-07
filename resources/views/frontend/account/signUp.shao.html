@@ -6,27 +6,27 @@
 
 <div class="memberships">
 
-    @for ($i = 0; $i < sizeof($memberships); $i++)
+    @for ($i = 0; $i < sizeof($subscriptions); $i++)
         <div class="membership membership{{ $i + 1 }} @if ($i == 0) active @endif ">
             <div class="membership-header">
-                {{ $memberships[$i]['name'] }}
+                {{ $subscriptions[$i]['name'] }}
             </div>
             <div class="membership-body">
-                <div class="membership-pricing">{{ $memberships[$i]['price'] }}</div>
+                <div class="membership-pricing">{{ $subscriptions[$i]['price'] }}</div>
                 <div class="membership-description">
                     <table>
                         <tr>
-                            <td><span class="fa fa-group"></span></td>
+                            <td><i class="fa fa-users"></i></td>
                             <td>Students:</td>
-                            <td>{{ $memberships[$i]['numStudents'] }}</td>
+                            <td>{{ $subscriptions[$i]['numStudents'] }}</td>
                         </tr>
                         <tr>
-                            <td><span class="fa fa-server"></span></td>
+                            <td><i class="fa fa-server"></i></td>
                             <td>Storage space:</td>
-                            <td>{{ $memberships[$i]['storageSpace'] }}</td>
+                            <td>{{ $subscriptions[$i]['storageSpace'] }}</td>
                         </tr>
                         <tr>
-                            <td><span class="fa fa-lock"></span></td>
+                            <td><i class="fa fa-lock"></i></td>
                             <td>SSL encryption:</td>
                             <td>Yes</td>
                         </tr>

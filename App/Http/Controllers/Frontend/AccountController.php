@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Frontend;
 
+use App\Domain\Subscriptions\SubscriptionsTypes;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Frontend\PreRegistrationRequest;
 use App\Http\Requests\Frontend\LoginRequest;
@@ -24,9 +25,9 @@ class AccountController extends Controller
 
     public function signup()
     {
-        $memberships = Subscription::getMembershipsArray();
-
-        return view('frontend.account.signUp', compact('memberships'));
+        return view('frontend.account.signUp', [
+            'subscriptions' => SubscriptionsTypes::describeSubscriptions()
+        ]);
     }
 
     public function login(LoginRequest $request)
