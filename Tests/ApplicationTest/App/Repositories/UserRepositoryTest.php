@@ -3,35 +3,50 @@
 namespace ApplicationTest\App\Repositories;
 
 use App\Repositories\UserRepository;
-use Library\Facades\Redis;
 use Tests\ApplicationTest\BaseTest;
 
 class UserRepositoryTest extends BaseTest
 {
+    protected $repository;
+
+    public function setUp()
+    {
+        parent::setUp();
+
+        $this->setUpDatabase();
+
+        $this->setUpDatamapper([
+            \App\Domain\Subscriptions\Subscription::class
+        ]);
+
+        $this->repository = new UserRepository($this->dm);
+    }
+
     public function tearDown()
     {
         parent::tearDown();
 
-        Redis::getRedis()->flushdb();
+        $this->flushRedis(14);
+        $this->db->dropAll();
     }
 
     public function testPreRegisterTeacher()
     {
-        // Arrange
-        $repository = new UserRepository();
-
         // Act
-        $id = $repository->preRegisterTeacher([
+        $id = $this->repository->preRegisterTeacher([
             'firstName' => 'fname',
             'lastName' => 'lname',
             'email' => 'an@email.com',
             'subscriptionType' => 1
         ]);
-        $tempTeacher = $repository->findTempTeacher($id);
+//        $tempTeacher = $repository->findTempTeacher($id);
 
         // Assert
-        $this->assertEquals('fname', $tempTeacher->first_name);
-        $this->assertEquals('lname', $tempTeacher->last_name);
-        $this->assertEquals('an@email.com', $tempTeacher->email);
+        $subscription = $this->db->table('subscriptions')->select()[0];
+        $this->assertNotNull($subscription);
+        $this->assertEquals(1, $subscription['type']);
+//        $this->assertEquals('fname', $tempTeacher->first_name);
+//        $this->assertEquals('lname', $tempTeacher->last_name);
+//        $this->assertEquals('an@email.com', $tempTeacher->email);
     }
 }

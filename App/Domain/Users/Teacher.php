@@ -3,7 +3,7 @@
 namespace App\Domain\Users;
 
 /**
- * @Entity(name="teacher")
+ * @Entity(name="teachers")
  */
 class Teacher
 {

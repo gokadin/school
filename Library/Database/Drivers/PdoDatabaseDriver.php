@@ -157,10 +157,10 @@ class PdoDatabaseDriver implements IDatabaseDriver
                 $columnStr .= ' NOT NULL';
             if (!is_null($column->getDefault()))
             {
-                $str .= ' DEFAULT';
+                $columnStr .= ' DEFAULT';
                 is_string($column->getDefault())
-                    ? $str .= '\' '.$column->getDefault().'\''
-                    : $str .= ' '.$column->getDefault();
+                    ? $columnStr .= ' \''.$column->getDefault().'\''
+                    : $columnStr .= ' '.$column->getDefault();
             }
 
             $columnsStr[] = $columnStr;

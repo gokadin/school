@@ -183,6 +183,11 @@ class DataMapper
             $value = $property->getValue($object);
             if (is_null($value))
             {
+                if ($column->isDefault())
+                {
+                    continue;
+                }
+
                 if ($column->getName() == Column::CREATED_AT || $column->getName() == Column::UPDATED_AT)
                 {
                     $data[$column->getName()] = Carbon::now();

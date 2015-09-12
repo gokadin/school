@@ -134,6 +134,11 @@ class AnnotationDriver
                 $addedColumn->nullable();
             }
 
+            if (isset($columnArgs['default']))
+            {
+                $addedColumn->default($columnArgs['default']);
+            }
+
             $addedColumn->propertyname($property->getName());
         }
     }

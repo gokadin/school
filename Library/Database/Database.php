@@ -85,18 +85,18 @@ class Database
 //        return $query;
 //    }
 
-//    public function beginTransaction()
-//    {
-//        $this->dao->beginTransaction();
-//    }
-//
-//    public function commit()
-//    {
-//        $this->dao->commit();
-//    }
-//
-//    public function rollBack()
-//    {
-//        $this->dao->rollBack();
-//    }
+    public function beginTransaction()
+    {
+        $this->driver->beginTransaction();
+    }
+
+    public function commit()
+    {
+        $this->driver->commit();
+    }
+
+    public function rollBack()
+    {
+        $this->driver->rollBack();
+    }
 }

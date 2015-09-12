@@ -2,19 +2,18 @@
 
 namespace App\Repositories;
 
-use Carbon\Carbon;
 use Library\Facades\DB;
 use Library\Facades\Redis;
 use Library\Redis\RedisModel;
 use Models\TempTeacher;
-use Models\Subscription;
+use App\Domain\Subscriptions\Subscription;
 use Models\Address;
 use Models\Teacher;
 use Models\TeacherSetting;
 use Models\School;
 use PDOException;
 
-class UserRepository
+class UserRepository extends Repository
 {
     public function findTempTeacher($id)
     {
@@ -24,24 +23,28 @@ class UserRepository
 
     public function preRegisterTeacher(array $data)
     {
-        $r = Redis::getRedis();
+        $subscription = new Subscription($data['subscriptionType']);
+        $this->dm->persist($subscription);
+        $this->dm->flush();
 
-        $subscriptionId = $r->incr('next_subscription_id');
-        $r->hmset('subscription:'.$subscriptionId, [
-            'type' => $data['subscriptionType'],
-            'created_at' => Carbon::now()
-        ]);
-
-        $confirmationCode = md5(rand(999, 999999));
-        $r->hmset('tempTeacher:'.$r->incr('next_temp_teacher_id'), [
-            'subscription_id' => $subscriptionId,
-            'first_name' => $data['firstName'],
-            'last_name' => $data['lastName'],
-            'email' => $data['email'],
-            'confirmation_code' => $confirmationCode
-        ]);
-
-        return $r->get('next_temp_teacher_id');
+//        $r = Redis::getRedis();
+//
+//        $subscriptionId = $r->incr('next_subscription_id');
+//        $r->hmset('subscription:'.$subscriptionId, [
+//            'type' => $data['subscriptionType'],
+//            'created_at' => Carbon::now()
+//        ]);
+//
+//        $confirmationCode = md5(rand(999, 999999));
+//        $r->hmset('tempTeacher:'.$r->incr('next_temp_teacher_id'), [
+//            'subscription_id' => $subscriptionId,
+//            'first_name' => $data['firstName'],
+//            'last_name' => $data['lastName'],
+//            'email' => $data['email'],
+//            'confirmation_code' => $confirmationCode
+//        ]);
+//
+//        return $r->get('next_temp_teacher_id');
 
 //            $subscription = Subscription::create([
 //                'type' => $data['subscriptionType']
