@@ -1,0 +1,128 @@
+<?php
+
+namespace Library\DataMapper\Mapping;
+
+class Column
+{
+    const UPDATED_AT = 'updated_at';
+    const CREATED_AT = 'created_at';
+
+    protected $columnName;
+    protected $fieldName;
+    protected $isPrimaryKey;
+    protected $type;
+    protected $size;
+    protected $precision;
+    protected $isNullable;
+    protected $isUnique;
+    protected $defaultValue;
+    protected $hasIndex;
+
+    public function __construct($columnName, $fieldName, $type, $size)
+    {
+        $this->columnName = $columnName;
+        $this->fieldName = $fieldName;
+        $this->type = $type;
+        $this->size = $size;
+        $this->isNullable = false;
+        $this->precision = 2;
+        $this->isPrimaryKey = false;
+        $this->isUnique = false;
+        $this->defaultValue = null;
+        $this->hasIndex = false;
+    }
+
+    public function name()
+    {
+        return $this->name;
+    }
+
+    public function type()
+    {
+        return $this->type;
+    }
+
+    public function isPrimaryKey()
+    {
+        return $this->isPrimaryKey;
+    }
+
+    public function setPrimaryKey()
+    {
+        $this->isPrimaryKey = true;
+    }
+
+    public function fieldName()
+    {
+        return $this->fieldName;
+    }
+
+    public function isNullable()
+    {
+        return $this->isNullable;
+    }
+
+    public function setNullable()
+    {
+        $this->canBeNull = true;
+    }
+
+    public function size()
+    {
+        return $this->size;
+    }
+
+    public function isUnique()
+    {
+        return $this->isUnique;
+    }
+
+    public function unique()
+    {
+        $this->isUnique = true;
+    }
+
+    public function defaultValue()
+    {
+        return $this->defaultValue;
+    }
+
+    public function isDefault()
+    {
+        return !is_null($this->defaultValue);
+    }
+
+    public function setDefaultValue($value)
+    {
+        $this->default = $value;
+    }
+
+    public function precision()
+    {
+        return $this->precision;
+    }
+
+    public function setPrecision($precision)
+    {
+        $this->precision = $precision;
+    }
+
+    public function hasIndex()
+    {
+        return $this->hasIndex;
+    }
+
+    public function setIndex()
+    {
+        $this->hasIndex = true;
+    }
+
+    public function isRequired()
+    {
+        if ($this->name === self::UPDATED_AT ||
+            $this->name === self::CREATED_AT)
+            return false;
+
+        return !$this->isNullable() && !$this->isDefault();
+    }
+}
