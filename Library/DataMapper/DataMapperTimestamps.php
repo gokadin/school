@@ -1,6 +1,6 @@
 <?php
 
-namespace Library\Database\DataMapper;
+namespace Library\DataMapper;
 
 trait DataMapperTimestamps
 {
