@@ -2,10 +2,14 @@
 
 namespace Library\DataMapper;
 
+use Carbon\Carbon;
 use Library\DataMapper\Database\QueryBuilder;
+use Library\DataMapper\Mapping\Column;
 use Library\DataMapper\Mapping\Drivers\AnnotationDriver;
 use Library\DataMapper\Mapping\Metadata;
 use Symfony\Component\Yaml\Exception\RuntimeException;
+use ReflectionClass;
+use ReflectionException;
 
 class DataMapper
 {
@@ -16,12 +20,12 @@ class DataMapper
 
     public function __construct($config)
     {
-        $this->initializeMetadataDriver($config['mappingDriver']);
+        $this->initializeMappingDriver($config['mappingDriver']);
 
         $this->queryBuilder = new QueryBuilder($config);
     }
 
-    protected function initializeMetadataDriver($driverName)
+    protected function initializeMappingDriver($driverName)
     {
         switch ($driverName)
         {
@@ -62,7 +66,68 @@ class DataMapper
 
     public function persist($object)
     {
-        $this->storeCommand(get_class($object), 'persist', [$object]);
+        $class = get_class($object);
+        $metadata = $this->mappingDriver->getMetadata($class);
+        $r = $metadata->getReflectionClass();
+
+        $primaryKeyProperty = $r->getProperty($metadata->primaryKey()->fieldName());
+        $primaryKeyProperty->setAccessible(true);
+        $value = $primaryKeyProperty->getValue($object);
+
+        if (is_null($value))
+        {
+            $this->insert($object, $metadata, $r);
+            return;
+        }
+
+        $this->update($object, $r);
+    }
+
+    protected function insert($object, Metadata $metadata, ReflectionClass $r)
+    {
+        $data = [];
+        $primaryKeyColumn = null;
+
+        foreach ($metadata->columns() as $column)
+        {
+            if ($column->isPrimaryKey())
+            {
+                $primaryKeyColumn = $r->getProperty($column->fieldName());
+                continue;
+            }
+
+            try
+            {
+                $property = $r->getProperty($column->fieldName());
+                $property->setAccessible(true);
+            }
+            catch (ReflectionException $e)
+            {
+                continue;
+            }
+
+            $value = $property->getValue($object);
+            if (is_null($value))
+            {
+                if ($column->isDefault())
+                {
+                    continue;
+                }
+
+                if ($column->name() == Column::CREATED_AT || $column->name() == Column::UPDATED_AT)
+                {
+                    $data[$column->name()] = Carbon::now();
+                    continue;
+                }
+            }
+
+            $data[$column->name()] = $value;
+        }
+
+        $id = $this->queryBuilder->table($metadata->table())->insert($data);
+
+        $primaryKeyColumn->setAccessible(true);
+        $primaryKeyColumn->setValue($object, $id);
     }
 
     public function delete($classOrObject, $id = 0)
@@ -71,16 +136,27 @@ class DataMapper
             ? get_class($classOrObject)
             : $classOrObject;
 
-        $this->storeCommand($class, 'delete', [$id]);
+
     }
 
-    public function flush()
-    {
-        foreach ($this->storedCommands as $class => $commands)
-        {
-            foreach // ... stopped here
-        }
-    }
+//    public function flush()
+//    {
+//        foreach ($this->storedCommands as $class => $commands)
+//        {
+//            foreach ($commands as $command => $data)
+//            {
+//                switch ($command)
+//                {
+//                    case 'insert':
+//
+//                        break;
+//                    case 'update':
+//
+//                        break;
+//                }
+//            }
+//        }
+//    }
 
     public function queryBuilder()
     {

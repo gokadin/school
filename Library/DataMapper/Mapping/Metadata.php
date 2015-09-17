@@ -32,7 +32,7 @@ class Metadata
         return $this->primaryKey;
     }
 
-    public function getColumns()
+    public function columns()
     {
         return $this->columns;
     }

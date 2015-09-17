@@ -36,7 +36,7 @@ class SimpleEntity
     /** @Column(type="decimal", nullable="true") */
     protected $decimal1;
 
-    /** @Column(type="decimal", size="2", precision="3", nullable="true") */
+    /** @Column(type="decimal", size="3", precision="2", nullable="true") */
     protected $decimal2;
 
     public function __construct($one, $two, $str1, $str2)

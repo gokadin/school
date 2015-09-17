@@ -12,6 +12,8 @@ abstract class BaseTest extends TestCase
         parent::setUp();
 
         putenv('APP_ENV=framework_testing');
+
+        require __DIR__.'/../../Bootstrap/env.php';
     }
 
     public function getRowCount($tableName)

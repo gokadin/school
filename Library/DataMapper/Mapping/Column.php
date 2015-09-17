@@ -34,7 +34,7 @@ class Column
 
     public function name()
     {
-        return $this->name;
+        return $this->columnName;
     }
 
     public function type()
@@ -64,7 +64,7 @@ class Column
 
     public function setNullable()
     {
-        $this->canBeNull = true;
+        $this->isNullable = true;
     }
 
     public function size()
