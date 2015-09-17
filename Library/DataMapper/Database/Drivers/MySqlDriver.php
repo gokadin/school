@@ -2,7 +2,6 @@
 
 namespace Library\DataMapper\Database\Drivers;
 
-use Library\DataMapper\Mapping\Column;
 use Library\DataMapper\Mapping\Metadata;
 use PDO;
 
@@ -40,7 +39,7 @@ class MySqlDriver
             return '';
         }
 
-        $str = 'WHERE';
+        $str = ' WHERE';
 
         for ($i = 0; $i < sizeof($wheres); $i++)
         {
@@ -73,6 +72,17 @@ class MySqlDriver
         $stmt->execute($data);
 
         return $this->dao->lastInsertId();
+    }
+
+    public function update($str, $data)
+    {
+        $stmt = $this->dao->prepare($str);
+        $stmt->execute($data);
+    }
+
+    public function delete($str)
+    {
+        return $this->dao->exec($str);
     }
 
     public function createTable(Metadata $metadata)

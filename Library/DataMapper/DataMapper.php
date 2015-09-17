@@ -16,7 +16,6 @@ class DataMapper
     protected $mappingDriver;
     protected $queryBuilder;
     protected $loadedMetadata = [];
-    protected $storedCommands = [];
 
     public function __construct($config)
     {
@@ -39,17 +38,16 @@ class DataMapper
     {
         $metadata = $this->loadMetadata($class);
 
-        $data = $this->getQueryBuilder()->select()
-            ->from($metadata->table())
-            ->where($metadata->primaryKey()->columnName(), '=', $id)
-            ->execute();
+        $data = $this->queryBuilder()->table($metadata->table())
+            ->where($metadata->primaryKey()->name(), '=', $id)
+            ->select();
 
         if (sizeof($data) == 0)
         {
             return null;
         }
 
-        return $this->buildEntity($metadata, $data);
+        return $this->buildEntity($metadata, $data[0]);
     }
 
     public function findOrFail($class, $id)
@@ -64,10 +62,54 @@ class DataMapper
         throw new RuntimeException('Could not find entity '.$class.' with id '.$id);
     }
 
+    public function findBy($class, array $conditions)
+    {
+        $metadata = $this->loadMetadata($class);
+
+        $this->queryBuilder->table($metadata->table());
+
+        foreach ($conditions as $var => $value)
+        {
+            $this->queryBuilder->where($var, '=', $value);
+        }
+
+        $results = $this->queryBuilder->select();
+
+        $entities = [];
+        foreach ($results as $data)
+        {
+            $entities[] = $this->buildEntity($metadata, $data);
+        }
+
+        return $entities;
+    }
+
+    public function findOneBy($class, array $conditions)
+    {
+        $results = $this->findBy($class, $conditions);
+
+        return sizeof($results) == 0 ? null : $results[0];
+    }
+
+    public function findAll($class)
+    {
+        $metadata = $this->loadMetadata($class);
+
+        $results = $this->queryBuilder->table($metadata->table())->select();
+
+        $entities = [];
+        foreach ($results as $data)
+        {
+            $entities[] = $this->buildEntity($metadata, $data);
+        }
+
+        return $entities;
+    }
+
     public function persist($object)
     {
         $class = get_class($object);
-        $metadata = $this->mappingDriver->getMetadata($class);
+        $metadata = $this->loadMetadata($class);
         $r = $metadata->getReflectionClass();
 
         $primaryKeyProperty = $r->getProperty($metadata->primaryKey()->fieldName());
@@ -80,7 +122,7 @@ class DataMapper
             return;
         }
 
-        $this->update($object, $r);
+        $this->update($object, $metadata, $r);
     }
 
     protected function insert($object, Metadata $metadata, ReflectionClass $r)
@@ -130,13 +172,63 @@ class DataMapper
         $primaryKeyColumn->setValue($object, $id);
     }
 
-    public function delete($classOrObject, $id = 0)
+    protected function update($object, Metadata $metadata, ReflectionClass $r)
+    {
+        $id = 0;
+        foreach ($metadata->columns() as $column)
+        {
+            try
+            {
+                $property = $r->getProperty($column->fieldName());
+                $property->setAccessible(true);
+            }
+            catch (ReflectionException $e)
+            {
+                continue;
+            }
+
+            if ($column->name() == Column::UPDATED_AT)
+            {
+                $data[$column->name()] = Carbon::now();
+                continue;
+            }
+
+            if ($column->isPrimaryKey())
+            {
+                $id = $property->getValue($object);
+                continue;
+            }
+
+            $value = $property->getValue($object);
+
+            $data[$column->name()] = $value;
+        }
+
+        $this->queryBuilder->table($metadata->table())
+            ->where($metadata->primaryKey()->name(), '=', $id)
+            ->update($data);
+    }
+
+    public function delete($classOrObject, $id = null)
     {
         $class = is_object($classOrObject)
             ? get_class($classOrObject)
             : $classOrObject;
 
+        $metadata = $this->loadMetadata($class);
+        $primaryKeyFieldName = $metadata->primaryKey()->fieldName();
 
+        if (is_null($id))
+        {
+            $r = $metadata->getReflectionClass();
+            $primaryKey = $r->getProperty($primaryKeyFieldName);
+            $primaryKey->setAccessible(true);
+            $id = $primaryKey->getValue($classOrObject);
+        }
+
+        $this->queryBuilder()->table($metadata->table())
+            ->where($primaryKeyFieldName, '=', $id)
+            ->delete();
     }
 
 //    public function flush()

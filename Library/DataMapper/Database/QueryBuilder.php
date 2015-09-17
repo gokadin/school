@@ -49,14 +49,24 @@ class QueryBuilder
 
     public function where($field, $operator, $value)
     {
-        $this->wheres[] = [$field, $operator, $value, 'AND'];
+        $this->addWhere($field, $operator, $value, 'AND');
         return $this;
     }
 
     public function orWhere($field, $operator, $value)
     {
-        $this->wheres[] = [$field, $operator, $value, 'OR'];
+        $this->addWhere($field, $operator, $value, 'OR');
         return $this;
+    }
+
+    protected function addWhere($field, $operator, $value, $link)
+    {
+        $this->wheres[] = [
+            'var' => $field,
+            'operator' => $operator,
+            'value' => $value,
+            'link' => $link
+        ];
     }
 
     protected function selectMySql($fields)
@@ -89,7 +99,50 @@ class QueryBuilder
 
         $str .= ' VALUES('.implode(',', array_keys($data)).')';
 
+        $this->clear();
+
         return $this->databaseDriver->insert($str, $data);
+    }
+
+    public function update(array $data)
+    {
+        // switch case driver...
+
+        $str = 'UPDATE '.$this->table.' SET ';
+
+        $processed = [];
+        $i = 0;
+        foreach ($data as $key => $value)
+        {
+            if ($i > 0)
+            {
+                $str .= ', ';
+            }
+
+            if (is_null($value))
+            {
+                $value = '';
+            }
+
+            $str .= $key.' = :'.$key;
+            $processed[':'.$key] = $value;
+            $i++;
+        }
+        $data = $processed;
+
+        $this->clear();
+
+        $this->databaseDriver->update($str, $data);
+    }
+
+    public function delete()
+    {
+        $str = 'DELETE FROM '.$this->table;
+        $str .= $this->databaseDriver->buildWheres($this->wheres);
+
+        $this->clear();
+
+        return $this->databaseDriver->delete($str);
     }
 
     protected function clear()
