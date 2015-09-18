@@ -4,7 +4,7 @@ namespace FrameworkTest\DataMapper\Database;
 
 use Library\DataMapper\Database\SchemaTool;
 use Tests\FrameworkTest\BaseTest;
-use Tests\FrameworkTest\TestData\Console\DataMapper\SimpleEntity;
+use Tests\FrameworkTest\TestData\DataMapper\SimpleEntity;
 use PDO;
 
 class SchemaToolTest extends BaseTest

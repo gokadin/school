@@ -1,8 +1,8 @@
 <?php
 
-namespace Tests\FrameworkTest\TestData\Console\DataMapper;
+namespace Tests\FrameworkTest\TestData\DataMapper;
 
-use Library\Database\DataMapper\DataMapperTimestamps;
+use Library\DataMapper\DataMapperTimestamps;
 
 /**
  * @Entity(name="simpleEntity")

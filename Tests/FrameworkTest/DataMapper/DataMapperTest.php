@@ -5,7 +5,7 @@ namespace FrameworkTest\DataMapper;
 use Library\DataMapper\DataMapper;
 use Symfony\Component\Yaml\Exception\RuntimeException;
 use Tests\FrameworkTest\BaseTest;
-use Tests\FrameworkTest\TestData\Console\DataMapper\SimpleEntity;
+use Tests\FrameworkTest\TestData\DataMapper\SimpleEntity;
 use Library\DataMapper\Database\SchemaTool;
 use PDO;
 
