@@ -28,21 +28,41 @@ class AnnotationDriver
         $properties = $r->getProperties();
         foreach ($properties as $property)
         {
-            $column = $this->buildColumn($property);
-            if (is_null($column))
-            {
-                continue;
-            }
+            $parsedProperty = $this->parseDocComment($property->getDocComment());
 
-            $metadata->addColumn($column);
+            if (isset($parsedProperty['Column']) || isset($parsedProperty['Id']))
+            {
+                $column = $this->buildColumn($property, $parsedProperty);
+                if (is_null($column))
+                {
+                    continue;
+                }
+
+                $metadata->addColumn($column);
+            }
+            else if (isset($parsedProperty[Metadata::ASSOC_HAS_MANY]))
+            {
+                $metadata->addAssociation(
+                    Metadata::ASSOC_HAS_MANY,
+                    $parsedProperty[Metadata::ASSOC_HAS_MANY]['target'],
+                    $property->getName()
+                );
+            }
+            else if (isset($parsedProperty[Metadata::ASSOC_BELONGS_TO]))
+            {
+                $metadata->addAssociation(
+                    Metadata::ASSOC_BELONGS_TO,
+                    $parsedProperty[Metadata::ASSOC_BELONGS_TO]['target'],
+                    $property->getName()
+                );
+            }
         }
 
         return $metadata;
     }
 
-    protected function buildColumn(ReflectionProperty $property)
+    protected function buildColumn(ReflectionProperty $property, $parsed)
     {
-        $parsed = $this->parseDocComment($property->getDocComment());
         if (sizeof($parsed) == 0 ||
             (!isset($parsed['Column']) && !isset($parsed['Id'])) ||
             (isset($parsed['Column']) && !isset($parsed['Column']['type'])))

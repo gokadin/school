@@ -75,20 +75,21 @@ class DataMapper
 
         $results = $this->queryBuilder->select();
 
-        $entities = [];
+        $collection = new EntityCollection();
         foreach ($results as $data)
         {
-            $entities[] = $this->buildEntity($metadata, $data);
+            $collection->add($this->buildEntity($metadata, $data));
         }
 
-        return $entities;
+        $collection->ignoreChanges();
+        return $collection;
     }
 
     public function findOneBy($class, array $conditions)
     {
         $results = $this->findBy($class, $conditions);
 
-        return sizeof($results) == 0 ? null : $results[0];
+        return $results->count() == 0 ? null : $results->first();
     }
 
     public function findAll($class)
@@ -97,13 +98,14 @@ class DataMapper
 
         $results = $this->queryBuilder->table($metadata->table())->select();
 
-        $entities = [];
+        $collection = new EntityCollection();
         foreach ($results as $data)
         {
-            $entities[] = $this->buildEntity($metadata, $data);
+            $collection->add($this->buildEntity($metadata, $data));
         }
 
-        return $entities;
+        $collection->ignoreChanges();
+        return $collection;
     }
 
     public function persist($object)
@@ -290,6 +292,32 @@ class DataMapper
             $property->setValue($entity, $data[$column->name()]);
         }
 
+        $this->buildAssociations($metadata, $r, $entity);
+
         return $entity;
+    }
+
+    protected function buildAssociations(Metadata $metadata, ReflectionClass $r, $entity)
+    {
+        foreach ($metadata->associations() as $assoc)
+        {
+            switch ($assoc['type'])
+            {
+                case Metadata::ASSOC_HAS_MANY:
+
+                    break;
+                case Metadata::ASSOC_BELONGS_TO:
+                    $this->buildBelongsTo($assoc['target'], $assoc['fieldName'], $r, $entity);
+                    break;
+            }
+        }
+    }
+
+    protected function buildBelongsTo($target, $fieldName, ReflectionClass $r, $entity)
+    {
+        $property = $r->getProperty($fieldName);
+        $property->setAccessible(true);
+
+        // how to find the teacher now........ need more fields in db.....
     }
 }

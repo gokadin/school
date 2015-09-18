@@ -187,11 +187,11 @@ class DataMapperTest extends BaseTest
         $this->dm->persist(new SimpleEntity(21, 22, 'one3', 'two3'));
 
         // Act
-        $entities = $this->dm->findAll(SimpleEntity::class);
+        $collection = $this->dm->findAll(SimpleEntity::class);
 
         // Assert
-        $this->assertEquals(3, sizeof($entities));
-        $this->assertTrue($entities[0] instanceof SimpleEntity);
+        $this->assertEquals(3, $collection->count());
+        $this->assertTrue($collection->first() instanceof SimpleEntity);
     }
 
     public function testFindBy()
@@ -204,11 +204,11 @@ class DataMapperTest extends BaseTest
         $this->dm->persist($se2);
 
         // Act
-        $entities = $this->dm->findBy(SimpleEntity::class, ['one' => 11]);
+        $collection = $this->dm->findBy(SimpleEntity::class, ['one' => 11]);
 
         // Assert
-        $this->assertEquals(1, sizeof($entities));
-        $this->assertEquals(11, $entities[0]->getOne());
+        $this->assertEquals(1, $collection->count());
+        $this->assertEquals(11, $collection->first()->getOne());
     }
 
     public function testFindByWithMultipleEntitiesFound()
@@ -221,10 +221,10 @@ class DataMapperTest extends BaseTest
         $this->dm->persist($se2);
 
         // Act
-        $entities = $this->dm->findBy(SimpleEntity::class, ['one' => 1, 'str1' => 'one']);
+        $collection = $this->dm->findBy(SimpleEntity::class, ['one' => 1, 'str1' => 'one']);
 
         // Assert
-        $this->assertEquals(2, sizeof($entities));
+        $this->assertEquals(2, $collection->count());
     }
 
     public function testFindOneBy()

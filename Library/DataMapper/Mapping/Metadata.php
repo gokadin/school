@@ -6,7 +6,11 @@ use ReflectionClass;
 
 class Metadata
 {
+    const ASSOC_HAS_MANY = 'HasMany';
+    const ASSOC_BELONGS_TO = 'BelongsTo';
+
     protected $columns = [];
+    protected $associations = [];
     protected $table;
     protected $reflectionClass;
     protected $primaryKey;
@@ -50,5 +54,19 @@ class Metadata
         {
             $this->primaryKey = $column;
         }
+    }
+
+    public function associations()
+    {
+        return $this->associations;
+    }
+
+    public function addAssociation($type, $target, $fieldName)
+    {
+        $this->associations[] = [
+            'type' => $type,
+            'target' => $target,
+            'fieldName' => $fieldName
+        ];
     }
 }
