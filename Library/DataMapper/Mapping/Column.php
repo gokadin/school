@@ -10,6 +10,7 @@ class Column
     protected $columnName;
     protected $fieldName;
     protected $isPrimaryKey;
+    protected $isForeignKey;
     protected $type;
     protected $size;
     protected $precision;
@@ -27,6 +28,7 @@ class Column
         $this->isNullable = false;
         $this->precision = 2;
         $this->isPrimaryKey = false;
+        $this->isForeignKey = false;
         $this->isUnique = false;
         $this->defaultValue = null;
         $this->hasIndex = false;
@@ -50,6 +52,16 @@ class Column
     public function setPrimaryKey()
     {
         $this->isPrimaryKey = true;
+    }
+
+    public function isForeignKey()
+    {
+        return $this->isForeignKey;
+    }
+
+    public function setForeignKey()
+    {
+        $this->isForeignKey = true;
     }
 
     public function fieldName()

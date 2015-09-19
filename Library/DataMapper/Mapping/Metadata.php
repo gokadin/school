@@ -61,12 +61,21 @@ class Metadata
         return $this->associations;
     }
 
+    public function getAssociation($fieldName)
+    {
+        return $this->associations[$fieldName];
+    }
+
     public function addAssociation($type, $target, $fieldName)
     {
-        $this->associations[] = [
+        $this->associations[$fieldName] = [
             'type' => $type,
-            'target' => $target,
-            'fieldName' => $fieldName
+            'target' => $target
         ];
+    }
+
+    public function generateForeignKeyName()
+    {
+        return lcfirst($this->reflectionClass->getShortName()).'_id';
     }
 }

@@ -1,13 +1,11 @@
 <?php
 
-namespace FrameworkTest\TestData\DataMapper;
+namespace Tests\FrameworkTest\TestData\DataMapper;
 
 use Library\DataMapper\DataMapperTimestamps;
-use Library\DataMapper\EntityCollection;
+use Library\DataMapper\Collection\EntityCollection;
 
-/**
- * @Entity
- */
+/** @Entity */
 class Teacher
 {
     use DataMapperTimestamps;
@@ -25,6 +23,11 @@ class Teacher
     {
         $this->name = $name;
         $this->students = new EntityCollection();
+    }
+
+    public function getId()
+    {
+        return $this->id;
     }
 
     public function setName($name)

@@ -2,20 +2,26 @@
 
 namespace FrameworkTest\DataMapper;
 
+use Library\DataMapper\Collection\AbstractEntityCollection;
+use Library\DataMapper\Collection\PersistentCollection;
 use Library\DataMapper\DataMapper;
+use Library\DataMapper\EntityCollection;
 use Symfony\Component\Yaml\Exception\RuntimeException;
 use Tests\FrameworkTest\BaseTest;
 use Tests\FrameworkTest\TestData\DataMapper\SimpleEntity;
 use Library\DataMapper\Database\SchemaTool;
 use PDO;
+use Tests\FrameworkTest\TestData\DataMapper\Teacher;
+use Tests\FrameworkTest\TestData\DataMapper\Student;
 
 class DataMapperTest extends BaseTest
 {
     protected $schemaTool;
     protected $dao;
     protected $dm;
+    protected $classes;
 
-    protected function setUpSimpleEntity()
+    protected function setUpBase()
     {
         date_default_timezone_set('America/Montreal');
 
@@ -31,9 +37,7 @@ class DataMapperTest extends BaseTest
                 'password' => env('DATABASE_PASSWORD')
             ],
 
-            'classes' => [
-                SimpleEntity::class
-            ]
+            'classes' => $this->classes
         ];
 
         $this->schemaTool = new SchemaTool($config);
@@ -46,6 +50,25 @@ class DataMapperTest extends BaseTest
         $this->dao->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
         $this->dm = new DataMapper($config);
+    }
+
+    protected function setUpSimpleEntity()
+    {
+        $this->classes = [
+            SimpleEntity::class
+        ];
+
+        $this->setUpBase();
+    }
+
+    public function setUpAssociations()
+    {
+        $this->classes = [
+            Teacher::class,
+            Student::class
+        ];
+
+        $this->setUpBase();
     }
 
     public function tearDown()
@@ -241,5 +264,101 @@ class DataMapperTest extends BaseTest
 
         // Assert
         $this->assertEquals(1, sizeof($entities));
+    }
+
+    public function testBelongsToWhenInserting()
+    {
+        // Arrange
+        $this->setUpAssociations();
+        $teacher = new Teacher('ateacher');
+        $this->dm->persist($teacher);
+        $student = new Student('astudent');
+        $student->setTeacher($teacher);
+        $this->dm->persist($student);
+
+        // Act
+        $student = $this->dm->find(Student::class, $student->getId());
+
+        // Assert
+        $this->assertNotNull($student->teacher());
+        $this->assertEquals('ateacher', $student->teacher()->name());
+    }
+
+    public function testBelongsToWhenInsertingNonPersistedAssociation()
+    {
+        // Arrange
+        $this->setUpAssociations();
+        $student = new Student('astudent');
+        $student->setTeacher(new Teacher('ateacher'));
+        $this->dm->persist($student);
+
+        // Act
+        $student = $this->dm->find(Student::class, $student->getId());
+
+        // Assert
+        $this->assertNotNull($student->teacher());
+        $this->assertEquals('ateacher', $student->teacher()->name());
+    }
+
+    public function testBelongsToWhenChangingEntityAndUpdating()
+    {
+        // Arrange
+        $this->setUpAssociations();
+        $student = new Student('student1');
+        $student->setTeacher(new Teacher('teacher1'));
+        $this->dm->persist($student);
+
+        // Act
+        $student = $this->dm->find(Student::class, $student->getId());
+
+        // Assert
+        $this->assertEquals('teacher1', $student->teacher()->name());
+
+        // Act
+        $student->setTeacher(new Teacher('teacher2'));
+        $this->dm->persist($student);
+        $student = $this->dm->find(Student::class, $student->getId());
+
+        // Assert
+        $this->assertEquals('teacher2', $student->teacher()->name());
+    }
+
+    public function testHasManyWhenHaveNoStudents()
+    {
+        // Arrange
+        $this->setUpAssociations();
+        $teacher = new Teacher('teacher1');
+
+        // Act
+        $this->dm->persist($teacher);
+        $teacher = $this->dm->find(Teacher::class, $teacher->getId());
+
+        // Assert
+        $this->assertTrue($teacher->students() instanceof PersistentCollection);
+        $this->assertTrue($teacher->students()->isEmpty());
+    }
+
+    public function testHasManyWhenInserting()
+    {
+        // Arrange
+        $this->setUpAssociations();
+        $teacher = new Teacher('teacher1');
+        $student1 = new Student('student1', $teacher);
+        $student2 = new Student('student2', $teacher);
+        $student3 = new Student('student3', $teacher);
+        $this->dm->persist($student1);
+        $this->dm->persist($student2);
+        $this->dm->persist($student3);
+        $teacher->addStudent($student1);
+        $teacher->addStudent($student2);
+        $teacher->addStudent($student3);
+
+        // Act
+        $this->dm->persist($teacher);
+        $teacher = $this->dm->find(Teacher::class, $teacher->getId());
+
+        // Assert
+        $this->assertTrue($teacher->students() instanceof PersistentCollection);
+        $this->assertEquals(3, $teacher->students()->count());
     }
 }

@@ -1,12 +1,10 @@
 <?php
 
-namespace FrameworkTest\TestData\DataMapper;
+namespace Tests\FrameworkTest\TestData\DataMapper;
 
-use Tests\FrameworkTest\Models\Teacher;
+use Library\DataMapper\DataMapperTimestamps;
 
-/**
- * @Entity
- */
+/** @Entity */
 class Student
 {
     use DataMapperTimestamps;
@@ -20,9 +18,15 @@ class Student
     /** @BelongsTo(target="Tests\FrameworkTest\TestData\DataMapper\Teacher") */
     protected $teacher;
 
-    public function __construct($name)
+    public function __construct($name, Teacher $teacher)
     {
         $this->name = $name;
+        $this->teacher = $teacher;
+    }
+
+    public function getId()
+    {
+        return $this->id;
     }
 
     public function setName($name)

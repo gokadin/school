@@ -23,7 +23,10 @@ class AnnotationDriver
             throw new RuntimeException('Class '.$class.' not parsable.');
         }
 
-        $metadata = new Metadata($parsed['Entity']['name'], $r);
+        $table = isset($parsed['Entity']['name'])
+            ? $parsed['Entity']['name']
+            : $r->getShortName();
+        $metadata = new Metadata($table, $r);
 
         $properties = $r->getProperties();
         foreach ($properties as $property)
@@ -42,19 +45,37 @@ class AnnotationDriver
             }
             else if (isset($parsedProperty[Metadata::ASSOC_HAS_MANY]))
             {
+                $target = $parsedProperty[Metadata::ASSOC_HAS_MANY]['target'];
                 $metadata->addAssociation(
                     Metadata::ASSOC_HAS_MANY,
-                    $parsedProperty[Metadata::ASSOC_HAS_MANY]['target'],
+                    $target,
                     $property->getName()
                 );
             }
             else if (isset($parsedProperty[Metadata::ASSOC_BELONGS_TO]))
             {
+                $target = $parsedProperty[Metadata::ASSOC_BELONGS_TO]['target'];
+                $targetShortName = substr($target, strrpos($target, '\\') + 1);
                 $metadata->addAssociation(
                     Metadata::ASSOC_BELONGS_TO,
-                    $parsedProperty[Metadata::ASSOC_BELONGS_TO]['target'],
+                    $target,
                     $property->getName()
                 );
+
+                $column = new Column(
+                    lcfirst($targetShortName).'_id',
+                    $property->getName(),
+                    'integer',
+                    self::DEFAULT_COLUMN_SIZE
+                );
+                $column->setForeignKey();
+                if (isset($parsedProperty[Metadata::ASSOC_BELONGS_TO]['nullable'])
+                    && $parsedProperty[Metadata::ASSOC_BELONGS_TO]['nullable'])
+                {
+                    $column->setNullable();
+                }
+
+                $metadata->addColumn($column);
             }
         }
 
