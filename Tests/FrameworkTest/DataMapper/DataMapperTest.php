@@ -378,4 +378,19 @@ class DataMapperTest extends BaseTest
         $this->assertTrue($teacher->students() instanceof PersistentCollection);
         $this->assertEquals(3, $teacher->students()->count());
     }
+
+    public function testHasManyWhenAddingANewEntityAndUpdating()
+    {
+
+    }
+
+    public function testHasManyWhenAddingANewNonPersistedEntityAndUpdating()
+    {
+
+    }
+
+    public function testHasManyWhenRemovingNewEntityAndUpdating()
+    {
+
+    }
 }
