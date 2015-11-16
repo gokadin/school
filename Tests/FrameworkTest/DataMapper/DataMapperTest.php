@@ -2,7 +2,6 @@
 
 namespace FrameworkTest\DataMapper;
 
-use Library\DataMapper\Collection\AbstractEntityCollection;
 use Library\DataMapper\Collection\PersistentCollection;
 use Library\DataMapper\DataMapper;
 use Library\DataMapper\EntityCollection;
@@ -272,8 +271,7 @@ class DataMapperTest extends BaseTest
         $this->setUpAssociations();
         $teacher = new Teacher('ateacher');
         $this->dm->persist($teacher);
-        $student = new Student('astudent');
-        $student->setTeacher($teacher);
+        $student = new Student('astudent', $teacher);
         $this->dm->persist($student);
 
         // Act
@@ -288,8 +286,7 @@ class DataMapperTest extends BaseTest
     {
         // Arrange
         $this->setUpAssociations();
-        $student = new Student('astudent');
-        $student->setTeacher(new Teacher('ateacher'));
+        $student = new Student('astudent', new Teacher('ateacher'));
         $this->dm->persist($student);
 
         // Act
@@ -304,8 +301,7 @@ class DataMapperTest extends BaseTest
     {
         // Arrange
         $this->setUpAssociations();
-        $student = new Student('student1');
-        $student->setTeacher(new Teacher('teacher1'));
+        $student = new Student('student1', new Teacher('teacher1'));
         $this->dm->persist($student);
 
         // Act
@@ -349,6 +345,27 @@ class DataMapperTest extends BaseTest
         $this->dm->persist($student1);
         $this->dm->persist($student2);
         $this->dm->persist($student3);
+        $teacher->addStudent($student1);
+        $teacher->addStudent($student2);
+        $teacher->addStudent($student3);
+
+        // Act
+        $this->dm->persist($teacher);
+        $teacher = $this->dm->find(Teacher::class, $teacher->getId());
+
+        // Assert
+        $this->assertTrue($teacher->students() instanceof PersistentCollection);
+        $this->assertEquals(3, $teacher->students()->count());
+    }
+
+    public function testHasManyWhenInsertingNonPersistedEntities()
+    {
+        // Arrange
+        $this->setUpAssociations();
+        $teacher = new Teacher('teacher1');
+        $student1 = new Student('student1', $teacher);
+        $student2 = new Student('student2', $teacher);
+        $student3 = new Student('student3', $teacher);
         $teacher->addStudent($student1);
         $teacher->addStudent($student2);
         $teacher->addStudent($student3);

@@ -19,6 +19,7 @@ class PersistentCollection extends AbstractEntityCollection
         parent::__construct();
 
         $this->items = $items;
+        $this->count = sizeof($this->items);
         $this->addedItems = new SplObjectStorage();
         $this->removedItems = new SplObjectStorage();
         $this->dm = $dm;

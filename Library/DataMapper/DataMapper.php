@@ -3,7 +3,6 @@
 namespace Library\DataMapper;
 
 use Carbon\Carbon;
-use Library\DataMapper\Collection\AbstractEntityCollection;
 use Library\DataMapper\Collection\EntityCollection;
 use Library\DataMapper\Collection\PersistentCollection;
 use Library\DataMapper\Database\QueryBuilder;
@@ -86,7 +85,6 @@ class DataMapper
             $collection->add($this->buildEntity($metadata, $data));
         }
 
-        $collection->ignoreChanges();
         return $collection;
     }
 
@@ -109,7 +107,6 @@ class DataMapper
             $collection->add($this->buildEntity($metadata, $data));
         }
 
-        $collection->ignoreChanges();
         return $collection;
     }
 
