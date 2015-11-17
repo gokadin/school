@@ -286,17 +286,23 @@ class DataMapper
 
         $targetMetadata = $this->loadMetadata($target);
         $targetR = $targetMetadata->getReflectionClass();
-        $targetProperty = $targetR->getProperty($metadata->generateForeignKeyName());
+        $targetProperty = $targetR->getProperty($metadata->associations()[$fieldName]['mappedBy']);
         $targetProperty->setAccessible(true);
         foreach ($addedItems as $item)
         {
-            if ($targetProperty->getValue($item) == $objectId)
+            $targetAssocValue = $targetProperty->getValue($item);
+            $currentIdProperty = $r->getProperty($metadata->primaryKey()->fieldName());
+            $currentIdProperty->setAccessible(true);
+            if (is_null($targetAssocValue) || $currentIdProperty->getValue($targetAssocValue) != $objectId)
             {
-                continue;
+                $targetProperty->setValue($item, $objectId);
             }
 
-            $targetProperty->setValue($item, $objectId);
-            $this->update($item, $targetMetadata, $targetR);
+            $targetPrimaryKeyProperty = $targetR->getProperty($targetMetadata->primaryKey()->fieldName());
+            $targetPrimaryKeyProperty->setAccessible(true);
+            is_null($targetPrimaryKeyProperty->getValue($item))
+                ? $this->insert($item, $targetMetadata, $targetR)
+                : $this->update($item, $targetMetadata, $targetR);
         }
     }
 

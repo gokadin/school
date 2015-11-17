@@ -66,12 +66,24 @@ class Metadata
         return $this->associations[$fieldName];
     }
 
-    public function addAssociation($type, $target, $fieldName)
+    public function addAssociation($data)
     {
-        $this->associations[$fieldName] = [
-            'type' => $type,
-            'target' => $target
-        ];
+        switch ($data['type'])
+        {
+            case Metadata::ASSOC_HAS_MANY:
+                $this->associations[$data['fieldName']] = [
+                    'type' => $data['type'],
+                    'target' => $data['target'],
+                    'mappedBy' => $data['mappedBy']
+                ];
+                break;
+            case Metadata::ASSOC_BELONGS_TO:
+                $this->associations[$data['fieldName']] = [
+                    'type' => $data['type'],
+                    'target' => $data['target'],
+                ];
+                break;
+        }
     }
 
     public function generateForeignKeyName()

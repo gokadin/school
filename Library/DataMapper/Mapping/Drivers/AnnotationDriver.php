@@ -45,22 +45,23 @@ class AnnotationDriver
             }
             else if (isset($parsedProperty[Metadata::ASSOC_HAS_MANY]))
             {
-                $target = $parsedProperty[Metadata::ASSOC_HAS_MANY]['target'];
-                $metadata->addAssociation(
-                    Metadata::ASSOC_HAS_MANY,
-                    $target,
-                    $property->getName()
-                );
+                $metadata->addAssociation([
+                    'type' => Metadata::ASSOC_HAS_MANY,
+                    'target' => $parsedProperty[Metadata::ASSOC_HAS_MANY]['target'],
+                    'fieldName' => $property->getName(),
+                    'mappedBy' => $parsedProperty[Metadata::ASSOC_HAS_MANY]['mappedBy']
+                ]);
             }
             else if (isset($parsedProperty[Metadata::ASSOC_BELONGS_TO]))
             {
                 $target = $parsedProperty[Metadata::ASSOC_BELONGS_TO]['target'];
                 $targetShortName = substr($target, strrpos($target, '\\') + 1);
-                $metadata->addAssociation(
-                    Metadata::ASSOC_BELONGS_TO,
-                    $target,
-                    $property->getName()
-                );
+
+                $metadata->addAssociation([
+                    'type' => Metadata::ASSOC_BELONGS_TO,
+                    'target' => $target,
+                    'fieldName' => $property->getName(),
+                ]);
 
                 $column = new Column(
                     lcfirst($targetShortName).'_id',

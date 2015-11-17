@@ -16,7 +16,7 @@ class Teacher
     /** @Column(type="string", size="50") */
     protected $name;
 
-    /** @HasMany(target="Tests\FrameworkTest\TestData\DataMapper\Student") */
+    /** @HasMany(target="Tests\FrameworkTest\TestData\DataMapper\Student", mappedBy="teacher") */
     protected $students;
 
     public function __construct($name)
