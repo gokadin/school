@@ -4,6 +4,7 @@ namespace Library\DataMapper\Collection;
 
 use Library\DataMapper\DataMapper;
 use SplObjectStorage;
+use ArrayIterator;
 
 class PersistentCollection extends AbstractEntityCollection
 {
@@ -30,8 +31,8 @@ class PersistentCollection extends AbstractEntityCollection
     public function add($value)
     {
         is_array($value)
-            ? $this->addOne($value)
-            : $this->addMany($value);
+            ? $this->addMany($value)
+            : $this->addOne($value);
     }
 
     protected function addOne($entity)
@@ -46,10 +47,38 @@ class PersistentCollection extends AbstractEntityCollection
     {
         foreach ($entities as $entity)
         {
-            $this->items[] = $entity;
-            $this->markAdded($entity);
+            $this->addOne($entity);
+        }
+    }
 
-            $this->count++;
+    public function remove($value)
+    {
+        is_array($value)
+            ? $this->removeMany($value)
+            : $this->removeOne($value);
+    }
+
+    protected function removeOne($entity)
+    {
+        foreach ($this->items as $key => $item)
+        {
+            if ($item === $entity)
+            {
+                unset($this->items[$key]);
+                break;
+            }
+        }
+
+        $this->markRemoved($entity);
+
+        $this->count--;
+    }
+
+    protected function removeMany($entities)
+    {
+        foreach ($entities as $entity)
+        {
+            $this->removeOne($entity);
         }
     }
 
