@@ -123,6 +123,13 @@ class PersistentCollection extends AbstractEntityCollection
         $this->isChanged = true;
     }
 
+    public function resetState()
+    {
+        $this->isChanged = false;
+        $this->addedItems = new SplObjectStorage();
+        $this->removedItems = new SplObjectStorage();
+    }
+
     public function first()
     {
         return $this->loadIndex(0);

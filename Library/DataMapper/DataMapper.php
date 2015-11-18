@@ -372,15 +372,19 @@ class DataMapper
 
                 $ids[] = $id;
             }
-            $this->queryBuilder->table($targetMetadata->table())
-                ->where($targetMetadata->primaryKey()->name(), 'in', implode(',', $ids))
-                ->update([$metadata->generateForeignKeyName() => $objectId]);
+
+            if (sizeof($ids) > 0)
+            {
+                $this->queryBuilder->table($targetMetadata->table())
+                    ->where($targetMetadata->primaryKey()->name(), 'in', '('.implode(',', $ids).')')
+                    ->update([$metadata->generateForeignKeyName() => $objectId]);
+            }
         }
 
         if (sizeof($removedItems) > 0)
         {
             $ids = [];
-            foreach ($addedItems as $item)
+            foreach ($removedItems as $item)
             {
                 $id = $targetPrimaryKeyProperty->getValue($item);
                 // if the entity was not was persisted
@@ -393,10 +397,16 @@ class DataMapper
                 }
                 $ids[] = $id;
             }
-            $this->queryBuilder->table($targetMetadata->table())
-                ->where($targetMetadata->primaryKey()->name(), 'in', implode(',', $ids))
-                ->update([$metadata->generateForeignKeyName() => 0]);
+
+            if (sizeof($ids) > 0)
+            {
+                $this->queryBuilder->table($targetMetadata->table())
+                    ->where($targetMetadata->primaryKey()->name(), 'in', '('.implode(',', $ids).')')
+                    ->update([$metadata->generateForeignKeyName() => 0]);
+            }
         }
+
+        $collection->resetState();
     }
 
     public function delete($classOrObject, $id = null)

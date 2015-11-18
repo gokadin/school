@@ -128,6 +128,9 @@ class QueryBuilder
             $processed[':'.$key] = $value;
             $i++;
         }
+
+        $str .= $this->databaseDriver->buildWheres($this->wheres);
+
         $data = $processed;
 
         $this->clear();

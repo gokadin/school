@@ -11,7 +11,7 @@ use PDO;
 use Tests\FrameworkTest\TestData\DataMapper\Teacher;
 use Tests\FrameworkTest\TestData\DataMapper\Student;
 
-class DataMapperBaseTest extends BaseTest
+abstract class DataMapperBaseTest extends BaseTest
 {
     protected $schemaTool;
     protected $dao;

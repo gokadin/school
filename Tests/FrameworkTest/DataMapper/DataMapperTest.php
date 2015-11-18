@@ -407,4 +407,23 @@ class DataMapperTest extends DataMapperBaseTest
         $this->assertEquals(1, $teacher->students()->count());
         $this->assertEquals($teacher->getId(), $teacher->students()->first()->teacher()->getId());
     }
+
+    public function testThatPersistentCollectionStateIsResetAfterUpdating()
+    {
+        // Arrange
+        $this->setUpAssociations();
+        $teacher = new Teacher('teacher1');
+        $student1 = new Student('student1', $teacher);
+        $student2 = new Student('student2', $teacher);
+        $teacher->addStudent($student1);
+        $teacher->addStudent($student2);
+
+        // Act
+        $this->dm->persist($teacher);
+        $teacher->removeStudent($student1);
+        $this->dm->persist($teacher);
+
+        // Assert
+        $this->assertFalse($teacher->students()->isChanged());
+    }
 }
