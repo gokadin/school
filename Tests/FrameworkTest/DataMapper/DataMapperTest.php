@@ -311,7 +311,6 @@ class DataMapperTest extends DataMapperBaseTest
         // Assert
         $this->assertTrue($teacher->students() instanceof PersistentCollection);
         $this->assertEquals(3, $teacher->students()->count());
-        $t = $teacher->students()->first();
         $this->assertEquals($teacher->getId(), $teacher->students()->first()->teacher()->getId());
     }
 

@@ -40,6 +40,12 @@ class DataMapper
 
     public function find($class, $id)
     {
+        $loadedObject = $this->findLoadedEntity($class, $id);
+        if (!is_null($loadedObject))
+        {
+            return $loadedObject;
+        }
+
         $metadata = $this->loadMetadata($class);
 
         $data = $this->queryBuilder()->table($metadata->table())
@@ -367,21 +373,40 @@ class DataMapper
         return $this->loadedMetadata[$class] = $this->mappingDriver->getMetadata($class);
     }
 
-    protected function addToLoadedEntities($entity, $class, array $foreignKeys)
+    protected function addToLoadedEntities($entity, $class, $id, array $foreignKeys)
     {
         if (!isset($this->loadedEntities[$class]))
         {
             $this->loadedEntities[$class] = new SplObjectStorage();
         }
 
-        $this->loadedEntities[$class][$entity] = [
+        $this->loadedEntities[$class]->attach($entity, [
+            'id' => $id,
             'foreignKeys' => $foreignKeys
-        ];
+        ]);
     }
 
     protected function getForeignKeys($entity, $class)
     {
         return $this->loadedEntities[$class][$entity]['foreignKeys'];
+    }
+
+    protected function findLoadedEntity($class, $id)
+    {
+        if (!isset($this->loadedEntities[$class]))
+        {
+            return null;
+        }
+
+        foreach ($this->loadedEntities[$class] as $key)
+        {
+            if ($this->loadedEntities[$class][$key]['id'] == $id)
+            {
+                return $key;
+            }
+        }
+
+        return null;
     }
 
     protected function buildEntity(Metadata $metadata, $data)
@@ -396,6 +421,7 @@ class DataMapper
         $entity = $r->newInstanceWithoutConstructor();
 
         $foreignKeys = [];
+        $id = 0;
         foreach ($metadata->columns() as $column)
         {
             if ($column->isForeignKey())
@@ -406,6 +432,11 @@ class DataMapper
 
             $property = $r->getProperty($column->fieldName());
             $property->setAccessible(true);
+
+            if ($column->isPrimaryKey())
+            {
+                $id = $data[$column->name()];
+            }
 
             if (!array_key_exists($column->name(), $data))
             {
@@ -418,7 +449,7 @@ class DataMapper
 
         $this->buildAssociations($metadata, $r, $entity, $foreignKeys);
 
-        $this->addToLoadedEntities($entity, $r->getName(), $foreignKeys);
+        $this->addToLoadedEntities($entity, $r->getName(), $id, $foreignKeys);
 
         return $entity;
     }
