@@ -464,11 +464,16 @@ class DataMapper
         $thisPrimaryKey->setAccessible(true);
         $thisPrimaryKeyValue = $thisPrimaryKey->getValue($entity);
 
-        $targetIds = $this->queryBuilder->table($targetMetadata->table())
+        $results = $this->queryBuilder->table($targetMetadata->table())
             ->where($metadata->generateForeignKeyName(), '=', $thisPrimaryKeyValue)
             ->select([$targetMetadata->primaryKey()->name()]);
+        $targetIds = [];
+        foreach ($results as $targetId)
+        {
+            $targetIds[] = $targetId[$targetMetadata->primaryKey()->name()];
+        }
 
-        $collection = new PersistentCollection($this, $r->getName(), $targetIds);
+        $collection = new PersistentCollection($this, $targetMetadata->getReflectionClass()->getName(), $targetIds);
 
         $property = $r->getProperty($fieldName);
         $property->setAccessible(true);
