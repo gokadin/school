@@ -5,6 +5,7 @@ namespace Tests\FrameworkTest\DataMapper;
 use Library\DataMapper\Collection\PersistentCollection;
 use Library\DataMapper\EntityCollection;
 use Symfony\Component\Yaml\Exception\RuntimeException;
+use Tests\FrameworkTest\TestData\DataMapper\Address;
 use Tests\FrameworkTest\TestData\DataMapper\SimpleEntity;
 use Tests\FrameworkTest\TestData\DataMapper\Teacher;
 use Tests\FrameworkTest\TestData\DataMapper\Student;
@@ -115,7 +116,7 @@ class DataMapperTest extends DataMapperBaseTest
         $this->dm->persist($se);
 
         // Act
-        $this->dm->detach($se);
+        $this->dm->detachAll();
         $result = $this->dm->find(SimpleEntity::class, $se->getId());
 
         // Assert
@@ -159,6 +160,23 @@ class DataMapperTest extends DataMapperBaseTest
         $this->dm->persist(new SimpleEntity(21, 22, 'one3', 'two3'));
 
         // Act
+        $collection = $this->dm->findAll(SimpleEntity::class);
+
+        // Assert
+        $this->assertEquals(3, $collection->count());
+        $this->assertTrue($collection->first() instanceof SimpleEntity);
+    }
+
+    public function testFindAllAfterDetachingEntities()
+    {
+        // Arrange
+        $this->setUpSimpleEntity();
+        $this->dm->persist(new SimpleEntity(1, 2, 'one', 'two'));
+        $this->dm->persist(new SimpleEntity(11, 12, 'one2', 'two2'));
+        $this->dm->persist(new SimpleEntity(21, 22, 'one3', 'two3'));
+
+        // Act
+        $this->dm->detachAll();
         $collection = $this->dm->findAll(SimpleEntity::class);
 
         // Assert
@@ -225,6 +243,7 @@ class DataMapperTest extends DataMapperBaseTest
         $this->dm->persist($student);
 
         // Act
+        $this->dm->detachAll();
         $student = $this->dm->find(Student::class, $student->getId());
 
         // Assert
@@ -240,6 +259,7 @@ class DataMapperTest extends DataMapperBaseTest
         $this->dm->persist($student);
 
         // Act
+        $this->dm->detachAll();
         $student = $this->dm->find(Student::class, $student->getId());
 
         // Assert
@@ -255,6 +275,7 @@ class DataMapperTest extends DataMapperBaseTest
         $this->dm->persist($student);
 
         // Act
+        $this->dm->detachAll();
         $student = $this->dm->find(Student::class, $student->getId());
 
         // Assert
@@ -263,10 +284,73 @@ class DataMapperTest extends DataMapperBaseTest
         // Act
         $student->setTeacher(new Teacher('teacher2'));
         $this->dm->persist($student);
+        $this->dm->detachAll();
         $student = $this->dm->find(Student::class, $student->getId());
 
         // Assert
         $this->assertEquals('teacher2', $student->teacher()->name());
+    }
+
+    public function testHasOneWhenInserting()
+    {
+        // Arrange
+        $this->setUpAssociations();
+        $teacher = new Teacher('ateacher');
+        $address = new Address('street');
+        $this->dm->persist($address);
+        $teacher->setAddress($address);
+
+        // Act
+        $this->dm->persist($teacher);
+        $this->dm->detachAll();
+        $teacher = $this->dm->find(Teacher::class, $teacher->getId());
+
+        // Assert
+        $this->assertNotNull($teacher->address());
+        $this->assertEquals($address->getId(), $teacher->address()->getId());
+    }
+
+    public function testHasOneWhenInsertingNonPersistedAssociation()
+    {
+        // Arrange
+        $this->setUpAssociations();
+        $teacher = new Teacher('ateacher');
+        $address = new Address('street');
+        $teacher->setAddress($address);
+
+        // Act
+        $this->dm->persist($teacher);
+        $this->dm->detachAll();
+        $teacher = $this->dm->find(Teacher::class, $teacher->getId());
+
+        // Assert
+        $this->assertNotNull($teacher->address());
+        $this->assertEquals($address->getId(), $teacher->address()->getId());
+    }
+
+    public function testHasOneWhenChangingEntityAndUpdating()
+    {
+        // Arrange
+        $this->setUpAssociations();
+        $teacher = new Teacher('teacher1');
+        $teacher->setAddress(new Address('street1'));
+
+        // Act
+        $this->dm->persist($teacher);
+        $this->dm->detachAll();
+        $teacher = $this->dm->find(Teacher::class, $teacher->getId());
+
+        // Assert
+        $this->assertEquals('street1', $teacher->address()->street());
+
+        // Act
+        $teacher->setAddress(new Address('street2'));
+        $this->dm->persist($teacher);
+        $this->dm->detachAll();
+        $teacher = $this->dm->find(Teacher::class, $teacher->getId());
+
+        // Assert
+        $this->assertEquals('street2', $teacher->address()->street());
     }
 
     public function testHasManyWhenHaveNoStudents()
@@ -277,7 +361,7 @@ class DataMapperTest extends DataMapperBaseTest
 
         // Act
         $this->dm->persist($teacher);
-        $this->dm->detach($teacher);
+        $this->dm->detachAll();
         $teacher = $this->dm->find(Teacher::class, $teacher->getId());
 
         // Assert
@@ -302,7 +386,7 @@ class DataMapperTest extends DataMapperBaseTest
 
         // Act
         $this->dm->persist($teacher);
-        $this->dm->detach($teacher);
+        $this->dm->detachAll();
         $teacher = $this->dm->find(Teacher::class, $teacher->getId());
 
         // Assert
@@ -324,7 +408,7 @@ class DataMapperTest extends DataMapperBaseTest
 
         // Act
         $this->dm->persist($teacher);
-        $this->dm->detach($teacher);
+        $this->dm->detachAll();
         $teacher = $this->dm->find(Teacher::class, $teacher->getId());
 
         // Assert
@@ -349,7 +433,7 @@ class DataMapperTest extends DataMapperBaseTest
         $this->dm->persist($student3);
         $teacher->addStudent($student3);
         $this->dm->persist($teacher);
-        $this->dm->detach($teacher);
+        $this->dm->detachAll();
         $teacher = $this->dm->find(Teacher::class, $teacher->getId());
 
         // Assert
@@ -373,7 +457,7 @@ class DataMapperTest extends DataMapperBaseTest
         $this->dm->persist($teacher);
         $teacher->addStudent($student3);
         $this->dm->persist($teacher);
-        $this->dm->detach($teacher);
+        $this->dm->detachAll();
         $teacher = $this->dm->find(Teacher::class, $teacher->getId());
 
         // Assert
@@ -399,7 +483,7 @@ class DataMapperTest extends DataMapperBaseTest
         $teacher->removeStudent($student1);
         $teacher->removeStudent($student2);
         $this->dm->persist($teacher);
-        $this->dm->detach($teacher);
+        $this->dm->detachAll();
         $teacher = $this->dm->find(Teacher::class, $teacher->getId());
 
         // Assert

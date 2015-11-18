@@ -7,6 +7,7 @@ use ReflectionClass;
 class Metadata
 {
     const ASSOC_HAS_MANY = 'HasMany';
+    const ASSOC_HAS_ONE = 'HasOne';
     const ASSOC_BELONGS_TO = 'BelongsTo';
 
     protected $columns = [];
@@ -70,14 +71,15 @@ class Metadata
     {
         switch ($data['type'])
         {
-            case Metadata::ASSOC_HAS_MANY:
+            case self::ASSOC_HAS_MANY:
                 $this->associations[$data['fieldName']] = [
                     'type' => $data['type'],
                     'target' => $data['target'],
                     'mappedBy' => $data['mappedBy']
                 ];
                 break;
-            case Metadata::ASSOC_BELONGS_TO:
+            case self::ASSOC_HAS_ONE:
+            case self::ASSOC_BELONGS_TO:
                 $this->associations[$data['fieldName']] = [
                     'type' => $data['type'],
                     'target' => $data['target'],

@@ -3,9 +3,9 @@
 namespace App\Domain\Users;
 
 /**
- * @Entity(name="teachers")
+ * @Entity(name="temp_teachers")
  */
-class Teacher
+class TempTeacher
 {
     /** @Id */
     protected $id;
@@ -19,15 +19,19 @@ class Teacher
     /** @Column(type="string") */
     protected $email;
 
-    /** @HasOne(target="App\Domain\Subscriptions\Subscription") */
+    //** @HasOne(target="App\Domain\Subscriptions\Subscription") */
     protected $subscription;
 
-    public function __construct($firstName, $lastName, $email, $subscription)
+    /** @Column(type="string") */
+    protected $confirmationCode;
+
+    public function __construct($firstName, $lastName, $email, $subscription, $confirmationCode)
     {
         $this->firstName = $firstName;
         $this->lastName = $lastName;
         $this->email = $email;
         $this->subscription = $subscription;
+        $this->confirmationCode = $confirmationCode;
     }
 
     public function firstName()
@@ -73,5 +77,15 @@ class Teacher
     public function setSubscription($subscription)
     {
         $this->subscription = $subscription;
+    }
+
+    public function confirmationCode()
+    {
+        return $this->confirmationCode;
+    }
+
+    public function setConfirmationCode($confirmationCode)
+    {
+        $this->confirmationCode = $confirmationCode;
     }
 }

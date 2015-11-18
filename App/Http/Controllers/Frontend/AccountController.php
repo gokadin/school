@@ -14,7 +14,6 @@ use Library\Facades\Redirect;
 use Library\Facades\Sentry;
 use Models\Student;
 use Models\Teacher;
-use Models\Subscription;
 
 class AccountController extends Controller
 {

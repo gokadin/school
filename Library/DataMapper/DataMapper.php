@@ -443,6 +443,12 @@ class DataMapper
         $this->loadedEntities[$class]->detach($object);
     }
 
+    public function detachAll()
+    {
+        unset($this->loadedEntities);
+        $this->loadedEntities = [];
+    }
+
 //    public function flush()
 //    {
 //        foreach ($this->storedCommands as $class => $commands)
@@ -572,6 +578,9 @@ class DataMapper
                 case Metadata::ASSOC_HAS_MANY:
                     $this->buildHasMany($assoc['target'], $fieldName, $metadata, $r, $entity);
                     break;
+                case Metadata::ASSOC_HAS_ONE:
+                    $this->buildHasOne($assoc['target'], $fieldName, $r, $entity, $foreignKeys);
+                    break;
                 case Metadata::ASSOC_BELONGS_TO:
                     $this->buildBelongsTo($assoc['target'], $fieldName, $r, $entity, $foreignKeys);
                     break;
@@ -592,6 +601,26 @@ class DataMapper
         if (sizeof($targetData) == 0)
         {
             $property->setValue($entity, null);
+            return;
+        }
+
+        $property->setValue($entity, $this->buildEntity($targetMetadata, $targetData[0]));
+    }
+
+    protected function buildHasOne($target, $fieldName, ReflectionClass $r, $entity, $foreignKeys)
+    {
+        $property = $r->getProperty($fieldName);
+        $property->setAccessible(true);
+
+        $targetMetadata = $this->loadMetadata($target);
+        $targetData = $this->queryBuilder->table($targetMetadata->table())
+            ->where($targetMetadata->primaryKey()->name(), '=', $foreignKeys[$targetMetadata->generateForeignKeyName()])
+            ->select();
+
+        if (sizeof($targetData) == 0)
+        {
+            $property->setValue($entity, null);
+            return;
         }
 
         $property->setValue($entity, $this->buildEntity($targetMetadata, $targetData[0]));

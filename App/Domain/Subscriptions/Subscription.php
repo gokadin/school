@@ -2,7 +2,7 @@
 
 namespace App\Domain\Subscriptions;
 
-use Library\Database\DataMapper\DataMapperTimestamps;
+use Library\DataMapper\DataMapperTimestamps;
 
 /**
  * @Entity(name="subscriptions")
