@@ -45,6 +45,11 @@ class Teacher
         $this->students->add($student);
     }
 
+    public function removeStudent(Student $student)
+    {
+        $this->students->remove($student);
+    }
+
     public function students()
     {
         return $this->students;

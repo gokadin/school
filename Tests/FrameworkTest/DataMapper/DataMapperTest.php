@@ -107,6 +107,22 @@ class DataMapperTest extends DataMapperBaseTest
         $this->assertEquals($se->getId(), $result->getId());
     }
 
+    public function testFindAfterDetachingFromCache()
+    {
+        // Arrange
+        $this->setUpSimpleEntity();
+        $se = new SimpleEntity(1, 2, 'one', 'two');
+        $this->dm->persist($se);
+
+        // Act
+        $this->dm->detach($se);
+        $result = $this->dm->find(SimpleEntity::class, $se->getId());
+
+        // Assert
+        $this->assertTrue($result instanceof SimpleEntity);
+        $this->assertEquals($se->getId(), $result->getId());
+    }
+
     public function testFindWhenNotFound()
     {
         // Arrange
@@ -261,6 +277,7 @@ class DataMapperTest extends DataMapperBaseTest
 
         // Act
         $this->dm->persist($teacher);
+        $this->dm->detach($teacher);
         $teacher = $this->dm->find(Teacher::class, $teacher->getId());
 
         // Assert
@@ -285,6 +302,7 @@ class DataMapperTest extends DataMapperBaseTest
 
         // Act
         $this->dm->persist($teacher);
+        $this->dm->detach($teacher);
         $teacher = $this->dm->find(Teacher::class, $teacher->getId());
 
         // Assert
@@ -306,6 +324,7 @@ class DataMapperTest extends DataMapperBaseTest
 
         // Act
         $this->dm->persist($teacher);
+        $this->dm->detach($teacher);
         $teacher = $this->dm->find(Teacher::class, $teacher->getId());
 
         // Assert
@@ -316,16 +335,76 @@ class DataMapperTest extends DataMapperBaseTest
 
     public function testHasManyWhenAddingANewEntityAndUpdating()
     {
+        // Arrange
+        $this->setUpAssociations();
+        $teacher = new Teacher('teacher1');
+        $student1 = new Student('student1', $teacher);
+        $student2 = new Student('student2', $teacher);
+        $student3 = new Student('student3', $teacher);
+        $teacher->addStudent($student1);
+        $teacher->addStudent($student2);
 
+        // Act
+        $this->dm->persist($teacher);
+        $this->dm->persist($student3);
+        $teacher->addStudent($student3);
+        $this->dm->persist($teacher);
+        $this->dm->detach($teacher);
+        $teacher = $this->dm->find(Teacher::class, $teacher->getId());
+
+        // Assert
+        $this->assertTrue($teacher->students() instanceof PersistentCollection);
+        $this->assertEquals(3, $teacher->students()->count());
+        $this->assertEquals($teacher->getId(), $teacher->students()->first()->teacher()->getId());
     }
 
     public function testHasManyWhenAddingANewNonPersistedEntityAndUpdating()
     {
+        // Arrange
+        $this->setUpAssociations();
+        $teacher = new Teacher('teacher1');
+        $student1 = new Student('student1', $teacher);
+        $student2 = new Student('student2', $teacher);
+        $student3 = new Student('student3', $teacher);
+        $teacher->addStudent($student1);
+        $teacher->addStudent($student2);
 
+        // Act
+        $this->dm->persist($teacher);
+        $teacher->addStudent($student3);
+        $this->dm->persist($teacher);
+        $this->dm->detach($teacher);
+        $teacher = $this->dm->find(Teacher::class, $teacher->getId());
+
+        // Assert
+        $this->assertTrue($teacher->students() instanceof PersistentCollection);
+        $this->assertEquals(3, $teacher->students()->count());
+        $this->assertEquals($teacher->getId(), $teacher->students()->first()->teacher()->getId());
     }
 
     public function testHasManyWhenRemovingNewEntityAndUpdating()
     {
+        // Arrange
+        $this->setUpAssociations();
+        $teacher = new Teacher('teacher1');
+        $student1 = new Student('student1', $teacher);
+        $student2 = new Student('student2', $teacher);
+        $student3 = new Student('student3', $teacher);
+        $teacher->addStudent($student1);
+        $teacher->addStudent($student2);
+        $teacher->addStudent($student3);
 
+        // Act
+        $this->dm->persist($teacher);
+        $teacher->removeStudent($student1);
+        $teacher->removeStudent($student2);
+        $this->dm->persist($teacher);
+        $this->dm->detach($teacher);
+        $teacher = $this->dm->find(Teacher::class, $teacher->getId());
+
+        // Assert
+        $this->assertTrue($teacher->students() instanceof PersistentCollection);
+        $this->assertEquals(1, $teacher->students()->count());
+        $this->assertEquals($teacher->getId(), $teacher->students()->first()->teacher()->getId());
     }
 }

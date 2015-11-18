@@ -16,6 +16,8 @@ abstract class AbstractEntityCollection implements IteratorAggregate, JsonSerial
 
     abstract function add($value);
 
+    abstract function remove($value);
+
     abstract function first();
 
     abstract function last();

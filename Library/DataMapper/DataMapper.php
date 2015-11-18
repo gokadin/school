@@ -233,6 +233,8 @@ class DataMapper
         $this->queryBuilder->table($metadata->table())
             ->where($metadata->primaryKey()->name(), '=', $id)
             ->update($data);
+
+        $this->handleUpdateAssociations($object, $metadata, $id);
     }
 
     protected function handleAssociatedProperty($object, Metadata $metadata, Column $column, ReflectionClass $r)
@@ -283,7 +285,12 @@ class DataMapper
         $property = $r->getProperty($fieldName);
         $property->setAccessible(true);
         $collection = $property->getValue($object);
-        if (!($collection instanceof EntityCollection) || $collection->isEmpty())
+        if (($collection instanceof EntityCollection) && $collection->isEmpty())
+        {
+            $property->setValue($object, new PersistentCollection($this, $r->getName()));
+            return;
+        }
+        else if (!($collection instanceof EntityCollection))
         {
             return;
         }
@@ -301,7 +308,7 @@ class DataMapper
             $currentIdProperty->setAccessible(true);
             if (is_null($targetAssocValue) || $currentIdProperty->getValue($targetAssocValue) != $objectId)
             {
-                $targetProperty->setValue($item, $objectId);
+                $targetProperty->setValue($item, $object);
             }
 
             $targetPrimaryKeyProperty = $targetR->getProperty($targetMetadata->primaryKey()->fieldName());
@@ -309,6 +316,86 @@ class DataMapper
             is_null($targetPrimaryKeyProperty->getValue($item))
                 ? $this->insert($item, $targetMetadata, $targetR)
                 : $this->update($item, $targetMetadata, $targetR);
+        }
+
+        $property->setValue($object, new PersistentCollection($this, $r->getName(), $addedItems));
+    }
+
+    protected function handleUpdateAssociations($object, Metadata $metadata, $objectId)
+    {
+        $associations = $metadata->associations();
+        foreach ($associations as $fieldName => $association)
+        {
+            switch ($association['type'])
+            {
+                case Metadata::ASSOC_HAS_MANY:
+                    $this->handleUpdateHasMany($object, $metadata, $fieldName, $association['target'], $objectId);
+                    break;
+            }
+        }
+    }
+
+    protected function handleUpdateHasMany($object, Metadata $metadata, $fieldName, $target, $objectId)
+    {
+        $r = $metadata->getReflectionClass();
+        $property = $r->getProperty($fieldName);
+        $property->setAccessible(true);
+        $collection = $property->getValue($object);
+        if (!($collection instanceof PersistentCollection) || !$collection->isChanged())
+        {
+            return;
+        }
+
+        $addedItems = $collection->addedItems();
+        $removedItems = $collection->removedItems();
+        $targetMetadata = $this->loadMetadata($target);
+        $targetR = $targetMetadata->getReflectionClass();
+        $targetPrimaryKeyProperty = $targetR->getProperty($targetMetadata->primaryKey()->fieldName());
+        $targetPrimaryKeyProperty->setAccessible(true);
+        $targetAssocProperty = $targetR->getProperty($metadata->associations()[$fieldName]['mappedBy']);
+        $targetAssocProperty->setAccessible(true);
+
+        if (sizeof($addedItems) > 0)
+        {
+            $ids = [];
+            foreach ($addedItems as $item)
+            {
+                $id = $targetPrimaryKeyProperty->getValue($item);
+                // if the entity was not was persisted
+                if (is_null($id))
+                {
+                    $targetAssocProperty->setValue($item, $object);
+                    $this->insert($item, $targetMetadata, $targetR);
+
+                    continue;
+                }
+
+                $ids[] = $id;
+            }
+            $this->queryBuilder->table($targetMetadata->table())
+                ->where($targetMetadata->primaryKey()->name(), 'in', implode(',', $ids))
+                ->update([$metadata->generateForeignKeyName() => $objectId]);
+        }
+
+        if (sizeof($removedItems) > 0)
+        {
+            $ids = [];
+            foreach ($addedItems as $item)
+            {
+                $id = $targetPrimaryKeyProperty->getValue($item);
+                // if the entity was not was persisted
+                if (is_null($id))
+                {
+                    $targetAssocProperty->setValue($item, 0);
+                    $this->insert($item, $targetMetadata, $targetR);
+
+                    continue;
+                }
+                $ids[] = $id;
+            }
+            $this->queryBuilder->table($targetMetadata->table())
+                ->where($targetMetadata->primaryKey()->name(), 'in', implode(',', $ids))
+                ->update([$metadata->generateForeignKeyName() => 0]);
         }
     }
 
@@ -332,6 +419,18 @@ class DataMapper
         $this->queryBuilder()->table($metadata->table())
             ->where($primaryKeyFieldName, '=', $id)
             ->delete();
+    }
+
+    public function detach($object)
+    {
+        $class = get_class($object);
+
+        if (!isset($this->loadedEntities[$class]))
+        {
+            return;
+        }
+
+        $this->loadedEntities[$class]->detach($object);
     }
 
 //    public function flush()

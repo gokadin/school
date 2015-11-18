@@ -30,8 +30,35 @@ class EntityCollection extends AbstractEntityCollection
     {
         foreach ($entities as $entity)
         {
-            $this->items[] = $entity;
-            $this->count++;
+            $this->addOne($entity);
+        }
+    }
+
+    public function remove($value)
+    {
+        is_array($value)
+            ? $this->removeMany($value)
+            : $this->removeOne($value);
+    }
+
+    public function removeOne($entity)
+    {
+        foreach ($this->items as $key => $item)
+        {
+            if ($item === $entity)
+            {
+                unset($this->items[$key]);
+                $this->count--;
+                break;
+            }
+        }
+    }
+
+    public function removeMany($entities)
+    {
+        foreach ($entities as $entity)
+        {
+            $this->removeOne($entity);
         }
     }
 
