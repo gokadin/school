@@ -7,5 +7,8 @@ $baseDir = dirname($vendorDir);
 
 return array(
     $vendorDir . '/hamcrest/hamcrest-php/hamcrest/Hamcrest.php',
+    $vendorDir . '/guzzlehttp/promises/src/functions_include.php',
+    $vendorDir . '/guzzlehttp/psr7/src/functions_include.php',
     $vendorDir . '/swiftmailer/swiftmailer/lib/swift_required.php',
+    $vendorDir . '/guzzlehttp/guzzle/src/functions_include.php',
 );

@@ -25,31 +25,16 @@ class UserRepository extends Repository
 
         $confirmationCode = md5(rand(999, 999999));
 
+        $tempTeacher = new TempTeacher(
+            $data['firstName'],
+            $data['lastName'],
+            $data['email'],
+            $subscription,
+            $confirmationCode
+        );
+        $this->dm->persist($tempTeacher);
 
-
-//        $r->hmset('tempTeacher:'.$r->incr('next_temp_teacher_id'), [
-//            'subscription_id' => $subscriptionId,
-//            'first_name' => $data['firstName'],
-//            'last_name' => $data['lastName'],
-//            'email' => $data['email'],
-//            'confirmation_code' => $confirmationCode
-//        ]);
-//
-//        return $r->get('next_temp_teacher_id');
-
-//            $subscription = Subscription::create([
-//                'type' => $data['subscriptionType']
-//            ]);
-//
-//            $confirmationCode = md5(rand(999, 999999));
-//
-//            $tempTeacher = TempTeacher::create([
-//                'subscription_id' => $subscription->id,
-//                'first_name' => $data['firstName'],
-//                'last_name' => $data['lastName'],
-//                'email' => $data['email'],
-//                'confirmation_code' => $confirmationCode
-//            ]);
+        return $tempTeacher;
     }
 
     public function registerTeacher(array $data)

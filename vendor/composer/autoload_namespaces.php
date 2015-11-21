@@ -9,6 +9,5 @@ return array(
     'phpDocumentor' => array($vendorDir . '/phpdocumentor/reflection-docblock/src'),
     'Prophecy\\' => array($vendorDir . '/phpspec/prophecy/src'),
     'Mockery' => array($vendorDir . '/mockery/mockery/library'),
-    'Carbon' => array($vendorDir . '/nesbot/carbon/src'),
     '' => array($baseDir . '/'),
 );
