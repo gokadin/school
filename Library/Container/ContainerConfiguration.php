@@ -3,7 +3,6 @@
 namespace Library\Container;
 
 use Library\Configuration\Config;
-use Library\Database\DataMapper\DataMapper;
 use Library\Database\ModelFactory;
 use Library\Events\EventManager;
 use Library\Http\Redirect;
@@ -17,7 +16,6 @@ use Library\Routing\Router;
 use Library\Database\Database;
 use Library\Http\Form;
 use Library\Page;
-use Library\Sentry\Sentry;
 use Library\Session;
 use Library\Shao\Shao;
 use Library\Validation\Validator;
@@ -48,7 +46,6 @@ class ContainerConfiguration
         $this->container->registerInstance('redis', new Redis($databaseSettings));
         $this->container->registerInstance('form', new Form());
         $this->container->registerInstance('session', new Session());
-        $this->container->registerInstance('validator', new Validator());
         $this->container->registerInstance('redirect', new Redirect());
         $this->container->registerInstance('shao', new Shao());
         $this->container->registerInstance('viewFactory', new ViewFactory());
@@ -58,6 +55,9 @@ class ContainerConfiguration
         $this->container->registerInstance('eventManager', new EventManager());
         //$datamapperSettings = require $app->basePath().'Config/datamapper.php';
         //$this->container->registerInstance('dataMapper', new DataMapper($database, $datamapperSettings));
+
+        // Services requiring a database
+        $this->container->registerInstance('validator', new Validator($database));
 
         if (env('APP_DEBUG'))
         {

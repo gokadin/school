@@ -2,12 +2,19 @@
 
 namespace Library\Validation;
 
-use Library\Facades\Redis;
+use Library\Database\Database;
 use Library\Facades\Request;
 use Library\Facades\Session;
 
 class Validator
 {
+    protected $database;
+
+    public function __construct(Database $database)
+    {
+        $this->database = $database;
+    }
+
     public function make(array $data, array $rules, $withErrors = true)
     {
         if ($rules == null || sizeof($rules) == 0)
@@ -196,22 +203,13 @@ class Validator
         return true;
     }
 
-    public function unique($value, $modelName, $columnName)
+    public function unique($value, $table, $columnName)
     {
-        // refactor this later
+        $results = $this->database->table($table)
+            ->where($columnName, '=',$value)
+            ->select();
 
-        if ($columnName != 'email')
-        {
-            return false;
-        }
-
-        $redis = Redis::getRedis();
-
-//        $model = '\\Models\\'.$modelName;
-//        if (env('APP_ENV') == 'framework_testing')
-//            $model = '\\Tests\\FrameworkTest\\Models\\'.$modelName;
-//
-//        return !$model::exists($columnName, $value);
+        return sizeof($results) == 0;
     }
 
     public function equalsField($value, $fieldName)

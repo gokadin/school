@@ -66,4 +66,12 @@ class SchemaTool
             $this->databaseDriver->dropTable($metadata->table());
         }
     }
+
+    public function update()
+    {
+        foreach ($this->classes as $class)
+        {
+            $metadata = $this->mappingDriver->getMetadata($class);
+        }
+    }
 }

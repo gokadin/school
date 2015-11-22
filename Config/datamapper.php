@@ -16,6 +16,7 @@ return [
     'classes' => [
         App\Domain\Users\Teacher::class,
         App\Domain\Users\TempTeacher::class,
+        App\Domain\Users\Student::class,
         App\Domain\Subscriptions\Subscription::class
     ]
 
