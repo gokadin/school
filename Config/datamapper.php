@@ -14,7 +14,9 @@ return [
     ],
 
     'classes' => [
-
+        App\Domain\Users\Teacher::class,
+        App\Domain\Users\TempTeacher::class,
+        App\Domain\Subscriptions\Subscription::class
     ]
 
 ];

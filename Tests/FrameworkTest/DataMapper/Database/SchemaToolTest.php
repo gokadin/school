@@ -52,10 +52,25 @@ class SchemaToolTest extends BaseTest
     public function testCreate()
     {
         // Act
-        $this->schemaTool->create();
+        $successes = $this->schemaTool->create();
 
         // Assert
         $results = $this->dao->query('SHOW TABLES LIKE \'simpleEntity\'');
-        $this->assertGreaterThan(0, count($results));
+        $this->assertGreaterThan(0, $results->rowCount());
+        $this->assertTrue(isset($successes['simpleEntity']));
+        $this->assertTrue($successes['simpleEntity']);
+    }
+
+    public function testDrop()
+    {
+        // Arrange
+        $this->schemaTool->create();
+
+        // Act
+        $this->schemaTool->drop();
+
+        // Assert
+        $results = $this->dao->query('SHOW TABLES LIKE \'simpleEntity\'');
+        $this->assertEquals(0, $results->rowCount());
     }
 }

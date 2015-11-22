@@ -87,6 +87,11 @@ class MySqlDriver
 
     public function createTable(Metadata $metadata)
     {
+        if ($this->tableExists($metadata->table()))
+        {
+            return false;
+        }
+
         $str = 'CREATE TABLE IF NOT EXISTS '.$metadata->table();
 
         $primaryKeyStr = '';
@@ -141,12 +146,17 @@ class MySqlDriver
 
         $str .= ')';
 
-        return $this->dao->exec($str);
+        $this->dao->exec($str);
+
+        return true;
     }
 
     public function dropTable($table)
     {
-        $this->dao->exec('DROP TABLE '.$table);
+        if ($this->tableExists($table))
+        {
+            $this->dao->exec('DROP TABLE '.$table);
+        }
     }
 
     protected function getColumnTypeString($type)
@@ -169,5 +179,22 @@ class MySqlDriver
                 throw new RuntimeException('Unknown column type: '.$type);
                 break;
         }
+    }
+
+    protected function tableExists($table)
+    {
+        $results = $this->dao->query("SHOW TABLES LIKE '$table'");
+
+        if (!$results)
+        {
+            return false;
+        }
+
+        if ($results->rowCount() > 0)
+        {
+            return true;
+        }
+
+        return false;
     }
 }

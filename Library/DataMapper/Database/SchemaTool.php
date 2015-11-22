@@ -41,11 +41,21 @@ class SchemaTool
 
     public function create()
     {
+        $results = [];
+
         foreach ($this->classes as $class)
         {
             $metadata = $this->mappingDriver->getMetadata($class);
-            $this->databaseDriver->createTable($metadata);
+            if ($this->databaseDriver->createTable($metadata))
+            {
+                $results[$metadata->table()] = true;
+                continue;
+            }
+
+            $results[$metadata->table()] = false;
         }
+
+        return $results;
     }
 
     public function drop()
