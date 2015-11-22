@@ -1,12 +1,15 @@
 <?php
 
 namespace App\Domain\Users;
+use Library\DataMapper\DataMapperTimestamps;
 
 /**
  * @Entity(name="teachers")
  */
 class Teacher
 {
+    use DataMapperTimestamps;
+
     /** @Id */
     protected $id;
 

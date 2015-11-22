@@ -2,7 +2,6 @@
 
 namespace Library\Console;
 
-use Library\Console\Modules\DataMapper\DataMapper;
 use Library\Console\Modules\Queue\QueueListener;
 use Symfony\Component\Console\Application;
 
@@ -35,6 +34,7 @@ class ConsoleApplication
     {
         $database = $this->framework->container()->resolveInstance('database');
         $this->app->add(new QueueListener($database));
+        $this->app->add(new ScheduleRunner());
     }
 
     protected function framework()

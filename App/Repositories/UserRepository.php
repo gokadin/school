@@ -37,6 +37,13 @@ class UserRepository extends Repository
         return $tempTeacher;
     }
 
+    public function removeExpiredTempTeachers()
+    {
+        $this->dm->queryBuilder()->table('temp_teachers')
+            ->where('created_at', '<', 'DATE_SUB(NOW(), INTERVAL 1 DAY)')
+            ->delete();
+    }
+
     public function registerTeacher(array $data)
     {
         $tempTeacher = TempTeacher::find($data['tempTeacherId']);

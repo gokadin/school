@@ -2,11 +2,15 @@
 
 namespace App\Domain\Users;
 
+use Library\DataMapper\DataMapperTimestamps;
+
 /**
  * @Entity(name="temp_teachers")
  */
 class TempTeacher
 {
+    use DataMapperTimestamps;
+
     /** @Id */
     protected $id;
 
