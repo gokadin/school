@@ -17,9 +17,9 @@ class SchedulerConfig
 
     public function run(Scheduler $scheduler)
     {
-        $scheduler->add('expired temp teachers removal', function() {
+        $scheduler->add('remove expired temp teachers', function() {
             $userRepository = new UserRepository();
             $userRepository->removeExpiredTempTeachers();
-        });
+        })->dailyAt('3:00');
     }
 }

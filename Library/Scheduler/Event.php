@@ -4,6 +4,7 @@ namespace Library\Scheduler;
 
 use Cron\CronExpression;
 use Closure;
+use Exception;
 
 class Event
 {
@@ -25,6 +26,20 @@ class Event
     public function isDue()
     {
         return CronExpression::factory($this->expression)->isDue();
+    }
+
+    public function run()
+    {
+        try
+        {
+            $this->closure();
+
+            return true;
+        }
+        catch (Exception $e)
+        {
+            return false;
+        }
     }
 
     public function cron($expression)
