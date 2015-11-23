@@ -8,23 +8,16 @@ class Table
     const UPDATED_AT = 'updated_at';
 
     protected $name;
-    protected $modelName;
     protected $columns = [];
 
-    public function __construct($name, $modelName = '')
+    public function __construct($name)
     {
         $this->name = $name;
-        $this->modelName = $modelName;
     }
 
     public function name()
     {
         return $this->name;
-    }
-
-    public function modelName()
-    {
-        return $this->modelName;
     }
 
     public function increments($name)

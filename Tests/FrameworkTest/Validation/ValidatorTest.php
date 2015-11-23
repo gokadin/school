@@ -2,8 +2,8 @@
 
 namespace Tests\FrameworkTest\Validation;
 
+use Library\Database\Table;
 use Library\Testing\DatabaseTransactions;
-use Library\Validation\Validator;
 use Library\Facades\Session;
 use Tests\FrameworkTest\BaseTest;
 use Tests\FrameworkTest\Models\Test;
@@ -12,40 +12,37 @@ class ValidatorTest extends BaseTest
 {
     use DatabaseTransactions;
 
+    protected $validator;
+    protected $database;
+
     public function setUp()
     {
         parent::setUp();
 
-        $this->createApplication();
+        $app = $this->createApplication();
+
+        $this->validator = $app->container()->resolveInstance('validator');
+        $this->database = $app->container()->resolveInstance('database');
     }
 
     public function testMakeWorksWithSimpleSingleValidationWhenValid()
     {
-        // Arrange
-        $validator = new Validator();
-
         // Assert
-        $this->assertTrue($validator->make(['one' => 1], ['one' => 'required']));
+        $this->assertTrue($this->validator->make(['one' => 1], ['one' => 'required']));
         $this->assertFalse(Session::hasErrors());
     }
 
     public function testMakeWorksWithSimpleSingleValidationWhenInvalid()
     {
-        // Arrange
-        $validator = new Validator();
-
         // Assert
-        $this->assertFalse($validator->make(['one' => null], ['one' => 'required']));
+        $this->assertFalse($this->validator->make(['one' => null], ['one' => 'required']));
         $this->assertTrue(Session::hasErrors());
     }
 
     public function testMakeWorksWithMultipleValidationsWhenAllValid()
     {
-        // Arrange
-        $validator = new Validator();
-
         // Assert
-        $this->assertTrue($validator->make(
+        $this->assertTrue($this->validator->make(
             ['one' => 1, 'two' => 2, 'three' => 3],
             ['one' => 'required', 'two' => 'numeric', 'three' => 'required']
         ));
@@ -54,11 +51,8 @@ class ValidatorTest extends BaseTest
 
     public function testMakeWorksWithMultipleValidationsWhenOneInvalid()
     {
-        // Arrange
-        $validator = new Validator();
-
         // Assert
-        $this->assertFalse($validator->make(
+        $this->assertFalse($this->validator->make(
             ['one' => 1, 'two' => 'text', 'three' => 3],
             ['one' => 'required', 'two' => 'numeric', 'three' => 'required']
         ));
@@ -67,11 +61,8 @@ class ValidatorTest extends BaseTest
 
     public function testMakeWorksWithMoreDataThanThereAreValidations()
     {
-        // Arrange
-        $validator = new Validator();
-
         // Assert
-        $this->assertTrue($validator->make(
+        $this->assertTrue($this->validator->make(
             ['one' => 1, 'two' => 2, 'three' => 3],
             ['one' => 'required', 'three' => 'required']
         ));
@@ -80,31 +71,22 @@ class ValidatorTest extends BaseTest
 
     public function testMakeWorksWithComplexValidationRuleWhenValid()
     {
-        // Arrange
-        $validator = new Validator();
-
         // Assert
-        $this->assertTrue($validator->make(['one' => 20], ['one' => 'min:15']));
+        $this->assertTrue($this->validator->make(['one' => 20], ['one' => 'min:15']));
         $this->assertFalse(Session::hasErrors());
     }
 
     public function testMakeWorksWithComplexValidationRuleWhenInvalid()
     {
-        // Arrange
-        $validator = new Validator();
-
         // Assert
-        $this->assertFalse($validator->make(['one' => 1], ['one' => 'min:15']));
+        $this->assertFalse($this->validator->make(['one' => 1], ['one' => 'min:15']));
         $this->assertTrue(Session::hasErrors());
     }
 
     public function testMakeWorksWithMultipleValidationsOnSameFieldWhenAllValid()
     {
-        // Arrange
-        $validator = new Validator();
-
         // Assert
-        $this->assertTrue($validator->make(
+        $this->assertTrue($this->validator->make(
             ['one' => 1],
             ['one' => ['required', 'numeric']]
         ));
@@ -113,11 +95,8 @@ class ValidatorTest extends BaseTest
 
     public function testMakeWorksWithMultipleValidationsOnSameFieldWhenOneIsInValid()
     {
-        // Arrange
-        $validator = new Validator();
-
         // Assert
-        $this->assertFalse($validator->make(
+        $this->assertFalse($this->validator->make(
             ['one' => 'text'],
             ['one' => ['required', 'numeric']]
         ));
@@ -126,11 +105,8 @@ class ValidatorTest extends BaseTest
 
     public function testSingleCustomErrorWorks()
     {
-        // Arrange
-        $validator = new Validator();
-
         // Act
-        $result = $validator->make(
+        $result = $this->validator->make(
             ['one' => null],
             ['one' => ['required' => 'custom']]
         );
@@ -144,11 +120,8 @@ class ValidatorTest extends BaseTest
 
     public function testMultipleCustomErrorsWork()
     {
-        // Arrange
-        $validator = new Validator();
-
         // Act
-        $result = $validator->make(
+        $result = $this->validator->make(
             ['one' => 'text', 'two' => null],
             [
                 'one' => ['required', 'numeric', 'min:10' => 'customMin'],
@@ -168,11 +141,8 @@ class ValidatorTest extends BaseTest
 
     public function testCustomErrorFormatting()
     {
-        // Arrange
-        $validator = new Validator();
-
         // Act
-        $result = $validator->make(
+        $result = $this->validator->make(
             ['one' => null],
             ['one' => [
                 'required' => '{field} is required',
@@ -191,194 +161,160 @@ class ValidatorTest extends BaseTest
 
     public function testThatRequiredWorksWhenValid()
     {
-        // Arrange
-        $validator = new Validator();
-
         // Assert
-        $this->assertTrue($validator->required('test'));
+        $this->assertTrue($this->validator->required('test'));
     }
 
     public function testThatRequiredWorksWhenInvalid()
     {
-        // Arrange
-        $validator = new Validator();
-
         // Assert
-        $this->assertFalse($validator->required(null));
-        $this->assertFalse($validator->required(''));
-        $this->assertFalse($validator->required('    '));
+        $this->assertFalse($this->validator->required(null));
+        $this->assertFalse($this->validator->required(''));
+        $this->assertFalse($this->validator->required('    '));
     }
 
     public function testThatNumericWorksWhenValid()
     {
-        // Arrange
-        $validator = new Validator();
-
         // Assert
-        $this->assertTrue($validator->numeric(3));
+        $this->assertTrue($this->validator->numeric(3));
     }
 
     public function testThatNumericWorksWhenInvalid()
     {
-        // Arrange
-        $validator = new Validator();
-
         // Assert
-        $this->assertFalse($validator->numeric(null));
-        $this->assertFalse($validator->numeric(''));
-        $this->assertFalse($validator->numeric('test'));
+        $this->assertFalse($this->validator->numeric(null));
+        $this->assertFalse($this->validator->numeric(''));
+        $this->assertFalse($this->validator->numeric('test'));
     }
 
     public function testMinWorksWhenValid()
     {
-        // Arrange
-        $validator = new Validator();
-
         // Assert
-        $this->assertTrue($validator->min(11, 10));
-        $this->assertTrue($validator->min(10, 10));
+        $this->assertTrue($this->validator->min(11, 10));
+        $this->assertTrue($this->validator->min(10, 10));
     }
 
     public function testMinWorksWhenInvalid()
     {
-        // Arrange
-        $validator = new Validator();
-
         // Assert
-        $this->assertFalse($validator->min(9, 10));
-        $this->assertFalse($validator->min('text', 10));
+        $this->assertFalse($this->validator->min(9, 10));
+        $this->assertFalse($this->validator->min('text', 10));
     }
 
     public function testMaxWorksWhenValid()
     {
-        // Arrange
-        $validator = new Validator();
-
         // Assert
-        $this->assertTrue($validator->max(10, 11));
-        $this->assertTrue($validator->max(10, 10));
+        $this->assertTrue($this->validator->max(10, 11));
+        $this->assertTrue($this->validator->max(10, 10));
     }
 
     public function testMaxWorksWhenInvalid()
     {
-        // Arrange
-        $validator = new Validator();
-
         // Assert
-        $this->assertFalse($validator->max(11, 10));
-        $this->assertFalse($validator->max('text', 10));
+        $this->assertFalse($this->validator->max(11, 10));
+        $this->assertFalse($this->validator->max('text', 10));
     }
 
     public function testBetweenWorksWhenValid()
     {
-        // Arrange
-        $validator = new Validator();
-
         // Assert
-        $this->assertTrue($validator->between(15, 10, 20));
-        $this->assertTrue($validator->between(10, 10, 20));
-        $this->assertTrue($validator->between(20, 10, 20));
+        $this->assertTrue($this->validator->between(15, 10, 20));
+        $this->assertTrue($this->validator->between(10, 10, 20));
+        $this->assertTrue($this->validator->between(20, 10, 20));
     }
 
     public function testBetweenWorksWhenInvalid()
     {
-        // Arrange
-        $validator = new Validator();
-
         // Assert
-        $this->assertFalse($validator->between(9, 10, 20));
-        $this->assertFalse($validator->between(21, 10, 20));
-        $this->assertFalse($validator->between('text', 10, 20));
+        $this->assertFalse($this->validator->between(9, 10, 20));
+        $this->assertFalse($this->validator->between(21, 10, 20));
+        $this->assertFalse($this->validator->between('text', 10, 20));
     }
 
     public function testBooleanWorksWhenValid()
     {
-        // Arrange
-        $validator = new Validator();
-
         // Assert
-        $this->assertTrue($validator->boolean(true));
-        $this->assertTrue($validator->boolean(false));
-        $this->assertTrue($validator->boolean(1));
-        $this->assertTrue($validator->boolean(0));
-        $this->assertTrue($validator->boolean('1'));
-        $this->assertTrue($validator->boolean('0'));
+        $this->assertTrue($this->validator->boolean(true));
+        $this->assertTrue($this->validator->boolean(false));
+        $this->assertTrue($this->validator->boolean(1));
+        $this->assertTrue($this->validator->boolean(0));
+        $this->assertTrue($this->validator->boolean('1'));
+        $this->assertTrue($this->validator->boolean('0'));
     }
 
     public function testBooleanWorksWhenInvalid()
     {
-        // Arrange
-        $validator = new Validator();
-
         // Assert
-        $this->assertFalse($validator->boolean(2));
-        $this->assertFalse($validator->boolean(-1));
-        $this->assertFalse($validator->boolean('2'));
-        $this->assertFalse($validator->boolean('-1'));
+        $this->assertFalse($this->validator->boolean(2));
+        $this->assertFalse($this->validator->boolean(-1));
+        $this->assertFalse($this->validator->boolean('2'));
+        $this->assertFalse($this->validator->boolean('-1'));
     }
 
     public function testEmailWorksWhenValid()
     {
-        // Arrange
-        $validator = new Validator();
-
         // Assert
-        $this->assertTrue($validator->email('a@b.cc'));
+        $this->assertTrue($this->validator->email('a@b.cc'));
     }
 
     public function testEmailWorksWhenInvalid()
     {
-        // Arrange
-        $validator = new Validator();
-
         // Assert
-        $this->assertFalse($validator->email('a@b'));
-        $this->assertFalse($validator->email('a@.c'));
-        $this->assertFalse($validator->email('a.c'));
-        $this->assertFalse($validator->email('@b.c'));
+        $this->assertFalse($this->validator->email('a@b'));
+        $this->assertFalse($this->validator->email('a@.c'));
+        $this->assertFalse($this->validator->email('a.c'));
+        $this->assertFalse($this->validator->email('@b.c'));
     }
 
     public function testUniqueWorksWhenValid()
     {
         // Arrange
-        $validator = new Validator();
+        $table = new Table('Test');
+        $table->increments('id');
+        $table->integer('col1');
+        $this->database->create($table);
 
         // Assert
-        $this->assertTrue($validator->unique('nonexistant', 'Test', 'col1'));
+        $this->assertTrue($this->validator->unique('nonexistant', 'Test', 'col1'));
+
+        // Arrange
+        $this->database->drop('Test');
     }
 
     public function testUniqueWorksWhenInvalid()
     {
-        $this->beginDatabaseTransaction();
-
         // Arrange
-        $validator = new Validator();
-        Test::create(['col1' => 'str', 'col2' => 1]);
+        $table = new Table('Test');
+        $table->increments('id');
+        $table->integer('col1');
+        $this->database->create($table);
+        $this->database->table('Test')->insert(['col1' => 'sr']);
 
         // Assert
-        $this->assertFalse($validator->unique('str', 'Test', 'col1'));
+        $this->assertFalse($this->validator->unique('str', 'Test', 'col1'));
+
+        // Arrange
+        $this->database->drop('Test');
     }
 
     public function testEqualsFieldWorksWhenValid()
     {
         // Arrange
-        $validator = new Validator();
         $_SERVER['REQUEST_METHOD'] = 'POST';
         $_POST['one'] = 1;
 
         // Assert
-        $this->assertTrue($validator->equalsField(1, 'one'));
+        $this->assertTrue($this->validator->equalsField(1, 'one'));
     }
 
     public function testEqualsFieldWorksWhenInvalid()
     {
         // Arrange
-        $validator = new Validator();
         $_POST['_method'] = 'POST';
         $_SERVER['REQUEST_METHOD'] = 'POST';
 
         // Assert
-        $this->assertFalse($validator->equalsField(2, 'one'));
-        $this->assertFalse($validator->equalsField(2, 'nonexistant'));
+        $this->assertFalse($this->validator->equalsField(2, 'one'));
+        $this->assertFalse($this->validator->equalsField(2, 'nonexistant'));
     }
 }

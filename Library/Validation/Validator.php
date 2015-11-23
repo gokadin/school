@@ -205,11 +205,18 @@ class Validator
 
     public function unique($value, $table, $columnName)
     {
-        $results = $this->database->table($table)
-            ->where($columnName, '=',$value)
-            ->select();
+        try
+        {
+            $results = $this->database->table($table)
+                ->where($columnName, '=',$value)
+                ->select();
 
-        return sizeof($results) == 0;
+            return sizeof($results) == 0;
+        }
+        catch (\PDOException $e)
+        {
+            return false;
+        }
     }
 
     public function equalsField($value, $fieldName)
