@@ -11,7 +11,7 @@ class UserRepository extends Repository
 {
     public function findTempTeacher($id)
     {
-        // ...
+        return $this->dm->find(TempTeacher::class, $id);
     }
 
     public function preRegisterTeacher(array $data)
@@ -53,19 +53,19 @@ class UserRepository extends Repository
 
     public function registerTeacher(array $data)
     {
-        $tempTeacher = TempTeacher::find($data['tempTeacherId']);
+        $tempTeacher = $this->findTempTeacher($data['tempTeacherId']);
         if ($tempTeacher == null)
         {
             return false;
         }
 
-        $subscription = Subscription::find($tempTeacher->subscription_id);
+        $subscription = $this->dm->find(Subscription::class, $tempTeacher->subscriptionId());
         if ($subscription == null)
         {
             return false;
         }
 
-        DB::beginTransaction();
+        $this->dm->beginTransaction();
 
         try
         {
@@ -85,12 +85,12 @@ class UserRepository extends Repository
                 'password' => md5($data['password']),
             ]);
 
-            DB::commit();
+            $this->dm->commit();
             return $teacher;
         }
         catch (PDOException $e)
         {
-            DB::rollBack();
+            $this->dm->rollBack();
             return false;
         }
     }

@@ -3,16 +3,14 @@
 namespace App\Domain\Subscriptions;
 
 use Library\DataMapper\DataMapperTimestamps;
+use Library\DataMapper\DataMapperPrimaryKey;
 
 /**
  * @Entity(name="subscriptions")
  */
 class Subscription
 {
-    use DataMapperTimestamps;
-
-    /** @Id */
-    protected $id;
+    use DataMapperPrimaryKey, DataMapperTimestamps;
 
     /** @Column(type="integer", size="3") */
     protected $type;

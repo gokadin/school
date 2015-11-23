@@ -1,6 +1,8 @@
 <?php
 
 namespace App\Domain\Users;
+
+use Library\DataMapper\DataMapperPrimaryKey;
 use Library\DataMapper\DataMapperTimestamps;
 
 /**
@@ -8,10 +10,7 @@ use Library\DataMapper\DataMapperTimestamps;
  */
 class Teacher
 {
-    use DataMapperTimestamps;
-
-    /** @Id */
-    protected $id;
+    use DataMapperPrimaryKey, DataMapperTimestamps;
 
     /** @Column(type="string") */
     protected $firstName;

@@ -14,6 +14,7 @@ use Library\Facades\Redirect;
 use Library\Facades\Sentry;
 use Models\Student;
 use Models\Teacher;
+use App\Repositories\UserRepository;
 
 class AccountController extends Controller
 {
@@ -75,16 +76,17 @@ class AccountController extends Controller
         Redirect::to('frontend.account.signUpLand');
     }
 
-    public function emailConfirmation(IUserRepository $userRepository, $id, $code)
+    public function emailConfirmation(UserRepository $userRepository, $id, $code)
     {
         $tempTeacher = $userRepository->findTempTeacher($id);
+
         if ($tempTeacher == null)
         {
             Session::setFlash('Your account no longer exists in our database');
             Redirect::to('frontend.account.signUp');
         }
 
-        if ($tempTeacher->confirmation_code != $code)
+        if ($tempTeacher->confirmationCode() != $code)
         {
             Session::setFlash('The confirmation code is invalid');
             Redirect::to('frontend.account.signUp');
@@ -93,9 +95,10 @@ class AccountController extends Controller
         return view('frontend.account.emailConfirmation', compact('tempTeacher'));
     }
 
-    public function registerTeacher(RegistrationRequest $request, IUserRepository $userRepository)
+    public function registerTeacher(RegistrationRequest $request, UserRepository $userRepository)
     {
         $teacher = $userRepository->registerTeacher($request->all());
+
         if (!$teacher)
         {
             Session::setFlash('Your account no longer exists. Please try signing up again.');
