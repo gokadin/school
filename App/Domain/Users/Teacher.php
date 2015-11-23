@@ -21,15 +21,27 @@ class Teacher
     /** @Column(type="string") */
     protected $email;
 
+    /** @Column(type="string") */
+    protected $password;
+
     /** @HasOne(target="App\Domain\Subscriptions\Subscription") */
     protected $subscription;
 
-    public function __construct($firstName, $lastName, $email, $subscription)
+    /** @HasOne(target="App\Domain\Common\Address") */
+    protected $address;
+
+    /** @HasOne(target="App\Domain\School\School") */
+    protected $school;
+
+    public function __construct($firstName, $lastName, $email, $password, $subscription, $address, $school)
     {
         $this->firstName = $firstName;
         $this->lastName = $lastName;
         $this->email = $email;
+        $this->password = $password;
         $this->subscription = $subscription;
+        $this->address = $address;
+        $this->school = $school;
     }
 
     public function firstName()
@@ -57,6 +69,16 @@ class Teacher
         return $this->email;
     }
 
+    public function password()
+    {
+        return $this->password;
+    }
+
+    public function setPassword($password)
+    {
+        $this->password = $password;
+    }
+
     public function setEmail($email)
     {
         $this->email = $email;
@@ -75,5 +97,25 @@ class Teacher
     public function setSubscription($subscription)
     {
         $this->subscription = $subscription;
+    }
+
+    public function address()
+    {
+        return $this->address;
+    }
+
+    public function setAddress($address)
+    {
+        $this->address = $address;
+    }
+
+    public function school()
+    {
+        return $this->school;
+    }
+
+    public function setSchool($school)
+    {
+        $this->school = $school;
     }
 }

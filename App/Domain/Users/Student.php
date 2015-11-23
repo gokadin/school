@@ -15,6 +15,9 @@ class Student
     /** @Column(type="string") */
     protected $email;
 
+    /** @HasOne(target="App\Domain\Common\Address") */
+    protected $address;
+
     public function __construct($email)
     {
         $this->email = $email;
@@ -28,5 +31,15 @@ class Student
     public function email()
     {
         return $this->email;
+    }
+
+    public function address()
+    {
+        return $this->address;
+    }
+
+    public function setAddress($address)
+    {
+        $this->address = $address;
     }
 }

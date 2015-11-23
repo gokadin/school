@@ -98,15 +98,15 @@ class AccountController extends Controller
     public function registerTeacher(RegistrationRequest $request, UserRepository $userRepository)
     {
         $teacher = $userRepository->registerTeacher($request->all());
-
+        // WHATSHAPPENINGGGGG??
         if (!$teacher)
         {
             Session::setFlash('Your account no longer exists. Please try signing up again.');
-            Redirect::to('frontend.account.signUp');
+            //Redirect::to('frontend.account.signUp');
         }
-
-        Sentry::login($teacher->id, 'Teacher');
-        Redirect::to('school.teacher.index.index');
+// STOPPED HERE
+        //Sentry::login($teacher->getId(), 'Teacher');
+        Redirect::to('school.frontend.index.index');
     }
 
     public function signUpLand()

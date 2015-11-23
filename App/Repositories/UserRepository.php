@@ -2,9 +2,11 @@
 
 namespace App\Repositories;
 
+use App\Domain\School\School;
 use App\Domain\Subscriptions\Subscription;
 use App\Domain\Users\TempTeacher;
 use App\Domain\Users\Teacher;
+use App\Domain\Common\Address;
 use PDOException;
 
 class UserRepository extends Repository
@@ -54,13 +56,13 @@ class UserRepository extends Repository
     public function registerTeacher(array $data)
     {
         $tempTeacher = $this->findTempTeacher($data['tempTeacherId']);
-        if ($tempTeacher == null)
+        if (is_null($tempTeacher))
         {
             return false;
         }
 
-        $subscription = $this->dm->find(Subscription::class, $tempTeacher->subscriptionId());
-        if ($subscription == null)
+        $subscription = $this->dm->find(Subscription::class, $tempTeacher->subscription()->getId());
+        if (is_null($subscription))
         {
             return false;
         }
@@ -69,21 +71,12 @@ class UserRepository extends Repository
 
         try
         {
-            $school = School::create([
-                'name' => 'Your School',
-                'address_id' => Address::create()->id
-            ]);
+            $school = new School('Your School');
+            $school->setAddress(new Address());
 
-            $teacher = Teacher::create([
-                'subscription_id' => $subscription->id,
-                'address_id' => Address::create()->id,
-                'teacher_setting_id' => TeacherSetting::create()->id,
-                'school_id' => $school->id,
-                'first_name' => $tempTeacher->first_name,
-                'last_name' => $tempTeacher->last_name,
-                'email' => $tempTeacher->email,
-                'password' => md5($data['password']),
-            ]);
+            $teacher = new Teacher($tempTeacher->firstName(), $tempTeacher->lastName(),
+                $tempTeacher->email(), md5($data['password']), $subscription, new Address(), $school);
+            $this->dm->persist($teacher);
 
             $this->dm->commit();
             return $teacher;
