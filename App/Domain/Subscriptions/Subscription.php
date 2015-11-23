@@ -25,4 +25,34 @@ class Subscription
     {
         $this->type = $type;
     }
+
+    public function type()
+    {
+        return $this->type;
+    }
+
+    public function setType($type)
+    {
+        $this->type = $type;
+    }
+
+    public function customRate()
+    {
+        return $this->customRate;
+    }
+
+    public function setCustomRate($customRate)
+    {
+        $this->customRate = $customRate;
+    }
+
+    public function period()
+    {
+        return $this->period;
+    }
+
+    public function setPeriod($period)
+    {
+        $this->period = $period;
+    }
 }

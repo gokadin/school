@@ -78,6 +78,8 @@ class UserRepository extends Repository
                 $tempTeacher->email(), md5($data['password']), $subscription, new Address(), $school);
             $this->dm->persist($teacher);
 
+            $this->dm->delete($tempTeacher);
+
             $this->dm->commit();
             return $teacher;
         }

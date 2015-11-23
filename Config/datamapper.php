@@ -18,7 +18,8 @@ return [
         App\Domain\Users\TempTeacher::class,
         App\Domain\Users\Student::class,
         App\Domain\Subscriptions\Subscription::class,
-        App\Domain\Common\Address::class
+        App\Domain\Common\Address::class,
+        App\Domain\School\School::class
     ]
 
 ];
