@@ -2,13 +2,9 @@
 
 namespace App\Repositories;
 
-use Library\Facades\DB;
-use Models\TempTeacher;
 use App\Domain\Subscriptions\Subscription;
-use Models\Address;
-use Models\Teacher;
-use Models\TeacherSetting;
-use Models\School;
+use App\Domain\Users\TempTeacher;
+use App\Domain\Users\Teacher;
 use PDOException;
 
 class UserRepository extends Repository
@@ -20,21 +16,32 @@ class UserRepository extends Repository
 
     public function preRegisterTeacher(array $data)
     {
-        $subscription = new Subscription($data['subscriptionType']);
-        $this->dm->persist($subscription);
+        $this->dm->beginTransaction();
 
-        $confirmationCode = md5(rand(999, 999999));
+        try
+        {
+            $subscription = new Subscription($data['subscriptionType']);
+            $this->dm->persist($subscription);
 
-        $tempTeacher = new TempTeacher(
-            $data['firstName'],
-            $data['lastName'],
-            $data['email'],
-            $subscription,
-            $confirmationCode
-        );
-        $this->dm->persist($tempTeacher);
+            $confirmationCode = md5(rand(999, 999999));
 
-        return $tempTeacher;
+            $tempTeacher = new TempTeacher(
+                $data['firstName'],
+                $data['lastName'],
+                $data['email'],
+                $subscription,
+                $confirmationCode
+            );
+            $this->dm->persist($tempTeacher);
+
+            $this->dm->commit();
+            return $tempTeacher;
+        }
+        catch (PDOException $e)
+        {
+            $this->dm->rollBack();
+            return false;
+        }
     }
 
     public function removeExpiredTempTeachers()

@@ -33,6 +33,21 @@ class MySqlDriver
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
+    public function beginTransaction()
+    {
+        $this->dao->beginTransaction();
+    }
+
+    public function rollBack()
+    {
+        $this->dao->rollBack();
+    }
+
+    public function commit()
+    {
+        $this->dao->commit();
+    }
+
     public function buildWheres(array $wheres)
     {
         if (sizeof($wheres) == 0)

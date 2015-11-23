@@ -11,9 +11,9 @@ use Library\Http\Response;
 use Library\Http\ViewFactory;
 use Library\Log\Log;
 use Library\Queue\Queue;
-use Library\Redis\Redis;
 use Library\Routing\Router;
 use Library\Database\Database;
+use Library\DataMapper\DataMapper;
 use Library\Http\Form;
 use Library\Page;
 use Library\Session;
@@ -33,31 +33,32 @@ class ContainerConfiguration
     {
         $app = $this->container->resolveInstance('app');
 
-        $databaseSettings = require $app->basePath().'Config/database.php';
-        $database = new Database($databaseSettings);
-        //$datamapperSettings = require $app->basePath().'Config/datamapper.php';
-        //$dm = new DataMapper($database, $datamapperSettings);
-        $this->container->registerInstance('database', $database);
-
         $this->container->registerInstance('config', new Config());
         $this->container->registerInstance('request', new Request());
         $this->container->registerInstance('response', new Response());
         $this->container->registerInstance('router', new Router());
-        $this->container->registerInstance('redis', new Redis($databaseSettings));
         $this->container->registerInstance('form', new Form());
         $this->container->registerInstance('session', new Session());
         $this->container->registerInstance('redirect', new Redirect());
         $this->container->registerInstance('shao', new Shao());
         $this->container->registerInstance('viewFactory', new ViewFactory());
-        //$this->container->registerInstance('sentry', new Sentry($dm));
         $this->container->registerInstance('log', new Log());
         $this->container->registerInstance('queue', new Queue());
         $this->container->registerInstance('eventManager', new EventManager());
-        //$datamapperSettings = require $app->basePath().'Config/datamapper.php';
-        //$this->container->registerInstance('dataMapper', new DataMapper($database, $datamapperSettings));
+
+        // ORM
+        $datamapperConfig = require $app->basePath().'Config/datamapper.php';
+        $dm = new DataMapper($datamapperConfig);
+        $this->container->registerInstance('datamapper', $dm);
+
+        // database
+        $databaseConfig = require $app->basePath().'Config/database.php';
+        $database = new Database($databaseConfig);
+        $this->container->registerInstance('database', $database);
 
         // Services requiring a database
         $this->container->registerInstance('validator', new Validator($database));
+        //$this->container->registerInstance('sentry', new Sentry($dm));
 
         if (env('APP_DEBUG'))
         {

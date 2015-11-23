@@ -23,7 +23,7 @@ class TempTeacher
     /** @Column(type="string") */
     protected $email;
 
-    //** @HasOne(target="App\Domain\Subscriptions\Subscription") */
+    /** @HasOne(target="App\Domain\Subscriptions\Subscription") */
     protected $subscription;
 
     /** @Column(type="string") */

@@ -38,6 +38,21 @@ class DataMapper
         }
     }
 
+    public function beginTransaction()
+    {
+        $this->queryBuilder->beginTransaction();
+    }
+
+    public function rollBack()
+    {
+        $this->queryBuilder->rollBack();
+    }
+
+    public function commit()
+    {
+        $this->queryBuilder->commit();
+    }
+
     public function find($class, $id)
     {
         $loadedObject = $this->findLoadedEntity($class, $id);

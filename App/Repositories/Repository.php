@@ -2,7 +2,7 @@
 
 namespace App\Repositories;
 
-use Library\Database\DataMapper\DataMapper;
+use Library\DataMapper\DataMapper;
 
 class Repository
 {

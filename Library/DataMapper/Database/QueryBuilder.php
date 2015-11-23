@@ -25,6 +25,21 @@ class QueryBuilder
         }
     }
 
+    public function beginTransaction()
+    {
+        $this->databaseDriver->beginTransaction();
+    }
+
+    public function rollBack()
+    {
+        $this->databaseDriver->rollBack();
+    }
+
+    public function commit()
+    {
+        $this->databaseDriver->commit();
+    }
+
     public function table($table)
     {
         $this->table = $table;

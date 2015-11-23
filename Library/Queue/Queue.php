@@ -9,10 +9,13 @@ class Queue
 {
     protected $driver;
     protected $syncDriver;
+    protected $syncOnly;
 
     public function __construct()
     {
         $settings = require __DIR__.'/../../Config/queue.php';
+
+        $this->syncOnly = false;
 
         $this->setDrivers($settings);
     }
@@ -27,6 +30,7 @@ class Queue
                 $this->driver = new DatabaseQueueDriver($settings['connections']['database']);
                 break;
             default:
+                $this->syncOnly = true;
                 $this->driver = null;
                 break;
         }
@@ -34,7 +38,7 @@ class Queue
 
     public function push($job, $handler = null)
     {
-        if (env('CONSOLE'))
+        if ($this->syncOnly || env('CONSOLE'))
         {
             $this->pushSync($job, $handler);
             return;
