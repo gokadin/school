@@ -2,6 +2,7 @@
 
 namespace Library\DataMapper\Database\Drivers;
 
+use Library\DataMapper\Mapping\Column;
 use Library\DataMapper\Mapping\Metadata;
 use PDO;
 
@@ -98,38 +99,9 @@ class MySqlDriver
         $columnsStr = [];
         foreach ($metadata->columns() as $column)
         {
-            if ($column->isPrimaryKey())
-            {
-                $primaryKeyStr = $column->name();
-                $primaryKeyStr .= ' '.$this->getColumnTypeString($column->type());
-                $primaryKeyStr .= '('.$column->size().')';
-                $primaryKeyStr .= ' UNSIGNED AUTO_INCREMENT PRIMARY KEY';
-                continue;
-            }
-
-            $columnStr = $column->name();
-            $columnStr .= ' '.$this->getColumnTypeString($column->type());
-            if ($column->type() != 'datetime' && $column->type() != 'text')
-            {
-                if ($column->size() > 0)
-                {
-                    $columnStr .= '('.$column->size();
-                    if ($column->type() == 'decimal')
-                        $columnStr .= ', '.$column->precision();
-                    $columnStr .= ')';
-                }
-            }
-            if (!$column->isNullable())
-                $columnStr .= ' NOT NULL';
-            if ($column->isDefault())
-            {
-                $columnStr .= ' DEFAULT';
-                is_string($column->getDefaultValue())
-                    ? $columnStr .= ' \''.$column->getDefaultValue().'\''
-                    : $columnStr .= ' '.$column->getDefaultValue();
-            }
-
-            $columnsStr[] = $columnStr;
+            $column->isPrimaryKey()
+                ? $primaryKeyStr = $this->getColumnBodyString($column)
+                : $columnsStr[] = $this->getColumnBodyString($column);
         }
 
         $str .= ' (';
@@ -140,7 +112,7 @@ class MySqlDriver
         {
             if ($column->isUnique())
             {
-                $str .= ', UNIQUE ('.$column->name().')';
+                $str .= ', '.$this->getUniqueString($column);
             }
         }
 
@@ -151,11 +123,144 @@ class MySqlDriver
         return true;
     }
 
+    protected function getColumnBodyString(Column $column)
+    {
+        if ($column->isPrimaryKey())
+        {
+            $primaryKeyStr = $column->name();
+            $primaryKeyStr .= ' '.$this->getColumnTypeString($column->type());
+            $primaryKeyStr .= '('.$column->size().')';
+            $primaryKeyStr .= ' UNSIGNED AUTO_INCREMENT PRIMARY KEY';
+
+            return $primaryKeyStr;
+        }
+
+        $columnStr = $column->name();
+        $columnStr .= ' '.$this->getColumnTypeString($column->type());
+        if ($column->type() != 'datetime' && $column->type() != 'text')
+        {
+            if ($column->size() > 0)
+            {
+                $columnStr .= '('.$column->size();
+                if ($column->type() == 'decimal')
+                    $columnStr .= ', '.$column->precision();
+                $columnStr .= ')';
+            }
+        }
+        if (!$column->isNullable())
+            $columnStr .= ' NOT NULL';
+        if ($column->isDefault())
+        {
+            $columnStr .= ' DEFAULT';
+            is_string($column->defaultValue())
+                ? $columnStr .= ' \''.$column->defaultValue().'\''
+                : $columnStr .= ' '.$column->defaultValue();
+        }
+
+        return $columnStr;
+    }
+
+    protected function getUniqueString(Column $column)
+    {
+        return 'UNIQUE ('.$column->name().')';
+    }
+
     public function dropTable($table)
     {
         if ($this->tableExists($table))
         {
             $this->dao->exec('DROP TABLE '.$table);
+        }
+    }
+
+    public function addColumnTo($table, Column $column)
+    {
+        $str = 'ALTER TABLE '.$table.' ADD ';
+
+        $str .= $this->getColumnBodyString($column);
+
+        if ($column->isUnique())
+        {
+            $str .= ', '.$this->getUniqueString($column);
+        }
+
+        $this->dao->exec($str);
+    }
+
+    public function dropColumnFrom($table, $column)
+    {
+        $this->dao->exec('ALTER TABLE '.$table.' DROP '.$column);
+    }
+
+    /**
+     * Reads the current database structure
+     * and constructs an array with all tables and
+     * columns usable by the schema tool.
+     *
+     * @return array
+     */
+    public function describeSchema()
+    {
+        $results = [];
+
+        $query = $this->dao->query('show tables');
+        $tables = $query->fetchAll(PDO::FETCH_COLUMN);
+
+        foreach ($tables as $table)
+        {
+            $query = $this->dao->query('show columns from '.$table);
+            $columns = $query->fetchAll(PDO::FETCH_COLUMN);
+
+            foreach ($columns as $column)
+            {
+                $query = $this->dao->query('select '.$column.' from '.$table);
+                $meta = $query->getColumnMeta(0);
+
+                $isNullable = true;
+                foreach ($meta['flags'] as $flag)
+                {
+                    if ($flag == 'not_null')
+                    {
+                        $isNullable = false;
+                    }
+                }
+
+                $results[$table][$column] = [
+                    'type' => $this->translatePdoType($meta['native_type']),
+                    'size' => $meta['len'],
+                    'precision' => $meta['precision'],
+                    'isNullable' => $isNullable
+                ];
+            }
+        }
+
+        return $results;
+    }
+
+    /**
+     * Takes the PDO type name and
+     * translates it into one that datamapper
+     * can understand.
+     *
+     * @param string $pdoType
+     * @return string
+     */
+    public function translatePdoType($pdoType)
+    {
+        switch ($pdoType)
+        {
+            case 'LONG':
+                return 'integer';
+            case 'VAR_STRING':
+                return 'string';
+            case 'DATETIME':
+                return 'datetime';
+            case 'NEWDECIMAL':
+                return 'decimal';
+            case 'TINY':
+                return 'boolean';
+            case 'BLOB':
+                return 'text';
         }
     }
 

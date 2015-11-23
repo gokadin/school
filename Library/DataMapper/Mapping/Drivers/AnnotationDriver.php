@@ -11,7 +11,11 @@ use Symfony\Component\Yaml\Exception\RuntimeException;
 class AnnotationDriver
 {
     const ANNOTATION_REGEX = '/@(\w+)(?:\(([^)]+)+\))?/';
-    const DEFAULT_COLUMN_SIZE = 11;
+    const DEFAULT_INTEGER_SIZE = 11;
+    const DEFAULT_STRING_SIZE = 255;
+    const DEFAULT_DECIMAL_PRECISION = 2;
+    const TEXT_SIZE = 65535;
+    const BOOLEAN_SIZE = 1;
 
     public function getMetadata($class)
     {
@@ -67,7 +71,7 @@ class AnnotationDriver
                     lcfirst($targetShortName).'_id',
                     $property->getName(),
                     'integer',
-                    self::DEFAULT_COLUMN_SIZE
+                    self::DEFAULT_INTEGER_SIZE
                 );
                 $column->setForeignKey();
                 if (isset($parsedProperty[Metadata::ASSOC_HAS_ONE]['nullable'])
@@ -93,7 +97,7 @@ class AnnotationDriver
                     lcfirst($targetShortName).'_id',
                     $property->getName(),
                     'integer',
-                    self::DEFAULT_COLUMN_SIZE
+                    self::DEFAULT_INTEGER_SIZE
                 );
                 $column->setForeignKey();
                 if (isset($parsedProperty[Metadata::ASSOC_BELONGS_TO]['nullable'])
@@ -122,12 +126,31 @@ class AnnotationDriver
         $columnName = isset($parsed['Column']['name'])
             ? $parsed['Column']['name']
             : $fieldName;
-        $size = isset($parsed['Column']['size'])
-            ? $parsed['Column']['size']
-            : self::DEFAULT_COLUMN_SIZE;
         $type = isset($parsed['Column']['type'])
             ? $parsed['Column']['type']
             : 'integer';
+
+        $size = 0;
+        switch ($type)
+        {
+            case 'text':
+                $size = self::TEXT_SIZE;
+                break;
+            case 'boolean':
+                $size = self::BOOLEAN_SIZE;
+                break;
+            case 'string':
+                $size = isset($parsed['Column']['size'])
+                    ? $parsed['Column']['size']
+                    : self::DEFAULT_STRING_SIZE;
+                break;
+            case 'integer':
+            case 'decimal':
+                $size = isset($parsed['Column']['size'])
+                    ? $parsed['Column']['size']
+                    : self::DEFAULT_INTEGER_SIZE;
+                break;
+        }
 
         $column = new Column($columnName, $fieldName, $type, $size);
 
@@ -139,17 +162,19 @@ class AnnotationDriver
 
         $columnArgs = $parsed['Column'];
 
-        if ($type == 'decimal' && isset($columnArgs['precision']))
+        if ($type == 'decimal')
         {
-            $column->setPrecision($columnArgs['precision']);
+            $column->setPrecision(isset($columnArgs['precision'])
+                ? $columnArgs['precision']
+                : self::DEFAULT_DECIMAL_PRECISION);
         }
 
-        if (isset($columnArgs['indexed']) && $columnArgs['indexed'])
+        if (isset($columnArgs['indexed']))
         {
             $column->setIndex();
         }
 
-        if (isset($columnArgs['nullable']) && $columnArgs['nullable'])
+        if (isset($columnArgs['nullable']))
         {
             $column->setNullable();
         }
@@ -157,6 +182,11 @@ class AnnotationDriver
         if (isset($columnArgs['default']))
         {
             $column->setDefaultValue($columnArgs['default']);
+        }
+
+        if (isset($columnArgs['unique']))
+        {
+            $column->unique();
         }
 
         return $column;
@@ -188,11 +218,12 @@ class AnnotationDriver
         foreach ($args as $arg)
         {
             $arg = trim($arg);
-            $name = substr($arg, 0, strpos($arg, '='));
-            $value = substr(substr($arg, strpos($arg, '"') + 1), 0, -1);
-            if (!$value)
+            $segments = explode('=', $arg);
+            $name = $segments[0];
+            $value = [];
+            if (sizeof($segments) == 2)
             {
-                $value = [];
+                $value = trim($segments[1], '"');
             }
 
             $parsed[$name] = $value;

@@ -36,16 +36,17 @@ class CreateSchema extends Command
         {
             if ($success)
             {
-                $output->writeln('<info>Created table '.$table.'.</info>');
+                $output->writeln('<info>--> Created table '.$table.'.</info>');
                 $successes++;
                 continue;
             }
 
-            $output->writeln('<error>Could not create table '.$table.'.</error>');
+            $output->writeln('<error>--> Could not create table '.$table.'.</error>');
             $failures++;
         }
 
         $output->writeln('');
+        $output->writeln('-------------------------------');
         $output->writeln('<info>Created '.$successes.' tables.</info>');
         $output->writeln('<info>Skipped '.$failures.' tables.</info>');
     }

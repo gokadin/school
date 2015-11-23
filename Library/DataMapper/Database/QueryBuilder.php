@@ -71,14 +71,10 @@ class QueryBuilder
 
     protected function selectMySql($fields)
     {
-        $str = '';
-
-        $wheres = $this->databaseDriver->buildWheres($this->wheres);
-
         $str = 'SELECT ';
         $str .= implode(', ', $fields);
         $str .= ' FROM '.$this->table;
-        $str .= ' '.$wheres;
+        $str .= ' '.$this->databaseDriver->buildWheres($this->wheres);
 
         return $this->databaseDriver->execute($str);
     }

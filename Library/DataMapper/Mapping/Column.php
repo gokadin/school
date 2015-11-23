@@ -106,7 +106,7 @@ class Column
 
     public function setDefaultValue($value)
     {
-        $this->default = $value;
+        $this->defaultValue = $value;
     }
 
     public function precision()

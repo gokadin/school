@@ -15,7 +15,7 @@ class SimpleEntity
     /** @Id */
     protected $id;
 
-    /** @Column(type="integer", indexed="true") */
+    /** @Column(type="integer", indexed) */
     protected $one;
 
     /** @Column(name="customName", type="integer", size="12") */
@@ -27,17 +27,23 @@ class SimpleEntity
     /** @Column(name="customName2", type="string", size="25") */
     protected $str2;
 
-    /** @Column(type="text", nullable="true") */
+    /** @Column(type="text", nullable) */
     protected $text1;
 
-    /** @Column(type="boolean", nullable="true") */
+    /** @Column(type="boolean", nullable) */
     protected $bool1;
 
-    /** @Column(type="decimal", nullable="true") */
+    /** @Column(type="decimal", nullable) */
     protected $decimal1;
 
-    /** @Column(type="decimal", size="3", precision="2", nullable="true") */
+    /** @Column(type="decimal", size="3", precision="2", nullable) */
     protected $decimal2;
+
+    /** @Column(type="integer", unique, nullable) */
+    protected $unique1;
+
+    /** @Column(type="integer", default="3", nullable) */
+    protected $default1;
 
     public function __construct($one, $two, $str1, $str2)
     {
