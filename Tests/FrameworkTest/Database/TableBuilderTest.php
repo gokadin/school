@@ -16,7 +16,7 @@ class TableBuilderTest extends BaseTest
         $columns = $t->columns();
 
         // Assert
-        $this->assertTrue($columns[0]->isUnique());
+        $this->assertTrue($columns['col1']->isUnique());
     }
 
     public function testIfColumnsDefaultGetsCalledProperlyWithDifferentNumberOfArgs()
@@ -47,9 +47,6 @@ class TableBuilderTest extends BaseTest
         $this->assertTrue($t->hasColumn(Table::CREATED_AT));
     }
 
-    /**
-     * @depends testThatTimestampColumnsAreCorrectlyCreated
-     */
     public function testThatTimestampColumnsAreNotRequired()
     {
         // Arrange
@@ -60,8 +57,8 @@ class TableBuilderTest extends BaseTest
         $columns = $t->columns();
 
         // Assert
-        $this->assertFalse($columns[0]->isRequired());
-        $this->assertFalse($columns[1]->isRequired());
+        $this->assertFalse($columns[Table::UPDATED_AT]->isRequired());
+        $this->assertFalse($columns[Table::CREATED_AT]->isRequired());
     }
 
     public function testThatNonNullableAndNonDefaultRegularColumnsAreRequired()

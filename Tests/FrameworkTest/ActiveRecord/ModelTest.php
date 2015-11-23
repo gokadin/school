@@ -2,6 +2,7 @@
 
 namespace Tests\FrameworkTest\ActiveRecord;
 
+use Library\Database\Database;
 use Library\Testing\DatabaseTransactions;
 use Tests\FrameworkTest\BaseTest;
 use Tests\FrameworkTest\Models\Activity;
@@ -17,15 +18,28 @@ use Tests\FrameworkTest\Models\ActivityStudent;
 
 class ModelTest extends BaseTest
 {
-    use DatabaseTransactions;
+    protected $database;
 
     public function setUp()
     {
         parent::setUp();
 
-        $this->createApplication();
+        $this->database = new Database([
+            'driver' => 'mysql',
+            'mysql' => [
+                'host' => env('DATABASE_HOST'),
+                'database' => env('DATABASE_NAME'),
+                'username' => env('DATABASE_USERNAME'),
+                'password' => env('DATABASE_PASSWORD')
+            ]
+        ]);
+    }
 
-        $this->beginDatabaseTransaction();
+    public function tearDown()
+    {
+        parent::tearDown();
+
+        $this->database->dropAll();
     }
 
     public function testThatNewModelCanBeProperlySaved()

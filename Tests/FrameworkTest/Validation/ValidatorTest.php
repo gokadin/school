@@ -2,11 +2,12 @@
 
 namespace Tests\FrameworkTest\Validation;
 
+use Library\Database\Database;
 use Library\Database\Table;
 use Library\Testing\DatabaseTransactions;
 use Library\Facades\Session;
+use Library\Validation\Validator;
 use Tests\FrameworkTest\BaseTest;
-use Tests\FrameworkTest\Models\Test;
 
 class ValidatorTest extends BaseTest
 {
@@ -19,10 +20,19 @@ class ValidatorTest extends BaseTest
     {
         parent::setUp();
 
-        $app = $this->createApplication();
+        $this->createApplication();
 
-        $this->validator = $app->container()->resolveInstance('validator');
-        $this->database = $app->container()->resolveInstance('database');
+        $this->database = new Database([
+            'driver' => 'mysql',
+            'mysql' => [
+                'host' => env('DATABASE_HOST'),
+                'database' => env('DATABASE_NAME'),
+                'username' => env('DATABASE_USERNAME'),
+                'password' => env('DATABASE_PASSWORD')
+            ]
+        ]);
+
+        $this->validator = new Validator($this->database);
     }
 
     public function testMakeWorksWithSimpleSingleValidationWhenValid()

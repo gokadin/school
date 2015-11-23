@@ -12,7 +12,15 @@ class SchemaTest extends BaseTest
     public function testAdd()
     {
         // Arrange
-        $schema = new Schema(new Database());
+        $schema = new Schema(new Database([
+            'driver' => 'mysql',
+            'mysql' => [
+                'host' => env('DATABASE_HOST'),
+                'database' => env('DATABASE_NAME'),
+                'username' => env('DATABASE_USERNAME'),
+                'password' => env('DATABASE_PASSWORD')
+            ]
+        ]));
 
         // Act
         $schema->add(new Table('test1'));
