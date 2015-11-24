@@ -6,13 +6,10 @@ use App\Events\School\NewMessageReceived;
 use App\Jobs\Job;
 use App\Repositories\MessageRepository;
 use Carbon\Carbon;
-use Library\Events\FiresEvents;
 use Library\Facades\Sentry;
 
 class ReceiveNewMessage extends Job
 {
-    use FiresEvents;
-
     protected $conversationId;
     protected $content;
     protected $created_at;
@@ -26,7 +23,7 @@ class ReceiveNewMessage extends Job
 
     public function handle(MessageRepository $messageRepository)
     {
-        $this->fireEvent(new NewMessageReceived($this->conversationId, $this->content, $this->created_at));
+        $this->eventManager->fire(new NewMessageReceived($this->conversationId, $this->content, $this->created_at));
 
         $this->addToRepository2($messageRepository);
     }

@@ -38,7 +38,7 @@ class Queue
 
     public function push($job, $handler = null)
     {
-        if ($this->syncOnly || env('CONSOLE'))
+        if ($this->syncOnly || env('CONSOLE') || !($job instanceof ShouldQueue))
         {
             $this->pushSync($job, $handler);
             return;

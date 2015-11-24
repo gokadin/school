@@ -37,7 +37,6 @@ class ContainerConfiguration
         $this->container->registerInstance('request', new Request());
         $this->container->registerInstance('form', new Form());
         $this->container->registerInstance('session', new Session());
-        $this->container->registerInstance('redirect', new Redirect());
         $this->container->registerInstance('shao', new Shao());
         $this->container->registerInstance('view', new View());
         $this->container->registerInstance('viewFactory', new ViewFactory());

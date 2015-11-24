@@ -5,13 +5,10 @@ namespace App\Jobs\School;
 use App\Events\School\StudentRegistered;
 use App\Jobs\Job;
 use App\Repositories\StudentRepository;
-use Library\Events\FiresEvents;
 use Library\Facades\Session;
 
 class RegisterStudent extends Job
 {
-    use FiresEvents;
-
     protected $data;
 
     public function __construct($data)
@@ -31,6 +28,6 @@ class RegisterStudent extends Job
 
         Session::setFlash('Student <b>'.$student->name.'</b> was added successfully.');
 
-        $this->fireEvent(new StudentRegistered($student));
+        $this->eventManager->fire(new StudentRegistered($student));
     }
 }

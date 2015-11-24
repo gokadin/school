@@ -61,7 +61,7 @@ class AccountController extends Controller
 
     public function preRegisterTeacher(PreRegistrationRequest $request)
     {
-        $this->dispatchJob(new PreRegisterTeacher($request->all()));
+        $this->queue->push(new PreRegisterTeacher($request->all()));
 
         $this->response->route('frontend.account.signUpLand');
     }

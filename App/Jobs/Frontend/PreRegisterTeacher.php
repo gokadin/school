@@ -4,15 +4,12 @@ namespace App\Jobs\Frontend;
 
 use App\Events\Frontend\TeacherPreRegistered;
 use App\Jobs\Job;
-use Library\Events\FiresEvents;
 use Library\Queue\JobFailedException;
 use Library\Queue\ShouldQueue;
 use App\Repositories\UserRepository;
 
 class PreRegisterTeacher extends Job implements ShouldQueue
 {
-    use FiresEvents;
-
     protected $data;
 
     public function __construct(array $data)
@@ -30,6 +27,6 @@ class PreRegisterTeacher extends Job implements ShouldQueue
             return;
         }
 
-        $this->fireEvent(new TeacherPreRegistered($tempTeacher));
+        $this->eventManager->fire(new TeacherPreRegistered($tempTeacher));
     }
 }
