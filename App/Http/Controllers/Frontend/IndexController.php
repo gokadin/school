@@ -3,13 +3,9 @@
 namespace App\Http\Controllers\Frontend;
 
 use App\Http\Controllers\Controller;
-use Library\Events\FiresEvents;
-use Library\Queue\DispatchesJobs;
 
 class IndexController extends Controller
 {
-    use FiresEvents, DispatchesJobs;
-
     public function index()
     {
         return $this->view->make('frontend.index.index');

@@ -26,6 +26,9 @@ class RegisterTeacher extends Job
             $response->route('frontend.account.signUp');
         }
 
+        $userRepository->loginTeacher($teacher);
+
         $this->fireEvent(new TeacherRegistered($teacher));
+        $this->fireEvent(new UserLoggedIn($teacher, 'teacher'));
     }
 }

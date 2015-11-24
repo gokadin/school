@@ -2,15 +2,15 @@
 
 namespace App\Jobs\Frontend;
 
-use App\Events\Frontend\StudentLoggedIn;
-use App\Events\Frontend\TeacherLoggedIn;
+use App\Domain\Users\Teacher;
+use App\Domain\Users\Student;
 use App\Events\Frontend\UserLoggedIn;
 use App\Jobs\Job;
 use App\Repositories\UserRepository;
 use Library\Http\Response;
 use Library\Session\Session;
 
-class LoginTeacher extends Job
+class LoginUser extends Job
 {
     protected $data;
 
@@ -40,6 +40,6 @@ class LoginTeacher extends Job
         }
 
         $session->setFlash('The email or password is incorrect. Please try again.');
-        $response->back();
+        $response->route('frontend.account.index');
     }
 }

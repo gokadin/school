@@ -7,12 +7,11 @@ return [
     ],
 
     App\Events\Frontend\TeacherRegistered::class => [
-        App\Listeners\Frontend\LoginTeacher::class,
         App\Listeners\Frontend\SendRegistrationEmail::class
     ],
 
-    App\Events\Frontend\TeacherLoggedIn::class => [
-        App\Listeners\Frontend\LogTeacherLogin::class
+    App\Events\Frontend\UserLoggedIn::class => [
+        App\Listeners\Frontend\LogUserLogin::class
     ]
 
 ];
