@@ -28,27 +28,88 @@ header {
     float: right;
 
     .dropdown-1 {
+      position: relative;
+      color: #cccccc;
+      padding: 0 10px;
+      cursor: pointer;
+
+      img {
+        vertical-align: middle;
+        margin-right: 5px;
+        margin-top: -3px;
+      }
+
       .dropdown-box {
-        background-color: #f2f2f2;
-        border: 1px solid #e2e2e2;
+        position: absolute;
+        width: 200px;
+        right: 0;
+        display: none;
 
-        ul {
-          list-style: outside none none;
+        .arrow-box:after, .arrow-box:before {
+          bottom: 100%;
+          right: 10px;
+          border: solid transparent;
+          content: " ";
+          height: 0;
+          width: 0;
+          position: absolute;
+          pointer-events: none;
+        }
 
-          li {
-            border-bottom: 1px solid #e2e2e2;
-            padding: 5px 10px;
-            line-height: 30px;
+        .arrow-box:after {
+          border-color: rgba(136, 183, 213, 0);
+          border-bottom-color: white;
+          border-width: 8px; margin-left: -8px;
+        }
 
-            a {
-              color: #444;
+        .arrow-box:before {
+          border-color: rgba(194, 225, 245, 0);
+          border-bottom-color: #f6f6f6;
+          border-width: 9px; margin-left: -9px;
+        }
 
-              i {
-                margin-right: 5px;
+        .arrow-box {
+          position: relative;
+          background-color: white;
+          border: 1px solid #f2f2f2;
+
+          ul {
+            list-style: outside none none;
+            cursor: default;
+
+            li:not(.divider) {
+              line-height: 25px;
+
+              a {
+                color: #444;
+                padding: 5px 15px;
+                display: block;
+
+                i {
+                  margin-right: 10px;
+                }
               }
+            }
+
+            li.divider {
+              height: 0;
+              margin: 4px 0;
+              border-bottom: 1px solid #f2f2f2;
+            }
+
+            li:not(.divider):hover {
+              background-color: #f6f6f6;
             }
           }
         }
+      }
+    }
+
+    .dropdown-1:hover {
+      background-color: #4d4d4d;
+
+      .dropdown-box {
+        display: block;
       }
     }
   }
