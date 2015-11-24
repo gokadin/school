@@ -1,6 +1,6 @@
 <?php
 
-namespace Library;
+namespace Library\Session;
 
 if(env('APP_ENV') != 'testing' && env('APP_ENV') != 'framework_testing')
 {

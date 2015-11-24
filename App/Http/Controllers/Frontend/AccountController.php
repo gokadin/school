@@ -8,9 +8,6 @@ use App\Http\Requests\Frontend\PreRegistrationRequest;
 use App\Http\Requests\Frontend\LoginRequest;
 use App\Http\Requests\Frontend\RegistrationRequest;
 use App\Jobs\Frontend\PreRegisterTeacher;
-use Library\Facades\Page;
-use Library\Facades\Session;
-use Library\Facades\Redirect;
 use Library\Facades\Sentry;
 use Models\Student;
 use Models\Teacher;
@@ -20,12 +17,12 @@ class AccountController extends Controller
 {
     public function index()
     {
-        return view('frontend.account.index');
+        return $this->view->make('frontend.account.index');
     }
 
     public function signup()
     {
-        return view('frontend.account.signUp', [
+        return $this->view->make('frontend.account.signUp', [
             'subscriptions' => SubscriptionsTypes::describeSubscriptions()
         ]);
     }
@@ -39,7 +36,7 @@ class AccountController extends Controller
 
         if ($teacher != false)
         {
-            Redirect::to('school.teacher.index.index');
+            $this->redirect->to('school.teacher.index.index');
             return;
         }
 
@@ -50,30 +47,30 @@ class AccountController extends Controller
 
         if ($student != false)
         {
-            Redirect::to('school.student.index.index');
+            $this->redirect->to('school.student.index.index');
             return;
         }
 
-        Session::setFlash('The email or password is incorrect. Please try again.');
-        Redirect::back();
+        $this->session->setFlash('The email or password is incorrect. Please try again.');
+        $this->redirect->back();
     }
 
     public function logout()
     {
         Sentry::logout();
-        Redirect::to('frontend.index.index');
+        $this->redirect->to('frontend.index.index');
     }
 
     public function resetPassword()
     {
-        return view('frontend.account.resetPassword');
+        return $this->view->make('frontend.account.resetPassword');
     }
 
     public function preRegisterTeacher(PreRegistrationRequest $request)
     {
         $this->dispatchJob(new PreRegisterTeacher($request->all()));
 
-        Redirect::to('frontend.account.signUpLand');
+        $this->redirect->to('frontend.account.signUpLand');
     }
 
     public function emailConfirmation(UserRepository $userRepository, $id, $code)
@@ -82,17 +79,17 @@ class AccountController extends Controller
 
         if ($tempTeacher == null)
         {
-            Session::setFlash('Your account no longer exists in our database');
-            Redirect::to('frontend.account.signUp');
+            $this->session->setFlash('Your account no longer exists in our database');
+            $this->redirect->to('frontend.account.signUp');
         }
 
         if ($tempTeacher->confirmationCode() != $code)
         {
-            Session::setFlash('The confirmation code is invalid');
-            Redirect::to('frontend.account.signUp');
+            $this->session->setFlash('The confirmation code is invalid');
+            $this->redirect->to('frontend.account.signUp');
         }
 
-        return view('frontend.account.emailConfirmation', compact('tempTeacher'));
+        return $this->view->make('frontend.account.emailConfirmation', compact('tempTeacher'));
     }
 
     public function registerTeacher(RegistrationRequest $request, UserRepository $userRepository)
@@ -100,16 +97,17 @@ class AccountController extends Controller
         $teacher = $userRepository->registerTeacher($request->all());
         if (!$teacher)
         {
-            Session::setFlash('Your account no longer exists. Please try signing up again.');
-            Redirect::to('frontend.account.signUp');
+            $this->session->setFlash('Your account no longer exists. Please try signing up again.');
+            $this->redirect->to('frontend.account.signUp');
         }
 
-        //Sentry::login($teacher->getId(), 'Teacher');
-        Redirect::to('frontend.index.index');
+        $userRepository->loginTeacher($teacher);
+
+        $this->redirect->to('frontend.index.index');
     }
 
-    public function signUpLand()
+    public function signUpLand(Session $session)
     {
-        return view('frontend.account.signUpLand', ['confn' => Session::getFlash()]);
+        return $this->view->make('frontend.account.signUpLand', ['confn' => $session->getFlash()]);
     }
 }

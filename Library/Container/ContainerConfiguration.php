@@ -8,6 +8,7 @@ use Library\Events\EventManager;
 use Library\Http\Redirect;
 use Library\Http\Request;
 use Library\Http\Response;
+use Library\Http\View;
 use Library\Http\ViewFactory;
 use Library\Log\Log;
 use Library\Queue\Queue;
@@ -15,8 +16,7 @@ use Library\Routing\Router;
 use Library\Database\Database;
 use Library\DataMapper\DataMapper;
 use Library\Http\Form;
-use Library\Page;
-use Library\Session;
+use Library\Session\Session;
 use Library\Shao\Shao;
 use Library\Validation\Validator;
 
@@ -41,6 +41,7 @@ class ContainerConfiguration
         $this->container->registerInstance('session', new Session());
         $this->container->registerInstance('redirect', new Redirect());
         $this->container->registerInstance('shao', new Shao());
+        $this->container->registerInstance('view', new View());
         $this->container->registerInstance('viewFactory', new ViewFactory());
         $this->container->registerInstance('log', new Log());
         $this->container->registerInstance('queue', new Queue());

@@ -2,31 +2,48 @@
 
 namespace App\Http\Middleware;
 
-use Library\Facades\Redirect;
-use Library\Facades\Router;
+use App\Repositories\UserRepository;
+use Library\Routing\Router;
 use Library\Facades\Sentry;
 use Library\Http\Request;
 use Closure;
+use Library\Http\View;
 
 class VerifyAuthentication
 {
-    public function handle(Request $request, Closure $next)
+    protected $userRepository;
+    protected $view;
+    protected $redirect;
+    protected $router;
+
+    public function __construct(UserRepository $userRepository, View $view, Redirect $redirect, Router $router)
     {
-        if (!Sentry::loggedIn())
+        $this->userRepository = $userRepository;
+        $this->view = $view;
+        $this->redirect = $redirect;
+        $this->router = $router;
+    }
+
+    public function handle(Request $request, Closure $next)
+    {// 1: CHANGE USER REPO FOR LOGIN HANDLER OR SOMETHING
+        // 2: MAKE THE CONSTRUCTOR RESOLVABLE
+        if (!$this->userRepository->loggedIn())
         {
-            Redirect::to('frontend.account.login');
+            $this->redirect->to('frontend.account.login');
             return;
         }
 
-        if (Router::currentNameContains('school.teacher.') && Sentry::type() != 'Teacher')
+        if ($this->router->currentNameContains('school.teacher.') && $this->userRepository->type() != 'Teacher')
         {
-            Redirect::to('frontend.account.login');
+            $this->redirect->to('frontend.account.login');
         }
 
-        if (Router::currentNameContains('school.student.') && Sentry::type() != 'Student')
+        if ($this->router->currentNameContains('school.student.') && $this->userRepository->type() != 'Student')
         {
-            Redirect::to('frontend.account.login');
+            $this->redirect->to('frontend.account.login');
         }
+
+        $this->view->add(['user' => $this->userRepository->getLoggedInUser()]);
 
         return $next($request);
     }

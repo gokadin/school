@@ -60,14 +60,15 @@ class Application
 
     private function loadRoutes()
     {
-        Router::group(['namespace' => 'App\\Http\\Controllers'], function() {
+        $this->container()->resolveInstance('router')->group(['namespace' => 'App\\Http\\Controllers'], function() {
             require __DIR__ . '/../App/Http/routes.php';
         });
     }
 
     public function processRoute()
     {
-        $result = Router::dispatch(Request::instance());
+        $result = $this->container()->resolveInstance('router')->dispatch(
+            $this->container()->resolveInstance('request'));
 
         $this->viewToSend = $result;
     }

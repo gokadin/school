@@ -88,4 +88,26 @@ class UserRepositoryTest extends BaseTest
         $this->assertEquals(md5('admin'), $teacher->password());
         $this->assertNull($tempTeacher);
     }
+
+    public function testLoginTeacher()
+    {
+        // Arrange
+        $tempTeacher = $this->repository->preRegisterTeacher([
+            'subscriptionType' => 1,
+            'firstName' => 'fname',
+            'lastName' => 'lname',
+            'email' => 'email@one.com'
+        ]);
+        $teacher = $this->repository->registerTeacher([
+            'tempTeacherId' => $tempTeacher->getId(),
+            'password' => 'admin'
+        ]);
+
+        // Act
+        $this->repository->loginTeacher($teacher);
+
+        // Assert
+        $this->assertTrue(isset($_SESSION['id']));
+        $this->assertEquals($teacher->getId(), $_SESSION['id']);
+    }
 }

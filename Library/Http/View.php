@@ -14,11 +14,24 @@ class View
     protected $content;
     protected $vars;
 
-    public function __construct($view, array $data = array())
+    public function __construct()
     {
-        $this->vars = $data;
         $this->basePath = __DIR__.'/../../'.self::VIEW_FOLDER;
+    }
+
+    public function make($view, array $data = [])
+    {
+        $this->add($data);
         $this->content = $this->processView($view);
+        return $this;
+    }
+
+    public function add(array $data)
+    {
+        foreach ($data as $key => $value)
+        {
+            $this->vars[$key] = $value;
+        }
     }
 
     public function send()

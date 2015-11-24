@@ -89,4 +89,16 @@ class UserRepository extends Repository
             return false;
         }
     }
+
+    public function loginTeacher(Teacher $teacher)
+    {
+        $_SESSION['id'] = $teacher->getId();
+        $_SESSION['type'] = 'teacher';
+        $_SESSION['authenticated'] = true;
+    }
+
+    public function logout()
+    {
+        session_destroy();
+    }
 }

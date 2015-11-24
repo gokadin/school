@@ -333,7 +333,7 @@ class Router
         $parameters = $this->getResolvedParameters($controllerName, $methodName, $this->currentRoute->parameters());
 
         return function() use ($controllerName, $methodName, $parameters) {
-            $controller = new $controllerName();
+            $controller = $this->getInstance($controllerName);
             return call_user_func_array([$controller, $methodName], $parameters);
         };
     }
