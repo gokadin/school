@@ -3,12 +3,16 @@
 return [
 
     App\Events\Frontend\TeacherPreRegistered::class => [
-        App\Events\Frontend\SendPreRegistrationEmail::class
+        App\Listeners\Frontend\SendPreRegistrationEmail::class
     ],
 
     App\Events\Frontend\TeacherRegistered::class => [
-        App\Events\Frontend\LoginTeacher::class,
-        App\Events\Frontend\SendRegistrationEmail::class
+        App\Listeners\Frontend\LoginTeacher::class,
+        App\Listeners\Frontend\SendRegistrationEmail::class
+    ],
+
+    App\Events\Frontend\TeacherLoggedIn::class => [
+        App\Listeners\Frontend\LogTeacherLogin::class
     ]
 
 ];

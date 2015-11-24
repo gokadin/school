@@ -4,6 +4,7 @@ namespace App\Jobs\Frontend;
 
 use App\Events\Frontend\StudentLoggedIn;
 use App\Events\Frontend\TeacherLoggedIn;
+use App\Events\Frontend\UserLoggedIn;
 use App\Jobs\Job;
 use App\Repositories\UserRepository;
 use Library\Http\Response;
@@ -24,7 +25,7 @@ class LoginTeacher extends Job
 
         if ($teacher != false)
         {
-            $this->fireEvent(new TeacherLoggedIn($teacher));
+            $this->fireEvent(new UserLoggedIn($teacher, 'teacher'));
             $response->route('school.teacher.index.index');
             return;
         }
@@ -33,7 +34,7 @@ class LoginTeacher extends Job
 
         if ($student != false)
         {
-            $this->fireEvent(new StudentLoggedIn($student));
+            $this->fireEvent(new UserLoggedIn($student, 'student'));
             $response->route('school.student.index.index');
             return;
         }
