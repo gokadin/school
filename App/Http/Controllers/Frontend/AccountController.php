@@ -8,6 +8,7 @@ use App\Http\Requests\Frontend\PreRegistrationRequest;
 use App\Http\Requests\Frontend\LoginRequest;
 use App\Http\Requests\Frontend\RegistrationRequest;
 use App\Jobs\Frontend\PreRegisterTeacher;
+use App\Jobs\Frontend\RegisterTeacher;
 use App\Repositories\UserRepository;
 use App\Domain\Users\Teacher;
 use App\Domain\Users\Student;
@@ -61,7 +62,7 @@ class AccountController extends Controller
 
     public function preRegisterTeacher(PreRegistrationRequest $request)
     {
-        $this->queue->push(new PreRegisterTeacher($request->all()));
+        $this->dispatchJob(new PreRegisterTeacher($request->all()));
 
         $this->response->route('frontend.account.signUpLand');
     }
@@ -79,16 +80,9 @@ class AccountController extends Controller
         return $this->view->make('frontend.account.emailConfirmation', compact('tempTeacher'));
     }
 
-    public function registerTeacher(RegistrationRequest $request, UserRepository $userRepository)
+    public function registerTeacher(RegistrationRequest $request)
     {
-        $teacher = $userRepository->registerTeacher($request->all());
-        if (!$teacher)
-        {
-            $this->session->setFlash('Your account no longer exists. Please try signing up again.');
-            $this->response->route('frontend.account.signUp');
-        }
-
-        $userRepository->loginTeacher($teacher);
+        $this->dispatchJob(new RegisterTeacher($request->all()));
 
         $this->response->route('frontend.index.index');
     }

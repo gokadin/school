@@ -23,9 +23,7 @@ class Application
         $this->basePath = __DIR__.'/../';
 
         $this->configureContainer();
-
-        $this->configureEvents();
-
+        
         $this->loadRoutes();
     }
 
@@ -48,13 +46,6 @@ class Application
         }
 
         return $this->container;
-    }
-
-    protected function configureEvents()
-    {
-        $eventRegistration = new EventRegistration($this->container()->resolveInstance('eventManager'));
-
-        $eventRegistration->registerEvents();
     }
 
     private function loadRoutes()

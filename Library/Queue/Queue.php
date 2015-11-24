@@ -7,7 +7,7 @@ use Library\Queue\Drivers\DatabaseQueueDriver;
 
 class Queue
 {
-    protected $driver;
+    protected $asyncDriver;
     protected $syncDriver;
     protected $syncOnly;
 
@@ -27,11 +27,11 @@ class Queue
         switch ($settings['use'])
         {
             case 'database':
-                $this->driver = new DatabaseQueueDriver($settings['connections']['database']);
+                $this->asyncDriver = new DatabaseQueueDriver($settings['connections']['database']);
                 break;
             default:
                 $this->syncOnly = true;
-                $this->driver = null;
+                $this->asyncDriver = null;
                 break;
         }
     }
@@ -40,15 +40,10 @@ class Queue
     {
         if ($this->syncOnly || env('CONSOLE') || !($job instanceof ShouldQueue))
         {
-            $this->pushSync($job, $handler);
+            $this->syncDriver->push($job, $handler);
             return;
         }
 
-        $this->driver->push($job, $handler);
-    }
-
-    public function pushSync($job, $handler = null)
-    {
-        $this->syncDriver->push($job, $handler);
+        $this->asyncDriver->push($job, $handler);
     }
 }

@@ -13,6 +13,7 @@ use Exception;
 class QueueListener extends Command
 {
     const SLEEP_DURATION_SEC = 2;
+    const MAX_ATTEMPTS = 3;
 
     protected $database;
     protected $queueTable;

@@ -2,19 +2,20 @@
 
 namespace App\Events\Frontend;
 
+use App\Domain\Users\TempTeacher;
 use App\Events\Event;
 
 class TeacherPreRegistered extends Event
 {
-    protected $teacher;
+    protected $tempTeacher;
 
-    public function __construct($teacher)
+    public function __construct(TempTeacher $tempTeacher)
     {
-        $this->teacher = $teacher;
+        $this->tempTeacher = $tempTeacher;
     }
 
-    public function teacher()
+    public function tempTeacher()
     {
-        return $this->teacher;
+        return $this->tempTeacher;
     }
 }

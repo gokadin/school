@@ -2,30 +2,31 @@
 
 namespace Library\Events;
 
-use Library\Facades\App;
-use Library\Queue\ShouldQueue;
+use Library\Container\Container;
+use Library\Queue\Queue;
 
 class EventManager
 {
-    protected $listeners;
+    protected $listeners = [];
+    protected $container;
+    protected $queue;
 
-    public function __construct()
+    public function __construct($config, Container $container, Queue $queue)
     {
-        $this->listeners = array();
+        $this->container = $container;
+        $this->queue = $queue;
+
+        $this->registerListeners($config);
     }
 
-    /**
-     * Register a listener to an event
-     *
-     * @param $event class name
-     * @param array $listeners class name
-     * @return void
-     */
-    public function register($event, array $listeners)
+    protected function registerListeners($config)
     {
-        foreach ($listeners as $listener)
+        foreach ($config as $eventClass => $listeners)
         {
-            $this->listeners[$event][] = $listener;
+            foreach ($listeners as $listenerClass)
+            {
+                $this->listeners[$eventClass][] = $listenerClass;
+            }
         }
     }
 
@@ -59,38 +60,20 @@ class EventManager
             $this->broadcastEvent($event);
         }
 
-        $eventClassName = get_class($event);
+        $eventClass = get_class($event);
 
-        if (!isset($this->listeners[$eventClassName]))
+        if (!isset($this->listeners[$eventClass]))
         {
             return;
         }
 
-        foreach ($this->listeners[$eventClassName] as $listener)
+        foreach ($this->listeners[$eventClass] as $listenerClass)
         {
-            $resolvedListener = App::container()->resolve($listener);
-
-            if ($resolvedListener instanceof ShouldQueue)
-            {
-                $this->pushToQueue($event, $resolvedListener);
-                continue;
-            }
-
-            $resolvedListener->handle($event);
+            $this->queue->push($event, $this->container->resolve($listenerClass));
         }
     }
 
-    /**
-     * Pushes the listener on the queue
-     *
-     * @param $event
-     * @param $listener
-     */
-    protected function pushToQueue($event, $listener)
-    {
-        App::container()->resolveInstance('queue')->push($event, $listener);
-    }
-
+    // **************************** NOT WORKING!!!!!
     /**
      * Broadcasts the event
      *
@@ -100,11 +83,9 @@ class EventManager
     {
         $data = $event->broadcastOn();
 
-        $redis = App::container()->resolveInstance('redis');
-
         foreach ($data as $channel => $payload)
         {
-            $redis->publish($channel, json_encode($payload));
+            //$this->redis->publish($channel, json_encode($payload));
         }
     }
 }
