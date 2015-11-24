@@ -1,11 +1,26 @@
 $color-main: #67b168;
 $color-error: #b94a48;
 
-@import './node_modules/font-awesome/scss/font-awesome';
-@import 'frontend/layout';
+* {
+  padding: 0;
+  margin: 0;
+  font-family: Roboto, sans-serif;
+  color: #444;
+  box-sizing: border-box;
+}
 
-body {
+.clearfix:after {
+  content: "";
+  display: table;
+  clear: both;
+}
 
+a {
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: none;
 }
 
 /* TABLES */
@@ -396,19 +411,5 @@ button:disabled
   cursor: not-allowed;
 }
 
-/* SELECT2 */
-
-.select2.select2-container
-{
-  width: 100% !important;
-  margin-bottom: 5px !important;
-}
-
-.select2-search__field
-{
-  width: 100% !important;
-}
-
-.select2-container--default .select2-selection--multiple {
-  border-radius: 0px !important;
-}
+@import 'frontend/frontend';
+@import 'school/school';

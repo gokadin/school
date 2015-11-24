@@ -1,0 +1,57 @@
+header {
+  height: 50px;
+  line-height: 50px;
+  background-color: $color-black;
+  padding: 0 2%;
+
+  > div {
+    color: #cccccc;
+
+    a {
+      color: #cccccc;
+    }
+
+    a:hover {
+      color: whitesmoke;
+    }
+  }
+
+  .school-name, .search {
+    float: left;
+  }
+
+  .school-name {
+    font-size: 18px;
+  }
+
+  .account {
+    float: right;
+
+    .dropdown-1 {
+      .dropdown-box {
+        background-color: #f2f2f2;
+        border: 1px solid #e2e2e2;
+
+        ul {
+          list-style: outside none none;
+
+          li {
+            border-bottom: 1px solid #e2e2e2;
+            padding: 5px 10px;
+            line-height: 30px;
+
+            a {
+              color: #444;
+
+              i {
+                margin-right: 5px;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+@import 'layout-responsive';

@@ -32,12 +32,12 @@ class VerifyAuthentication
             return;
         }
 
-        if ($this->router->currentNameContains('school.teacher.') && $this->userRepository->getLoggedInType() != 'Teacher')
+        if ($this->router->currentNameContains('school.teacher.') && $this->userRepository->getLoggedInType() != 'teacher')
         {
             $this->response->route('frontend.account.login');
         }
 
-        if ($this->router->currentNameContains('school.student.') && $this->userRepository->getLoggedInType() != 'Student')
+        if ($this->router->currentNameContains('school.student.') && $this->userRepository->getLoggedInType() != 'student')
         {
             $this->response->route('frontend.account.login');
         }

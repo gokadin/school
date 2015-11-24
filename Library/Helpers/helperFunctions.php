@@ -43,6 +43,14 @@ if (!function_exists('viewFactoryYield'))
     }
 }
 
+if (!function_exists('generateToken'))
+{
+    function generateToken()
+    {
+        return \Library\Facades\Session::generateToken();
+    }
+}
+
 if (!function_exists('redirect404'))
 {
     function redirect404()

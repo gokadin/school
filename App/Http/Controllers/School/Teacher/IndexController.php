@@ -8,6 +8,6 @@ class IndexController extends Controller
 {
     public function index()
     {
-        return view('school.teacher.index.index');
+        return $this->view->make('school.teacher.index.index');
     }
 }
