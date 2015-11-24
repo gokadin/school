@@ -8,10 +8,9 @@ use App\Http\Requests\Frontend\PreRegistrationRequest;
 use App\Http\Requests\Frontend\LoginRequest;
 use App\Http\Requests\Frontend\RegistrationRequest;
 use App\Jobs\Frontend\PreRegisterTeacher;
-use Library\Facades\Sentry;
-use Models\Student;
-use Models\Teacher;
 use App\Repositories\UserRepository;
+use App\Domain\Users\Teacher;
+use App\Domain\Users\Student;
 
 class AccountController extends Controller
 {
@@ -27,38 +26,32 @@ class AccountController extends Controller
         ]);
     }
 
-    public function login(LoginRequest $request)
+    public function login(LoginRequest $request, UserRepository $userRepository)
     {
-        $teacher = Sentry::attempt(Teacher::class, [
-            'email' => $request->email,
-            'password' => md5($request->password)
-        ]);
+        $teacher = $userRepository->attemptLogin(Teacher::class, $request->email, md5($request->password));
 
         if ($teacher != false)
         {
-            $this->redirect->to('school.teacher.index.index');
+            $this->response->route('school.teacher.index.index');
             return;
         }
 
-        $student = Sentry::attempt(Student::class, [
-            'email' => $request->email,
-            'password' => md5($request->password)
-        ]);
+        $student = $userRepository->attemptLogin(Student::class, $request->email, md5($request->password));
 
         if ($student != false)
         {
-            $this->redirect->to('school.student.index.index');
+            $this->response->route('school.student.index.index');
             return;
         }
 
         $this->session->setFlash('The email or password is incorrect. Please try again.');
-        $this->redirect->back();
+        $this->response->back();
     }
 
-    public function logout()
+    public function logout(UserRepository $userRepository)
     {
-        Sentry::logout();
-        $this->redirect->to('frontend.index.index');
+        $userRepository->logout();
+        $this->response->route('frontend.index.index');
     }
 
     public function resetPassword()
@@ -70,23 +63,17 @@ class AccountController extends Controller
     {
         $this->dispatchJob(new PreRegisterTeacher($request->all()));
 
-        $this->redirect->to('frontend.account.signUpLand');
+        $this->response->route('frontend.account.signUpLand');
     }
 
     public function emailConfirmation(UserRepository $userRepository, $id, $code)
     {
         $tempTeacher = $userRepository->findTempTeacher($id);
 
-        if ($tempTeacher == null)
+        if ($tempTeacher == null || $tempTeacher->confirmationCode() != $code)
         {
-            $this->session->setFlash('Your account no longer exists in our database');
-            $this->redirect->to('frontend.account.signUp');
-        }
-
-        if ($tempTeacher->confirmationCode() != $code)
-        {
-            $this->session->setFlash('The confirmation code is invalid');
-            $this->redirect->to('frontend.account.signUp');
+            $this->session->setFlash('Your account no longer exists. Please sign up again.');
+            $this->response->route('frontend.account.signUp');
         }
 
         return $this->view->make('frontend.account.emailConfirmation', compact('tempTeacher'));
@@ -98,12 +85,12 @@ class AccountController extends Controller
         if (!$teacher)
         {
             $this->session->setFlash('Your account no longer exists. Please try signing up again.');
-            $this->redirect->to('frontend.account.signUp');
+            $this->response->route('frontend.account.signUp');
         }
 
         $userRepository->loginTeacher($teacher);
 
-        $this->redirect->to('frontend.index.index');
+        $this->response->route('frontend.index.index');
     }
 
     public function signUpLand(Session $session)

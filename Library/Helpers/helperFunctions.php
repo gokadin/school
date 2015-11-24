@@ -42,3 +42,24 @@ if (!function_exists('viewFactoryYield'))
         echo ViewFactory::getSection($name);
     }
 }
+
+if (!function_exists('redirect404'))
+{
+    function redirect404()
+    {
+        header('HTTP/1.0 404 Not Found');
+
+        $view = new View('errors.404');
+        echo $view->send();
+        exit();
+    }
+}
+
+if (!function_exists('back'))
+{
+    function back()
+    {
+        header('Location: '.$_SERVER['HTTP_REFERER']);
+        exit();
+    }
+}

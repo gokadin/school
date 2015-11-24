@@ -12,26 +12,26 @@ class IndexController extends Controller
 
     public function index()
     {
-        return view('frontend.index.index');
+        return $this->view->make('frontend.index.index');
     }
 
     public function features()
     {
-        return view('frontend.index.features');
+        return $this->view->make('frontend.index.features');
     }
 
     public function testimonials()
     {
-        return view('frontend.index.testimonials');
+        return $this->view->make('frontend.index.testimonials');
     }
 
     public function faq()
     {
-        return view('frontend.index.faq');
+        return $this->view->make('frontend.index.faq');
     }
 
     public function about()
     {
-        return view('frontend.index.about');
+        return $this->view->make('frontend.index.about');
     }
 }

@@ -5,8 +5,6 @@ namespace Library;
 use Config\EventRegistration;
 use Library\Container\Container;
 use Library\Container\ContainerConfiguration;
-use Library\Facades\Request;
-use Library\Facades\Router;
 use Library\Facades\Facade;
 use Library\Http\View;
 
@@ -25,6 +23,7 @@ class Application
         $this->basePath = __DIR__.'/../';
 
         $this->configureContainer();
+
         $this->configureEvents();
 
         $this->loadRoutes();

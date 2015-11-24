@@ -3,8 +3,8 @@
 namespace App\Http\Middleware;
 
 use App\Repositories\UserRepository;
+use Library\Http\Response;
 use Library\Routing\Router;
-use Library\Facades\Sentry;
 use Library\Http\Request;
 use Closure;
 use Library\Http\View;
@@ -13,34 +13,33 @@ class VerifyAuthentication
 {
     protected $userRepository;
     protected $view;
-    protected $redirect;
     protected $router;
+    protected $response;
 
-    public function __construct(UserRepository $userRepository, View $view, Redirect $redirect, Router $router)
+    public function __construct(UserRepository $userRepository, View $view, Router $router, Response $response)
     {
         $this->userRepository = $userRepository;
         $this->view = $view;
-        $this->redirect = $redirect;
         $this->router = $router;
+        $this->response = $response;
     }
 
     public function handle(Request $request, Closure $next)
-    {// 1: CHANGE USER REPO FOR LOGIN HANDLER OR SOMETHING
-        // 2: MAKE THE CONSTRUCTOR RESOLVABLE
+    {
         if (!$this->userRepository->loggedIn())
         {
-            $this->redirect->to('frontend.account.login');
+            $this->response->route('frontend.account.login');
             return;
         }
 
-        if ($this->router->currentNameContains('school.teacher.') && $this->userRepository->type() != 'Teacher')
+        if ($this->router->currentNameContains('school.teacher.') && $this->userRepository->getLoggedInType() != 'Teacher')
         {
-            $this->redirect->to('frontend.account.login');
+            $this->response->route('frontend.account.login');
         }
 
-        if ($this->router->currentNameContains('school.student.') && $this->userRepository->type() != 'Student')
+        if ($this->router->currentNameContains('school.student.') && $this->userRepository->getLoggedInType() != 'Student')
         {
-            $this->redirect->to('frontend.account.login');
+            $this->response->route('frontend.account.login');
         }
 
         $this->view->add(['user' => $this->userRepository->getLoggedInUser()]);

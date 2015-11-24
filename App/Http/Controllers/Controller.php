@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use Library\Controller\Controller as BackController;
 use Library\Controller\ValidatesRequests;
-use Library\Http\Redirect;
+use Library\Http\Response;
 use Library\Http\View;
 use Library\Queue\DispatchesJobs;
 use Library\Session\Session;
@@ -15,12 +15,12 @@ abstract class Controller extends BackController
 
     protected $view;
     protected $session;
-    protected $redirect;
+    protected $response;
 
-    public function __construct(View $view, Session $session, Redirect $redirect)
+    public function __construct(View $view, Session $session, Response $response)
     {
         $this->view = $view;
         $this->session = $session;
-        $this->redirect = $redirect;
+        $this->response = $response;
     }
 }

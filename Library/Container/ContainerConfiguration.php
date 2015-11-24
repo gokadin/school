@@ -35,8 +35,6 @@ class ContainerConfiguration
 
         $this->container->registerInstance('config', new Config());
         $this->container->registerInstance('request', new Request());
-        $this->container->registerInstance('response', new Response());
-        $this->container->registerInstance('router', new Router());
         $this->container->registerInstance('form', new Form());
         $this->container->registerInstance('session', new Session());
         $this->container->registerInstance('redirect', new Redirect());
@@ -58,8 +56,12 @@ class ContainerConfiguration
         $this->container->registerInstance('database', $database);
 
         // Services requiring a database
-        $this->container->registerInstance('validator', new Validator($database));
+        $validator = new Validator($database);
+        $this->container->registerInstance('validator', $validator);
         //$this->container->registerInstance('sentry', new Sentry($dm));
+        $router = new Router($this->container, $validator);
+        $this->container->registerInstance('router', $router);
+        $this->container->registerInstance('response', new Response($router));
 
         if (env('APP_DEBUG'))
         {

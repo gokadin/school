@@ -2,30 +2,28 @@
 
 namespace Library\Routing;
 
-use Library\Facades\App;
-use Library\Facades\Redirect;
-use Library\Facades\Validator;
+use Library\Container\Container;
 use Library\Http\Request;
+use Library\Validation\Validator;
 use Symfony\Component\Yaml\Exception\RuntimeException;
 use ReflectionMethod;
 
 class Router
 {
+    protected $container;
+    protected $validator;
     protected $routes;
     protected $currentRoute;
-    protected $namespaces;
-    protected $prefixes;
-    protected $middlewares;
-    protected $names;
+    protected $namespaces = [];
+    protected $prefixes = [];
+    protected $middlewares = [];
+    protected $names = [];
 
-    public function __construct()
+    public function __construct(Container $container, Validator $validator)
     {
+        $this->container = $container;
+        $this->validator = $validator;
         $this->routes = new RouteCollection();
-        $this->currentRoute = null;
-        $this->namespaces= array();
-        $this->prefixes = array();
-        $this->middlewares = array();
-        $this->names = array();
     }
 
     public function get($uri, $action)
@@ -60,50 +58,20 @@ class Router
 
     public function group($params, $action)
     {
-        if (isset($params['namespace']))
-        {
-            array_push($this->namespaces, $params['namespace']);
-        }
-
-        if (isset($params['prefix']))
-        {
-            array_push($this->prefixes, $params['prefix']);
-        }
-
-        if (isset($params['middleware']))
-        {
-            array_push($this->middlewares, $params['middleware']);
-        }
-
-        if (isset($params['as']))
-        {
-            array_push($this->names, $params['as']);
-        }
+        if (isset($params['namespace'])) { array_push($this->namespaces, $params['namespace']); }
+        if (isset($params['prefix'])) { array_push($this->prefixes, $params['prefix']); }
+        if (isset($params['middleware'])) { array_push($this->middlewares, $params['middleware']); }
+        if (isset($params['as'])) { array_push($this->names, $params['as']); }
 
         $action();
 
-        if (isset($params['namespace']))
-        {
-            array_pop($this->namespaces);
-        }
-
-        if (isset($params['prefix']))
-        {
-            array_pop($this->prefixes);
-        }
-
-        if (isset($params['middleware']))
-        {
-            array_pop($this->middlewares);
-        }
-
-        if (isset($params['as']))
-        {
-            array_pop($this->names);
-        }
+        if (isset($params['namespace'])) { array_pop($this->namespaces); }
+        if (isset($params['prefix'])) { array_pop($this->prefixes); }
+        if (isset($params['middleware'])) { array_pop($this->middlewares); }
+        if (isset($params['as'])) { array_pop($this->names); }
     }
 
-    public function getUri($name, array $params = null)
+    public function getUri($name, array $params = [])
     {
         $route = $this->routes->getNamedRoute($name);
 
@@ -112,7 +80,7 @@ class Router
             return '';
         }
 
-        if (is_null($params) || sizeof($params) == 0)
+        if (sizeof($params) == 0)
         {
             return $route->uri();
         }
@@ -259,7 +227,7 @@ class Router
         }
         catch (RouteNotFoundException $e)
         {
-            Redirect::redirect404();
+            redirect404();
         }
     }
 
@@ -304,7 +272,7 @@ class Router
     protected function getActionClosureWithMiddlewares($closure, Request $request, $index)
     {
         $middlewareName = '\\App\\Http\\Middleware\\'.$this->currentRoute->middlewares()[$index];
-        $middleware = new $middlewareName();
+        $middleware = $this->resolve($middlewareName);
 
         if ($index == 0)
         {
@@ -333,7 +301,7 @@ class Router
         $parameters = $this->getResolvedParameters($controllerName, $methodName, $this->currentRoute->parameters());
 
         return function() use ($controllerName, $methodName, $parameters) {
-            $controller = $this->getInstance($controllerName);
+            $controller = $this->resolve($controllerName);
             return call_user_func_array([$controller, $methodName], $parameters);
         };
     }
@@ -348,7 +316,7 @@ class Router
             $class = $parameter->getClass();
             if (!is_null($class))
             {
-                $resolvedParameters[] = $this->getInstance($class->getName());
+                $resolvedParameters[] = $this->resolve($class->getName());
                 continue;
             }
 
@@ -370,9 +338,9 @@ class Router
         return $resolvedParameters;
     }
 
-    protected function getInstance($class)
+    protected function resolve($class)
     {
-        $instance = App::container()->resolve($class);
+        $instance = $this->container->resolve($class);
 
         if ($instance instanceof \App\Http\Requests\Request)
         {
@@ -386,12 +354,12 @@ class Router
     {
         if (!$request->authorize())
         {
-            Redirect::back();
+            back();
         }
 
-        if (!Validator::make($request->all(), $request->rules()))
+        if (!$this->validator->make($request->all(), $request->rules()))
         {
-            Redirect::back();
+            back();
         }
     }
 }

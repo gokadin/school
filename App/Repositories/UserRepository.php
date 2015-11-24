@@ -6,11 +6,14 @@ use App\Domain\School\School;
 use App\Domain\Subscriptions\Subscription;
 use App\Domain\Users\TempTeacher;
 use App\Domain\Users\Teacher;
+use App\Domain\Users\Student;
 use App\Domain\Common\Address;
 use PDOException;
 
 class UserRepository extends Repository
 {
+    protected $user;
+
     public function findTempTeacher($id)
     {
         return $this->dm->find(TempTeacher::class, $id);
@@ -100,5 +103,44 @@ class UserRepository extends Repository
     public function logout()
     {
         session_destroy();
+    }
+
+    public function loggedIn()
+    {
+        return isset($_SESSION['id']) &&
+            isset($_SESSION['type']) &&
+            isset($_SESSION['authenticated']) &&
+            $_SESSION['authenticated'];
+    }
+
+    public function getLoggedInUser()
+    {
+        if (!is_null($this->user))
+        {
+            return $this->user;
+        }
+
+        switch ($_SESSION['type'])
+        {
+            case 'teacher':
+                return $this->user = $this->dm->find(Teacher::class, $_SESSION['id']);
+            case 'student':
+                return $this->user = $this->dm->find(Student::class, $_SESSION['id']);
+        }
+    }
+
+    public function getLoggedInType()
+    {
+        return $_SESSION['type'];
+    }
+
+    public function attemptLogin($class, $email, $password)
+    {
+        $user = $this->dm->findOneBy($class, [
+            'email' => $email,
+            'password' => $password
+        ]);
+
+        return is_null($user) ? false : $user;
     }
 }
