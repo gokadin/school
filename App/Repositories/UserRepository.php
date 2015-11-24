@@ -98,6 +98,17 @@ class UserRepository extends Repository
         $_SESSION['id'] = $teacher->getId();
         $_SESSION['type'] = 'teacher';
         $_SESSION['authenticated'] = true;
+
+        $this->user = $teacher;
+    }
+
+    public function loginStudent(Student $student)
+    {
+        $_SESSION['id'] = $student->getId();
+        $_SESSION['type'] = 'student';
+        $_SESSION['authenticated'] = true;
+
+        $this->user = $student;
     }
 
     public function logout()
@@ -141,6 +152,20 @@ class UserRepository extends Repository
             'password' => $password
         ]);
 
-        return is_null($user) ? false : $user;
+        if (is_null($user))
+        {
+            return false;
+        }
+
+        if ($user instanceof Teacher)
+        {
+            $this->loginTeacher($user);
+        }
+        else if ($user instanceof Student)
+        {
+            $this->loginStudent($user);
+        }
+
+        return $user;
     }
 }

@@ -23,7 +23,7 @@ class Application
         $this->basePath = __DIR__.'/../';
 
         $this->configureContainer();
-        
+
         $this->loadRoutes();
     }
 

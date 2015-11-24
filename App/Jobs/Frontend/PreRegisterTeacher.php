@@ -27,6 +27,6 @@ class PreRegisterTeacher extends Job implements ShouldQueue
             return;
         }
 
-        $this->eventManager->fire(new TeacherPreRegistered($tempTeacher));
+        $this->fireEvent(new TeacherPreRegistered($tempTeacher));
     }
 }

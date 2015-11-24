@@ -7,11 +7,10 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Frontend\PreRegistrationRequest;
 use App\Http\Requests\Frontend\LoginRequest;
 use App\Http\Requests\Frontend\RegistrationRequest;
+use App\Jobs\Frontend\LoginUser;
 use App\Jobs\Frontend\PreRegisterTeacher;
 use App\Jobs\Frontend\RegisterTeacher;
 use App\Repositories\UserRepository;
-use App\Domain\Users\Teacher;
-use App\Domain\Users\Student;
 
 class AccountController extends Controller
 {
@@ -27,31 +26,15 @@ class AccountController extends Controller
         ]);
     }
 
-    public function login(LoginRequest $request, UserRepository $userRepository)
+    public function login(LoginRequest $request)
     {
-        $teacher = $userRepository->attemptLogin(Teacher::class, $request->email, md5($request->password));
-
-        if ($teacher != false)
-        {
-            $this->response->route('school.teacher.index.index');
-            return;
-        }
-
-        $student = $userRepository->attemptLogin(Student::class, $request->email, md5($request->password));
-
-        if ($student != false)
-        {
-            $this->response->route('school.student.index.index');
-            return;
-        }
-
-        $this->session->setFlash('The email or password is incorrect. Please try again.');
-        $this->response->back();
+        $this->dispatchJob(new LoginUser($request->all()));
     }
 
     public function logout(UserRepository $userRepository)
     {
         $userRepository->logout();
+
         $this->response->route('frontend.index.index');
     }
 
