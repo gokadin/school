@@ -6,24 +6,14 @@
     Activities
 </div>
 
-<activities activities="{{ json_encode($activities) }}"></activities>
+<activities></activities>
 
 <template id="activities-template">
     <ul>
         <li v-for="activity in activities">
-            @{{ activity.name }}
+            @{{ activity.name }}<strong @click="deleteActivity(activity)">X</strong>
         </li>
     </ul>
 </template>
-
-@stop()
-
-@section('javascript')
-
-<script type="text/javascript">
-    $(function() {
-        var x = '{{ json_encode($activities) }}';
-    });
-</script>
 
 @stop()
