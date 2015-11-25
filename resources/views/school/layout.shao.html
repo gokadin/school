@@ -46,18 +46,36 @@
 <div id="container" class="clearfix">
     <div id="menu">
         <div class="search">
-
+            <input type="text" id="search" placeholder="Search..." />
+            <i class="fa fa-search"></i>
         </div>
         <div class="menu-only">
             <ul>
-                <li class="active">
+                <li class="@if (currentRoute() == 'school.teacher.index.index') active @endif ">
                     <a href="@path('school.teacher.index.index')">
                         <i class="fa fa-home"></i>Home
                     </a>
                 </li>
-                <li class="multi-level open">
+                <li class="multi-level @if (currentNameContains('school.teacher.activity.')) open active @endif ">
                     <a href="javascript:;">
                         <i class="fa fa-cogs"></i>Activities
+                    </a>
+                    <ul>
+                        <li>
+                            <a href="@path('school.teacher.index.index')">
+                                View
+                            </a>
+                        </li>
+                        <li>
+                            <a href="@path('school.teacher.index.index')">
+                                Create
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+                <li class="multi-level @if (currentNameContains('school.teacher.student.')) open active @endif ">
+                    <a href="javascript:;">
+                        <i class="fa fa-group"></i>Students
                     </a>
                     <ul>
                         <li>

@@ -2,6 +2,9 @@ $color-selected-menu: #26a69a;
 $color-hover-menu-first-level: #202B30;
 $color-hover-menu-second-level: #202729;
 $color-top-menu-border: #4b5a61;
+$color-menu-background: #263238;
+$color-menu-text: #c7cacb;
+$color-menu-text-hover: #fff;
 
 header {
   height: 45px;
@@ -129,15 +132,40 @@ header {
 
 #menu {
   width: 260px;
-  background-color: #263238;
+  background-color: $color-menu-background;
 
   .search {
     height: 100px;
+    position: relative;
+
+    #search {
+      height: 40px;
+      margin-top: 30px;
+      width: 200px;
+      margin-left: 30px;
+      background-color: $color-menu-background;
+      border: none;
+      border-bottom: 1px solid $color-menu-text;
+      color: $color-menu-text;
+      padding: 0 20px 0 5px;
+    }
+
+    #search:focus {
+      color: $color-menu-text-hover;
+      border-bottom: 1px solid $color-menu-text-hover;
+    }
+
+    i {
+      position: absolute;
+      color: $color-menu-text;
+      top: 40px;
+      right: 30px;
+    }
   }
 
   .menu-only {
     a, i {
-      color: #c7cacb;
+      color: $color-menu-text;
       font-weight: 500;
     }
 
@@ -178,13 +206,17 @@ header {
         line-height: 45px;
       }
 
-      li.active a {
+      > li.active a {
         background-color: $color-selected-menu;
         color: #fff;
 
         i {
           color: #fff;
         }
+      }
+
+      > li > ul > li.active a {
+        background-color: $color-hover-menu-second-level;
       }
     }
 

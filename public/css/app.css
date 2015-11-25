@@ -614,6 +614,9 @@ footer .copyright {
 * {
   font-family: Roboto, sans-serif; }
 
+html, body, #container {
+  height: 100%; }
+
 a:hover {
   text-decoration: none; }
 
@@ -705,7 +708,26 @@ header {
   width: 260px;
   background-color: #263238; }
   #menu .search {
-    height: 100px; }
+    height: 100px;
+    position: relative; }
+    #menu .search #search {
+      height: 40px;
+      margin-top: 30px;
+      width: 200px;
+      margin-left: 30px;
+      background-color: #263238;
+      border: none;
+      border-bottom: 1px solid #c7cacb;
+      color: #c7cacb;
+      padding: 0 20px 0 5px; }
+    #menu .search #search:focus {
+      color: white;
+      border-bottom: 1px solid white; }
+    #menu .search i {
+      position: absolute;
+      color: #c7cacb;
+      top: 40px;
+      right: 30px; }
   #menu .menu-only a, #menu .menu-only i {
     color: #c7cacb;
     font-weight: 500; }
@@ -735,11 +757,13 @@ header {
     list-style: outside none none; }
     #menu .menu-only ul li {
       line-height: 45px; }
-    #menu .menu-only ul li.active a {
+    #menu .menu-only ul > li.active a {
       background-color: #26a69a;
       color: #fff; }
-      #menu .menu-only ul li.active a i {
+      #menu .menu-only ul > li.active a i {
         color: #fff; }
+    #menu .menu-only ul > li > ul > li.active a {
+      background-color: #202729; }
   #menu .menu-only > ul > li.multi-level {
     position: relative; }
     #menu .menu-only > ul > li.multi-level > a:after {

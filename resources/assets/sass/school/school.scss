@@ -4,6 +4,10 @@ $color-black: #333333;
   font-family: Roboto, sans-serif;
 }
 
+html, body, #container {
+  height: 100%;
+}
+
 a:hover {
   text-decoration: none;
 }
