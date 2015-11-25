@@ -10,4 +10,27 @@ a:hover {
   text-decoration: none;
 }
 
+#content {
+  .content-padding {
+    padding: 30px 20px;
+  }
+
+  .main-title {
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-size: 20px;
+    height: 60px;
+    line-height: 60px;
+    background-color: #e6e6e6;
+    padding: 0 20px;
+    border-bottom: 1px solid #cccccc;
+  }
+}
+
+.form-1 {
+
+}
+
+@import 'school-responsive';
 @import 'layout';
+@import 'activities';

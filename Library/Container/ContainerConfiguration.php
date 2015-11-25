@@ -36,9 +36,9 @@ class ContainerConfiguration
 
         $this->container->registerInstance('config', new Config());
         $this->container->registerInstance('request', new Request());
-        $this->container->registerInstance('form', new Form());
-        $this->container->registerInstance('session', new Session());
-        $this->container->registerInstance('shao', new Shao());
+        $session = new Session();
+        $this->container->registerInstance('session', $session);
+        $this->container->registerInstance('shao', new Shao($this->container));
         $this->container->registerInstance('view', new View());
         $this->container->registerInstance('viewFactory', new ViewFactory());
         $this->container->registerInstance('log', new Log());
@@ -65,6 +65,7 @@ class ContainerConfiguration
         $router = new Router($this->container, $validator);
         $this->container->registerInstance('router', $router);
         $this->container->registerInstance('response', new Response($router));
+        $this->container->registerInstance('form', new Form($router, $session));
 
         if (env('APP_DEBUG'))
         {

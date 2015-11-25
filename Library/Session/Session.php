@@ -2,7 +2,7 @@
 
 namespace Library\Session;
 
-if(env('APP_ENV') != 'testing' && env('APP_ENV') != 'framework_testing')
+if (session_status() == PHP_SESSION_NONE)
 {
     session_start();
 }

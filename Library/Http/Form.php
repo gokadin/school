@@ -2,16 +2,26 @@
 
 namespace Library\Http;
 
-use Library\Facades\Session;
+use Library\Routing\Router;
+use Library\Session\Session;
 
 class Form
 {
+    protected $router;
+    protected $session;
+
+    public function __construct(Router $router, Session $session)
+    {
+        $this->router = $router;
+        $this->session = $session;
+    }
+
     public function open($action, $method = 'POST', array $options = null, $includeToken = true)
     {
         $needHiddenMethod = false;
         $str = '<form action="';
         if (!empty($action))
-            $str .= \Library\Facades\Router::getUri($action);
+            $str .= $this->router->getUri($action);
         $str .= '"';
 
         if ($method == 'GET' || $method == 'POST')
@@ -30,7 +40,7 @@ class Form
             $str .= '<input type="hidden" name="_method" value="'.$method.'" />';
 
         if ($includeToken)
-            $str .= '<input type="hidden" name="_token" value="'. Session::generateToken() .'" />';
+            $str .= '<input type="hidden" name="_token" value="'. $this->session->generateToken() .'" />';
 
         return $str;
     }
@@ -127,11 +137,11 @@ class Form
 
         $str .= '>';
 
-        if (\Library\Facades\Session::hasErrors()
-            && isset(\Library\Facades\Session::getErrors()[$name])
-            && sizeof(\Library\Facades\Session::getErrors()[$name]) > 0)
+        if ($this->session->hasErrors()
+            && isset($this->session->getErrors()[$name])
+            && sizeof($this->session->getErrors()[$name]) > 0)
         {
-            $str .= \Library\Facades\Session::getErrors()[$name][0];
+            $str .= $this->session->getErrors()[$name][0];
         }
 
         return $str .= '</div>';
@@ -176,9 +186,9 @@ class Form
             {
                 if ($presentError
                     && $name != null
-                    && \Library\Facades\Session::hasErrors()
-                    && isset(\Library\Facades\Session::getErrors()[$name])
-                    && sizeof(\Library\Facades\Session::getErrors()[$name]) > 0)
+                    && $this->session->hasErrors()
+                    && isset($this->session->getErrors()[$name])
+                    && sizeof($this->session->getErrors()[$name]) > 0)
                 {
                     $value .= ' invalid';
                 }
@@ -196,9 +206,9 @@ class Form
         {
             if ($presentError
                 && $name != null
-                && \Library\Facades\Session::hasErrors()
-                && isset(\Library\Facades\Session::getErrors()[$name])
-                && sizeof(\Library\Facades\Session::getErrors()[$name]) > 0)
+                && $this->session->hasErrors()
+                && isset($this->session->getErrors()[$name])
+                && sizeof($this->session->getErrors()[$name]) > 0)
             {
                 $str .= ' class="invalid"';
             }

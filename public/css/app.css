@@ -548,6 +548,20 @@ button:disabled {
   height: 100%; }
 #school a:hover {
   text-decoration: none; }
+#school #content .content-padding {
+  padding: 30px 20px; }
+#school #content .main-title {
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-size: 20px;
+  height: 60px;
+  line-height: 60px;
+  background-color: #e6e6e6;
+  padding: 0 20px;
+  border-bottom: 1px solid #cccccc; }
+@media screen and (max-width: 480px) {
+  #school #content .main-title {
+    text-align: center; } }
 #school .dropdown-1 {
   position: relative;
   color: #fff;
@@ -718,13 +732,10 @@ button:disabled {
     list-style: outside none none; }
     #school #menu .menu-only ul li {
       line-height: 45px; }
-    #school #menu .menu-only ul > li.active a {
-      background-color: #26a69a;
+    #school #menu .menu-only ul li.active a {
       color: #fff; }
-      #school #menu .menu-only ul > li.active a i {
+      #school #menu .menu-only ul li.active a i {
         color: #fff; }
-    #school #menu .menu-only ul > li > ul > li.active a {
-      background-color: #202729; }
   #school #menu .menu-only > ul > li.multi-level {
     position: relative; }
     #school #menu .menu-only > ul > li.multi-level > a:after {
@@ -740,19 +751,23 @@ button:disabled {
     background-color: #202b30;
     border-top: 1px solid #4b5a61;
     border-bottom: 1px solid #4b5a61; }
-    #school #menu .menu-only > ul > li > ul > li a {
+    #school #menu .menu-only > ul > li > ul > li > a {
       padding-left: 45px; }
-    #school #menu .menu-only > ul > li > ul > li:hover a {
+    #school #menu .menu-only > ul > li > ul > li:hover > a {
+      background-color: #202729; }
+    #school #menu .menu-only > ul > li > ul > li.active > a {
       background-color: #202729; }
   #school #menu .menu-only > ul > li.open > a {
     background-color: #202b30; }
   #school #menu .menu-only > ul > li.open > a:after {
     content: "\f0d7"; }
+  #school #menu .menu-only > ul > li.active > a {
+    background-color: #26a69a; }
 #school #content {
   position: relative;
   background-color: #f5f5f5;
   margin-left: 260px;
-  padding: 30px 20px; }
+  padding-bottom: 30px; }
 #school footer {
   height: 30px;
   line-height: 30px;

@@ -2,6 +2,7 @@
 
 namespace Library\Shao;
 
+use Library\Container\Container;
 use Library\Facades\Router;
 use Library\Facades\Shao as ShaoBase;
 use Library\Facades\ViewFactory;
@@ -10,6 +11,13 @@ use Symfony\Component\Yaml\Exception\RuntimeException;
 
 class ShaoFunctions
 {
+    protected $container;
+
+    public function __construct(Container $container)
+    {
+        $this->container = $container;
+    }
+
     public function layout($str)
     {
         $requestedFile = __DIR__.'/../../'.View::VIEW_FOLDER.'/'.str_replace('.', '/', $str);
@@ -79,9 +87,14 @@ class ShaoFunctions
         throw new RuntimeException('File '.$requestedFile.' does not exist.');
     }
 
-    public function inject($str)
+    public function inject($class, $varName = null)
     {
-        return '<?php use '.$str.'; ?>';
+        $resolved = $this->container->resolve($class);
+        $view = $this->container->resolveInstance('view');
+
+        is_null($varName)
+            ? $view->add([lcfirst(substr($class, strrpos($class, '\\') + 1)) => $resolved])
+            : $view->add([$varName => $resolved]);
     }
 
     public function path($action, $var = null)

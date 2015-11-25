@@ -2,6 +2,7 @@
 
 namespace Library\Shao;
 
+use Library\Container\Container;
 use Library\Http\View;
 
 class Shao
@@ -12,10 +13,10 @@ class Shao
     protected $shaoFunctions;
     protected $currentView;
 
-    public function __construct()
+    public function __construct(Container $container)
     {
         $this->shaoLogic = new ShaoLogic();
-        $this->shaoFunctions = new ShaoFunctions();
+        $this->shaoFunctions = new ShaoFunctions($container);
     }
 
     public function parseFile($file)
