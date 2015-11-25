@@ -35,7 +35,7 @@ class AccountController extends Controller
     {
         $userRepository->logout();
 
-        $this->response->route('frontend.index.index');
+        $this->response->route('frontend.account.index');
     }
 
     public function resetPassword()

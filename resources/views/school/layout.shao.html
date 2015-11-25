@@ -13,18 +13,29 @@
 
 <header class="clearfix">
     <div class="school-name"><a href="@path('school.teacher.index.index')">{{ $user->school()->name() }}</a></div>
-    <div class="search">search</div>
     <div class="account">
         <div class="dropdown-1">
-            <img src="/images/defaultProfilePicture.png" width="40" height="40" />
-            {{ $user->name() }}
+            <img src="/images/defaultProfilePicture.png" width="30" height="30" />
+            {{ $user->name() }} <i class="fa fa-angle-down"></i>
             <div class="dropdown-box">
                 <div class="arrow-box">
                     <ul>
-                        <li><a href="#"><i class="fa fa-chevron-right"></i>link1</a></li>
-                        <li><a href="#"><i class="fa fa-gear"></i>link2</a></li>
+                        <li>
+                            <a href="#">
+                                <i class="fa fa-user"></i>Account
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#">
+                                <i class="fa fa-gear"></i>Settings
+                            </a>
+                        </li>
                         <li class="divider"></li>
-                        <li><a href="#"><i class="fa fa-sign-out"></i>Log out</a></li>
+                        <li>
+                            <a href="@path('frontend.account.logout')">
+                                <i class="fa fa-sign-out"></i>Log out
+                            </a>
+                        </li>
                     </ul>
                 </div>
             </div>
@@ -32,9 +43,76 @@
     </div>
 </header>
 
-<div id="content">
-    @yield('content')
+<div id="container" class="clearfix">
+    <div id="menu">
+        <div class="search">
+
+        </div>
+        <div class="menu-only">
+            <ul>
+                <li class="active">
+                    <a href="@path('school.teacher.index.index')">
+                        <i class="fa fa-home"></i>Home
+                    </a>
+                </li>
+                <li class="multi-level open">
+                    <a href="javascript:;">
+                        <i class="fa fa-cogs"></i>Activities
+                    </a>
+                    <ul>
+                        <li>
+                            <a href="@path('school.teacher.index.index')">
+                                View
+                            </a>
+                        </li>
+                        <li>
+                            <a href="@path('school.teacher.index.index')">
+                                Create
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="@path('school.teacher.index.index')">
+                        <i class="fa fa-user"></i>Account
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <div id="content">
+        @yield('content')
+    </div>
 </div>
+
+<footer>
+    footer
+</footer>
+
+<script src="/js/jquery.min.js"></script>
+
+<script type="text/javascript">
+$(function() {
+    $('#menu li.multi-level').each(function() {
+        if ($(this).hasClass('open')) {
+            $(this).children('ul').css('display', 'block');
+        } else {
+            $(this).children('ul').css('display', 'none');
+        }
+    });
+
+    $('#menu li.multi-level').click(function() {
+        $(this).toggleClass('open');
+
+        if ($(this).hasClass('open')) {
+            $(this).children('ul').slideDown();
+        } else {
+            $(this).children('ul').slideUp();
+        }
+    });
+});
+</script>
 
 </body>
 </html>

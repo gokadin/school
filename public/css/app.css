@@ -611,40 +611,47 @@ footer .copyright {
   font-size: 11px;
   text-align: center; }
 
+* {
+  font-family: Roboto, sans-serif; }
+
 a:hover {
   text-decoration: none; }
 
 header {
-  height: 50px;
-  line-height: 50px;
-  background-color: #333333;
-  padding: 0 2%; }
+  height: 45px;
+  line-height: 45px;
+  background-color: #37474f;
+  padding: 0 2%;
+  border-bottom: 1px solid #4b5a61; }
   header > div {
-    color: #cccccc; }
+    color: #fff; }
     header > div a {
-      color: #cccccc; }
-    header > div a:hover {
-      color: whitesmoke; }
-  header .school-name, header .search {
-    float: left; }
+      color: #fff; }
   header .school-name {
-    font-size: 18px; }
+    font-size: 18px;
+    float: left; }
   header .account {
     float: right; }
     header .account .dropdown-1 {
       position: relative;
-      color: #cccccc;
+      color: #fff;
       padding: 0 10px;
-      cursor: pointer; }
+      cursor: pointer;
+      font-size: 14px; }
       header .account .dropdown-1 img {
         vertical-align: middle;
         margin-right: 5px;
         margin-top: -3px; }
+      header .account .dropdown-1 > i {
+        color: #fff; }
       header .account .dropdown-1 .dropdown-box {
         position: absolute;
         width: 200px;
         right: 0;
-        display: none; }
+        display: none;
+        -webkit-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        -moz-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1); }
         header .account .dropdown-1 .dropdown-box .arrow-box:after, header .account .dropdown-1 .dropdown-box .arrow-box:before {
           bottom: 100%;
           right: 10px;
@@ -686,6 +693,73 @@ header {
             header .account .dropdown-1 .dropdown-box .arrow-box ul li:not(.divider):hover {
               background-color: #f6f6f6; }
     header .account .dropdown-1:hover {
-      background-color: #4d4d4d; }
+      background-color: #2a353c; }
       header .account .dropdown-1:hover .dropdown-box {
         display: block; }
+
+#menu, #content {
+  float: left;
+  height: 100%; }
+
+#menu {
+  width: 260px;
+  background-color: #263238; }
+  #menu .search {
+    height: 100px; }
+  #menu .menu-only a, #menu .menu-only i {
+    color: #c7cacb;
+    font-weight: 500; }
+  #menu .menu-only a {
+    display: block;
+    font-size: 13px;
+    padding-left: 20px;
+    -webkit-transition: background-color 0.2s;
+    -moz-transition: background-color 0.2s;
+    -ms-transition: background-color 0.2s;
+    -o-transition: background-color 0.2s;
+    transition: background-color 0.2s; }
+  #menu .menu-only a:hover {
+    background-color: #202b30;
+    color: #fff;
+    -webkit-transition: background-color 0.2s;
+    -moz-transition: background-color 0.2s;
+    -ms-transition: background-color 0.2s;
+    -o-transition: background-color 0.2s;
+    transition: background-color 0.2s; }
+    #menu .menu-only a:hover i {
+      color: #fff; }
+  #menu .menu-only i {
+    font-size: 16px;
+    margin-right: 10px; }
+  #menu .menu-only ul {
+    list-style: outside none none; }
+    #menu .menu-only ul li {
+      line-height: 45px; }
+    #menu .menu-only ul li.active a {
+      background-color: #26a69a;
+      color: #fff; }
+      #menu .menu-only ul li.active a i {
+        color: #fff; }
+  #menu .menu-only > ul > li.multi-level {
+    position: relative; }
+    #menu .menu-only > ul > li.multi-level > a:after {
+      position: absolute;
+      font-family: FontAwesome;
+      content: "\f0da";
+      color: #c7cacb;
+      right: 0;
+      margin-right: 8px;
+      font-size: 14px; }
+  #menu .menu-only > ul > li > ul {
+    display: none;
+    background-color: #202b30;
+    border-top: 1px solid #4b5a61;
+    border-bottom: 1px solid #4b5a61; }
+    #menu .menu-only > ul > li > ul > li a {
+      padding-left: 45px; }
+    #menu .menu-only > ul > li > ul > li:hover a {
+      background-color: #202729; }
+  #menu .menu-only > ul > li.open > a {
+    background-color: #202b30; }
+  #menu .menu-only > ul > li.open > a:after {
+    content: "\f0d7"; }

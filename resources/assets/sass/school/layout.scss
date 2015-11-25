@@ -1,27 +1,26 @@
+$color-selected-menu: #26a69a;
+$color-hover-menu-first-level: #202B30;
+$color-hover-menu-second-level: #202729;
+$color-top-menu-border: #4b5a61;
+
 header {
-  height: 50px;
-  line-height: 50px;
-  background-color: $color-black;
+  height: 45px;
+  line-height: 45px;
+  background-color: #37474f;
   padding: 0 2%;
+  border-bottom: 1px solid $color-top-menu-border;
 
   > div {
-    color: #cccccc;
+    color: #fff;
 
     a {
-      color: #cccccc;
+      color: #fff;
     }
-
-    a:hover {
-      color: whitesmoke;
-    }
-  }
-
-  .school-name, .search {
-    float: left;
   }
 
   .school-name {
     font-size: 18px;
+    float: left;
   }
 
   .account {
@@ -29,9 +28,10 @@ header {
 
     .dropdown-1 {
       position: relative;
-      color: #cccccc;
+      color: #fff;
       padding: 0 10px;
       cursor: pointer;
+      font-size: 14px;
 
       img {
         vertical-align: middle;
@@ -39,11 +39,18 @@ header {
         margin-top: -3px;
       }
 
+      > i {
+        color: #fff;
+      }
+
       .dropdown-box {
         position: absolute;
         width: 200px;
         right: 0;
         display: none;
+        -webkit-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        -moz-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 
         .arrow-box:after, .arrow-box:before {
           bottom: 100%;
@@ -106,13 +113,130 @@ header {
     }
 
     .dropdown-1:hover {
-      background-color: #4d4d4d;
+      background-color: #2a353c;
 
       .dropdown-box {
         display: block;
       }
     }
   }
+}
+
+#menu, #content {
+  float: left;
+  height: 100%;
+}
+
+#menu {
+  width: 260px;
+  background-color: #263238;
+
+  .search {
+    height: 100px;
+  }
+
+  .menu-only {
+    a, i {
+      color: #c7cacb;
+      font-weight: 500;
+    }
+
+    a {
+      display: block;
+      font-size: 13px;
+      padding-left: 20px;
+      -webkit-transition: background-color 0.2s;
+      -moz-transition: background-color 0.2s;
+      -ms-transition: background-color 0.2s;
+      -o-transition: background-color 0.2s;
+      transition: background-color 0.2s;
+    }
+
+    a:hover {
+      background-color: $color-hover-menu-first-level;
+      color: #fff;
+      -webkit-transition: background-color 0.2s;
+      -moz-transition: background-color 0.2s;
+      -ms-transition: background-color 0.2s;
+      -o-transition: background-color 0.2s;
+      transition: background-color 0.2s;
+
+      i {
+        color: #fff;
+      }
+    }
+
+    i {
+      font-size: 16px;
+      margin-right: 10px;
+    }
+
+    ul {
+      list-style: outside none none;
+
+      li {
+        line-height: 45px;
+      }
+
+      li.active a {
+        background-color: $color-selected-menu;
+        color: #fff;
+
+        i {
+          color: #fff;
+        }
+      }
+    }
+
+    > ul {
+      > li.multi-level {
+        position: relative;
+
+        > a:after {
+          position: absolute;
+          font-family: FontAwesome;
+          content: "\f0da";
+          color: #c7cacb;
+          right: 0;
+          margin-right: 8px;
+          font-size: 14px;
+        }
+      }
+
+      > li {
+        > ul {
+          display: none;
+          background-color: $color-hover-menu-first-level;
+          border-top: 1px solid $color-top-menu-border;
+          border-bottom: 1px solid $color-top-menu-border;
+
+          > li {
+            a {
+              padding-left: 45px;
+            }
+          }
+
+          > li:hover a {
+            background-color: $color-hover-menu-second-level;
+          }
+        }
+      }
+
+      > li.open {
+        > a {
+          background-color: $color-hover-menu-first-level;
+        }
+
+        > a:after {
+          content: "\f0d7";
+        }
+      }
+    }
+  }
+}
+
+#content {
+
 }
 
 @import 'layout-responsive';
