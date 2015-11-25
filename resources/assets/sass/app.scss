@@ -9,6 +9,11 @@ $color-error: #b94a48;
   box-sizing: border-box;
 }
 
+html, body
+{
+  height: 100%;
+}
+
 .clearfix:after {
   content: "";
   display: table;
@@ -21,6 +26,10 @@ a {
 
 a:hover {
   text-decoration: none;
+}
+
+i.fa {
+  font-family: FontAwesome !important;
 }
 
 /* TABLES */
@@ -411,5 +420,10 @@ button:disabled
   cursor: not-allowed;
 }
 
-@import 'frontend/frontend';
-@import 'school/school';
+#frontend {
+  @import 'frontend/frontend';
+}
+
+#school {
+  @import 'school/school';
+}

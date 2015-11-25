@@ -6,6 +6,8 @@ $color-menu-background: #263238;
 $color-menu-text: #c7cacb;
 $color-menu-text-hover: #fff;
 
+$side-menu-width: 260px;
+
 .dropdown-1 {
   position: relative;
   color: #fff;
@@ -144,12 +146,12 @@ header {
 }
 
 #menu, #content {
-  float: left;
   height: 100%;
 }
 
 #menu {
-  width: 260px;
+  float: left;
+  width: $side-menu-width;
   background-color: $color-menu-background;
 
   .responsive-user-menu {
@@ -319,7 +321,20 @@ header {
 }
 
 #content {
+  position: relative;
+  background-color: #f5f5f5;
+  margin-left: $side-menu-width;
+  padding: 30px 20px;
+}
 
+footer {
+  height: 30px;
+  line-height: 30px;
+  position: absolute;
+  background-color: #f5f5f5;
+  bottom: 0;
+  margin-left: 20px;
+  font-size: 12px;
 }
 
 @import 'layout-responsive';

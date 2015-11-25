@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="/vendor/font-awesome-4.4.0/css/font-awesome.min.css" />
 </head>
 
-<body>
+<body id="school">
 
 <header class="clearfix">
     <div class="school-name"><a href="@path('school.teacher.index.index')">{{ $user->school()->name() }}</a></div>
@@ -139,12 +139,12 @@
 
     <div id="content">
         @yield('content')
+
+        <footer>
+            Copyright &copy; 2015
+        </footer>
     </div>
 </div>
-
-<footer>
-    footer
-</footer>
 
 <script src="/js/jquery.min.js"></script>
 
@@ -167,7 +167,7 @@ $(function() {
             $(this).children('ul').slideUp();
         }
     });
-    
+
     $('#responsive-menu-button').click(function() {
         $('#menu').slideToggle();
     });

@@ -12,10 +12,16 @@
   #menu {
     width: 100%;
     display: none;
+    float: none;
+    height: auto;
 
     .responsive-user-menu {
       display: block;
     }
+  }
+
+  #content {
+    margin-left: 0;
   }
 }
 
