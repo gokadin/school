@@ -2,11 +2,11 @@
 
 @section('content')
 
-@inject('\Library\Facades\Form')
+@inject('\Library\Http\Form')
 
 <div class="login">
 
-    {{ Form::open('', 'POST', ['id' => 'login-form', 'class' => 'custom-1']) }}
+    {{ $form->open('', 'POST', ['id' => 'login-form', 'class' => 'custom-1']) }}
 
     <div class="g-form-header">
         Login
@@ -15,15 +15,15 @@
     <div class="g-form-body">
 
         <div class="form-row">
-            {{ Form::label('email', 'Email') }}
-            {{ Form::text('email', null, ['placeholder' => 'Email']) }}
-            {{ Form::error('email') }}
+            {{ $form->label('email', 'Email') }}
+            {{ $form->text('email', null, ['placeholder' => 'Email']) }}
+            {{ $form->error('email') }}
         </div>
 
         <div class="form-row">
-            {{ Form::label('password', 'Password') }}
-            {{ Form::password('password') }}
-            {{ Form::error('password') }}
+            {{ $form->label('password', 'Password') }}
+            {{ $form->password('password') }}
+            {{ $form->error('password') }}
         </div>
 
         <div class="forgot-password-row">
@@ -40,11 +40,11 @@
 
     <div class="g-form-footer">
 
-        {{ Form::button('Login', ['type' => 'submit']) }}
+        {{ $form->button('Login', ['type' => 'submit']) }}
 
     </div>
 
-    {{ Form::close() }}
+    {{ $form->close() }}
 
 </div>
 

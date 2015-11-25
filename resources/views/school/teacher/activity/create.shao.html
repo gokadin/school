@@ -10,11 +10,39 @@
     </div>
 
     <div class="content-padding">
-        {{ $form->open('school.teacher.activity.store', 'POST', ['class' => 'form-1']) }}
+        <div class="panel-1">
+            {{ $form->open('school.teacher.activity.store', 'POST', ['class' => 'form-1']) }}
 
-        
+            <div class="form-title">
+                Create a new activity
+            </div>
 
-        {{ $form->close() }}
+            <div class="form-row">
+                {{ $form->label('name', 'Name') }}
+                {{ $form->text('name', null, ['placeholder' => 'Name']) }}
+            </div>
+
+            <div class="form-row">
+                {{ $form->label('rate', 'Rate') }}
+                {{ $form->text('rate', null, ['placeholder' => 'Rate']) }}
+            </div>
+
+            <div class="form-row">
+                {{ $form->label('period', 'Period') }}
+                {{ $form->text('period', null, ['placeholder' => 'Period']) }}
+            </div>
+
+            <div class="form-row">
+                {{ $form->label('location', 'Location') }}
+                {{ $form->text('location', null, ['placeholder' => 'Location']) }}
+            </div>
+
+            <div class="form-buttons">
+                {{ $form->submit('Create') }}
+            </div>
+
+            {{ $form->close() }}
+        </div>
     </div>
 </div>
 

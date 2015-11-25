@@ -559,6 +559,25 @@ button:disabled {
   background-color: #e6e6e6;
   padding: 0 20px;
   border-bottom: 1px solid #cccccc; }
+#school .panel-1 {
+  background-color: #fff;
+  border: 1px solid #ddd;
+  -webkit-border-radius: 3px;
+  -moz-border-radius: 3px;
+  border-radius: 3px;
+  -webkit-box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05);
+  -moz-box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05);
+  padding: 20px; }
+#school .form-1 {
+  width: 100%; }
+  #school .form-1 .form-title {
+    font-size: 18px;
+    margin-bottom: 30px; }
+  #school .form-1 .form-row {
+    margin: 20px 0; }
+    #school .form-1 .form-row label {
+      width: 300px; }
 @media screen and (max-width: 480px) {
   #school #content .main-title {
     text-align: center; } }

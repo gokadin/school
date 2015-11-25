@@ -27,8 +27,37 @@ a:hover {
   }
 }
 
-.form-1 {
+.panel-1 {
+  background-color: #fff;
+  border: 1px solid #ddd;
+  -webkit-border-radius: 3px;
+  -moz-border-radius: 3px;
+  border-radius: 3px;
+  -webkit-box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05);
+  -moz-box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05);
+  padding: 20px;
+}
 
+.form-1 {
+  width: 100%;
+
+  .form-title {
+    font-size: 18px;
+    margin-bottom: 30px;
+  }
+
+  .form-row {
+    margin: 20px 0;
+
+    label {
+      width: 300px;
+    }
+
+    input[type="text"] {
+
+    }
+  }
 }
 
 @import 'school-responsive';
