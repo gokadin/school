@@ -199,6 +199,7 @@ class PersistentCollection extends AbstractEntityCollection
     public function jsonSerialize()
     {
         $this->loadAll();
+
         return $this->items;
     }
 

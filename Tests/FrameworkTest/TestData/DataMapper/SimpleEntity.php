@@ -3,12 +3,13 @@
 namespace Tests\FrameworkTest\TestData\DataMapper;
 
 use Library\DataMapper\DataMapperTimestamps;
+use JsonSerializable;
 
 /**
  * @Entity(name="simpleEntity")
  * @Other(x="1", y="2", z="3")
  */
-class SimpleEntity
+class SimpleEntity implements JsonSerializable
 {
     use DataMapperTimestamps;
 
@@ -106,5 +107,13 @@ class SimpleEntity
     public function setText1($text1)
     {
         $this->text1 = $text1;
+    }
+
+    public function jsonSerialize()
+    {
+        return [
+            'one' => $this->one,
+            'two' => $this->two
+        ];
     }
 }

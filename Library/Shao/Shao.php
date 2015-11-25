@@ -73,8 +73,8 @@ class Shao
 
     private function parseEchoAndEscape(&$str)
     {
-        $str = str_replace('{!!', '<?php echo htmlspecialchars(', $str);
-        $str = str_replace('!!}', '); ?>', $str);
+        $str = str_replace('{!!', '<?php echo ', $str);
+        $str = str_replace('!!}', '; ?>', $str);
     }
 
     private function parseRawPhp(&$str)
@@ -85,7 +85,7 @@ class Shao
 
     private function parseEcho(&$str)
     {
-        $str = preg_replace('/(?<!\@)\{\{([^\}]*)\}\}/', '<?php echo ${1}; ?>', $str);
+        $str = preg_replace('/(?<!\@)\{\{([^\}]*)\}\}/', '<?php echo htmlspecialchars(${1}); ?>', $str);
     }
 
     private function parseAngularSymbol(&$str)

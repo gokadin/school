@@ -5,11 +5,12 @@ namespace App\Domain\Activities;
 use App\Domain\Users\Teacher;
 use Library\DataMapper\DataMapperPrimaryKey;
 use Library\DataMapper\DataMapperTimestamps;
+use JsonSerializable;
 
 /**
  * @Entity(name="activities")
  */
-class Activity
+class Activity implements JsonSerializable
 {
     use DataMapperPrimaryKey, DataMapperTimestamps;
 
@@ -84,5 +85,15 @@ class Activity
     public function setTeacher(Teacher $teacher)
     {
         $this->teacher = $teacher;
+    }
+
+    public function jsonSerialize()
+    {
+        return [
+            'name' => $this->name,
+            'rate' => $this->rate,
+            'period' => $this->period,
+            'location' => $this->location
+        ];
     }
 }

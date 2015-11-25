@@ -1,0 +1,29 @@
+@layout('school.layout')
+
+@section('content')
+
+<div class="main-title">
+    Activities
+</div>
+
+<activities activities="{{ json_encode($activities) }}"></activities>
+
+<template id="activities-template">
+    <ul>
+        <li v-for="activity in activities">
+            @{{ activity.name }}
+        </li>
+    </ul>
+</template>
+
+@stop()
+
+@section('javascript')
+
+<script type="text/javascript">
+    $(function() {
+        var x = '{{ json_encode($activities) }}';
+    });
+</script>
+
+@stop()

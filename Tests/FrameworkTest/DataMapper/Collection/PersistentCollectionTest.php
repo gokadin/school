@@ -159,4 +159,29 @@ class PersistentCollectionTest extends DataMapperBaseTest
         }
         $this->assertEquals(3, $counter);
     }
+
+    public function testJsonEncodeWorksCorrectly()
+    {
+        // Arrange
+        $this->setUpSimpleEntity();
+        $se1 = new SimpleEntity(1, 2, 'one1', 'two1');
+        $se2 = new SimpleEntity(1, 2, 'one2', 'two2');
+        $se3 = new SimpleEntity(1, 2, 'one3', 'two3');
+        $this->dm->persist($se1);
+        $this->dm->persist($se2);
+        $this->dm->persist($se3);
+        $collection = new PersistentCollection($this->dm, SimpleEntity::class, [
+            $se1->getId(),
+            $se2->getId(),
+            $se3->getId(),
+        ]);
+
+        $encoded = json_encode($collection);
+        $decoded = json_decode($encoded, true);
+
+        // Assert
+        $this->assertEquals(3, sizeof($decoded));
+        $this->assertEquals(1, $decoded[0]['one']);
+        $this->assertEquals(2, $decoded[0]['two']);
+    }
 }
