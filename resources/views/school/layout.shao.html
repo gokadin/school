@@ -12,7 +12,7 @@
 
 <body id="school">
 
-<header class="clearfix">
+<header>
     <div class="school-name"><a href="@path('school.teacher.index.index')">{{ $user->school()->name() }}</a></div>
     <div class="account">
         <div class="dropdown-1">
@@ -47,9 +47,9 @@
     </div>
 </header>
 
-<div id="container" class="clearfix">
+<div id="container">
     <div id="menu">
-        <div class="responsive-user-menu clearfix">
+        <div class="responsive-user-menu">
             <div class="account">
                 <div class="dropdown-1">
                     <img src="/images/defaultProfilePicture.png" width="30" height="30" />
@@ -140,14 +140,11 @@
 
     <div id="content">
         @yield('content')
-
-        <footer>
-            Copyright &copy; 2015
-        </footer>
     </div>
 </div>
 
 <script src="/js/jquery.min.js"></script>
+<script src="/js/validator.js"></script>
 
 <script type="text/javascript">
 $(function() {
@@ -174,6 +171,8 @@ $(function() {
     });
 });
 </script>
+
+@yield('javascript')
 
 </body>
 </html>

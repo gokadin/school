@@ -11,7 +11,7 @@
 
     <div class="content-padding">
         <div class="panel-1">
-            {{ $form->open('school.teacher.activity.store', 'POST', ['class' => 'form-1']) }}
+            {{ $form->open('school.teacher.activity.store', 'POST', ['id' => 'create-activity-form', 'class' => 'form-1']) }}
 
             <div class="form-title">
                 Create a new activity
@@ -20,11 +20,13 @@
             <div class="form-row">
                 {{ $form->label('name', 'Name') }}
                 {{ $form->text('name', null, ['placeholder' => 'Name']) }}
+                {{ $form->error('name') }}
             </div>
 
             <div class="form-row">
                 {{ $form->label('rate', 'Rate') }}
                 {{ $form->text('rate', null, ['placeholder' => 'Rate']) }}
+                {{ $form->error('rate') }}
             </div>
 
             <div class="form-row">
@@ -38,6 +40,11 @@
             </div>
 
             <div class="form-buttons">
+                <label for="create-another">
+                    <input type="checkbox" id="create-another" name="create-another" value="1" />
+                    Create another
+                </label>
+
                 {{ $form->submit('Create') }}
             </div>
 
@@ -48,14 +55,18 @@
 
 @stop()
 
+@section('javascript')
+
 <script type="text/javascript">
     $('#create-activity-form').validate({
         name: [
             {rule: 'required'}
         ],
-        defaultRate: [
-            {rule: 'required', message: 'default rate is required'},
-            {rule: 'numeric', message: 'default rate must be a number'}
+        rate: [
+            {rule: 'required', message: 'rate is required'},
+            {rule: 'numeric', message: 'rate must be a number'}
         ]
     });
 </script>
+
+@stop()

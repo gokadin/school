@@ -149,11 +149,11 @@ class Form
 
     public function submit($name, $options = null)
     {
-        $str = '<input type="submit" value="'.$name.'"';
+        $str = '<button type="submit" ';
 
         $str .= $this->buildOptionsAndId($options, $name);
 
-        $str .= ' />';
+        $str .= '>'.$name.'</button>';
 
         return $str;
     }

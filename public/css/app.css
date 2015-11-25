@@ -577,10 +577,53 @@ button:disabled {
   #school .form-1 .form-row {
     margin: 20px 0; }
     #school .form-1 .form-row label {
-      width: 300px; }
+      width: 25%;
+      float: left;
+      font-size: 17px;
+      line-height: 40px; }
+    #school .form-1 .form-row input[type="text"] {
+      width: 75%;
+      height: 40px;
+      padding: 0 5px;
+      -webkit-border-radius: 0px;
+      -moz-border-radius: 0px;
+      border-radius: 0px;
+      border: 1px solid #cccccc; }
+    #school .form-1 .form-row input[type="text"]:focus {
+      border-color: #808080; }
+    #school .form-1 .form-row input[type="text"].valid {
+      border-color: #67b168; }
+    #school .form-1 .form-row input[type="text"].invalid {
+      border-color: #b94a48; }
+    #school .form-1 .form-row .form-error {
+      margin-top: 5px;
+      margin-left: 25%; }
+  #school .form-1 .form-buttons {
+    text-align: right;
+    height: 60px;
+    line-height: 60px; }
+    #school .form-1 .form-buttons label {
+      margin-right: 50px; }
+    #school .form-1 .form-buttons input[type="checkbox"] {
+      margin-right: 5px;
+      vertical-align: middle; }
+    #school .form-1 .form-buttons button[type="submit"] {
+      background-color: #67b168;
+      width: 120px;
+      height: 40px;
+      cursor: pointer;
+      color: white;
+      font-weight: 600; }
 @media screen and (max-width: 480px) {
   #school #content .main-title {
-    text-align: center; } }
+    text-align: center; }
+  #school .form-1 .form-row label {
+    width: 100%;
+    margin-bottom: 5px; }
+  #school .form-1 .form-row input[type="text"] {
+    width: 100%; }
+  #school .form-1 .form-row .form-error {
+    margin-left: 0; } }
 #school .dropdown-1 {
   position: relative;
   color: #fff;
@@ -783,18 +826,9 @@ button:disabled {
   #school #menu .menu-only > ul > li.active > a {
     background-color: #26a69a; }
 #school #content {
-  position: relative;
   background-color: #f5f5f5;
   margin-left: 260px;
   padding-bottom: 30px; }
-#school footer {
-  height: 30px;
-  line-height: 30px;
-  position: absolute;
-  background-color: #f5f5f5;
-  bottom: 0;
-  margin-left: 20px;
-  font-size: 12px; }
 @media screen and (max-width: 480px) {
   #school header #responsive-menu-button {
     display: block; }
