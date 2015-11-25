@@ -4,7 +4,7 @@ namespace App\Http\Requests\School;
 
 use App\Http\Requests\Request;
 
-class StoreMessageRequest extends Request
+class StoreActivityRequest extends Request
 {
     public function authorize()
     {
@@ -14,8 +14,9 @@ class StoreMessageRequest extends Request
     public function rules()
     {
         return [
-            'conversation_id' => ['required', 'numeric'],
-            'content' => 'required'
+            'name' => 'required',
+            'rate' => ['required', 'numeric'],
+            'period' => 'required'
         ];
     }
 }

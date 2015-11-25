@@ -45,12 +45,22 @@ class UserRepository extends Repository
         catch (PDOException $e)
         {
             $this->dm->rollBack();
+            $this->log->error('UserRepository.preRegisterTeacher : could not pre-register teacher : ' .$e->getMessage());
             return false;
         }
     }
 
     public function removeExpiredTempTeachers()
     {
+        try
+        {
+
+        }
+        catch (PDOException $e)
+        {
+            $this->log->error('UserRepository.removeExpiredTempTeachers : could not delete expired temp teachers : '
+                .$e->getMessage());
+        }
         $this->dm->queryBuilder()->table('temp_teachers')
             ->where('created_at', '<', 'DATE_SUB(NOW(), INTERVAL 1 DAY)')
             ->delete();
@@ -89,6 +99,7 @@ class UserRepository extends Repository
         catch (PDOException $e)
         {
             $this->dm->rollBack();
+            $this->log->error('UserRepository.registerTeacher : could not register teacher : '.$e->getMessage());
             return false;
         }
     }

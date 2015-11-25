@@ -19,7 +19,8 @@ return [
         App\Domain\Users\Student::class,
         App\Domain\Subscriptions\Subscription::class,
         App\Domain\Common\Address::class,
-        App\Domain\School\School::class
+        App\Domain\School\School::class,
+        App\Domain\Activities\Activity::class
     ]
 
 ];
