@@ -1,0 +1,26 @@
+@media screen and (max-width: 480px) {
+  header {
+    #responsive-menu-button {
+      display: block;
+    }
+
+    .account {
+      display: none;
+    }
+  }
+
+  #menu {
+    width: 100%;
+    display: none;
+
+    .responsive-user-menu {
+      display: block;
+    }
+  }
+}
+
+@media screen and (min-width: 481px) {
+  #menu {
+    display: block !important;
+  }
+}

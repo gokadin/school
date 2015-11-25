@@ -3,7 +3,7 @@
 <head>
     <title>School</title>
     <meta http-equiv="Content-type" content="text/html; charset=UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     <meta id="csrf-token" content="{{ generateToken() }}">
     <link rel="stylesheet" href="/css/app.css" />
     <link rel="stylesheet" href="/vendor/font-awesome-4.4.0/css/font-awesome.min.css" />
@@ -41,13 +41,51 @@
             </div>
         </div>
     </div>
+    <div id="responsive-menu-button">
+        <i class="fa fa-bars"></i>
+    </div>
 </header>
 
 <div id="container" class="clearfix">
     <div id="menu">
+        <div class="responsive-user-menu clearfix">
+            <div class="account">
+                <div class="dropdown-1">
+                    <img src="/images/defaultProfilePicture.png" width="30" height="30" />
+                    {{ $user->name() }} <i class="fa fa-angle-down"></i>
+                    <div class="dropdown-box">
+                        <div class="arrow-box">
+                            <ul>
+                                <li>
+                                    <a href="#">
+                                        <i class="fa fa-user"></i>Account
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="#">
+                                        <i class="fa fa-gear"></i>Settings
+                                    </a>
+                                </li>
+                                <li class="divider"></li>
+                                <li>
+                                    <a href="@path('frontend.account.logout')">
+                                        <i class="fa fa-sign-out"></i>Log out
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
         <div class="search">
-            <input type="text" id="search" placeholder="Search..." />
-            <i class="fa fa-search"></i>
+            <div class="search-wrapper">
+                <input type="text" id="search" placeholder="Search..." />
+                <i class="fa fa-search"></i>
+                <div id="search-results">
+
+                </div>
+            </div>
         </div>
         <div class="menu-only">
             <ul>
@@ -128,6 +166,10 @@ $(function() {
         } else {
             $(this).children('ul').slideUp();
         }
+    });
+    
+    $('#responsive-menu-button').click(function() {
+        $('#menu').slideToggle();
     });
 });
 </script>

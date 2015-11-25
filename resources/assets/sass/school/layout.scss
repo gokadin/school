@@ -6,6 +6,101 @@ $color-menu-background: #263238;
 $color-menu-text: #c7cacb;
 $color-menu-text-hover: #fff;
 
+.dropdown-1 {
+  position: relative;
+  color: #fff;
+  padding: 0 10px;
+  cursor: pointer;
+  font-size: 14px;
+  z-index: 101;
+
+  img {
+    vertical-align: middle;
+    margin-right: 5px;
+    margin-top: -3px;
+  }
+
+  > i {
+    color: #fff;
+  }
+
+  .dropdown-box {
+    position: absolute;
+    width: 200px;
+    right: 0;
+    display: none;
+    -webkit-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    -moz-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+
+    .arrow-box:after, .arrow-box:before {
+      bottom: 100%;
+      right: 10px;
+      border: solid transparent;
+      content: " ";
+      height: 0;
+      width: 0;
+      position: absolute;
+      pointer-events: none;
+    }
+
+    .arrow-box:after {
+      border-color: rgba(136, 183, 213, 0);
+      border-bottom-color: white;
+      border-width: 8px; margin-left: -8px;
+    }
+
+    .arrow-box:before {
+      border-color: rgba(194, 225, 245, 0);
+      border-bottom-color: #f6f6f6;
+      border-width: 9px; margin-left: -9px;
+    }
+
+    .arrow-box {
+      position: relative;
+      background-color: white;
+      border: 1px solid #f2f2f2;
+
+      ul {
+        list-style: outside none none;
+        cursor: default;
+
+        li:not(.divider) {
+          line-height: 25px;
+
+          a {
+            color: #444;
+            padding: 5px 15px;
+            display: block;
+
+            i {
+              margin-right: 10px;
+            }
+          }
+        }
+
+        li.divider {
+          height: 0;
+          margin: 4px 0;
+          border-bottom: 1px solid #f2f2f2;
+        }
+
+        li:not(.divider):hover {
+          background-color: #f6f6f6;
+        }
+      }
+    }
+  }
+}
+
+.dropdown-1:hover {
+  background-color: #2a353c;
+
+  .dropdown-box {
+    display: block;
+  }
+}
+
 header {
   height: 45px;
   line-height: 45px;
@@ -28,100 +123,23 @@ header {
 
   .account {
     float: right;
+  }
 
-    .dropdown-1 {
-      position: relative;
-      color: #fff;
-      padding: 0 10px;
-      cursor: pointer;
-      font-size: 14px;
+  #responsive-menu-button {
+    float: right;
+    cursor: pointer;
+    display: none;
+    height: 45px;
 
-      img {
-        vertical-align: middle;
-        margin-right: 5px;
-        margin-top: -3px;
-      }
-
-      > i {
-        color: #fff;
-      }
-
-      .dropdown-box {
-        position: absolute;
-        width: 200px;
-        right: 0;
-        display: none;
-        -webkit-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-        -moz-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-
-        .arrow-box:after, .arrow-box:before {
-          bottom: 100%;
-          right: 10px;
-          border: solid transparent;
-          content: " ";
-          height: 0;
-          width: 0;
-          position: absolute;
-          pointer-events: none;
-        }
-
-        .arrow-box:after {
-          border-color: rgba(136, 183, 213, 0);
-          border-bottom-color: white;
-          border-width: 8px; margin-left: -8px;
-        }
-
-        .arrow-box:before {
-          border-color: rgba(194, 225, 245, 0);
-          border-bottom-color: #f6f6f6;
-          border-width: 9px; margin-left: -9px;
-        }
-
-        .arrow-box {
-          position: relative;
-          background-color: white;
-          border: 1px solid #f2f2f2;
-
-          ul {
-            list-style: outside none none;
-            cursor: default;
-
-            li:not(.divider) {
-              line-height: 25px;
-
-              a {
-                color: #444;
-                padding: 5px 15px;
-                display: block;
-
-                i {
-                  margin-right: 10px;
-                }
-              }
-            }
-
-            li.divider {
-              height: 0;
-              margin: 4px 0;
-              border-bottom: 1px solid #f2f2f2;
-            }
-
-            li:not(.divider):hover {
-              background-color: #f6f6f6;
-            }
-          }
-        }
-      }
+    i {
+      color: $color-menu-text;
+      font-size: 30px;
+      line-height: 45px;
     }
+  }
 
-    .dropdown-1:hover {
-      background-color: #2a353c;
-
-      .dropdown-box {
-        display: block;
-      }
-    }
+  #responsive-menu-button:hover i {
+    color: $color-menu-text-hover;
   }
 }
 
@@ -134,32 +152,65 @@ header {
   width: 260px;
   background-color: $color-menu-background;
 
+  .responsive-user-menu {
+    height: 45px;
+    line-height: 45px;
+    border-bottom: 1px solid $color-top-menu-border;
+    padding: 0 2%;
+    display: none;
+
+    .account {
+      float: right;
+    }
+
+    .dropdown-1:hover {
+      background-color: $color-hover-menu-first-level;
+    }
+  }
+
   .search {
     height: 100px;
-    position: relative;
 
-    #search {
-      height: 40px;
-      margin-top: 30px;
+    .search-wrapper {
+      position: relative;
+      margin: 0 auto;
       width: 200px;
-      margin-left: 30px;
-      background-color: $color-menu-background;
-      border: none;
-      border-bottom: 1px solid $color-menu-text;
-      color: $color-menu-text;
-      padding: 0 20px 0 5px;
-    }
+      height: 100%;
 
-    #search:focus {
-      color: $color-menu-text-hover;
-      border-bottom: 1px solid $color-menu-text-hover;
-    }
+      #search {
+        height: 40px;
+        width: 200px;
+        margin-top: 30px;
+        background-color: $color-menu-background;
+        border: none;
+        border-bottom: 1px solid $color-menu-text;
+        color: $color-menu-text;
+        padding: 0 20px 0 5px;
+      }
 
-    i {
-      position: absolute;
-      color: $color-menu-text;
-      top: 40px;
-      right: 30px;
+      #search:focus {
+        color: $color-menu-text-hover;
+        border-bottom: 1px solid $color-menu-text-hover;
+      }
+
+      i {
+        position: absolute;
+        color: $color-menu-text;
+        height: 20px;
+        top: 50%;
+        margin-top: -8px;
+        right: 2px;
+      }
+
+      #search-results {
+        position: absolute;
+        width: 200px;
+        height: 300px;
+        background-color: white;
+        left: 0;
+        z-index: 100;
+        display: none;
+      }
     }
   }
 
