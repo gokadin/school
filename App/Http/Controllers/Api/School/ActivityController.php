@@ -21,4 +21,9 @@ class ActivityController extends Controller
 
         return $activities;
     }
+
+    public function getTeacherActivityCount(UserRepository $userRepository)
+    {
+        return $userRepository->getLoggedInUser()->activities()->count();
+    }
 }

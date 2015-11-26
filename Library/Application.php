@@ -65,19 +65,17 @@ class Application
 
     public function sendView()
     {
-        if (is_string($this->viewToSend) || is_bool($this->viewToSend))
+        if (!is_object($this->viewToSend) && !is_array($this->viewToSend))
         {
             echo $this->viewToSend;
+            exit();
             return;
         }
 
-        if (!($this->viewToSend instanceof View))
+        if (is_array($this->viewToSend) || !($this->viewToSend instanceof View))
         {
-            if (is_object($this->viewToSend) || is_array($this->viewToSend))
-            {
-                echo json_encode($this->viewToSend);
-            }
-
+            echo json_encode($this->viewToSend);
+            exit();
             return;
         }
 

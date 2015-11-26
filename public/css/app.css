@@ -567,10 +567,10 @@ button:disabled {
   border-radius: 3px;
   -webkit-box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05);
   -moz-box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05);
-  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05);
-  padding: 20px; }
+  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05); }
 #school .form-1 {
-  width: 100%; }
+  width: 100%;
+  padding: 20px; }
   #school .form-1 .form-title {
     font-size: 18px;
     margin-bottom: 30px; }
@@ -614,6 +614,112 @@ button:disabled {
       cursor: pointer;
       color: white;
       font-weight: 600; }
+#school .data-table-1 .header {
+  height: 60px;
+  border-bottom: 1px solid #ddd; }
+  #school .data-table-1 .header .title, #school .data-table-1 .header .filter {
+    width: 50%;
+    float: left;
+    height: 50px;
+    padding: 10px 20px;
+    line-height: 40px; }
+  #school .data-table-1 .header .title {
+    font-size: 18px; }
+  #school .data-table-1 .header .filter {
+    text-align: right; }
+    #school .data-table-1 .header .filter input {
+      height: 30px;
+      -webkit-border-radius: 0;
+      -moz-border-radius: 0;
+      border-radius: 0;
+      border: 1px solid #cccccc;
+      margin-left: 10px;
+      padding: 0 5px; }
+    #school .data-table-1 .header .filter input:focus {
+      border-color: #808080; }
+#school .data-table-1 .table table {
+  width: 100%;
+  border-collapse: collapse; }
+  #school .data-table-1 .table table tr:first-child {
+    height: 30px;
+    text-align: left; }
+  #school .data-table-1 .table table th, #school .data-table-1 .table table td {
+    padding: 0 20px;
+    height: 40px; }
+  #school .data-table-1 .table table th {
+    border-bottom: 1px solid #bbb;
+    font-size: 13px;
+    font-weight: 600;
+    position: relative; }
+  #school .data-table-1 .table table th.sortable {
+    cursor: pointer; }
+  #school .data-table-1 .table table th.sortable:before,
+  #school .data-table-1 .table table th.sortable:after {
+    position: absolute;
+    font-family: FontAwesome;
+    content: "";
+    font-size: 13px;
+    right: 20px; }
+  #school .data-table-1 .table table th.sortable:before {
+    margin-top: -4px;
+    content: "\f106"; }
+  #school .data-table-1 .table table th.sortable:after {
+    margin-top: 4px;
+    content: "\f107"; }
+  #school .data-table-1 .table table td {
+    font-size: 14px;
+    border-bottom: 1px solid #ddd; }
+  #school .data-table-1 .table table tr:not(:first-child):not(:last-child):hover td {
+    background-color: #f2f2f2; }
+  #school .data-table-1 .table table tr:last-child td {
+    padding: 0 20px;
+    border-color: #bbb; }
+    #school .data-table-1 .table table tr:last-child td input {
+      width: 130px;
+      height: 30px;
+      -webkit-border-radius: 0;
+      -moz-border-radius: 0;
+      border-radius: 0;
+      border: 1px solid #cccccc;
+      padding: 0 5px; }
+    #school .data-table-1 .table table tr:last-child td input:focus {
+      border-color: #808080; }
+#school .data-table-1 .footer {
+  height: 60px;
+  padding: 0 20px; }
+  #school .data-table-1 .footer .showing, #school .data-table-1 .footer .page-selector {
+    float: left;
+    width: 50%;
+    line-height: 60px; }
+  #school .data-table-1 .footer .showing {
+    font-size: 13px;
+    font-weight: 600; }
+  #school .data-table-1 .footer .page-selector {
+    text-align: right; }
+    #school .data-table-1 .footer .page-selector button {
+      width: 35px;
+      height: 35px; }
+    #school .data-table-1 .footer .page-selector button::-moz-focus-inner {
+      border: 0; }
+    #school .data-table-1 .footer .page-selector button:first-child,
+    #school .data-table-1 .footer .page-selector button:last-child {
+      cursor: pointer;
+      background: none;
+      border: none;
+      -webkit-border-radius: 6px;
+      -moz-border-radius: 6px;
+      border-radius: 6px; }
+    #school .data-table-1 .footer .page-selector button:first-child:hover:not(.disabled),
+    #school .data-table-1 .footer .page-selector button:last-child:hover:not(.disabled) {
+      background-color: #26a69a; }
+    #school .data-table-1 .footer .page-selector button:first-child.disabled,
+    #school .data-table-1 .footer .page-selector button:last-child.disabled {
+      opacity: 0.5;
+      cursor: default; }
+    #school .data-table-1 .footer .page-selector button:nth-child(2) {
+      background: none;
+      border: none;
+      outline: none; }
 @media screen and (max-width: 480px) {
   #school #content .main-title {
     text-align: center; }

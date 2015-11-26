@@ -9,11 +9,60 @@
 <activities></activities>
 
 <template id="activities-template">
-    <ul>
-        <li v-for="activity in activities">
-            @{{ activity.name }}
-        </li>
-    </ul>
+    <div class="content-padding">
+        <div class="panel-1">
+            <div class="data-table-1">
+                <div class="header">
+                    <div class="title">
+                        Activity list
+                    </div>
+                    <div class="filter">
+                        <label>
+                            Filter:
+                            <input type="text" placeholder="Type to filter..." />
+                        </label>
+                    </div>
+                </div>
+                <div class="table">
+                    <table cellspacing="0">
+                        <tr>
+                            <th class="sortable">Name</th>
+                            <th class="sortable">Rate</th>
+                            <th class="sortable">Period</th>
+                            <th class="sortable">Students</th>
+                            <th>Actions</th>
+                        </tr>
+                        <tr v-for="activity in activities">
+                            <td>@{{ activity.name }}</td>
+                            <td>@{{ activity.rate }}</td>
+                            <td>@{{ activity.period }}</td>
+                            <td>0</td>
+                            <td>x</td>
+                        </tr>
+                        <tr>
+                            <td><input typ="text" placeholder="Search name" /></td>
+                            <td><input typ="text" placeholder="Search rate" /></td>
+                            <td><input typ="text" placeholder="Search period" /></td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="footer">
+                    <div class="showing">
+                        Showing @{{ page * max + 1 }}
+                        to @{{ ((page + 1) * max) > total ? total : (page + 1) * max }}
+                        of @{{ total }} entries
+                    </div>
+                    <div class="page-selector">
+                        <button v-bind:class="{'disabled': page == 0}"><i class="fa fa-arrow-left"></i></button>
+                        <button>@{{ page + 1 }}</button>
+                        <button v-bind:class="{'disabled': page * max > total - max}"><i class="fa fa-arrow-right"></i></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </template>
 
 @stop()
