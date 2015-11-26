@@ -163,28 +163,30 @@ class PersistentCollection extends AbstractEntityCollection
 
                 $slice[] = $this->items[$i];
             }
+
+            $this->loadArray($slice);
+            return $slice;
         }
-        else
+
+        $lengthCounter = 0;
+        for ($i = 0; $i < $this->count; $i++)
         {
-            $lengthCounter = 0;
-            for ($i = 0; $i < $this->count; $i++)
+            if ($i < $offset)
             {
-                if ($i < $offset)
-                {
-                    continue;
-                }
+                continue;
+            }
 
-                $slice[] = $this->items[$i];
+            $slice[] = $this->items[$i];
 
-                $lengthCounter++;
-                if ($lengthCounter >= $length)
-                {
-                    break;
-                }
+            $lengthCounter++;
+            if ($lengthCounter >= $length)
+            {
+                break;
             }
         }
 
-        return new PersistentCollection($slice);
+        $this->loadArray($slice);
+        return $slice;
     }
 
     public function sortBy($property, $ascending = true)
@@ -267,6 +269,7 @@ class PersistentCollection extends AbstractEntityCollection
     public function getIterator()
     {
         $this->loadAll();
+
         return new ArrayIterator($this->items);
     }
 
@@ -279,29 +282,7 @@ class PersistentCollection extends AbstractEntityCollection
 
     protected function loadAll()
     {
-        $ids = [];
-        foreach ($this->items as $index => $item)
-        {
-            if ($this->isLoaded($item))
-            {
-                continue;
-            }
-
-            $ids[] = $item;
-            unset($this->items[$index]);
-        }
-
-        if (sizeof($ids) == 0)
-        {
-            return;
-        }
-
-        $entityCollection = $this->dm->findIn($this->class, $ids);
-
-        foreach ($entityCollection as $entity)
-        {
-            $this->items[] = $entity;
-        }
+        $this->loadArray($this->items);
     }
 
     protected function loadIndex($index)
@@ -319,6 +300,33 @@ class PersistentCollection extends AbstractEntityCollection
 
         $this->items[$index] = $this->dm->find($this->class, $item);
         return $this->items[$index];
+    }
+
+    protected function loadArray(array &$items)
+    {
+        $ids = [];
+        foreach ($items as $index => $item)
+        {
+            if ($this->isLoaded($item))
+            {
+                continue;
+            }
+
+            $ids[] = $item;
+            unset($items[$index]);
+        }
+
+        if (sizeof($ids) == 0)
+        {
+            return;
+        }
+
+        $entityCollection = $this->dm->findIn($this->class, $ids);
+
+        foreach ($entityCollection as $entity)
+        {
+            $items[] = $entity;
+        }
     }
 
     protected function isLoaded($item)

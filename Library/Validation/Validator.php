@@ -9,6 +9,7 @@ use Library\Facades\Session;
 class Validator
 {
     protected $database;
+    protected $errors = [];
 
     public function __construct(Database $database)
     {
@@ -17,10 +18,12 @@ class Validator
 
     public function make(array $data, array $rules, $withErrors = true)
     {
+        $this->errors = [];
+
         if ($rules == null || sizeof($rules) == 0)
             return false;
 
-        $errors = array();
+        $errors = [];
         $isValid = true;
 
         foreach ($rules as $field => $constraints)
@@ -77,9 +80,17 @@ class Validator
         }
 
         if ($withErrors && sizeof($errors) > 0)
+        {
             Session::setErrors($errors);
+            $this->errors = $errors;
+        }
 
         return $isValid;
+    }
+
+    public function errors()
+    {
+        return $this->errors;
     }
 
     private function callProperFunction($functionName, $value, array $args)
@@ -155,6 +166,11 @@ class Validator
 
     public function required($value)
     {
+        if ($value == 0)
+        {
+            return true;
+        }
+
         if ($value == null || trim($value) === '')
             return false;
 

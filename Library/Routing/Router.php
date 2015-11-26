@@ -344,7 +344,17 @@ class Router
 
         if ($instance instanceof \App\Http\Requests\Request)
         {
-            $this->processRequest($instance);
+            if (!$this->processRequest($instance))
+            {
+                if ($instance->isJson())
+                {
+                    $response = $this->container->resolveInstance('response');
+                    echo $response->json($this->validator->errors(), 401);
+                    exit();
+                }
+
+                back();
+            }
         }
 
         return $instance;
@@ -352,14 +362,12 @@ class Router
 
     protected function processRequest($request)
     {
-        if (!$request->authorize())
+        if (!$request->authorize() ||
+            !$this->validator->make($request->all(), $request->rules()))
         {
-            back();
+            return false;
         }
 
-        if (!$this->validator->make($request->all(), $request->rules()))
-        {
-            back();
-        }
+        return true;
     }
 }

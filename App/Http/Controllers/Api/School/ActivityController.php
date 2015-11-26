@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Api\School;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Api\School\GetUserActivitiesRequest;
+use App\Http\Requests\Api\School\GetTeacherActivitiesRequest;
 use App\Repositories\UserRepository;
 
 class ActivityController extends Controller
@@ -17,13 +17,13 @@ class ActivityController extends Controller
     {
         $activities = $userRepository->getLoggedInUser()->activities()
             ->sortBy($request->sortBy, $request->ascending)
-            ->paginate($request->currentPage, $request->max);
+            ->slice($request->page * $request->max, $request->max);
 
         foreach ($request->filters as $property => $string)
         {
-            
+
         }
 
-        // return something
+        return $activities;
     }
 }

@@ -47,4 +47,11 @@ class Response
         echo $view->send();
         exit();
     }
+
+    public function json($data, $statusCode)
+    {
+        http_response_code($statusCode);
+
+        return json_encode($data);
+    }
 }

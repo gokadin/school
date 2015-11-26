@@ -73,7 +73,7 @@ class Application
 
         if (!($this->viewToSend instanceof View))
         {
-            if (is_object($this->viewToSend))
+            if (is_object($this->viewToSend) || is_array($this->viewToSend))
             {
                 echo json_encode($this->viewToSend);
             }

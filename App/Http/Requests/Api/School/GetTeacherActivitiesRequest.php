@@ -2,7 +2,7 @@
 
 namespace App\Http\Requests\Api\School;
 
-use Library\Http\Request;
+use App\Http\Requests\Request;
 
 class GetTeacherActivitiesRequest extends Request
 {
@@ -14,11 +14,8 @@ class GetTeacherActivitiesRequest extends Request
     public function rules()
     {
         return [
-            'currentPage' => ['required', 'numeric'],
-            'max' => ['required', 'numeric'],
-            'sortBy' => 'required',
-            'sortAscending' => 'required',
-            'filters' => 'required'
+            'page' => ['required', 'numeric'],
+            'max' => ['required', 'numeric']
         ];
     }
 }

@@ -28,6 +28,11 @@ class VerifyAuthentication
     {
         if (!$this->userRepository->loggedIn())
         {
+            if ($request->isJson())
+            {
+                return $this->response->json([], 401);
+            }
+
             $this->response->route('frontend.account.login');
             return;
         }
