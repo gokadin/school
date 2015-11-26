@@ -9,6 +9,7 @@ class QueryBuilder
     protected $databaseDriver;
     protected $table;
     protected $wheres = [];
+    protected $sortingRules = [];
 
     public function __construct($config)
     {
@@ -84,12 +85,25 @@ class QueryBuilder
         ];
     }
 
+    public function sortBy($field, $ascending = true)
+    {
+        $this->sortingRules[$field] = $ascending;
+
+        return $this;
+    }
+
     protected function selectMySql($fields)
     {
         $str = 'SELECT ';
         $str .= implode(', ', $fields);
         $str .= ' FROM '.$this->table;
         $str .= ' '.$this->databaseDriver->buildWheres($this->wheres);
+        $str .= ' '.$this->databaseDriver->buildSorts($this->sortingRules);
+
+        if (sizeof($fields) == 1 && $fields[0] != '*')
+        {
+            return $this->databaseDriver->execute($str, 'SINGLE');
+        }
 
         return $this->databaseDriver->execute($str);
     }
@@ -163,5 +177,6 @@ class QueryBuilder
     {
         $this->table = null;
         $this->wheres = [];
+        $this->sortingRules = [];
     }
 }

@@ -5,6 +5,7 @@ namespace Library\DataMapper\Collection;
 use Library\DataMapper\DataMapper;
 use SplObjectStorage;
 use ArrayIterator;
+use Exception;
 
 class PersistentCollection extends AbstractEntityCollection
 {
@@ -13,6 +14,7 @@ class PersistentCollection extends AbstractEntityCollection
     protected $removedItems;
     protected $dm;
     protected $class;
+    protected $metadata;
     protected $isChanged;
 
     public function __construct(DataMapper $dm, $class, array $items = [])
@@ -25,6 +27,7 @@ class PersistentCollection extends AbstractEntityCollection
         $this->removedItems = new SplObjectStorage();
         $this->dm = $dm;
         $this->class = $class;
+        $this->metadata = $this->dm->getMetadata($class);
         $this->isChanged = false;
     }
 
@@ -184,9 +187,80 @@ class PersistentCollection extends AbstractEntityCollection
         return new PersistentCollection($slice);
     }
 
+    public function sortBy($property, $ascending = true)
+    {
+        $column = $this->metadata->getColumn($property);
+        if (is_null($column))
+        {
+            throw new Exception('PersistentCollection.sortBy : invalid property '.$property);
+        }
+
+        $fieldName = $column->fieldName();
+        $primaryKey = $this->metadata->primaryKey();
+        $r = $this->metadata->getReflectionClass();
+        $primaryKeyProperty = $r->getProperty($primaryKey->name());
+        $primaryKeyProperty->setAccessible(true);
+
+        $ids = [];
+        foreach ($this->items as $item)
+        {
+            if (is_object($item))
+            {
+                $ids[$primaryKeyProperty->getValue($item)] = $item;
+                continue;
+            }
+
+            $ids[$item] = null;
+        }
+
+        $sortedIds = $this->dm->queryBuilder()->table($this->metadata->table())
+            ->where($primaryKey->fieldName(), 'in', '('.implode(',', array_keys($ids)).')')
+            ->sortBy($fieldName, $ascending)
+            ->select([$primaryKey->fieldName()]);
+
+        $this->items = [];
+        foreach ($sortedIds as $sortedId)
+        {
+            $object = $ids[$sortedId];
+
+            if (is_null($object))
+            {
+                $this->items[] = $sortedId;
+                continue;
+            }
+
+            $this->items[] = $object;
+        }
+
+        return $this;
+    }
+
+    public function getIdList()
+    {
+        $primaryKey = $this->metadata->primaryKey();
+        $r = $this->metadata->getReflectionClass();
+        $primaryKeyProperty = $r->getProperty($primaryKey->name());
+        $primaryKeyProperty->setAccessible(true);
+        $ids = [];
+
+        foreach ($this->items as $item)
+        {
+            if (is_object($item))
+            {
+                $ids[] = $primaryKeyProperty->getValue($item);
+                continue;
+            }
+
+            $ids[] = $item;
+        }
+
+        return $ids;
+    }
+
     public function toArray()
     {
         $this->loadAll();
+
         return $this->items;
     }
 
@@ -205,14 +279,28 @@ class PersistentCollection extends AbstractEntityCollection
 
     protected function loadAll()
     {
-        foreach ($this->items as &$item)
+        $ids = [];
+        foreach ($this->items as $index => $item)
         {
             if ($this->isLoaded($item))
             {
                 continue;
             }
 
-            $item = $this->dm->find($this->class, $item);
+            $ids[] = $item;
+            unset($this->items[$index]);
+        }
+
+        if (sizeof($ids) == 0)
+        {
+            return;
+        }
+
+        $entityCollection = $this->dm->findIn($this->class, $ids);
+
+        foreach ($entityCollection as $entity)
+        {
+            $this->items[] = $entity;
         }
     }
 

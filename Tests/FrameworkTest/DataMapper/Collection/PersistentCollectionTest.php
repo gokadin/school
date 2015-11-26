@@ -5,6 +5,7 @@ namespace Tests\FrameworkTest\DataMapper\Collection;
 use Library\DataMapper\Collection\PersistentCollection;
 use Tests\FrameworkTest\DataMapper\DataMapperBaseTest;
 use Tests\FrameworkTest\TestData\DataMapper\SimpleEntity;
+use Exception;
 
 class PersistentCollectionTest extends DataMapperBaseTest
 {
@@ -164,16 +165,10 @@ class PersistentCollectionTest extends DataMapperBaseTest
     {
         // Arrange
         $this->setUpSimpleEntity();
-        $se1 = new SimpleEntity(1, 2, 'one1', 'two1');
-        $se2 = new SimpleEntity(1, 2, 'one2', 'two2');
-        $se3 = new SimpleEntity(1, 2, 'one3', 'two3');
-        $this->dm->persist($se1);
-        $this->dm->persist($se2);
-        $this->dm->persist($se3);
         $collection = new PersistentCollection($this->dm, SimpleEntity::class, [
-            $se1->getId(),
-            $se2->getId(),
-            $se3->getId(),
+            $this->dm->persist(new SimpleEntity(1, 2, 'one1', 'two1')),
+            $this->dm->persist(new SimpleEntity(1, 2, 'one2', 'two2')),
+            $this->dm->persist(new SimpleEntity(1, 2, 'one3', 'two3')),
         ]);
 
         $encoded = json_encode($collection);
@@ -181,7 +176,116 @@ class PersistentCollectionTest extends DataMapperBaseTest
 
         // Assert
         $this->assertEquals(3, sizeof($decoded));
-        $this->assertEquals(1, $decoded[0]['one']);
-        $this->assertEquals(2, $decoded[0]['two']);
+    }
+
+    public function testGetIdList()
+    {
+        // Arrange
+        $this->setUpSimpleEntity();
+        $ids = [];
+        $firstHalf = [];
+        $secondHalf = [];
+        for ($i = 0; $i < 100; $i++)
+        {
+            $entity = new SimpleEntity($i, 2, 'one', 'two');
+            $id = $this->dm->persist($entity);
+            $ids[] = $id;
+
+            if ($i < 50)
+            {
+                $firstHalf[] = $id;
+                continue;
+            }
+
+            $secondHalf[] = $entity;
+        }
+        $collection = new PersistentCollection($this->dm, SimpleEntity::class, $firstHalf);
+        $collection->add($secondHalf);
+
+        // Act
+        $retrievedIds = $collection->getIdList();
+
+        // Assert
+        $this->assertEquals($ids, $retrievedIds);
+    }
+
+    /**
+     * @expectedException Exception
+     */
+    public function testSortByWhenPassingANonExistantProperty()
+    {
+        // Arrange
+        $this->setUpSimpleEntity();
+        $collection = new PersistentCollection($this->dm, SimpleEntity::class);
+
+        // Act
+        $collection->sortBy('rubbish');
+    }
+
+    public function testSortByWithUnloadedCollection()
+    {
+        // Arrange
+        $this->setUpSimpleEntity();
+        $sortedIds = [];
+        for ($i = 0; $i < 100; $i++)
+        {
+            $sortedIds[] = $this->dm->persist(new SimpleEntity($i, 2, 'one', 'two'));
+        }
+        $shuffledIds = $sortedIds;
+        shuffle($shuffledIds);
+        $collection = new PersistentCollection($this->dm, SimpleEntity::class, $sortedIds);
+
+        // Act
+        $collection->sortBy('one');
+        $retrievedIds = $collection->getIdList();
+
+        // Assert
+        $this->assertEquals($sortedIds, $retrievedIds);
+
+        // Act
+        $collection->sortBy('one', false);
+        $retrievedIds = $collection->getIdList();
+        rsort($sortedIds);
+
+        // Assert
+        $this->assertEquals($sortedIds, $retrievedIds);
+    }
+
+    public function testSortByWithHalfLoadedCollection()
+    {
+        // Arrange
+        $this->setUpSimpleEntity();
+        $sortedIds = [];
+        $firstHalf = [];
+        $secondHalf = [];
+        for ($i = 0; $i < 100; $i++)
+        {
+            $entity = new SimpleEntity($i, 2, 'one', 'two');
+            $sortedIds[] = $this->dm->persist($entity);
+
+            if ($i < 50)
+            {
+                $firstHalf[] = $entity->getId();
+                continue;
+            }
+
+            $secondHalf[] = $entity;
+        }
+        shuffle($firstHalf);
+        $collection = new PersistentCollection($this->dm, SimpleEntity::class, $firstHalf);
+        $collection->add($secondHalf);
+
+        // Act
+        $collection->sortBy('one');
+
+        // Assert
+        $this->assertEquals($sortedIds, $collection->getIdList());
+
+        // Act
+        $collection->sortBy('one', false);
+        rsort($sortedIds);
+
+        // Assert
+        $this->assertEquals($sortedIds, $collection->getIdList());
     }
 }

@@ -184,6 +184,29 @@ class DataMapperTest extends DataMapperBaseTest
         $this->assertTrue($collection->first() instanceof SimpleEntity);
     }
 
+    public function testFindIn()
+    {
+        // Arrange
+        $this->setUpSimpleEntity();
+        $ids = [];
+        for ($i = 0; $i < 20; $i++)
+        {
+            $id = $this->dm->persist(new SimpleEntity($i, 2, 'one', 'two'));
+
+            if ($i > 10 && $i < 16)
+            {
+                $ids[] = $id;
+            }
+        }
+
+        // Act
+        $collection = $this->dm->findIn(SimpleEntity::class, $ids);
+
+        // Assert
+        $this->assertEquals(5, $collection->count());
+        $this->assertTrue($collection->first() instanceof SimpleEntity);
+    }
+
     public function testFindBy()
     {
         // Arrange

@@ -2,6 +2,8 @@
 
 namespace Library\DataMapper\Collection;
 
+use ArrayIterator;
+
 class EntityCollection extends AbstractEntityCollection
 {
     protected $items = [];

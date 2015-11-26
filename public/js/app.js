@@ -8,9 +8,9 @@ Vue.component('activities', {
     },
 
     created: function() {
-        $.getJSON('/api/school/user-activities', function(activities) {
+        this.$http.get('/api/school/user-activities', function(activities) {
             this.activities = activities;
-        }.bind(this));
+        });
     },
 
     methods: {

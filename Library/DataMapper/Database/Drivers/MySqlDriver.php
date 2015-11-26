@@ -26,11 +26,18 @@ class MySqlDriver
         return self::NAME;
     }
 
-    public function execute($str)
+    public function execute($str, $structureType = 'ASSOC')
     {
         $stmt = $this->dao->prepare($str);
         $stmt->execute();
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        switch ($structureType)
+        {
+            case 'ASSOC':
+                return $stmt->fetchAll(PDO::FETCH_ASSOC);
+            case 'SINGLE':
+                return $stmt->fetchAll(PDO::FETCH_COLUMN);
+        }
     }
 
     public function beginTransaction()
@@ -78,6 +85,26 @@ class MySqlDriver
 
             $str .= ' '.$value;
         }
+
+        return $str;
+    }
+
+    public function buildSorts(array $rules)
+    {
+        if (sizeof($rules) == 0)
+        {
+            return '';
+        }
+
+        $str = 'ORDER BY ';
+
+        $segments = [];
+        foreach ($rules as $field => $ascending)
+        {
+            $segments[] = $field.' '.($ascending ? 'ASC' : 'DESC');
+        }
+
+        $str .= implode(', ', $segments);
 
         return $str;
     }

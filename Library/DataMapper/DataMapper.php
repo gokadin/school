@@ -61,7 +61,7 @@ class DataMapper
             return $loadedObject;
         }
 
-        $metadata = $this->loadMetadata($class);
+        $metadata = $this->getMetadata($class);
 
         $data = $this->queryBuilder()->table($metadata->table())
             ->where($metadata->primaryKey()->name(), '=', $id)
@@ -87,9 +87,26 @@ class DataMapper
         throw new RuntimeException('Could not find entity '.$class.' with id '.$id);
     }
 
+    public function findIn($class, array $ids)
+    {
+        $metadata = $this->getMetadata($class);
+
+        $results = $this->queryBuilder()->table($metadata->table())
+            ->where($metadata->primaryKey()->fieldName(), 'in', '('.implode(',', $ids).')')
+            ->select();
+
+        $collection = new EntityCollection();
+        foreach ($results as $data)
+        {
+            $collection->add($this->buildEntity($metadata, $data));
+        }
+
+        return $collection;
+    }
+
     public function findBy($class, array $conditions)
     {
-        $metadata = $this->loadMetadata($class);
+        $metadata = $this->getMetadata($class);
 
         $this->queryBuilder->table($metadata->table());
 
@@ -118,7 +135,7 @@ class DataMapper
 
     public function findAll($class)
     {
-        $metadata = $this->loadMetadata($class);
+        $metadata = $this->getMetadata($class);
 
         $results = $this->queryBuilder->table($metadata->table())->select();
 
@@ -134,7 +151,7 @@ class DataMapper
     public function persist($object)
     {
         $class = get_class($object);
-        $metadata = $this->loadMetadata($class);
+        $metadata = $this->getMetadata($class);
         $r = $metadata->getReflectionClass();
 
         $primaryKeyProperty = $r->getProperty($metadata->primaryKey()->fieldName());
@@ -143,11 +160,10 @@ class DataMapper
 
         if (is_null($value))
         {
-            $this->insert($object, $metadata, $r);
-            return;
+            return $this->insert($object, $metadata, $r);
         }
 
-        $this->update($object, $metadata, $r);
+        return $this->update($object, $metadata, $r);
     }
 
     protected function insert($object, Metadata $metadata, ReflectionClass $r)
@@ -250,6 +266,8 @@ class DataMapper
             ->update($data);
 
         $this->handleUpdateAssociations($object, $metadata, $id);
+
+        return $id;
     }
 
     protected function handleAssociatedProperty($object, Metadata $metadata, Column $column, ReflectionClass $r)
@@ -264,7 +282,7 @@ class DataMapper
             return null;
         }
 
-        $targetMetadata = $this->loadMetadata($assoc['target']);
+        $targetMetadata = $this->getMetadata($assoc['target']);
         $targetR = $targetMetadata->getReflectionClass();
         $targetPrimaryKey = $targetR->getProperty($targetMetadata->primaryKey()->fieldName());
         $targetPrimaryKey->setAccessible(true);
@@ -312,7 +330,7 @@ class DataMapper
 
         $addedItems = $collection->toArray();
 
-        $targetMetadata = $this->loadMetadata($target);
+        $targetMetadata = $this->getMetadata($target);
         $targetR = $targetMetadata->getReflectionClass();
         $targetProperty = $targetR->getProperty($metadata->associations()[$fieldName]['mappedBy']);
         $targetProperty->setAccessible(true);
@@ -363,7 +381,7 @@ class DataMapper
 
         $addedItems = $collection->addedItems();
         $removedItems = $collection->removedItems();
-        $targetMetadata = $this->loadMetadata($target);
+        $targetMetadata = $this->getMetadata($target);
         $targetR = $targetMetadata->getReflectionClass();
         $targetPrimaryKeyProperty = $targetR->getProperty($targetMetadata->primaryKey()->fieldName());
         $targetPrimaryKeyProperty->setAccessible(true);
@@ -430,7 +448,7 @@ class DataMapper
             ? get_class($classOrObject)
             : $classOrObject;
 
-        $metadata = $this->loadMetadata($class);
+        $metadata = $this->getMetadata($class);
         $primaryKeyFieldName = $metadata->primaryKey()->fieldName();
 
         if (is_null($id))
@@ -464,25 +482,6 @@ class DataMapper
         $this->loadedEntities = [];
     }
 
-//    public function flush()
-//    {
-//        foreach ($this->storedCommands as $class => $commands)
-//        {
-//            foreach ($commands as $command => $data)
-//            {
-//                switch ($command)
-//                {
-//                    case 'insert':
-//
-//                        break;
-//                    case 'update':
-//
-//                        break;
-//                }
-//            }
-//        }
-//    }
-
     public function queryBuilder()
     {
         return $this->queryBuilder;
@@ -493,7 +492,7 @@ class DataMapper
         $this->storedCommands[$class][$command][] = $data;
     }
 
-    protected function loadMetadata($class)
+    public function getMetadata($class)
     {
         if (isset($this->loadedMetadata[$class]))
         {
@@ -608,7 +607,7 @@ class DataMapper
         $property = $r->getProperty($fieldName);
         $property->setAccessible(true);
 
-        $targetMetadata = $this->loadMetadata($target);
+        $targetMetadata = $this->getMetadata($target);
         $targetData = $this->queryBuilder->table($targetMetadata->table())
             ->where($targetMetadata->primaryKey()->name(), '=', $foreignKeys[$targetMetadata->generateForeignKeyName()])
             ->select();
@@ -627,7 +626,7 @@ class DataMapper
         $property = $r->getProperty($fieldName);
         $property->setAccessible(true);
 
-        $targetMetadata = $this->loadMetadata($target);
+        $targetMetadata = $this->getMetadata($target);
         $targetData = $this->queryBuilder->table($targetMetadata->table())
             ->where($targetMetadata->primaryKey()->name(), '=', $foreignKeys[$targetMetadata->generateForeignKeyName()])
             ->select();
@@ -643,7 +642,7 @@ class DataMapper
 
     protected function buildHasMany($target, $fieldName, Metadata $metadata, ReflectionClass $r, $entity)
     {
-        $targetMetadata = $this->loadMetadata($target);
+        $targetMetadata = $this->getMetadata($target);
         $thisPrimaryKey = $r->getProperty($metadata->primaryKey()->fieldName());
         $thisPrimaryKey->setAccessible(true);
         $thisPrimaryKeyValue = $thisPrimaryKey->getValue($entity);
@@ -654,7 +653,7 @@ class DataMapper
         $targetIds = [];
         foreach ($results as $targetId)
         {
-            $targetIds[] = $targetId[$targetMetadata->primaryKey()->name()];
+            $targetIds[] = $targetId;
         }
 
         $collection = new PersistentCollection($this, $targetMetadata->getReflectionClass()->getName(), $targetIds);

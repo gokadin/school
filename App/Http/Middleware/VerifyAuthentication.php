@@ -32,6 +32,13 @@ class VerifyAuthentication
             return;
         }
 
+        $this->view->add(['user' => $this->userRepository->getLoggedInUser()]);
+
+        if ($this->router->currentNameContains('api.'))
+        {
+            return $next($request);
+        }
+
         if ($this->router->currentNameContains('school.teacher.') && $this->userRepository->getLoggedInType() != 'teacher')
         {
             $this->response->route('frontend.account.login');
@@ -41,8 +48,6 @@ class VerifyAuthentication
         {
             $this->response->route('frontend.account.login');
         }
-
-        $this->view->add(['user' => $this->userRepository->getLoggedInUser()]);
 
         return $next($request);
     }
