@@ -304,28 +304,14 @@ class PersistentCollection extends AbstractEntityCollection
 
     protected function loadArray(array &$items)
     {
-        $ids = [];
-        foreach ($items as $index => $item)
+        foreach ($items as &$item)
         {
             if ($this->isLoaded($item))
             {
                 continue;
             }
 
-            $ids[] = $item;
-            unset($items[$index]);
-        }
-
-        if (sizeof($ids) == 0)
-        {
-            return;
-        }
-
-        $entityCollection = $this->dm->findIn($this->class, $ids);
-
-        foreach ($entityCollection as $entity)
-        {
-            $items[] = $entity;
+            $item = $this->dm->find($this->class, $item);
         }
     }
 

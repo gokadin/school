@@ -8,15 +8,10 @@ use App\Repositories\UserRepository;
 
 class ActivityController extends Controller
 {
-    public function userActivities(UserRepository $userRepository)
-    {
-        return $userRepository->getLoggedInUser()->activities();
-    }
-
     public function getTeacherActivities(GetTeacherActivitiesRequest $request, UserRepository $userRepository)
     {
         $activities = $userRepository->getLoggedInUser()->activities()
-            ->sortBy($request->sortBy, $request->ascending)
+            ->sortBy($request->sortBy, $request->sortAscending)
             ->slice($request->page * $request->max, $request->max);
 
         foreach ($request->filters as $property => $string)

@@ -79,13 +79,13 @@ class Shao
 
     private function parseRawPhp(&$str)
     {
-        $str = str_replace('{{{', '<?php ', $str);
-        $str = str_replace('}}}', ' ?>', $str);
+        $str = str_replace('{{{', '<?php htmlEntities(', $str);
+        $str = str_replace('}}}', ') ?>', $str);
     }
 
     private function parseEcho(&$str)
     {
-        $str = preg_replace('/(?<!\@)\{\{([^\}]*)\}\}/', '<?php echo htmlspecialchars(${1}); ?>', $str);
+        $str = preg_replace('/(?<!\@)\{\{([^\}]*)\}\}/', '<?php echo htmlentities(${1}); ?>', $str);
     }
 
     private function parseAngularSymbol(&$str)

@@ -62,7 +62,7 @@ class MySqlDriver
             return '';
         }
 
-        $str = ' WHERE';
+        $str = 'WHERE';
 
         for ($i = 0; $i < sizeof($wheres); $i++)
         {

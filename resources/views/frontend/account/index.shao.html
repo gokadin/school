@@ -6,7 +6,7 @@
 
 <div class="login">
 
-    {{ $form->open('', 'POST', ['id' => 'login-form', 'class' => 'custom-1']) }}
+    {!! $form->open('', 'POST', ['id' => 'login-form', 'class' => 'custom-1']) !!}
 
     <div class="g-form-header">
         Login
@@ -15,15 +15,15 @@
     <div class="g-form-body">
 
         <div class="form-row">
-            {{ $form->label('email', 'Email') }}
-            {{ $form->text('email', null, ['placeholder' => 'Email']) }}
-            {{ $form->error('email') }}
+            {!! $form->label('email', 'Email') !!}
+            {!! $form->text('email', null, ['placeholder' => 'Email']) !!}
+            {!! $form->error('email') !!}
         </div>
 
         <div class="form-row">
-            {{ $form->label('password', 'Password') }}
-            {{ $form->password('password') }}
-            {{ $form->error('password') }}
+            {!! $form->label('password', 'Password') !!}
+            {!! $form->password('password') !!}
+            {!! $form->error('password') !!}
         </div>
 
         <div class="forgot-password-row">
@@ -40,11 +40,11 @@
 
     <div class="g-form-footer">
 
-        {{ $form->button('Login', ['type' => 'submit']) }}
+        {!! $form->button('Login', ['type' => 'submit']) !!}
 
     </div>
 
-    {{ $form->close() }}
+    {!! $form->close() !!}
 
 </div>
 

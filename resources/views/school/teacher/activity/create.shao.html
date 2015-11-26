@@ -11,32 +11,32 @@
 
     <div class="content-padding">
         <div class="panel-1">
-            {{ $form->open('school.teacher.activity.store', 'POST', ['id' => 'create-activity-form', 'class' => 'form-1']) }}
+            {!! $form->open('school.teacher.activity.store', 'POST', ['id' => 'create-activity-form', 'class' => 'form-1']) !!}
 
             <div class="form-title">
                 Create a new activity
             </div>
 
             <div class="form-row">
-                {{ $form->label('name', 'Name') }}
-                {{ $form->text('name', null, ['placeholder' => 'Name']) }}
-                {{ $form->error('name') }}
+                {!! $form->label('name', 'Name') !!}
+                {!! $form->text('name', null, ['placeholder' => 'Name']) !!}
+                {!! $form->error('name') !!}
             </div>
 
             <div class="form-row">
-                {{ $form->label('rate', 'Rate') }}
-                {{ $form->text('rate', null, ['placeholder' => 'Rate']) }}
-                {{ $form->error('rate') }}
+                {!! $form->label('rate', 'Rate') !!}
+                {!! $form->text('rate', null, ['placeholder' => 'Rate']) !!}
+                {!! $form->error('rate') !!}
             </div>
 
             <div class="form-row">
-                {{ $form->label('period', 'Period') }}
-                {{ $form->text('period', null, ['placeholder' => 'Period']) }}
+                {!! $form->label('period', 'Period') !!}
+                {!! $form->text('period', null, ['placeholder' => 'Period']) !!}
             </div>
 
             <div class="form-row">
-                {{ $form->label('location', 'Location') }}
-                {{ $form->text('location', null, ['placeholder' => 'Location']) }}
+                {!! $form->label('location', 'Location') !!}
+                {!! $form->text('location', null, ['placeholder' => 'Location']) !!}
             </div>
 
             <div class="form-buttons">
@@ -45,10 +45,10 @@
                     Create another
                 </label>
 
-                {{ $form->submit('Create') }}
+                {!! $form->submit('Create') !!}
             </div>
 
-            {{ $form->close() }}
+            {!! $form->close() !!}
         </div>
     </div>
 </div>

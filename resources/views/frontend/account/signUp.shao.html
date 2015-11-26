@@ -7,23 +7,23 @@
 <div class="memberships">
 
     @for ($i = 0; $i < sizeof($subscriptions); $i++)
-        <div class="membership membership{{ $i + 1 }} @if ($i == 0) active @endif ">
+        <div class="membership membership{!! $i + 1 !!} @if ($i == 0) active @endif ">
             <div class="membership-header">
-                {{ $subscriptions[$i]['name'] }}
+                {!! $subscriptions[$i]['name'] !!}
             </div>
             <div class="membership-body">
-                <div class="membership-pricing">{{ $subscriptions[$i]['price'] }}</div>
+                <div class="membership-pricing">{!! $subscriptions[$i]['price'] !!}</div>
                 <div class="membership-description">
                     <table>
                         <tr>
                             <td><i class="fa fa-users"></i></td>
                             <td>Students:</td>
-                            <td>{{ $subscriptions[$i]['numStudents'] }}</td>
+                            <td>{!! $subscriptions[$i]['numStudents'] !!}</td>
                         </tr>
                         <tr>
                             <td><i class="fa fa-server"></i></td>
                             <td>Storage space:</td>
-                            <td>{{ $subscriptions[$i]['storageSpace'] }}</td>
+                            <td>{!! $subscriptions[$i]['storageSpace'] !!}</td>
                         </tr>
                         <tr>
                             <td><i class="fa fa-lock"></i></td>
@@ -34,7 +34,7 @@
                 </div>
             </div>
             <div class="membership-footer">
-                <a href="#" onclick="selectSubscription({{ $i + 1 }});return false;">
+                <a href="#" onclick="selectSubscription({!! $i + 1 !!});return false;">
                     <button type="button">Select</button>
                 </a>
             </div>
@@ -44,9 +44,9 @@
 
 <div class="signup">
 
-    {{ Form::open('', 'POST', ['id' => 'signup-form', 'class' => 'custom-1']) }}
+    {!! Form::open('', 'POST', ['id' => 'signup-form', 'class' => 'custom-1']) !!}
 
-    {{ Form::hidden('subscriptionType', '1') }}
+    {!! Form::hidden('subscriptionType', '1') !!}
 
     <div class="g-form-header">
         Sign up
@@ -55,30 +55,30 @@
     <div class="g-form-body">
 
         <div class="form-row">
-            {{ Form::label('firstName', 'First name', ['class' => 'required']) }}
-            {{ Form::text('firstName', null, ['placeholder' => 'First name']) }}
-            {{ Form::error('firstName') }}
+            {!! Form::label('firstName', 'First name', ['class' => 'required']) !!}
+            {!! Form::text('firstName', null, ['placeholder' => 'First name']) !!}
+            {!! Form::error('firstName') !!}
         </div>
 
         <div class="form-row">
-            {{ Form::label('lastName', 'Last name', ['class' => 'required']) }}
-            {{ Form::text('lastName', null, ['placeholder' => 'Last name']) }}
-            {{ Form::error('lastName') }}
+            {!! Form::label('lastName', 'Last name', ['class' => 'required']) !!}
+            {!! Form::text('lastName', null, ['placeholder' => 'Last name']) !!}
+            {!! Form::error('lastName') !!}
         </div>
 
         <div class="form-row">
-            {{ Form::label('email', 'Email', ['class' => 'required']) }}
-            {{ Form::text('email', null, ['placeholder' => 'Email']) }}
-            {{ Form::error('email') }}
+            {!! Form::label('email', 'Email', ['class' => 'required']) !!}
+            {!! Form::text('email', null, ['placeholder' => 'Email']) !!}
+            {!! Form::error('email') !!}
         </div>
 
     </div>
 
     <div class="g-form-footer">
-        {{ Form::button('Sign up', ['type' => 'submit']) }}
+        {!! Form::button('Sign up', ['type' => 'submit']) !!}
     </div>
 
-    {{ Form::close() }}
+    {!! Form::close() !!}
 
 </div>
 
