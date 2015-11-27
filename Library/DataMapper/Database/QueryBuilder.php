@@ -154,7 +154,7 @@ class QueryBuilder
             $i++;
         }
 
-        $str .= $this->databaseDriver->buildWheres($this->wheres);
+        $str .= ' '.$this->databaseDriver->buildWheres($this->wheres);
 
         $data = $processed;
 
@@ -166,7 +166,7 @@ class QueryBuilder
     public function delete()
     {
         $str = 'DELETE FROM '.$this->table;
-        $str .= $this->databaseDriver->buildWheres($this->wheres);
+        $str .= ' '.$this->databaseDriver->buildWheres($this->wheres);
 
         $this->clear();
 

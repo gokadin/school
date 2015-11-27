@@ -334,6 +334,10 @@ class DataMapper
         $targetR = $targetMetadata->getReflectionClass();
         $targetProperty = $targetR->getProperty($metadata->associations()[$fieldName]['mappedBy']);
         $targetProperty->setAccessible(true);
+        $targetPrimaryKeyProperty = $targetR->getProperty($targetMetadata->primaryKey());
+        $targetPrimaryKeyProperty->setAccessible(true);
+
+        $idMap = [];
         foreach ($addedItems as $item)
         {
             $targetAssocValue = $targetProperty->getValue($item);
@@ -344,14 +348,18 @@ class DataMapper
                 $targetProperty->setValue($item, $object);
             }
 
-            $targetPrimaryKeyProperty = $targetR->getProperty($targetMetadata->primaryKey()->fieldName());
-            $targetPrimaryKeyProperty->setAccessible(true);
-            is_null($targetPrimaryKeyProperty->getValue($item))
-                ? $this->insert($item, $targetMetadata, $targetR)
-                : $this->update($item, $targetMetadata, $targetR);
+            $currentId = $targetPrimaryKeyProperty->getValue($item);
+            if (is_null($currentId))
+            {
+                $currentId = $this->insert($item, $targetMetadata, $targetR);
+            }
+
+            $this->update($item, $targetMetadata, $targetR);
+
+            $idMap[$currentId] = $item;
         }
 
-        $property->setValue($object, new PersistentCollection($this, $r->getName(), $addedItems));
+        $property->setValue($object, new PersistentCollection($this, $r->getName(), $idMap));
     }
 
     protected function handleUpdateAssociations($object, Metadata $metadata, $objectId)
@@ -383,22 +391,22 @@ class DataMapper
         $removedItems = $collection->removedItems();
         $targetMetadata = $this->getMetadata($target);
         $targetR = $targetMetadata->getReflectionClass();
-        $targetPrimaryKeyProperty = $targetR->getProperty($targetMetadata->primaryKey()->fieldName());
-        $targetPrimaryKeyProperty->setAccessible(true);
         $targetAssocProperty = $targetR->getProperty($metadata->associations()[$fieldName]['mappedBy']);
         $targetAssocProperty->setAccessible(true);
 
+        $addToIdMap = [];
         if (sizeof($addedItems) > 0)
         {
             $ids = [];
             foreach ($addedItems as $item)
             {
-                $id = $targetPrimaryKeyProperty->getValue($item);
+                $id = $addedItems[$item];
                 // if the entity was not was persisted
                 if (is_null($id))
                 {
                     $targetAssocProperty->setValue($item, $object);
-                    $this->insert($item, $targetMetadata, $targetR);
+                    $id = $this->insert($item, $targetMetadata, $targetR);
+                    $addToIdMap[$id] = $item;
 
                     continue;
                 }
@@ -419,7 +427,7 @@ class DataMapper
             $ids = [];
             foreach ($removedItems as $item)
             {
-                $id = $targetPrimaryKeyProperty->getValue($item);
+                $id = $removedItems[$item];
                 // if the entity was not was persisted
                 if (is_null($id))
                 {
@@ -440,6 +448,12 @@ class DataMapper
         }
 
         $collection->resetState();
+        $idMap = $collection->toIdMap();
+        foreach ($addToIdMap as $id => $entity)
+        {
+            $idMap[$id] = $entity;
+        }
+        $property->setValue($object, new PersistentCollection($this, $target, $idMap));
     }
 
     public function delete($classOrObject, $id = null)
@@ -653,7 +667,7 @@ class DataMapper
         $targetIds = [];
         foreach ($results as $targetId)
         {
-            $targetIds[] = $targetId;
+            $targetIds[$targetId] = null;
         }
 
         $collection = new PersistentCollection($this, $targetMetadata->getReflectionClass()->getName(), $targetIds);

@@ -7,6 +7,9 @@ Vue.component('activities', {
         return {
             activities: [],
             mainFilter: '',
+            searchName: '',
+            searchRate: '',
+            searchPeriod: '',
             total: 0,
             sortBy: 'name',
             sortAscending: true,
@@ -22,6 +25,26 @@ Vue.component('activities', {
 
         hasNextPage: function() {
             return this.page * this.max <= this.total - this.max;
+        }
+    },
+
+    watch: {
+        'searchName': function(value, oldValue) {
+            if (value.trim() == oldValue.trim()) {
+                return;
+            }
+
+            this.$http.post('/api/school/teacher-activities', {
+                page: this.page,
+                max: this.max,
+                sortBy: this.sortBy,
+                sortAscending: this.sortAscending,
+                filters: {
+                    'name': value
+                }
+            }, function(activities) {
+                this.activities = activities;
+            });
         }
     },
 

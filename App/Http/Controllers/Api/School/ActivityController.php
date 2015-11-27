@@ -16,7 +16,12 @@ class ActivityController extends Controller
 
         foreach ($request->filters as $property => $string)
         {
-
+            switch ($property)
+            {
+                case 'name':
+                    
+                    break;
+            }
         }
 
         return $activities;

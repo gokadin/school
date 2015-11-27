@@ -26,10 +26,10 @@
                 <div class="table">
                     <table cellspacing="0">
                         <tr>
-                            <th class="sortable">Name</th>
-                            <th class="sortable">Rate</th>
-                            <th class="sortable">Period</th>
-                            <th class="sortable">Students</th>
+                            <th class="sortable" @click="sortBy('name')">Name</th>
+                            <th class="sortable" @click="sortBy('rate')">Rate</th>
+                            <th class="sortable" @click="sortBy('period')">Period</th>
+                            <th class="sortable" @click="sortBy('students')">Students</th>
                             <th>Actions</th>
                         </tr>
                         <tr v-for="activity in activities | filterBy mainFilter">
@@ -40,9 +40,9 @@
                             <td>x</td>
                         </tr>
                         <tr>
-                            <td><input typ="text" placeholder="Search name" /></td>
-                            <td><input typ="text" placeholder="Search rate" /></td>
-                            <td><input typ="text" placeholder="Search period" /></td>
+                            <td><input typ="text" placeholder="Search name" v-model="searchName" /></td>
+                            <td><input typ="text" placeholder="Search rate" v-model="searchRate" /></td>
+                            <td><input typ="text" placeholder="Search period" v-model="searchPeriod" /></td>
                             <td></td>
                             <td></td>
                         </tr>
