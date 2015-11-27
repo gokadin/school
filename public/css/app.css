@@ -627,6 +627,7 @@ button:disabled {
     text-align: right; }
     #school .data-table-1 .header .filter input {
       height: 30px;
+      width: 200px;
       -webkit-border-radius: 0;
       -moz-border-radius: 0;
       border-radius: 0;
@@ -730,7 +731,19 @@ button:disabled {
   #school .form-1 .form-row input[type="text"] {
     width: 100%; }
   #school .form-1 .form-row .form-error {
-    margin-left: 0; } }
+    margin-left: 0; }
+  #school .data-table-1 .header .filter input {
+    width: 150px; }
+  #school .data-table-1 .header .filter span {
+    display: none; }
+  #school .data-table-1 .table {
+    overflow-x: auto; }
+    #school .data-table-1 .table table tr:last-child td {
+      height: 60px; }
+  #school .data-table-1 .footer .showing {
+    font-size: 12px; }
+    #school .data-table-1 .footer .showing span {
+      display: none; } }
 #school .dropdown-1 {
   position: relative;
   color: #fff;

@@ -18,7 +18,7 @@
                     </div>
                     <div class="filter">
                         <label>
-                            Filter:
+                            <span>Filter:</span>
                             <input type="text" v-model="mainFilter" placeholder="Type to filter..." />
                         </label>
                     </div>
@@ -52,7 +52,7 @@
                     <div class="showing">
                         Showing @{{ page * max + 1 }}
                         to @{{ ((page + 1) * max) > total ? total : (page + 1) * max }}
-                        of @{{ total }} entries
+                        of @{{ total }} <span>entries</span>
                     </div>
                     <div class="page-selector">
                         <button v-bind:class="{'disabled': !hasPreviousPage}" @click="previousPage()">

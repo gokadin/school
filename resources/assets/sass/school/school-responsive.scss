@@ -19,4 +19,32 @@
       }
     }
   }
+
+  .data-table-1 {
+    .header .filter {
+      input {
+        width: 150px;
+      }
+
+      span {
+        display: none;
+      }
+    }
+
+    .table {
+      overflow-x: auto;
+
+      table tr:last-child td {
+        height: 60px;
+      }
+    }
+
+    .footer .showing {
+      font-size: 12px;
+
+      span {
+        display: none;
+      }
+    }
+  }
 }
