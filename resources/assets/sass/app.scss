@@ -9,9 +9,8 @@ $color-error: #b94a48;
   box-sizing: border-box;
 }
 
-html, body
-{
-  min-height: 100%;
+html, body {
+  height: 100%;
 }
 
 .clearfix:after {

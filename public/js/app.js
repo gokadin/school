@@ -6,12 +6,23 @@ Vue.component('activities', {
     data: function() {
         return {
             activities: [],
+            mainFilter: '',
             total: 0,
             sortBy: 'name',
             sortAscending: true,
             page: 0,
             max: 10
         };
+    },
+
+    computed: {
+        hasPreviousPage: function() {
+            return this.page > 0;
+        },
+
+        hasNextPage: function() {
+            return this.page * this.max <= this.total - this.max;
+        }
     },
 
     created: function() {
@@ -31,7 +42,39 @@ Vue.component('activities', {
     },
 
     methods: {
+        previousPage: function() {
+            if (!this.hasPreviousPage) {
+                return;
+            }
 
+            this.$http.post('/api/school/teacher-activities', {
+                page: this.page - 1,
+                max: this.max,
+                sortBy: this.sortBy,
+                sortAscending: this.sortAscending,
+                filters: {}
+            }, function(activities) {
+                this.activities = activities;
+                this.page--;
+            });
+        },
+
+        nextPage: function() {
+            if (!this.hasNextPage) {
+                return;
+            }
+
+            this.$http.post('/api/school/teacher-activities', {
+                page: this.page + 1,
+                max: this.max,
+                sortBy: this.sortBy,
+                sortAscending: this.sortAscending,
+                filters: {}
+            }, function(activities) {
+                this.activities = activities;
+                this.page++;
+            });
+        }
     }
 });
 

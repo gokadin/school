@@ -1,8 +1,4 @@
-* {
-  font-family: Roboto, sans-serif;
-}
-
-html, body, #container, #content {
+#container, #content {
   min-height: 100%;
 }
 
@@ -262,7 +258,11 @@ a:hover {
 
       button:first-child:hover:not(.disabled),
       button:last-child:hover:not(.disabled) {
-        background-color: #26a69a;
+        background-color: #202B30;
+
+        i {
+          color: #fff;
+        }
       }
 
       button:first-child.disabled,

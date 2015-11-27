@@ -19,7 +19,7 @@
                     <div class="filter">
                         <label>
                             Filter:
-                            <input type="text" placeholder="Type to filter..." />
+                            <input type="text" v-model="mainFilter" placeholder="Type to filter..." />
                         </label>
                     </div>
                 </div>
@@ -32,7 +32,7 @@
                             <th class="sortable">Students</th>
                             <th>Actions</th>
                         </tr>
-                        <tr v-for="activity in activities">
+                        <tr v-for="activity in activities | filterBy mainFilter">
                             <td>@{{ activity.name }}</td>
                             <td>@{{ activity.rate }}</td>
                             <td>@{{ activity.period }}</td>
@@ -55,9 +55,15 @@
                         of @{{ total }} entries
                     </div>
                     <div class="page-selector">
-                        <button v-bind:class="{'disabled': page == 0}"><i class="fa fa-arrow-left"></i></button>
-                        <button>@{{ page + 1 }}</button>
-                        <button v-bind:class="{'disabled': page * max > total - max}"><i class="fa fa-arrow-right"></i></button>
+                        <button v-bind:class="{'disabled': !hasPreviousPage}" @click="previousPage()">
+                            <i class="fa fa-arrow-left"></i>
+                        </button>
+                        <button>
+                            @{{ page + 1 }}
+                        </button>
+                        <button v-bind:class="{'disabled': !hasNextPage}" @click="nextPage">
+                            <i class="fa fa-arrow-right"></i>
+                        </button>
                     </div>
                 </div>
             </div>
