@@ -80,7 +80,49 @@ class DataMapperTest extends DataMapperBaseTest
         $this->assertEquals($s1->getId(), $foundS1->getId());
     }
 
+    public function testDelete()
+    {
+        // Arrange
+        $this->setUpSimpleEntity();
+        $s1 = new SimpleEntity(1, 2, '1', '2');
+        $this->dm->persist($s1);
+        $this->dm->flush();
 
+        // Act
+        $this->dm->delete($s1);
+        $this->dm->flush();
+        $foundS1 = $this->dm->find(SimpleEntity::class, $s1->getId());
+
+        // Assert
+        $this->assertNull($foundS1);
+    }
+
+    public function testDeleteMultiple()
+    {
+        // Arrange
+        $this->setUpSimpleEntity();
+        $s1 = new SimpleEntity(1, 2, '1', '2');
+        $s2 = new SimpleEntity(2, 2, '1', '2');
+        $s3 = new SimpleEntity(3, 2, '1', '2');
+        $this->dm->persist($s1);
+        $this->dm->persist($s2);
+        $this->dm->persist($s3);
+        $this->dm->flush();
+
+        // Act
+        $this->dm->delete($s1);
+        $this->dm->delete($s2);
+        $this->dm->delete($s3);
+        $this->dm->flush();
+        $foundS1 = $this->dm->find(SimpleEntity::class, $s1->getId());
+        $foundS2 = $this->dm->find(SimpleEntity::class, $s2->getId());
+        $foundS3 = $this->dm->find(SimpleEntity::class, $s3->getId());
+
+        // Assert
+        $this->assertNull($foundS1);
+        $this->assertNull($foundS2);
+        $this->assertNull($foundS3);
+    }
 
 
 

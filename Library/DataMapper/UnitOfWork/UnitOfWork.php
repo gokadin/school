@@ -5,6 +5,7 @@ namespace Library\DataMapper\UnitOfWork;
 use Carbon\Carbon;
 use Library\DataMapper\DataMapper;
 use Exception;
+use Library\DataMapper\DataMapperException;
 use Library\DataMapper\Mapping\Column;
 
 /**
@@ -142,6 +143,26 @@ final class UnitOfWork
     }
 
     /**
+     * Marks the entity for deletion.
+     * The entity must be managed by the unit of work.
+     *
+     * @param $entity
+     * @throws DataMapperException
+     */
+    public function addToRemovals($entity)
+    {
+        $oid = spl_object_hash($entity);
+
+        if (!isset($this->states[$oid]))
+        {
+            throw new DataMapperException('UnitOfWork.addToRemovals : Entity of class '.get_class($entity).
+                ' cannot be removed as it is not known by the unit of work.');
+        }
+
+        $this->scheduleRemoval(get_class($entity), $oid);
+    }
+
+    /**
      * @param $class
      * @param $id
      * @return null
@@ -156,13 +177,70 @@ final class UnitOfWork
         return null;
     }
 
-    public function detach($object)
+    public function detach($entity)
     {
-        $oid = spl_object_hash($object);
+        $oid = spl_object_hash($entity);
 
-        // ...
+        if (!isset($this->states[$oid]))
+        {
+            return;
+        }
+
+        switch ($this->states[$oid])
+        {
+            case self::STATE_NEW:
+                $this->detachNew($oid);
+                break;
+            case self::STATE_KNOWN:
+                $this->detachKnown($oid);
+                break;
+            case self::STATE_MANAGED:
+                $this->detachManaged($oid);
+                break;
+        }
     }
 
+    /**
+     * Detaches a managed entity.
+     *
+     * @param $oid
+     */
+    private function detachManaged($oid)
+    {
+        $entity = $this->entities[$oid];
+
+        unset($this->entities[$oid]);
+        unset($this->ids[$oid]);
+        unset($this->originalData[$oid]);
+        unset($this->idMap[get_class($entity)][$this->getId($entity)]);
+        unset($this->states[$oid]);
+    }
+
+    /**
+     * Detaches a known entity.
+     *
+     * @param $oid
+     */
+    private function detachKnown($oid)
+    {
+        unset($this->ids[$oid]);
+        unset($this->states[$oid]);
+    }
+
+    /**
+     * Detaches a new entity.
+     *
+     * @param $oid
+     */
+    private function detachNew($oid)
+    {
+        unset($this->entities[$oid]);
+        unset($this->states[$oid]);
+    }
+
+    /**
+     * Detaches all entities from the unit of work.
+     */
     public function detachAll()
     {
         $this->entities = [];
@@ -171,6 +249,7 @@ final class UnitOfWork
         $this->originalData = [];
         $this->states = [];
         $this->clearInsertions();
+        $this->clearRemovals();
     }
 
     /**
@@ -185,22 +264,51 @@ final class UnitOfWork
     }
 
     /**
+     * Schedules the entity for deletion.
+     *
+     * @param $class
+     * @param $oid
+     */
+    public function scheduleRemoval($class, $oid)
+    {
+        $this->scheduledRemovals[$class][] = $oid;
+    }
+
+    /**
      * Clears all scheduled insertions.
      */
-    public function clearInsertions()
+    private function clearInsertions()
     {
         $this->insertions = [];
     }
 
     /**
+     * Clears all scheduled removals.
+     */
+    private function clearRemovals()
+    {
+        $this->removals = [];
+    }
+
+    /**
+     * Clears all scheduled updates.
+     */
+    private function clearUpdates()
+    {
+        $this->updates = [];
+    }
+
+    /**
      * Executes all scheduled work in the unit of work.
      */
-    public function flush()
+    public function commit()
     {
         $this->dm->queryBuilder()->beginTransaction();
 
         try
         {
+            $this->executeRemovals();
+            $this->executeUpdates();
             $this->executeInsertions();
 
             $this->dm->queryBuilder()->commit();
@@ -269,5 +377,49 @@ final class UnitOfWork
         }
 
         $this->clearInsertions();
+    }
+
+    private function executeRemovals()
+    {
+        foreach ($this->scheduledRemovals as $class => $oids)
+        {
+            $ids = [];
+            foreach ($oids as $oid)
+            {
+                $ids[] = $this->ids[$oid];
+                $this->detachManaged($oid);
+            }
+
+            $metadata = $this->dm->getMetadata($class);
+
+            $this->dm->queryBuilder()->table($metadata->table())
+                ->where($metadata->primaryKey()->name(), 'in', '('.implode(',', $this->ids).')')
+                ->delete();
+        }
+
+        $this->clearRemovals();
+    }
+
+    private function executeUpdates()
+    {
+        
+
+        $this->clearUpdates();
+    }
+
+    /**
+     * Gets the object id with reflection.
+     *
+     * @param $object
+     * @return mixed
+     */
+    protected function getId($object)
+    {
+        $metadata = $this->dm->getMetadata(get_class($object));
+        $r = $metadata->getReflectionClass();
+        $property = $r->getProperty($metadata->primaryKey()->name());
+        $property->setAccessible(true);
+
+        return $property->getValue($object);
     }
 }

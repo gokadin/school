@@ -119,12 +119,17 @@ class DataMapper
         //$this->unitOfWork->sche($object, $id);
     }
 
+    public function delete($object)
+    {
+        $this->unitOfWork->addToRemovals($object);
+    }
+
     /**
      * Executes all scheduled work in the unit of work.
      */
     public function flush()
     {
-        $this->unitOfWork->flush();
+        $this->unitOfWork->commit();
     }
 
     /**
