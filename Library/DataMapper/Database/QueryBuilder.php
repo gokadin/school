@@ -141,29 +141,20 @@ class QueryBuilder
         $str .= ' VALUES ';
 
         $segments = [];
+        $qString = '?';
+        for ($i = 1; $i < sizeof($dataSet[0]); $i++)
+        {
+            $qString .= ',?';
+        }
         foreach ($dataSet as $data)
         {
-            $segments[] = '('.implode(',', $data).')';
-//            $str .= '(';
-//            for ($j = 0; $j < sizeof($dataSet[0]); $i++)
-//            {
-//                $str .= $j < sizeof($dataSet[0]) - 1 ? '?,' : '?';
-//            }
-//            $str .= $i < sizeof($dataSet) - 1 ? '),' : ')';
+            $segments[] = '('.$qString.')';
         }
         $str .= implode(',', $segments);
 
         $this->clear();
 
-        $this->databaseDriver->execute($str);
-        $firstId = $this->databaseDriver->lastInsertId();
-        $insertIds = [];
-        for ($i = 0; $i < sizeof($dataSet[0]); $i++)
-        {
-            $insertIds[] = $firstId + $i;
-        }
-
-        return $insertIds;
+        return $this->databaseDriver->insertMany($str, $dataSet);
     }
 
     public function update(array $data)

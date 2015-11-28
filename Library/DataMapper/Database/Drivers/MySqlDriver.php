@@ -117,6 +117,30 @@ class MySqlDriver
         return $this->dao->lastInsertId();
     }
 
+    public function insertMany($str, $dataSet)
+    {
+        $stmt = $this->dao->prepare($str);
+        $i = 1;
+        foreach ($dataSet as $data)
+        {
+            foreach ($data as $value)
+            {
+                $stmt->bindValue($i, $value);
+                $i++;
+            }
+        }
+        $stmt->execute();
+
+        $firstId = $this->dao->lastInsertId();
+        $insertIds = [];
+        for ($i = 0; $i < sizeof($dataSet); $i++)
+        {
+            $insertIds[] = $firstId + $i;
+        }
+
+        return $insertIds;
+    }
+
     public function lastInsertId()
     {
         return $this->dao->lastInsertId();

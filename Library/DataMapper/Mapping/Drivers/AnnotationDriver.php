@@ -52,7 +52,7 @@ class AnnotationDriver
                 $metadata->addAssociation([
                     'type' => Metadata::ASSOC_HAS_MANY,
                     'target' => $parsedProperty[Metadata::ASSOC_HAS_MANY]['target'],
-                    'fieldName' => $property->getName(),
+                    'propName' => $property->getName(),
                     'mappedBy' => $parsedProperty[Metadata::ASSOC_HAS_MANY]['mappedBy']
                 ]);
             }
@@ -64,7 +64,7 @@ class AnnotationDriver
                 $metadata->addAssociation([
                     'type' => Metadata::ASSOC_HAS_ONE,
                     'target' => $target,
-                    'fieldName' => $property->getName()
+                    'propName' => $property->getName()
                 ]);
 
                 $column = new Column(
@@ -90,7 +90,7 @@ class AnnotationDriver
                 $metadata->addAssociation([
                     'type' => Metadata::ASSOC_BELONGS_TO,
                     'target' => $target,
-                    'fieldName' => $property->getName()
+                    'propName' => $property->getName()
                 ]);
 
                 $column = new Column(
@@ -122,10 +122,10 @@ class AnnotationDriver
             return null;
         }
 
-        $fieldName = $property->getName();
+        $propName = $property->getName();
         $columnName = isset($parsed['Column']['name'])
             ? $parsed['Column']['name']
-            : $fieldName;
+            : $propName;
         $type = isset($parsed['Column']['type'])
             ? $parsed['Column']['type']
             : 'integer';
@@ -152,7 +152,7 @@ class AnnotationDriver
                 break;
         }
 
-        $column = new Column($columnName, $fieldName, $type, $size);
+        $column = new Column($columnName, $propName, $type, $size);
 
         if (isset($parsed['Id']))
         {

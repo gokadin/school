@@ -8,7 +8,7 @@ class Column
     const CREATED_AT = 'created_at';
 
     protected $columnName;
-    protected $fieldName;
+    protected $propName;
     protected $isPrimaryKey;
     protected $isForeignKey;
     protected $type;
@@ -19,10 +19,10 @@ class Column
     protected $defaultValue;
     protected $hasIndex;
 
-    public function __construct($columnName, $fieldName, $type, $size)
+    public function __construct($columnName, $propName, $type, $size)
     {
         $this->columnName = $columnName;
-        $this->fieldName = $fieldName;
+        $this->propName = $propName;
         $this->type = $type;
         $this->size = $size;
         $this->isNullable = false;
@@ -64,9 +64,9 @@ class Column
         $this->isForeignKey = true;
     }
 
-    public function fieldName()
+    public function propName()
     {
-        return $this->fieldName;
+        return $this->propName;
     }
 
     public function isNullable()

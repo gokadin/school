@@ -6,7 +6,6 @@ use Carbon\Carbon;
 use Library\DataMapper\DataMapper;
 use Exception;
 use Library\DataMapper\Mapping\Column;
-use Library\DataMapper\Mapping\Metadata;
 
 /**
  * Keeps track of all entities known to data mapper
@@ -44,7 +43,7 @@ final class UnitOfWork
     private $entities = [];
 
     /**
-     * Represents every known id associated with its object hash.
+     * Represents every known id associated with its object hash, sorted by class.
      * If the entity state is known, the id will be associated to null.
      *
      * @var array
@@ -109,13 +108,14 @@ final class UnitOfWork
      */
     public function addManaged($entity, array $data)
     {
-        $metadata = $this->dm->getMetadata(get_class($entity));
+        $class = get_class($entity);
+        $metadata = $this->dm->getMetadata($class);
         $oid = spl_object_hash($entity);
-        $id = $data[$metadata->primaryKey()->fieldName()];
+        $id = $data[$metadata->primaryKey()->name()];
 
         $this->entities[$oid] = $entity;
 
-        $this->idMap[$id] = $oid;
+        $this->idMap[$class][$id] = $oid;
 
         $this->ids[$oid] = $id;
 
@@ -148,12 +148,29 @@ final class UnitOfWork
      */
     public function find($class, $id)
     {
-        if (isset($this->managed[$class][$id]))
+        if (isset($this->idMap[$class][$id]))
         {
-            return $this->managed[$class][$id];
+            return $this->entities[$this->idMap[$class][$id]];
         }
 
         return null;
+    }
+
+    public function detach($object)
+    {
+        $oid = spl_object_hash($object);
+
+        // ...
+    }
+
+    public function detachAll()
+    {
+        $this->entities = [];
+        $this->idMap = [];
+        $this->ids = [];
+        $this->originalData = [];
+        $this->states = [];
+        $this->clearInsertions();
     }
 
     /**
@@ -219,14 +236,19 @@ final class UnitOfWork
                         continue;
                     }
 
-                    $property = $r->getProperty($column->fieldName());
+                    $property = $r->getProperty($column->propName());
                     $property->setAccessible(true);
-                    $data[$column->name()] = $property->getValue($entity);
+                    $value = $property->getValue($entity);
 
-                    if ($column->name() == Column::CREATED_AT && is_null($data[$column->name()]) ||
-                        $column->name() == Column::UPDATED_AT && is_null($data[$column->name()]))
+                    if ($column->name() == Column::CREATED_AT && is_null($value) ||
+                        $column->name() == Column::UPDATED_AT && is_null($value))
                     {
-                        $data[$column->name()] = Carbon::now();
+                        $value = Carbon::now();
+                    }
+
+                    if (!is_null($value))
+                    {
+                        $data[$column->name()] = $value;
                     }
                 }
 
@@ -237,6 +259,10 @@ final class UnitOfWork
 
             for ($i = 0; $i < sizeof($oids); $i++)
             {
+                $property = $r->getProperty($metadata->primaryKey()->name());
+                $property->setAccessible(true);
+                $property->setValue($this->entities[$oids[$i]], $ids[$i]);
+
                 $dataSet[$i][$metadata->primaryKey()->name()] = $ids[$i];
                 $this->addManaged($this->entities[$oids[$i]], $dataSet[$i]);
             }

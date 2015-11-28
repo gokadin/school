@@ -87,12 +87,18 @@ class DataMapper
         $metadata = $this->getMetadata($class);
 
         $data = $this->queryBuilder()->table($metadata->table())
-            ->where($metadata->primaryKey()->fieldName(), '=', $id)
+            ->where($metadata->primaryKey()->propName(), '=', $id)
             ->select();
 
-        $entity = $this->buildEntity($class, $data);
+        if (is_null($data) || sizeof($data) == 0)
+        {
+            return null;
+        }
 
-        $this->unitOfWork->addManaged($entity, $data);
+        $entity = $this->buildEntity($class, $data[0]);
+        $this->unitOfWork->addManaged($entity, $data[0]);
+
+        return $entity;
     }
 
     /**
@@ -128,14 +134,7 @@ class DataMapper
      */
     public function detach($object)
     {
-        $class = get_class($object);
-
-        if (!isset($this->loadedEntities[$class]))
-        {
-            return;
-        }
-
-        $this->loadedEntities[$class]->detach($object);
+        $this->unitOfWork->detach($object);
     }
 
     /**
@@ -143,9 +142,7 @@ class DataMapper
      */
     public function detachAll()
     {
-        unset($this->loadedEntities);
-
-        $this->loadedEntities = [];
+        $this->unitOfWork->detachAll();
     }
 
     /**
@@ -200,9 +197,9 @@ class DataMapper
 
         foreach ($metadata->columns() as $column)
         {
-            $property = $r->getProperty($column->name());
+            $property = $r->getProperty($column->propName());
             $property->setAccessible(true);
-            $property->setValue($entity, $data[$column->fieldName()]);
+            $property->setValue($entity, $data[$column->name()]);
         }
 
         return $entity;

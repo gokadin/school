@@ -16,16 +16,80 @@ class DataMapperTest extends DataMapperBaseTest
     {
         // Arrange
         $this->setUpSimpleEntity();
-        $se = new SimpleEntity(1, 2, 'one', 'two');
+        $s1 = new SimpleEntity(1, 2, '1', '2');
+        $this->dm->persist($s1);
 
         // Act
-        $this->dm->persist($se);
+        $this->dm->flush();
 
         // Assert
-        $results = $this->dm->queryBuilder()->table('simpleEntity')->select();
-        $this->assertEquals(1, sizeof($results));
-        $this->assertEquals(1, $results[0]['one']);
+        $this->assertNotNull($s1->getId());
     }
+
+    public function testPersistWhenInsertingMultipleNewEntities()
+    {
+        // Arrange
+        $this->setUpSimpleEntity();
+        $entities = [];
+        for ($i = 0; $i < 10; $i++)
+        {
+            $entity = new SimpleEntity($i, 2, '1', '2');
+            $entities[] = $entity;
+            $this->dm->persist($entity);
+        }
+
+        // Act
+        $this->dm->flush();
+
+        // Assert
+        for ($i = 0; $i < 10; $i++)
+        {
+            $this->assertNotNull($entities[$i]->getId());
+        }
+    }
+
+    public function testFindWhenEntityIsManaged()
+    {
+        // Arrange
+        $this->setUpSimpleEntity();
+        $s1 = new SimpleEntity(1, 2, '1', '2');
+        $this->dm->persist($s1);
+        $this->dm->flush();
+
+        // Act
+        $foundS1 = $this->dm->find(SimpleEntity::class, $s1->getId());
+
+        // Assert
+        $this->assertTrue($s1 === $foundS1);
+    }
+
+    public function testFindWhenEntityIsNotManaged()
+    {
+        // Arrange
+        $this->setUpSimpleEntity();
+        $s1 = new SimpleEntity(1, 2, '1', '2');
+        $this->dm->persist($s1);
+        $this->dm->flush();
+
+        // Act
+        $this->dm->detachAll();
+        $foundS1 = $this->dm->find(SimpleEntity::class, $s1->getId());
+
+        // Assert
+        $this->assertFalse($s1 === $foundS1);
+        $this->assertEquals($s1->getId(), $foundS1->getId());
+    }
+
+
+
+
+
+
+
+
+
+
+    // **************************************************
 
     public function testPersistWhenUpdating()
     {
