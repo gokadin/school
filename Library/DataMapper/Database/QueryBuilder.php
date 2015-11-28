@@ -155,7 +155,15 @@ class QueryBuilder
 
         $this->clear();
 
-        return $this->databaseDriver->execute($str);
+        $this->databaseDriver->execute($str);
+        $firstId = $this->databaseDriver->lastInsertId();
+        $insertIds = [];
+        for ($i = 0; $i < sizeof($dataSet[0]); $i++)
+        {
+            $insertIds[] = $firstId + $i;
+        }
+
+        return $insertIds;
     }
 
     public function update(array $data)

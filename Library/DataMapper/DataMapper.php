@@ -92,7 +92,7 @@ class DataMapper
 
         $entity = $this->buildEntity($class, $data);
 
-        $this->unitOfWork->startTracking($entity, $data);
+        $this->unitOfWork->addManaged($entity, $data);
     }
 
     /**
@@ -107,7 +107,7 @@ class DataMapper
 
         if (is_null($id))
         {
-            $this->unitOfWork->scheduleInsertion($object);
+            $this->unitOfWork->addNew($object);
         }
 
         //$this->unitOfWork->sche($object, $id);
@@ -200,7 +200,8 @@ class DataMapper
 
         foreach ($metadata->columns() as $column)
         {
-            $property = $r->getProperty($column->name())->setAccessible(true);
+            $property = $r->getProperty($column->name());
+            $property->setAccessible(true);
             $property->setValue($entity, $data[$column->fieldName()]);
         }
 

@@ -2,52 +2,96 @@
 
 namespace Library\DataMapper\UnitOfWork;
 
+use Carbon\Carbon;
 use Library\DataMapper\DataMapper;
 use Exception;
+use Library\DataMapper\Mapping\Column;
+use Library\DataMapper\Mapping\Metadata;
 
 /**
  * Keeps track of all entities known to data mapper
  * and their states.
  */
-class UnitOfWork
+final class UnitOfWork
 {
+    /**
+     * Entity does not exist in the database.
+     */
+    const STATE_NEW = 'STATE_NEW';
+
+    /**
+     * Entity exists in the database, but data mapper only
+     * has its id.
+     */
+    const STATE_KNOWN = 'STATE_KNOWN';
+
+    /**
+     * Entity exists in the database and is fully loaded in the
+     * unit of work.
+     */
+    const STATE_MANAGED = 'STATE_MANAGED';
+
     /**
      * @var DataMapper
      */
-    protected $dm;
+    private $dm;
 
     /**
-     * Map of all fully loaded entities sorted by class.
-     * Uses ids as keys.
+     * Links every entity's hash with its object.
      *
      * @var array
      */
-    protected $managed = [];
-
-    protected $known = [];
+    private $entities = [];
 
     /**
-     * The original property values of entities.
-     * Uses spl_object_hash as keys.
+     * Represents every known id associated with its object hash.
+     * If the entity state is known, the id will be associated to null.
      *
      * @var array
      */
-    protected $originalData = [];
+    private $idMap = [];
 
     /**
+     * Links every entity's hash to its id.
+     *
      * @var array
      */
-    protected $scheduledInsertions = [];
+    private $ids = [];
 
     /**
+     * Links every entity's hash to its original data.
+     *
      * @var array
      */
-    protected $scheduledUpdates = [];
+    private $originalData = [];
 
     /**
+     * Links every entity's hash with its current state.
+     *
      * @var array
      */
-    protected $scheduledRemovals = [];
+    private $states = [];
+
+    /**
+     * Sorted by class, then by hash.
+     *
+     * @var array
+     */
+    private $scheduledInsertions = [];
+
+    /**
+     * Sorted by class, then by hash.
+     *
+     * @var array
+     */
+    private $scheduledUpdates = [];
+
+    /**
+     * Sorted by class, then by hash.
+     *
+     * @var array
+     */
+    private $scheduledRemovals = [];
 
     /**
      * @param DataMapper $dm
@@ -63,32 +107,38 @@ class UnitOfWork
      * @param $entity
      * @param array $data
      */
-    public function startTracking($entity, array $data)
+    public function addManaged($entity, array $data)
     {
         $metadata = $this->dm->getMetadata(get_class($entity));
+        $oid = spl_object_hash($entity);
         $id = $data[$metadata->primaryKey()->fieldName()];
 
-        $this->addToManaged($entity, $id);
+        $this->entities[$oid] = $entity;
 
-        $this->addOriginalData($entity, $data);
+        $this->idMap[$id] = $oid;
+
+        $this->ids[$oid] = $id;
+
+        $this->originalData[$oid] = $data;
+
+        $this->states[$oid] = self::STATE_MANAGED;
     }
 
     /**
+     * Adds a new entity to the unit of work
+     * which does not yet exist in the database.
+     *
      * @param $entity
-     * @param $id
      */
-    protected function addToManaged($entity, $id)
+    public function addNew($entity)
     {
-        $this->managed[get_class($entity)][$id] = $entity;
-    }
+        $oid = spl_object_hash($entity);
 
-    /**
-     * @param $entity
-     * @param array $data
-     */
-    protected function addOriginalData($entity, array $data)
-    {
-        $this->originalData[spl_object_hash($entity)] = $data;
+        $this->entities[$oid] = $entity;
+
+        $this->states[$oid] = self::STATE_NEW;
+
+        $this->scheduleInsertion(get_class($entity), $oid);
     }
 
     /**
@@ -109,11 +159,20 @@ class UnitOfWork
     /**
      * Schedules the entity for insertion
      *
-     * @param $entity
+     * @param $class
+     * @param $oid
      */
-    public function scheduleInsertion($entity)
+    public function scheduleInsertion($class, $oid)
     {
-        $this->insertions[get_class($entity)][] = $entity;
+        $this->scheduledInsertions[$class][] = $oid;
+    }
+
+    /**
+     * Clears all scheduled insertions.
+     */
+    public function clearInsertions()
+    {
+        $this->insertions = [];
     }
 
     /**
@@ -139,30 +198,50 @@ class UnitOfWork
     /**
      * Executes all insertions
      */
-    protected function executeInsertions()
+    private function executeInsertions()
     {
-        foreach ($this->scheduledInsertions as $class => $entities)
+        foreach ($this->scheduledInsertions as $class => $oids)
         {
             $metadata = $this->dm->getMetadata($class);
             $r = $metadata->getReflectionClass();
             $queryBuilder = $this->dm->queryBuilder()->table($metadata->table());
 
             $dataSet = [];
-            foreach ($entities as $entity)
+            foreach ($oids as $oid)
             {
+                $entity = $this->entities[$oid];
                 $data = [];
+
                 foreach ($metadata->columns() as $column)
                 {
-                    $property = $r->getProperty($column->name())->setAccessible(true);
-                    $data[$column->fieldName()] = $property->getValue($entity);
+                    if ($column->isPrimaryKey())
+                    {
+                        continue;
+                    }
+
+                    $property = $r->getProperty($column->fieldName());
+                    $property->setAccessible(true);
+                    $data[$column->name()] = $property->getValue($entity);
+
+                    if ($column->name() == Column::CREATED_AT && is_null($data[$column->name()]) ||
+                        $column->name() == Column::UPDATED_AT && is_null($data[$column->name()]))
+                    {
+                        $data[$column->name()] = Carbon::now();
+                    }
                 }
 
                 $dataSet[] = $data;
             }
 
-            $queryBuilder->insertMany($dataSet);
+            $ids = $queryBuilder->insertMany($dataSet);
 
-            $this->startTracking() // MANAGE MY OWN IdS?...
+            for ($i = 0; $i < sizeof($oids); $i++)
+            {
+                $dataSet[$i][$metadata->primaryKey()->name()] = $ids[$i];
+                $this->addManaged($this->entities[$oids[$i]], $dataSet[$i]);
+            }
         }
+
+        $this->clearInsertions();
     }
 }

@@ -117,6 +117,11 @@ class MySqlDriver
         return $this->dao->lastInsertId();
     }
 
+    public function lastInsertId()
+    {
+        return $this->dao->lastInsertId();
+    }
+
     public function update($str, $data)
     {
         $stmt = $this->dao->prepare($str);

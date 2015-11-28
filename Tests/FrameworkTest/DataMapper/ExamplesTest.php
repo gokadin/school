@@ -9,16 +9,18 @@ class ExamplesTest extends DataMapperBaseTest
 {
     // SIMPLE
 
-    public function insertNew()
+    public function testInsertNew()
     {
         $this->setUpSimpleEntity();
 
         $s1 = new SimpleEntity(1, 2, '1', '2');
         $this->dm->persist($s1);
         $this->dm->flush();
+
+        $entity = $this->dm->find(SimpleEntity::class, 1);
     }
 
-    public function update()
+    public function testUpdate()
     {
         $this->setUpSimpleEntity();
 
@@ -29,7 +31,7 @@ class ExamplesTest extends DataMapperBaseTest
         $this->dm->flush();
     }
 
-    public function delete()
+    public function testDelete()
     {
         $this->setUpSimpleEntity();
 
