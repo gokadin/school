@@ -28,13 +28,36 @@ class PersistentCollectionTest extends DataMapperBaseTest
         $this->assertEquals(0, $collection->removedItems()->count());
     }
 
-    public function testAddingItemsCorrectlyChangesState()
+    public function testAddingNonPersistedItemsCorrectlyChangesState()
     {
         // Arrange
         $this->setUpSimpleEntity();
         $collection = new PersistentCollection($this->dm, SimpleEntity::class);
         $e1 = new SimpleEntity(1, 2, 'one', 'two');
         $e2 = new SimpleEntity(1, 2, 'one', 'two');
+
+        // Act
+        $collection->add($e1);
+        $collection->add($e2);
+
+        // Assert
+        $this->assertEquals(0, $collection->count());
+        $this->assertTrue($collection->isChanged());
+        $this->assertEquals(0, $collection->removedItems()->count());
+        $this->assertEquals(2, $collection->addedItems()->count());
+        $this->assertTrue($collection->addedItems()->contains($e1));
+        $this->assertTrue($collection->addedItems()->contains($e2));
+    }
+
+    public function testAddingPersistedItemsCorrectlyChangesState()
+    {
+        // Arrange
+        $this->setUpSimpleEntity();
+        $collection = new PersistentCollection($this->dm, SimpleEntity::class);
+        $e1 = new SimpleEntity(1, 2, 'one', 'two');
+        $e2 = new SimpleEntity(1, 2, 'one', 'two');
+        $this->dm->persist($e1);
+        $this->dm->persist($e2);
 
         // Act
         $collection->add($e1);
@@ -63,7 +86,7 @@ class PersistentCollectionTest extends DataMapperBaseTest
         $collection->remove($e1);
 
         // Assert
-        $this->assertEquals(1, $collection->count());
+        $this->assertEquals(0, $collection->count());
         $this->assertTrue($collection->isChanged());
         $this->assertEquals(0, $collection->removedItems()->count());
         $this->assertEquals(1, $collection->addedItems()->count());
@@ -78,7 +101,7 @@ class PersistentCollectionTest extends DataMapperBaseTest
         $e2 = new SimpleEntity(1, 2, 'one', 'two');
         $e3 = new SimpleEntity(1, 2, 'one', 'two');
         $collection = new PersistentCollection($this->dm, SimpleEntity::class, [
-            $e1, $e2, $e3
+            $e1, $e2, $e3 // simulates adding with corresponding ids
         ]);
 
         // Act
@@ -98,7 +121,7 @@ class PersistentCollectionTest extends DataMapperBaseTest
         $this->setUpSimpleEntity();
         $se = new SimpleEntity(1, 2, 'one', 'two');
         $this->dm->persist($se);
-        $collection = new PersistentCollection($this->dm, SimpleEntity::class, [$se->getId()]);
+        $collection = new PersistentCollection($this->dm, SimpleEntity::class, [$se->getId() => null]);
 
         // Act
         $loadedSe = $collection->first();
@@ -119,9 +142,9 @@ class PersistentCollectionTest extends DataMapperBaseTest
         $this->dm->persist($se2);
         $this->dm->persist($se3);
         $collection = new PersistentCollection($this->dm, SimpleEntity::class, [
-            $se1->getId(),
-            $se2->getId(),
-            $se3->getId(),
+            $se1->getId() => null,
+            $se2->getId() => null,
+            $se3->getId() => null,
         ]);
 
         // Act
@@ -146,9 +169,9 @@ class PersistentCollectionTest extends DataMapperBaseTest
         $this->dm->persist($se2);
         $this->dm->persist($se3);
         $collection = new PersistentCollection($this->dm, SimpleEntity::class, [
-            $se1->getId(),
-            $se2->getId(),
-            $se3->getId(),
+            $se1->getId() => null,
+            $se2->getId() => null,
+            $se3->getId() => null,
         ]);
 
         // Assert
@@ -166,9 +189,9 @@ class PersistentCollectionTest extends DataMapperBaseTest
         // Arrange
         $this->setUpSimpleEntity();
         $collection = new PersistentCollection($this->dm, SimpleEntity::class, [
-            $this->dm->persist(new SimpleEntity(1, 2, 'one1', 'two1')),
-            $this->dm->persist(new SimpleEntity(1, 2, 'one2', 'two2')),
-            $this->dm->persist(new SimpleEntity(1, 2, 'one3', 'two3')),
+            $this->dm->persist(new SimpleEntity(1, 2, 'one1', 'two1')) => null,
+            $this->dm->persist(new SimpleEntity(1, 2, 'one2', 'two2')) => null,
+            $this->dm->persist(new SimpleEntity(1, 2, 'one3', 'two3')) => null,
         ]);
 
         $encoded = json_encode($collection);
@@ -193,7 +216,7 @@ class PersistentCollectionTest extends DataMapperBaseTest
 
             if ($i < 50)
             {
-                $firstHalf[] = $id;
+                $firstHalf[$id] = null;
                 continue;
             }
 
@@ -219,7 +242,7 @@ class PersistentCollectionTest extends DataMapperBaseTest
         $collection = new PersistentCollection($this->dm, SimpleEntity::class);
 
         // Act
-        $collection->sortBy('rubbish');
+        $collection->sortBy('rubbish')->count();
     }
 
     public function testSortByWithUnloadedCollection()
@@ -229,23 +252,25 @@ class PersistentCollectionTest extends DataMapperBaseTest
         $sortedIds = [];
         for ($i = 0; $i < 100; $i++)
         {
-            $sortedIds[] = $this->dm->persist(new SimpleEntity($i, 2, 'one', 'two'));
+            $entity = new SimpleEntity($i, 2, 'one', 'two');
+            $id = $this->dm->persist($entity);
+            $sortedIds[$id] = $entity;
         }
-        $shuffledIds = $sortedIds;
-        shuffle($shuffledIds);
         $collection = new PersistentCollection($this->dm, SimpleEntity::class, $sortedIds);
-
-        // Act
-        $collection->sortBy('one');
-        $retrievedIds = $collection->getIdList();
-
-        // Assert
-        $this->assertEquals($sortedIds, $retrievedIds);
+        $sortedIds = array_keys($sortedIds);
 
         // Act
         $collection->sortBy('one', false);
         $retrievedIds = $collection->getIdList();
         rsort($sortedIds);
+
+        // Assert
+        $this->assertEquals($sortedIds, $retrievedIds);
+
+        // Act
+        $collection->sortBy('one', true);
+        $retrievedIds = $collection->getIdList();
+        sort($sortedIds);
 
         // Assert
         $this->assertEquals($sortedIds, $retrievedIds);
@@ -265,25 +290,25 @@ class PersistentCollectionTest extends DataMapperBaseTest
 
             if ($i < 50)
             {
-                $firstHalf[] = $entity->getId();
+                $firstHalf[$entity->getId()] = null;
                 continue;
             }
 
-            $secondHalf[] = $entity;
+            $secondHalf[$entity->getId()] = $entity;
         }
-        shuffle($firstHalf);
         $collection = new PersistentCollection($this->dm, SimpleEntity::class, $firstHalf);
         $collection->add($secondHalf);
 
         // Act
-        $collection->sortBy('one');
+        $collection->sortBy('one', false);
+        rsort($sortedIds);
 
         // Assert
         $this->assertEquals($sortedIds, $collection->getIdList());
 
         // Act
-        $collection->sortBy('one', false);
-        rsort($sortedIds);
+        $collection->sortBy('one', true);
+        sort($sortedIds);
 
         // Assert
         $this->assertEquals($sortedIds, $collection->getIdList());

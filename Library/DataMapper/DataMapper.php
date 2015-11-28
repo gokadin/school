@@ -166,62 +166,181 @@ class DataMapper
         return $this->update($object, $metadata, $r);
     }
 
-    protected function insert($object, Metadata $metadata, ReflectionClass $r)
+    protected function insert($object, Metadata $metadata, $overrides = [])
+    {
+        $data = $this->buildObjectData($object, $metadata, $overrides);
+
+        $id = $this->queryBuilder->table($metadata->table())->insert($data);
+
+        $this->setPrimaryKey($object, $metadata, $id);
+
+        return $id;
+    }
+
+    protected function setPrimaryKey($object, Metadata $metadata, $value)
+    {
+        $r = $metadata->getReflectionClass();
+        $property = $r->getProperty($metadata->primaryKey()->name());
+        $property->setAccessible(true);
+        $property->setValue($object, $value);
+    }
+
+    protected function getPrimaryKey($object, Metadata $metadata)
+    {
+        $r = $metadata->getReflectionClass();
+        $property = $r->getProperty($metadata->primaryKey()->name());
+        $property->setAccessible(true);
+        return $property->getValue($object);
+    }
+
+    protected function buildObjectData($object, Metadata $metadata, array $overrides = [])
     {
         $data = [];
-        $primaryKeyColumn = null;
+        $r = $metadata->getReflectionClass();
 
         foreach ($metadata->columns() as $column)
         {
             if ($column->isPrimaryKey())
             {
-                $primaryKeyColumn = $r->getProperty($column->fieldName());
+                continue;
+            }
+
+            if (isset($overrides[$column->name()]))
+            {
+                $data[$column->fieldName()] = $overrides[$column->name()];
                 continue;
             }
 
             if ($column->isForeignKey())
             {
-                $data[$column->name()] = $this->handleAssociatedProperty($object, $metadata, $column, $r);
                 continue;
             }
 
-            try
-            {
-                $property = $r->getProperty($column->fieldName());
-                $property->setAccessible(true);
-            }
-            catch (ReflectionException $e)
-            {
-                continue;
-            }
-
+            $property = $r->getProperty($column->name());
+            $property->setAccessible(true);
             $value = $property->getValue($object);
-            if (is_null($value))
-            {
-                if ($column->isDefault())
-                {
-                    continue;
-                }
 
-                if ($column->name() == Column::CREATED_AT || $column->name() == Column::UPDATED_AT)
-                {
-                    $data[$column->name()] = Carbon::now();
-                    continue;
-                }
+            if (is_null($value) && ($column->name() == Column::CREATED_AT || $column->name() == Column::UPDATED_AT))
+            {
+                $data[$column->fieldName()] = Carbon::now();
+                continue;
             }
 
-            $data[$column->name()] = $value;
+            $data[$column->fieldName()] = $value;
         }
 
-        $id = $this->queryBuilder->table($metadata->table())->insert($data);
-
-        $primaryKeyColumn->setAccessible(true);
-        $primaryKeyColumn->setValue($object, $id);
-
-        $this->handleInsertAssociations($object, $metadata, $id);
-
-        return $id;
+        return $data;
     }
+
+    protected function buildAssociationsInsert($object, Metadata $metadata, array $overrides = [])
+    {
+        foreach ($metadata->associations() as $fieldName => $association)
+        {
+            if (isset($overrides[$fieldName]))
+            {
+                continue;
+            }
+
+            $mappedBy = $association['mappedBy'];
+            $target = $association['target'];
+
+            switch ($association['type'])
+            {
+                case Metadata::ASSOC_HAS_MANY:
+                    $this->buildHasManyInsert($object, $fieldName, $metadata, $target, $mappedBy);
+                    break;
+                case Metadata::ASSOC_BELONGS_TO:
+
+                    break;
+
+                case Metadata::ASSOC_HAS_ONE:
+
+                    break;
+            }
+        }
+    }
+
+    protected function buildHasManyInsert($parentObject, $fieldName, Metadata $parentMetadata, $targetClass, $mappedBy)
+    {
+        $r = $parentMetadata->getReflectionClass();
+        $property = $r->getProperty($fieldName);
+        $property->setAccessible(true);
+        $collection = $property->getValue($parentObject);
+
+        if (!($collection instanceof EntityCollection))
+        {
+            return;
+        }
+
+        $items = $collection->toArray();
+
+        if (sizeof($items) == 0)
+        {
+            return;
+        }
+
+        $parentPrimaryKey = $this->getPrimaryKey($parentObject, $parentMetadata);
+
+        $idMap = [];
+        $idsToUpdate = [];
+        foreach ($items as $item)
+        {
+            $targetMetadata = $this->loadedMetadata($targetClass);
+            $targetId = $this->getPrimaryKey($item, $targetMetadata);
+
+            if (is_null($targetId))
+            {
+                $targetId = $this->insert($item, $targetMetadata, [$mappedBy => $parentPrimaryKey]);
+                $idMap[$targetId] = $item;
+
+                continue;
+            }
+
+            $r = $targetMetadata->getReflectionClass();
+            $mappedByProperty = $r->getProperty($mappedBy);
+            $mappedByProperty->setAccessible(true);
+            $mappedByValue = $mappedByProperty->getValue($item);
+
+            if ($mappedByValue == $parentPrimaryKey)
+            {
+                $idMap[$targetId] = $item;
+
+                continue;
+            }
+
+            $mappedByProperty->setValue($item, $parentPrimaryKey);
+            $idMap[$targetId] = $item;
+            $idsToUpdate[] = $targetId;
+        }
+
+        if (sizeof($idsToUpdate) > 0)
+        {
+            $this->queryBuilder->table($targetMetadata->table())
+                ->where($targetMetadata->primaryKey()->fieldName(), 'in', '('.implode(',', $idsToUpdate).')')
+                ->update([$mappedBy => $parentPrimaryKey]);
+        }
+
+        $collection = new PersistentCollection($this, $targetClass, $idMap);
+        $property->setValue($parentObject, $collection);
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    // **************************************************************
 
     protected function update($object, Metadata $metadata, ReflectionClass $r)
     {
@@ -270,8 +389,9 @@ class DataMapper
         return $id;
     }
 
-    protected function handleAssociatedProperty($object, Metadata $metadata, Column $column, ReflectionClass $r)
+    protected function handleAssociatedProperty($object, Metadata $metadata, Column $column)
     {
+        $r = $metadata->getReflectionClass();
         $property = $r->getProperty($column->fieldName());
         $property->setAccessible(true);
         $assoc = $metadata->getAssociation($column->fieldName());
@@ -334,7 +454,7 @@ class DataMapper
         $targetR = $targetMetadata->getReflectionClass();
         $targetProperty = $targetR->getProperty($metadata->associations()[$fieldName]['mappedBy']);
         $targetProperty->setAccessible(true);
-        $targetPrimaryKeyProperty = $targetR->getProperty($targetMetadata->primaryKey());
+        $targetPrimaryKeyProperty = $targetR->getProperty($targetMetadata->primaryKey()->name());
         $targetPrimaryKeyProperty->setAccessible(true);
 
         $idMap = [];
@@ -393,6 +513,8 @@ class DataMapper
         $targetR = $targetMetadata->getReflectionClass();
         $targetAssocProperty = $targetR->getProperty($metadata->associations()[$fieldName]['mappedBy']);
         $targetAssocProperty->setAccessible(true);
+        $targetPrimaryKeyProperty = $targetR->getProperty($targetMetadata->primaryKey()->name());
+        $targetPrimaryKeyProperty->setAccessible(true);
 
         $addToIdMap = [];
         if (sizeof($addedItems) > 0)
@@ -404,6 +526,16 @@ class DataMapper
                 // if the entity was not was persisted
                 if (is_null($id))
                 {
+                    // check if item was persisted separately before
+                    $id = $targetPrimaryKeyProperty->getValue($item);
+
+                    if (!is_null($id))
+                    {
+                        $ids[] = $id;
+
+                        continue;
+                    }
+
                     $targetAssocProperty->setValue($item, $object);
                     $id = $this->insert($item, $targetMetadata, $targetR);
                     $addToIdMap[$id] = $item;

@@ -151,6 +151,11 @@ final class PersistentCollection extends AbstractEntityCollection
     {
         if ($this->addedItems->contains($entity))
         {
+            if ($this->addedItems[$entity] == null)
+            {
+                $this->count++;
+            }
+
             $this->addedItems->detach($entity);
             return;
         }
@@ -199,11 +204,11 @@ final class PersistentCollection extends AbstractEntityCollection
         $this->execute();
 
         $slice = [];
-        $items = $this->items;
+        $ids = keys($this->items);
         $count = $this->count;
         if ($this->useSubset)
         {
-            $items = $this->subset;
+            $ids = $this->subset;
             $count = $this->subsetCount;
         }
 
@@ -216,11 +221,10 @@ final class PersistentCollection extends AbstractEntityCollection
                     continue;
                 }
 
-                $slice[] = $items[$i];
+                $slice[] = $ids[$i];
             }
 
-            $this->loadArray($slice);
-            return $slice;
+            return $this->loadArray($slice);
         }
 
         $lengthCounter = 0;
@@ -231,7 +235,7 @@ final class PersistentCollection extends AbstractEntityCollection
                 continue;
             }
 
-            $slice[] = $items[$i];
+            $slice[] = $ids[$i];
 
             $lengthCounter++;
             if ($lengthCounter >= $length)
@@ -240,8 +244,7 @@ final class PersistentCollection extends AbstractEntityCollection
             }
         }
 
-        $this->loadArray($slice);
-        return $slice;
+        return $this->loadArray($ids);
     }
 
     public function where($var, $operator, $value = null)
@@ -271,10 +274,7 @@ final class PersistentCollection extends AbstractEntityCollection
 
     public function sortBy($property, $ascending = true)
     {
-        $this->sortingRules[] = [
-            'sortBy' => $property,
-            'ascending' => $ascending
-        ];
+        $this->sortingRules[$property] = $ascending;
 
         return $this;
     }
@@ -298,7 +298,7 @@ final class PersistentCollection extends AbstractEntityCollection
         $this->execute();
 
         return $this->useSubset
-            ? array_keys($this->subset)
+            ? $this->subset
             : array_keys($this->items);
     }
 
@@ -312,72 +312,67 @@ final class PersistentCollection extends AbstractEntityCollection
         return $this->toArray();
     }
 
+    /**
+     * Loads either all items or the subset
+     * based on current mode.
+     *
+     * @return array
+     */
     protected function loadAll()
     {
-        $items = $this->useSubset ? $this->subset : $this->items;
-        $ids = [];
-        foreach ($items as $id => $item)
-        {
-            if (!is_null($item))
-            {
-                continue;
-            }
-
-            $ids[] = $id;
-        }
-
-        if (sizeof($ids) == 0)
-        {
-            return;
-        }
-
-        if ($this->useSubset)
-        {
-            foreach ($this->dm->findIn($this->class, $ids) as $entity)
-            {
-                $id = $this->getEntityId($entity);
-                $this->subset[$id] = $entity;
-                $this->items[$id] = $entity;
-            }
-
-            return $this->subset;
-        }
-
-        foreach ($this->dm->findIn($this->class, $ids) as $entity)
-        {
-            $this->items[$this->getEntityId($entity)] = $entity;
-        }
-
-        return $this->items;
+        return $this->useSubset ?
+            $this->loadArray($this->subset) :
+            $this->loadArray(array_keys($this->items));
     }
 
-    protected function loadArray(array &$items)
+    /**
+     * Loads all missing entities from the given
+     * ids and returns an associative array of the
+     * given ids with their loaded entities.
+     *
+     * @param array $ids
+     *
+     * @return array
+     */
+    protected function loadArray(array $ids)
     {
-        $ids = [];
-        foreach ($items as $id => $item)
+        $unloadedIds = [];
+        $results = [];
+        foreach ($this->items as $id => $item)
         {
             if (!is_null($item))
             {
+                $results[$id] = $item;
                 continue;
             }
 
-            $ids[] = $id;
+            $unloadedIds[] = $id;
         }
 
-        if (sizeof($ids) == 0)
+        if (sizeof($unloadedIds) == 0)
         {
-            return;
+            return $this->buildFromIdList($ids);
         }
 
         foreach ($this->dm->findIn($this->class, $ids) as $entity)
         {
-            $items[$this->getEntityId($entity)] = $entity;
+            $id = $this->getEntityId($entity);
+            $results[$id] = $entity;
+            $this->items[$id] = $entity;
         }
+
+        return $results;
     }
 
     protected function loadIndex($index)
     {
-        $count = $this->useSubset ? $this->subsetCount : $this->count;
+        $ids = array_keys($this->items);
+        $count = $this->count;
+        if ($this->useSubset)
+        {
+            $ids = $this->subset;
+            $count = $this->subsetCount;
+        }
 
         if ($count - 1 < $index || $index > $count - 1)
         {
@@ -385,22 +380,19 @@ final class PersistentCollection extends AbstractEntityCollection
         }
 
         $i = 0;
-        foreach ($this->items as $id => &$entity)
+        foreach ($ids as $id)
         {
             if ($i == $index)
             {
-                if (is_null($entity))
+                if (is_null($this->items[$id]))
                 {
                     $entity = $this->dm->find($this->class, $id);
-                    if ($this->useSubset)
-                    {
-                        $this->subset[$id] = $entity;
-                    }
+                    $this->items[$id] = $entity;
 
                     return  $entity;
                 }
 
-                return $entity;
+                return $this->items[$id];
             }
 
             $i++;
@@ -424,9 +416,8 @@ final class PersistentCollection extends AbstractEntityCollection
 
         $this->executeSortingRules($queryBuilder);
 
-        $ids = $queryBuilder->select([$this->metadata->primaryKey()->fieldName()]);
-
-        $this->buildSubset($ids);
+        $this->subset = $queryBuilder->select([$this->metadata->primaryKey()->fieldName()]);
+        $this->subsetCount = sizeof($this->subset);
     }
 
     protected function executeWheres(QueryBuilder &$queryBuilder)
@@ -451,26 +442,35 @@ final class PersistentCollection extends AbstractEntityCollection
             return;
         }
 
-        foreach ($this->sortingRules as $rule)
+        foreach ($this->sortingRules as $propery => $ascending)
         {
-            $column = $this->metadata->getColumn($rule['sortBy']);
+            $column = $this->metadata->getColumn($propery);
             if (is_null($column))
             {
-                throw new Exception('PersistentCollection.sortBy : invalid property '.$rule['sortBy']);
+                throw new Exception('PersistentCollection.sortBy : invalid property '.$propery);
             }
 
-            $queryBuilder->sortBy($column->fieldName(), $rule['ascending']);
+            $queryBuilder->sortBy($column->fieldName(), $ascending);
         }
     }
 
-    protected function buildSubset($ids)
+    /**
+     * Builds a temporary array from the provided
+     * ids with id => entity associations.
+     * This method assumes all ids are loaded before calling.
+     *
+     * @param array ids
+     *
+     * @return array results
+     */
+    protected function buildFromIdList($ids)
     {
-        $this->subset = [];
-        $this->subsetCount = 0;
+        $results = [];
         foreach ($ids as $id)
         {
-            $this->subset[$id] = $this->items[$id];
-            $this->subsetCount++;
+            $results[$id] = $this->items[$id];
         }
+
+        return $results;
     }
 }
