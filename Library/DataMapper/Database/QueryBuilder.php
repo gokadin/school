@@ -129,6 +129,35 @@ class QueryBuilder
         return $this->databaseDriver->insert($str, $data);
     }
 
+    public function insertMany(array $dataSet)
+    {
+        if (sizeof($dataSet) == 0)
+        {
+            return null;
+        }
+
+        $str = 'INSERT INTO '.$this->table;
+        $str .= ' ('.implode(',', array_keys($dataSet[0])).')';
+        $str .= ' VALUES ';
+
+        $segments = [];
+        foreach ($dataSet as $data)
+        {
+            $segments[] = '('.implode(',', $data).')';
+//            $str .= '(';
+//            for ($j = 0; $j < sizeof($dataSet[0]); $i++)
+//            {
+//                $str .= $j < sizeof($dataSet[0]) - 1 ? '?,' : '?';
+//            }
+//            $str .= $i < sizeof($dataSet) - 1 ? '),' : ')';
+        }
+        $str .= implode(',', $segments);
+
+        $this->clear();
+
+        return $this->databaseDriver->execute($str);
+    }
+
     public function update(array $data)
     {
         // switch case driver...

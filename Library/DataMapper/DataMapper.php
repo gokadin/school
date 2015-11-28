@@ -5,9 +5,15 @@ namespace Library\DataMapper;
 use Library\DataMapper\Database\QueryBuilder;
 use Library\DataMapper\Mapping\Drivers\AnnotationDriver;
 use Library\DataMapper\Mapping\Metadata;
+use Library\DataMapper\UnitOfWork\UnitOfWork;
 
 class DataMapper
 {
+    /**
+     * @var UnitOfWork
+     */
+    protected $unitOfWork;
+
     /**
      * The mapping driver used to parse
      * and build entity metadata.
@@ -33,19 +39,14 @@ class DataMapper
     protected $loadedMetadata = [];
 
     /**
-     * Main array of the unit of work pattern.
-     *
-     * @var array
-     */
-    protected $loadedEntities = [];
-
-    /**
      * Initializes mapping and database drivers.
      *
      * @param array $config
      */
     public function __construct($config)
     {
+        $this->unitOfWork = new UnitOfWork($this);
+
         $this->initializeMappingDriver($config['mappingDriver']);
 
         $this->queryBuilder = new QueryBuilder($config);
@@ -76,7 +77,22 @@ class DataMapper
      */
     public function find($class, $id)
     {
+        $entity = $this->unitOfWork->find($class, $id);
 
+        if (!is_null($entity))
+        {
+            return $entity;
+        }
+
+        $metadata = $this->getMetadata($class);
+
+        $data = $this->queryBuilder()->table($metadata->table())
+            ->where($metadata->primaryKey()->fieldName(), '=', $id)
+            ->select();
+
+        $entity = $this->buildEntity($class, $data);
+
+        $this->unitOfWork->startTracking($entity, $data);
     }
 
     /**
@@ -87,7 +103,22 @@ class DataMapper
      */
     public function persist($object)
     {
+        $id = $this->getId($object);
 
+        if (is_null($id))
+        {
+            $this->unitOfWork->scheduleInsertion($object);
+        }
+
+        //$this->unitOfWork->sche($object, $id);
+    }
+
+    /**
+     * Executes all scheduled work in the unit of work.
+     */
+    public function flush()
+    {
+        $this->unitOfWork->flush();
     }
 
     /**
@@ -142,5 +173,37 @@ class DataMapper
         }
 
         return $this->loadedMetadata[$class] = $this->mappingDriver->getMetadata($class);
+    }
+
+    /**
+     * Gets the object id with reflection.
+     *
+     * @param $object
+     * @return mixed
+     */
+    protected function getId($object)
+    {
+        $metadata = $this->getMetadata(get_class($object));
+        $r = $metadata->getReflectionClass();
+        $property = $r->getProperty($metadata->primaryKey()->name());
+        $property->setAccessible(true);
+
+        return $property->getValue($object);
+    }
+
+    protected function buildEntity($class, $data)
+    {
+        $metadata = $this->getMetadata($class);
+        $r = $metadata->getReflectionClass();
+
+        $entity = $r->newInstanceWithoutConstructor();
+
+        foreach ($metadata->columns() as $column)
+        {
+            $property = $r->getProperty($column->name())->setAccessible(true);
+            $property->setValue($entity, $data[$column->fieldName()]);
+        }
+
+        return $entity;
     }
 }
