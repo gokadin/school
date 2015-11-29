@@ -18,6 +18,16 @@ class EntityPersister extends BasePersister
         $this->removalIds[] = $id;
     }
 
+    private function clearInserts()
+    {
+        $this->inserts = [];
+    }
+
+    private function clearRemovals()
+    {
+        $this->removalIds = [];
+    }
+
     public function executeInserts()
     {
         if (sizeof($this->inserts) == 1)
@@ -30,24 +40,24 @@ class EntityPersister extends BasePersister
 
     private function executeSingleInsert()
     {
-        $id = $this->queryBuilder()->table($this->metadata->table())
-            ->insert($this->inserts[0]);
+        $id = $this->queryBuilder->table($this->metadata->table())
+            ->insert(reset($this->inserts));
 
-        return [key($this->inserts) => $id];
+        $oid = key($this->inserts);
+
+        $this->clearInserts();
+
+        return [$oid => $id];
     }
 
     private function executeBatchInsert()
     {
         $ids = $this->queryBuilder->table($this->metadata->table())
-            ->insertMany(inserts);
+            ->insertMany($this->inserts);
 
-        $result = [];
-        for ($i = 0; $i < sizeof($ids); $i++)
-        {
-            $result[key($this->inserts[$i])] = $ids[$i];
-        }
+        $this->clearInserts();
 
-        return $result;
+        return $ids;
     }
 
     public function executeRemovals()
@@ -55,6 +65,7 @@ class EntityPersister extends BasePersister
         if (sizeof($this->removalIds) == 1)
         {
             $this->executeSingleRemoval();
+            return;
         }
 
         $this->executeBatchRemoval();
@@ -62,15 +73,19 @@ class EntityPersister extends BasePersister
 
     private function executeSingleRemoval()
     {
-        $this->queryBuilder()->table($this->metadata->table())
-            ->where($this->metadata->primaryKey()->name(), '=', $this->removalIds[0])
+        $this->queryBuilder->table($this->metadata->table())
+            ->where($this->metadata->primaryKey()->name(), '=', reset($this->removalIds))
             ->delete();
+
+        $this->clearRemovals();
     }
 
     private function executeBatchRemoval()
     {
-        $this->queryBuilder()->table($this->metadata->table())
+        $this->queryBuilder->table($this->metadata->table())
             ->where($this->metadata->primaryKey()->name(), 'in', '('.implode(',', $this->removalIds).')')
             ->delete();
+
+        $this->clearRemovals();
     }
 }

@@ -143,9 +143,11 @@ class MySqlDriver
 
         $firstId = $this->dao->lastInsertId();
         $insertIds = [];
-        for ($i = 0; $i < sizeof($dataSet); $i++)
+        $i = 0;
+        foreach ($dataSet as $oid => $data)
         {
-            $insertIds[] = $firstId + $i;
+            $insertIds[$oid] = $firstId + $i;
+            $i++;
         }
 
         return $insertIds;

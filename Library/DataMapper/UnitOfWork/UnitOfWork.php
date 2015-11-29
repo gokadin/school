@@ -260,7 +260,7 @@ final class UnitOfWork
         unset($this->entities[$oid]);
         unset($this->ids[$oid]);
         unset($this->originalData[$oid]);
-        unset($this->idMap[$entity][$id]);
+        unset($this->idMap[$class][$id]);
         unset($this->states[$oid]);
     }
 
@@ -399,29 +399,36 @@ final class UnitOfWork
     {
         $this->dm->queryBuilder()->beginTransaction();
 
-        $commitOrder = $this->getCommitOrder();
+        //$commitOrder = $this->getCommitOrder();
 
         try
         {
-            foreach ($commitOrder as $class)
+//            foreach ($commitOrder as $class)
+//            {
+            foreach ($this->scheduledInsertions as $class => $x)
             {
                 $this->executeInsertions($class);
             }
+            $class = 'x';
+//            }
 
-            foreach ($commitOrder as $class)
-            {
+//            foreach ($commitOrder as $class)
+//            {
                 $this->executeUpdates($class);
-            }
+//            }
 
-            foreach ($commitOrder as $class)
+//            foreach ($commitOrder as $class)
+//            {
+            foreach ($this->scheduledRemovals as $class => $x)
             {
                 $this->executeRemovals($class);
             }
+//            }
 
-            foreach ($commitOrder as $class)
-            {
+//            foreach ($commitOrder as $class)
+//            {
                 $this->executeExtraUpdates($class);
-            }
+//            }
 
             $this->dm->queryBuilder()->commit();
         }
@@ -570,25 +577,19 @@ final class UnitOfWork
 
     /**
      * Executes all removals.
+     *
+     * @param $class
      */
-    private function executeRemovals()
+    private function executeRemovals($class)
     {
-        foreach ($this->scheduledRemovals as $class => $oids)
+        $persister = $this->getEntityPersister($class);
+        foreach ($this->scheduledRemovals[$class] as $oid)
         {
-            if (sizeof($oids) == 1)
-            {
-                $this->getSinglePersister($class)->executeRemoval($this->ids[$oids[0]]);
-            }
-
-            $ids = [];
-            foreach ($oids as $oid)
-            {
-                $ids[] = $this->ids[$oid];
-                $this->detachManaged($oid);
-            }
-
-            $this->getBatchPersister($class)->executeRemovals($ids);
+            $persister->addRemoval($this->ids[$oid]);
+            $this->detachManaged($oid);
         }
+
+        $persister->executeRemovals();
 
         $this->clearRemovals();
     }
@@ -596,7 +597,7 @@ final class UnitOfWork
     /**
      * Executes all scheduled updates
      */
-    private function executeUpdates()
+    private function executeUpdates($class)
     {
         $this->detectEntityChanges();
 
@@ -685,5 +686,10 @@ final class UnitOfWork
         }
 
         return $changeSet;
+    }
+
+    private function executeExtraUpdates($class)
+    {
+
     }
 }

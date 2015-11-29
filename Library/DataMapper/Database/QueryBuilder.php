@@ -146,12 +146,12 @@ class QueryBuilder
         }
 
         $str = 'INSERT INTO '.$this->table;
-        $str .= ' ('.implode(',', array_keys($dataSet[0])).')';
+        $str .= ' ('.implode(',', array_keys(reset($dataSet))).')';
         $str .= ' VALUES ';
 
         $segments = [];
         $qString = '?';
-        for ($i = 1; $i < sizeof($dataSet[0]); $i++)
+        for ($i = 1; $i < sizeof(reset($dataSet)); $i++)
         {
             $qString .= ',?';
         }
