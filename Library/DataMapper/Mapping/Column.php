@@ -64,6 +64,22 @@ class Column
         $this->isForeignKey = true;
     }
 
+    public function isTimeStamp()
+    {
+        return $this->columnName == self::CREATED_AT ||
+            $this->columnName == self::UPDATED_AT;
+    }
+
+    public function isCreatedAt()
+    {
+        return $this->columnName == self::CREATED_AT;
+    }
+
+    public function isUpdatedAt()
+    {
+        return $this->columnName == self::UPDATED_AT;
+    }
+
     public function propName()
     {
         return $this->propName;
@@ -131,8 +147,8 @@ class Column
 
     public function isRequired()
     {
-        if ($this->name === self::UPDATED_AT ||
-            $this->name === self::CREATED_AT)
+        if ($this->columnName === self::UPDATED_AT ||
+            $this->columnName === self::CREATED_AT)
             return false;
 
         return !$this->isNullable() && !$this->isDefault();

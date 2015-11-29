@@ -152,6 +152,11 @@ class MySqlDriver
         $stmt->execute($data);
     }
 
+    public function updateMany($str)
+    {
+        $this->dao->exec($str);
+    }
+
     public function delete($str)
     {
         return $this->dao->exec($str);

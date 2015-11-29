@@ -7,6 +7,7 @@ use Library\DataMapper\DataMapper;
 use Exception;
 use Library\DataMapper\DataMapperException;
 use Library\DataMapper\Mapping\Column;
+use Library\DataMapper\Mapping\Metadata;
 
 /**
  * Keeps track of all entities known to data mapper
@@ -80,7 +81,7 @@ final class UnitOfWork
     private $scheduledInsertions = [];
 
     /**
-     * Sorted by class, then by hash.
+     * Links all the changes found with each class as key. var
      *
      * @var array
      */
@@ -332,11 +333,12 @@ final class UnitOfWork
             $queryBuilder = $this->dm->queryBuilder()->table($metadata->table());
 
             $dataSet = [];
+            $originalDataSet = [];
             foreach ($oids as $oid)
             {
                 $entity = $this->entities[$oid];
                 $data = [];
-
+                $originalData = [];
                 foreach ($metadata->columns() as $column)
                 {
                     if ($column->isPrimaryKey())
@@ -358,9 +360,12 @@ final class UnitOfWork
                     {
                         $data[$column->name()] = $value;
                     }
+
+                    $originalData[$column->name()] = $value;
                 }
 
                 $dataSet[] = $data;
+                $originalDataSet[] = $originalData;
             }
 
             $ids = $queryBuilder->insertMany($dataSet);
@@ -370,9 +375,15 @@ final class UnitOfWork
                 $property = $r->getProperty($metadata->primaryKey()->name());
                 $property->setAccessible(true);
                 $property->setValue($this->entities[$oids[$i]], $ids[$i]);
+                $createdAt = $r->getProperty($metadata->createdAt()->propName());
+                $createdAt->setAccessible(true);
+                $createdAt->setValue($this->entities[$oids[$i]], $dataSet[$i][$metadata->createdAt()->name()]);
+                $updatedAt = $r->getProperty($metadata->updatedAt()->propName());
+                $updatedAt->setAccessible(true);
+                $updatedAt->setValue($this->entities[$oids[$i]], $dataSet[$i][$metadata->updatedAt()->name()]);
 
-                $dataSet[$i][$metadata->primaryKey()->name()] = $ids[$i];
-                $this->addManaged($this->entities[$oids[$i]], $dataSet[$i]);
+                $originalDataSet[$i][$metadata->primaryKey()->name()] = $ids[$i];
+                $this->addManaged($this->entities[$oids[$i]], $originalDataSet[$i]);
             }
         }
 
@@ -400,11 +411,101 @@ final class UnitOfWork
         $this->clearRemovals();
     }
 
+    /**
+     * Executes all scheduled updates
+     */
     private function executeUpdates()
     {
-        
+        $this->detectEntityChanges();
+
+        foreach ($this->scheduledUpdates as $class => $allChanges)
+        {
+            $updateSet = [];
+            $ids = [];
+            foreach ($allChanges as $id => $changeSet)
+            {
+                foreach ($changeSet as $field => $value)
+                {
+                    $updateSet[$field][$id] = $value;
+                    $ids[] = $id;
+                }
+            }
+
+            $metadata = $this->dm->getMetadata($class);
+            $this->dm->queryBuilder()->table($metadata->table())
+                ->where($metadata->primaryKey()->name(), 'in', '('.implode(',', $ids).')')
+                ->updateMany($updateSet, $metadata->primaryKey()->name());
+        }
 
         $this->clearUpdates();
+    }
+
+    /**
+     * Loops through all managed entities to detect changes
+     * from the original values and schedules them from update.
+     */
+    private function detectEntityChanges()
+    {
+        foreach ($this->idMap as $class => $idData)
+        {
+            $metadata = $this->dm->getMetadata($class);
+            $allChanges = [];
+            foreach ($idData as $id => $oid)
+            {
+                $entity = $this->entities[$oid];
+
+                $changeSet = $this->buildChangeSet($entity, $oid, $metadata);
+                if (sizeof($changeSet) == 0)
+                {
+                    continue;
+                }
+
+                $allChanges[$id] = $changeSet;
+            }
+
+            if (sizeof($allChanges) == 0)
+            {
+                continue;
+            }
+
+            $this->scheduledUpdates[$class] = $allChanges;
+        }
+    }
+
+    /**
+     * Compares the entity with its original data for changes.
+     *
+     * @param $entity
+     * @param $oid
+     * @param Metadata $metadata
+     * @return array $changeSet
+     */
+    private function buildChangeSet($entity, $oid, Metadata $metadata)
+    {
+        $changeSet = [];
+        $originalData = $this->originalData[$oid];
+        $r = $metadata->getReflectionClass();
+
+        foreach ($metadata->columns() as $column)
+        {
+            if ($column->isPrimaryKey())
+            {
+                continue;
+            }
+
+            $prop = $r->getProperty($column->propName());
+            $prop->setAccessible(true);
+            $actualValue = $prop->getValue($entity);
+
+            if ($originalData[$column->name()] == $actualValue)
+            {
+                continue;
+            }
+
+            $changeSet[$column->name()] = $actualValue;
+        }
+
+        return $changeSet;
     }
 
     /**

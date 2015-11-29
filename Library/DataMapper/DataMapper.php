@@ -2,6 +2,7 @@
 
 namespace Library\DataMapper;
 
+use Library\DataMapper\Collection\EntityCollection;
 use Library\DataMapper\Database\QueryBuilder;
 use Library\DataMapper\Mapping\Drivers\AnnotationDriver;
 use Library\DataMapper\Mapping\Metadata;
@@ -102,6 +103,56 @@ class DataMapper
     }
 
     /**
+     * Finds an object by id and fully loads it.
+     * Throws an exception if not found.
+     *
+     * @param $class
+     * @param $id
+     * @return mixed
+     * @throws DataMapperException
+     */
+    public function findOrFail($class, $id)
+    {
+        $entity = $this->find($class, $id);
+
+        if (is_null($entity))
+        {
+            throw new DataMapperException('DataMapper.findOrFail : Could not find entity of class '.$class.
+                ' with id of '.$id);
+        }
+
+        return $entity;
+    }
+
+    /**
+     * Finds all the objects of the given class.
+     *
+     * @param $class
+     * @return EntityCollection
+     */
+    public function findAll($class)
+    {
+        $metadata = $this->getMetadata($class);
+        $allData = $this->queryBuilder->table($metadata->table())
+            ->select();
+
+        if (sizeof($allData) == 0)
+        {
+            return new EntityCollection();
+        }
+
+        $collection = new EntityCollection();
+        foreach ($allData as $data)
+        {
+            $entity = $this->buildEntity($class, $data);
+            $this->unitOfWork->addManaged($entity, $data);
+            $collection->add($entity);
+        }
+
+        return $collection;
+    }
+
+    /**
      * Marks the object for persistence
      * and adds it to the unit of work if not yet tracked.
      *
@@ -115,8 +166,6 @@ class DataMapper
         {
             $this->unitOfWork->addNew($object);
         }
-
-        //$this->unitOfWork->sche($object, $id);
     }
 
     public function delete($object)

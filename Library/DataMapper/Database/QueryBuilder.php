@@ -191,6 +191,29 @@ class QueryBuilder
         $this->databaseDriver->update($str, $data);
     }
 
+    public function updateMany(array $updateSet, $idField)
+    {
+        $str = 'UPDATE '.$this->table;
+
+        foreach ($updateSet as $field => $data)
+        {
+            $str .= ' SET '.$field.' = CASE '.$idField;
+
+            foreach ($data as $id => $value)
+            {
+                $str .= ' WHEN '.$id.' THEN '.$value;
+            }
+
+            $str .= ' END';
+        }
+
+        $str .= ' '.$this->databaseDriver->buildWheres($this->wheres);
+
+        $this->clear();
+
+        $this->databaseDriver->updateMany($str);
+    }
+
     public function delete()
     {
         $str = 'DELETE FROM '.$this->table;

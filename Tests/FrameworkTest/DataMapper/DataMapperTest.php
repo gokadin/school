@@ -3,8 +3,8 @@
 namespace Tests\FrameworkTest\DataMapper;
 
 use Library\DataMapper\Collection\PersistentCollection;
-use Library\DataMapper\EntityCollection;
-use Symfony\Component\Yaml\Exception\RuntimeException;
+use Library\DataMapper\Collection\EntityCollection;
+use Library\DataMapper\DataMapperException;
 use Tests\FrameworkTest\TestData\DataMapper\Address;
 use Tests\FrameworkTest\TestData\DataMapper\SimpleEntity;
 use Tests\FrameworkTest\TestData\DataMapper\Teacher;
@@ -80,6 +80,51 @@ class DataMapperTest extends DataMapperBaseTest
         $this->assertEquals($s1->getId(), $foundS1->getId());
     }
 
+    public function testFindWhenNotFound()
+    {
+        // Arrange
+        $this->setUpSimpleEntity();
+
+        // Act
+        $found = $this->dm->find(SimpleEntity::class, 9999);
+
+        // Assert
+        $this->assertNull($found);
+    }
+
+    /**
+     * @expectedException DataMapperException
+     */
+    public function testFindOrFailWhenNotFound()
+    {
+        // Arrange
+        $this->setUpSimpleEntity();
+
+        // Act
+        $found = $this->dm->findOrFail(SimpleEntity::class, 9999);
+
+        // Assert
+        $this->assertNull($found);
+    }
+
+    public function testFindAll()
+    {
+        // Arrange
+        $this->setUpSimpleEntity();
+        $this->dm->persist(new SimpleEntity(1, 2, 'one', 'two'));
+        $this->dm->persist(new SimpleEntity(11, 12, 'one2', 'two2'));
+        $this->dm->persist(new SimpleEntity(21, 22, 'one3', 'two3'));
+        $this->dm->flush();
+
+        // Act
+        $collection = $this->dm->findAll(SimpleEntity::class);
+
+        // Assert
+        $this->assertTrue($collection instanceof EntityCollection);
+        $this->assertEquals(3, $collection->count());
+        $this->assertTrue($collection->first() instanceof SimpleEntity);
+    }
+
     public function testDelete()
     {
         // Arrange
@@ -124,6 +169,52 @@ class DataMapperTest extends DataMapperBaseTest
         $this->assertNull($foundS3);
     }
 
+    public function testUpdate()
+    {
+        // Arrange
+        $this->setUpSimpleEntity();
+        $s1 = new SimpleEntity(1, 2, '1', '2');
+        $this->dm->persist($s1);
+        $this->dm->flush();
+
+        // Act
+        $s1->setOne(10);
+        $this->dm->flush();
+        $this->dm->detachAll();
+        $foundS1 = $this->dm->find(SimpleEntity::class, $s1->getId());
+
+        // Assert
+        $this->assertEquals($foundS1->getOne(), $s1->getOne());
+    }
+
+    public function testUpdateForMultipleWithSameFields()
+    {
+        // Arrange
+        $this->setUpSimpleEntity();
+        $s1 = new SimpleEntity(1, 2, '1', '2');
+        $s2 = new SimpleEntity(2, 2, '1', '2');
+        $s3 = new SimpleEntity(3, 2, '1', '2');
+        $this->dm->persist($s1);
+        $this->dm->persist($s2);
+        $this->dm->persist($s3);
+        $this->dm->flush();
+
+        // Act
+        $s1->setOne(10);
+        $s2->setOne(11);
+        $s3->setOne(12);
+        $this->dm->flush();
+        $this->dm->detachAll();
+        $foundS1 = $this->dm->find(SimpleEntity::class, $s1->getId());
+        $foundS2 = $this->dm->find(SimpleEntity::class, $s2->getId());
+        $foundS3 = $this->dm->find(SimpleEntity::class, $s3->getId());
+
+        // Assert
+        $this->assertEquals($foundS1->getOne(), $s1->getOne());
+        $this->assertEquals($foundS2->getOne(), $s2->getOne());
+        $this->assertEquals($foundS3->getOne(), $s3->getOne());
+    }
+
 
 
 
@@ -132,146 +223,6 @@ class DataMapperTest extends DataMapperBaseTest
 
 
     // **************************************************
-
-    public function testPersistWhenUpdating()
-    {
-        // Arrange
-        $this->setUpSimpleEntity();
-        $se = new SimpleEntity(1, 2, 'one', 'two');
-
-        // Act
-        $this->dm->persist($se);
-
-        // Assert
-        $results = $this->dm->queryBuilder()->table('simpleEntity')->select();
-        $this->assertEquals(1, sizeof($results));
-        $this->assertEquals(1, $results[0]['one']);
-
-        // Act
-        $se->setOne(10);
-        $this->dm->persist($se);
-
-        // Assert
-        $results = $this->dm->queryBuilder()->table('simpleEntity')->select();
-        $this->assertEquals(1, sizeof($results));
-        $this->assertEquals(10, $results[0]['one']);
-    }
-
-    public function testDeleteWhenPassingClassNameAndId()
-    {
-        // Arrange
-        $this->setUpSimpleEntity();
-        $se = new SimpleEntity(1, 2, 'one', 'two');
-
-        // Act
-        $this->dm->persist($se);
-
-        // Assert
-        $results = $this->dm->queryBuilder()->table('simpleEntity')->select();
-        $this->assertEquals(1, sizeof($results));
-
-        // Act
-        $this->dm->delete(get_class($se), $se->getId());
-
-        // Assert
-        $results = $this->dm->queryBuilder()->table('simpleEntity')->select();
-        $this->assertEquals(0, sizeof($results));
-    }
-
-    public function testDeleteWhenPassingObject()
-    {
-        // Arrange
-        $this->setUpSimpleEntity();
-        $se = new SimpleEntity(1, 2, 'one', 'two');
-
-        // Act
-        $this->dm->persist($se);
-
-        // Assert
-        $results = $this->dm->queryBuilder()->table('simpleEntity')->select();
-        $this->assertEquals(1, sizeof($results));
-
-        // Act
-        $this->dm->delete($se);
-
-        // Assert
-        $results = $this->dm->queryBuilder()->table('simpleEntity')->select();
-        $this->assertEquals(0, sizeof($results));
-    }
-
-    public function testFind()
-    {
-        // Arrange
-        $this->setUpSimpleEntity();
-        $se = new SimpleEntity(1, 2, 'one', 'two');
-        $this->dm->persist($se);
-
-        // Act
-        $result = $this->dm->find(SimpleEntity::class, $se->getId());
-
-        // Assert
-        $this->assertTrue($result instanceof SimpleEntity);
-        $this->assertEquals($se->getId(), $result->getId());
-    }
-
-    public function testFindAfterDetachingFromCache()
-    {
-        // Arrange
-        $this->setUpSimpleEntity();
-        $se = new SimpleEntity(1, 2, 'one', 'two');
-        $this->dm->persist($se);
-
-        // Act
-        $this->dm->detachAll();
-        $result = $this->dm->find(SimpleEntity::class, $se->getId());
-
-        // Assert
-        $this->assertTrue($result instanceof SimpleEntity);
-        $this->assertEquals($se->getId(), $result->getId());
-    }
-
-    public function testFindWhenNotFound()
-    {
-        // Arrange
-        $this->setUpSimpleEntity();
-
-        // Act
-        $result = $this->dm->find(SimpleEntity::class, 1);
-
-        // Assert
-        $this->assertNull($result);
-    }
-
-    /**
-     * @expectedException RuntimeException
-     */
-    public function testFindOrFailWhenNotFound()
-    {
-        // Arrange
-        $this->setUpSimpleEntity();
-
-        // Act
-        $result = $this->dm->findOrFail(SimpleEntity::class, 1);
-
-        // Assert
-        $this->assertNull($result);
-    }
-
-    public function testFindAll()
-    {
-        // Arrange
-        $this->setUpSimpleEntity();
-        $this->dm->persist(new SimpleEntity(1, 2, 'one', 'two'));
-        $this->dm->persist(new SimpleEntity(11, 12, 'one2', 'two2'));
-        $this->dm->persist(new SimpleEntity(21, 22, 'one3', 'two3'));
-
-        // Act
-        $collection = $this->dm->findAll(SimpleEntity::class);
-
-        // Assert
-        $this->assertEquals(3, $collection->count());
-        $this->assertTrue($collection->first() instanceof SimpleEntity);
-    }
 
     public function testFindAllAfterDetachingEntities()
     {

@@ -15,6 +15,8 @@ class Metadata
     protected $table;
     protected $reflectionClass;
     protected $primaryKey;
+    protected $createdAt;
+    protected $updatedAt;
 
     public function __construct($table, ReflectionClass $r)
     {
@@ -37,6 +39,16 @@ class Metadata
         return $this->primaryKey;
     }
 
+    public function createdAt()
+    {
+        return $this->createdAt;
+    }
+
+    public function updatedAt()
+    {
+        return $this->updatedAt;
+    }
+
     public function columns()
     {
         return $this->columns;
@@ -54,6 +66,16 @@ class Metadata
         if ($column->isPrimaryKey())
         {
             $this->primaryKey = $column;
+        }
+
+        if ($column->isCreatedAt())
+        {
+            $this->createdAt = $column;
+        }
+
+        if ($column->isUpdatedAt())
+        {
+            $this->updatedAt = $column;
         }
     }
 
