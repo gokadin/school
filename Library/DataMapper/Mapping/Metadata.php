@@ -59,6 +59,19 @@ class Metadata
         return isset($this->columns[$name]) ? $this->columns[$name] : null;
     }
 
+    public function getColumnByPropName($propName)
+    {
+        foreach ($this->columns as $column)
+        {
+            if ($column->propName() == $propName)
+            {
+                return $column;
+            }
+        }
+
+        return null;
+    }
+
     public function addColumn(Column $column)
     {
         $this->columns[$column->name()] = $column;

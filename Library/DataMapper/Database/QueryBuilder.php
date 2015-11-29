@@ -10,6 +10,7 @@ class QueryBuilder
     protected $table;
     protected $wheres = [];
     protected $sortingRules = [];
+    protected $limit;
 
     public function __construct($config)
     {
@@ -92,6 +93,13 @@ class QueryBuilder
         return $this;
     }
 
+    public function limit($number)
+    {
+        $this->limit = $number;
+
+        return $this;
+    }
+
     protected function selectMySql($fields)
     {
         $str = 'SELECT ';
@@ -99,6 +107,7 @@ class QueryBuilder
         $str .= ' FROM '.$this->table;
         $str .= ' '.$this->databaseDriver->buildWheres($this->wheres);
         $str .= ' '.$this->databaseDriver->buildSorts($this->sortingRules);
+        $str .= ' '.$this->databaseDriver->buildLimit($this->limit);
 
         if (sizeof($fields) == 1 && $fields[0] != '*')
         {
@@ -193,19 +202,23 @@ class QueryBuilder
 
     public function updateMany(array $updateSet, $idField)
     {
-        $str = 'UPDATE '.$this->table;
+        $str = 'UPDATE '.$this->table.' SET';
 
+        $setSegments = [];
         foreach ($updateSet as $field => $data)
         {
-            $str .= ' SET '.$field.' = CASE '.$idField;
+            $setSegmentStr = ' '.$field.' = CASE '.$idField;
 
             foreach ($data as $id => $value)
             {
-                $str .= ' WHEN '.$id.' THEN '.$value;
+                $setSegmentStr .= ' WHEN '.$id.' THEN '.$value;
             }
 
-            $str .= ' END';
+            $setSegmentStr .= ' ELSE '.$field.' END';
+
+            $setSegments[] = $setSegmentStr;
         }
+        $str .= implode(',', $setSegments);
 
         $str .= ' '.$this->databaseDriver->buildWheres($this->wheres);
 
@@ -229,5 +242,6 @@ class QueryBuilder
         $this->table = null;
         $this->wheres = [];
         $this->sortingRules = [];
+        $this->limit = null;
     }
 }

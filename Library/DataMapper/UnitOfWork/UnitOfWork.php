@@ -8,6 +8,7 @@ use Exception;
 use Library\DataMapper\DataMapperException;
 use Library\DataMapper\Mapping\Column;
 use Library\DataMapper\Mapping\Metadata;
+use Symfony\Component\Translation\Tests\IdentityTranslatorTest;
 
 /**
  * Keeps track of all entities known to data mapper
@@ -110,9 +111,22 @@ final class UnitOfWork
      */
     public function addManaged($entity, array $data)
     {
+        $oid = spl_object_hash($entity);
+
+        if (isset($this->states[$oid]))
+        {
+            switch ($this->states[$oid])
+            {
+                case self::STATE_MANAGED:
+                    return;
+                case self::STATE_KNOWN:
+                    // ...
+                    break;
+            }
+        }
+
         $class = get_class($entity);
         $metadata = $this->dm->getMetadata($class);
-        $oid = spl_object_hash($entity);
         $id = $data[$metadata->primaryKey()->name()];
 
         $this->entities[$oid] = $entity;
@@ -135,6 +149,11 @@ final class UnitOfWork
     public function addNew($entity)
     {
         $oid = spl_object_hash($entity);
+
+        if (isset($this->states[$oid]) && $this->states[$oid] == self::STATE_NEW)
+        {
+            return;
+        }
 
         $this->entities[$oid] = $entity;
 
@@ -280,7 +299,7 @@ final class UnitOfWork
      */
     private function clearInsertions()
     {
-        $this->insertions = [];
+        $this->scheduledInsertions = [];
     }
 
     /**
@@ -288,7 +307,7 @@ final class UnitOfWork
      */
     private function clearRemovals()
     {
-        $this->removals = [];
+        $this->scheduledRemovals = [];
     }
 
     /**
@@ -296,7 +315,7 @@ final class UnitOfWork
      */
     private function clearUpdates()
     {
-        $this->updates = [];
+        $this->scheduledUpdates = [];
     }
 
     /**
@@ -404,7 +423,7 @@ final class UnitOfWork
             $metadata = $this->dm->getMetadata($class);
 
             $this->dm->queryBuilder()->table($metadata->table())
-                ->where($metadata->primaryKey()->name(), 'in', '('.implode(',', $this->ids).')')
+                ->where($metadata->primaryKey()->name(), 'in', '('.implode(',', $ids).')')
                 ->delete();
         }
 

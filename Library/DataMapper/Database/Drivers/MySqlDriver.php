@@ -109,6 +109,16 @@ class MySqlDriver
         return $str;
     }
 
+    public function buildLimit($number)
+    {
+        if (is_null($number))
+        {
+            return '';
+        }
+
+        return ' LIMIT '.$number;
+    }
+
     public function insert($str, $data)
     {
         $stmt = $this->dao->prepare($str);

@@ -91,15 +91,7 @@ class DataMapper
             ->where($metadata->primaryKey()->propName(), '=', $id)
             ->select();
 
-        if (is_null($data) || sizeof($data) == 0)
-        {
-            return null;
-        }
-
-        $entity = $this->buildEntity($class, $data[0]);
-        $this->unitOfWork->addManaged($entity, $data[0]);
-
-        return $entity;
+        return $this->handleSingleRawFoundData($class, $data);
     }
 
     /**
@@ -126,6 +118,7 @@ class DataMapper
 
     /**
      * Finds all the objects of the given class.
+     * Does not consider managed entities.
      *
      * @param $class
      * @return EntityCollection
@@ -136,6 +129,99 @@ class DataMapper
         $allData = $this->queryBuilder->table($metadata->table())
             ->select();
 
+        return $this->handleMultipleRawFoundData($class, $allData);
+    }
+
+    /**
+     * Finds entities which correspond to the
+     * given array of ids.
+     *
+     * @param $class
+     * @param array $ids
+     * @return EntityCollection
+     */
+    public function findIn($class, array $ids)
+    {
+        $metadata = $this->getMetadata($class);
+
+        $allData = $this->queryBuilder->table($metadata->table())
+            ->where($metadata->primaryKey()->name(), 'in', '('.implode(',', $ids).')')
+            ->select();
+
+        return $this->handleMultipleRawFoundData($class, $allData);
+    }
+
+    /**
+     * Finds entities of a certain class by the
+     * given conditions.
+     *
+     * @param $class
+     * @param array $conditions
+     * @return EntityCollection
+     * @throws DataMapperException
+     */
+    public function findBy($class, array $conditions)
+    {
+        $queryBuilder = $this->_findBy($class, $conditions);
+
+        return $this->handleMultipleRawFoundData($class, $queryBuilder->select());
+    }
+
+    /**
+     * Finds the first matching entity from the given conditions.
+     *
+     * @param $class
+     * @param array $conditions
+     * @return mixed
+     * @throws DataMapperException
+     */
+    public function findOneBy($class, array $conditions)
+    {
+        $queryBuilder = $this->_findBy($class, $conditions);
+
+        $data = $queryBuilder->limit(1)->select();
+
+        return $this->handleSingleRawFoundData($class, $data);
+    }
+
+    /**
+     * Get the prepared query builder for performing
+     * a find by function.
+     *
+     * @param $class
+     * @param array $conditions
+     * @return $this
+     * @throws DataMapperException
+     */
+    private function _findBy($class, array $conditions)
+    {
+        $metadata = $this->getMetadata($class);
+
+        $queryBuilder = $this->queryBuilder->table($metadata->table());
+        foreach ($conditions as $prop => $value)
+        {
+            $column = $metadata->getColumnByPropName($prop);
+            if (is_null($column))
+            {
+                throw new DataMapperException('DataMapper.findBy : Property '.$prop.' does not exist.');
+            }
+
+            $queryBuilder->where($column->name(), '=', $value);
+        }
+
+        return $queryBuilder;
+    }
+
+    /**
+     * Takes care of the data returned from a query from
+     * the found methods.
+     *
+     * @param $class
+     * @param array $allData
+     * @return EntityCollection
+     */
+    private function handleMultipleRawFoundData($class, array $allData)
+    {
         if (sizeof($allData) == 0)
         {
             return new EntityCollection();
@@ -150,6 +236,19 @@ class DataMapper
         }
 
         return $collection;
+    }
+
+    private function handleSingleRawFoundData($class, array $data)
+    {
+        if (sizeof($data) == 0)
+        {
+            return null;
+        }
+
+        $entity = $this->buildEntity($class, $data[0]);
+        $this->unitOfWork->addManaged($entity, $data[0]);
+
+        return $entity;
     }
 
     /**
