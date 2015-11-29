@@ -2,6 +2,7 @@
 
 namespace Library\DataMapper\Mapping;
 
+use Library\DataMapper\Mapping\Drivers\AnnotationDriver;
 use ReflectionClass;
 
 class Metadata
@@ -128,7 +129,7 @@ class Metadata
 
     public function addHasOneAssociation($columnName, $propName, $target, $nullable)
     {
-        $column = new Column($columnName, $propName, 'integer', self::DEFAULT_INTEGER_SIZE);
+        $column = new Column(lcfirst($columnName).'_id', $propName, 'integer', AnnotationDriver::DEFAULT_INTEGER_SIZE);
         $column->setForeignKey();
         $column->setNullable();
         $this->columns[$columnName] = $column;

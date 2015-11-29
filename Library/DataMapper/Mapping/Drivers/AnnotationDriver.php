@@ -63,7 +63,7 @@ class AnnotationDriver
                 $nullable = isset($parsedProperty[Metadata::ASSOC_HAS_ONE]['nullable'])
                     && $parsedProperty[Metadata::ASSOC_HAS_ONE]['nullable'];
 
-                $metadata->addHasOneAssociation($targetShortName, $property->name(), $target, $nullable);
+                $metadata->addHasOneAssociation($targetShortName, $property->getName(), $target, $nullable);
             }
             else if (isset($parsedProperty[Metadata::ASSOC_BELONGS_TO]))
             {

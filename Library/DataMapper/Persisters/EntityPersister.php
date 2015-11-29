@@ -6,7 +6,9 @@ class EntityPersister extends BasePersister
 {
     protected $inserts = [];
 
-    protected $removalIds = [];
+    protected $removals = [];
+
+    protected $updates = [];
 
     public function addInsert($oid, array $data)
     {
@@ -15,7 +17,12 @@ class EntityPersister extends BasePersister
 
     public function addRemoval($id)
     {
-        $this->removalIds[] = $id;
+        $this->removals[] = $id;
+    }
+
+    public function addUpdate($id, $updateData)
+    {
+        $this->updates[$id] = $updateData;
     }
 
     private function clearInserts()
@@ -25,7 +32,12 @@ class EntityPersister extends BasePersister
 
     private function clearRemovals()
     {
-        $this->removalIds = [];
+        $this->removals = [];
+    }
+
+    private function clearUpdates()
+    {
+        $this->updates = [];
     }
 
     public function executeInserts()
@@ -62,7 +74,7 @@ class EntityPersister extends BasePersister
 
     public function executeRemovals()
     {
-        if (sizeof($this->removalIds) == 1)
+        if (sizeof($this->removals) == 1)
         {
             $this->executeSingleRemoval();
             return;
@@ -74,7 +86,7 @@ class EntityPersister extends BasePersister
     private function executeSingleRemoval()
     {
         $this->queryBuilder->table($this->metadata->table())
-            ->where($this->metadata->primaryKey()->name(), '=', reset($this->removalIds))
+            ->where($this->metadata->primaryKey()->name(), '=', reset($this->removals))
             ->delete();
 
         $this->clearRemovals();
@@ -83,9 +95,44 @@ class EntityPersister extends BasePersister
     private function executeBatchRemoval()
     {
         $this->queryBuilder->table($this->metadata->table())
-            ->where($this->metadata->primaryKey()->name(), 'in', '('.implode(',', $this->removalIds).')')
+            ->where($this->metadata->primaryKey()->name(), 'in', '('.implode(',', $this->removals).')')
             ->delete();
 
         $this->clearRemovals();
+    }
+
+    public function executeUpdates()
+    {
+        if (sizeof($this->updates) == 1)
+        {
+            $this->executeSingleUpdate();
+            return;
+        }
+
+        $this->executeBatchUpdate();
+    }
+
+    private function executeSingleUpdate()
+    {
+        $this->queryBuilder->table($this->metadata->table())
+            ->where($this->metadata->primaryKey()->name(), '=', key($this->updates))
+            ->update(reset($this->updates), $this->metadata->primaryKey()->name());
+    }
+
+    private function executeBatchUpdate()
+    {
+        $ids = $updateSet = [];
+        foreach ($this->updates as $id => $updateData)
+        {
+            $ids[] = $id;
+            foreach ($updateData as $field => $value)
+            {
+                $updateSet[$field][$id] = $value;
+            }
+        }
+
+        $this->queryBuilder->table($this->metadata->table())
+            ->where($this->metadata->primaryKey()->name(), 'in', '('.implode(',', $ids).')')
+            ->updateMany($updateSet, $this->metadata->primaryKey()->name());
     }
 }

@@ -88,7 +88,7 @@ final class UnitOfWork
     private $scheduledInsertions = [];
 
     /**
-     * Links all the changes found with each class as key. var
+     * Sorted by class.
      *
      * @var array
      */
@@ -107,6 +107,13 @@ final class UnitOfWork
      * @var array
      */
     private $scheduledRemovals = [];
+
+    /**
+     * Sorted by class.
+     *
+     * @var array
+     */
+    private $changeSets = [];
 
     /**
      * Entity persisters with classes as keys.
@@ -301,7 +308,7 @@ final class UnitOfWork
     }
 
     /**
-     * Schedules the entity for insertion
+     * Schedules the entity for insertion.
      *
      * @param $class
      * @param $oid
@@ -309,6 +316,17 @@ final class UnitOfWork
     public function scheduleInsertion($class, $oid)
     {
         $this->scheduledInsertions[$class][] = $oid;
+    }
+
+    /**
+     * Schedules the entity for update.
+     *
+     * @param $class
+     * @param $oid
+     */
+    public function scheduleUpdate($class, $oid)
+    {
+        $this->scheduledUpdates[$class][] = $oid;
     }
 
     /**
@@ -331,6 +349,17 @@ final class UnitOfWork
     private function scheduleExtraUpdate($class, $oid)
     {
         $this->scheduledExtraUpdates[$class][] = $oid;
+    }
+
+    /**
+     * Adds a change set for updates.
+     *
+     * @param $oid
+     * @param $changeSet
+     */
+    private function addChangeSet($oid, $changeSet)
+    {
+        $this->changeSets[$oid] = $changeSet;
     }
 
     /**
@@ -397,6 +426,8 @@ final class UnitOfWork
      */
     public function commit()
     {
+        $this->detectEntityChanges();
+
         $this->dm->queryBuilder()->beginTransaction();
 
         //$commitOrder = $this->getCommitOrder();
@@ -409,12 +440,14 @@ final class UnitOfWork
             {
                 $this->executeInsertions($class);
             }
-            $class = 'x';
 //            }
 
 //            foreach ($commitOrder as $class)
 //            {
+            foreach ($this->scheduledUpdates as $class => $x)
+            {
                 $this->executeUpdates($class);
+            }
 //            }
 
 //            foreach ($commitOrder as $class)
@@ -427,7 +460,10 @@ final class UnitOfWork
 
 //            foreach ($commitOrder as $class)
 //            {
+            foreach ($this->scheduledExtraUpdates as $class => $x)
+            {
                 $this->executeExtraUpdates($class);
+            }
 //            }
 
             $this->dm->queryBuilder()->commit();
@@ -478,7 +514,7 @@ final class UnitOfWork
             $this->addManaged($this->entities[$oid], $this->originalData[$oid]);
         }
 
-        $this->clearInsertions();
+        unset($this->scheduledInsertions[$class]);
     }
 
     private function prepareInsertionData(Metadata $metadata, $oid)
@@ -492,8 +528,6 @@ final class UnitOfWork
                 continue;
             }
 
-            $value = $metadata->reflProp($column->propName())->getValue($this->entities[$oid]);
-
             if ($column->isForeignKey())
             {
                 $value = $this->processAssociationForInsert($this->entities[$oid],
@@ -501,12 +535,14 @@ final class UnitOfWork
 
                 if (!is_null($value))
                 {
-                    $data[$column->name()] = null;
+                    $data[$column->name()] = $value;
                 }
 
                 $this->originalData[$oid][$column->name()] = $value;
                 continue;
             }
+
+            $value = $metadata->reflProp($column->propName())->getValue($this->entities[$oid]);
 
             if ($column->isTimestamp() && is_null($value))
             {
@@ -591,68 +627,67 @@ final class UnitOfWork
 
         $persister->executeRemovals();
 
-        $this->clearRemovals();
+        unset($this->scheduledRemovals[$class]);
     }
 
     /**
      * Executes all scheduled updates
+     *
+     * @param $class
      */
     private function executeUpdates($class)
     {
-        $this->detectEntityChanges();
+        $persister = $this->getEntityPersister($class);
 
-        foreach ($this->scheduledUpdates as $class => $allChanges)
+        foreach ($this->scheduledUpdates[$class] as $oid)
         {
-            $updateSet = [];
-            $ids = [];
-            foreach ($allChanges as $id => $changeSet)
-            {
-                foreach ($changeSet as $field => $value)
-                {
-                    $updateSet[$field][$id] = $value;
-                    $ids[] = $id;
-                }
-            }
-
-            $metadata = $this->dm->getMetadata($class);
-            $this->dm->queryBuilder()->table($metadata->table())
-                ->where($metadata->primaryKey()->name(), 'in', '('.implode(',', $ids).')')
-                ->updateMany($updateSet, $metadata->primaryKey()->name());
+            $persister->addUpdate($this->ids[$oid], $this->changeSets[$oid]);
         }
 
-        $this->clearUpdates();
+        $persister->executeUpdates();
+
+        unset($this->scheduledUpdates[$class]);
     }
 
     /**
-     * Loops through all managed entities to detect changes
+     * Loops through all managed entities or a single one to detect changes
      * from the original values and schedules them from update.
+     *
+     * @param null $oid
      */
-    private function detectEntityChanges()
+    private function detectEntityChanges($oid = null)
     {
-        foreach ($this->idMap as $class => $idData)
+        if (!is_null($oid))
         {
-            $metadata = $this->dm->getMetadata($class);
-            $allChanges = [];
-            foreach ($idData as $id => $oid)
-            {
-                $entity = $this->entities[$oid];
+            $this->detectSingleEntityChanges($oid);
+            return;
+        }
 
-                $changeSet = $this->buildChangeSet($entity, $oid, $metadata);
-                if (sizeof($changeSet) == 0)
-                {
-                    continue;
-                }
-
-                $allChanges[$id] = $changeSet;
-            }
-
-            if (sizeof($allChanges) == 0)
+        foreach ($this->states as $oid => $state)
+        {
+            if ($state != self::STATE_MANAGED)
             {
                 continue;
             }
 
-            $this->scheduledUpdates[$class] = $allChanges;
+            $this->detectSingleEntityChanges($oid);
         }
+    }
+
+    private function detectSingleEntityChanges($oid)
+    {
+        $entity = $this->entities[$oid];
+        $class = get_class($entity);
+
+        $changeSet = $this->buildChangeSet($entity, $oid);
+
+        if (sizeof($changeSet) == 0)
+        {
+            return;
+        }
+
+        $this->scheduleUpdate($class, $oid);
+        $this->addChangeSet($oid, $changeSet);
     }
 
     /**
@@ -660,11 +695,11 @@ final class UnitOfWork
      *
      * @param $entity
      * @param $oid
-     * @param Metadata $metadata
      * @return array $changeSet
      */
-    private function buildChangeSet($entity, $oid, Metadata $metadata)
+    private function buildChangeSet($entity, $oid)
     {
+        $metadata = $this->dm->getMetadata(get_class($entity));
         $changeSet = [];
         $originalData = $this->originalData[$oid];
 
@@ -672,6 +707,50 @@ final class UnitOfWork
         {
             if ($column->isPrimaryKey())
             {
+                continue;
+            }
+
+            if ($column->isForeignKey())
+            {
+                $association = $metadata->getAssociation($column->propName());
+                $actualValue = $metadata->reflProp($column->propName())->getValue($entity);
+
+                if (is_null($actualValue))
+                {
+                    // ...
+                    continue;
+                }
+
+                $actualValueOid = spl_object_hash($actualValue);
+
+                if (is_null($originalData[$column->name()]))
+                {
+                    if (!isset($this->states[$actualValueOid]))
+                    {
+                        continue;
+                    }
+
+                    switch ($this->states[$actualValueOid])
+                    {
+                        case self::STATE_NEW:
+                            // not applicable
+                            break;
+                        case self::STATE_KNOWN:
+                        case self::STATE_MANAGED:
+                            $changeSet[$column->name()] = $this->ids[$actualValueOid];
+                            break;
+                    }
+
+                    continue;
+                }
+
+                if (spl_object_hash($actualValue) === $this->idMap[$association['target']][$originalData[$column->name()]])
+                {
+                    continue;
+                }
+
+                // ...
+
                 continue;
             }
 
@@ -688,8 +767,20 @@ final class UnitOfWork
         return $changeSet;
     }
 
+    /**
+     * Executes all extra updates for the class.
+     *
+     * @param $class
+     */
     private function executeExtraUpdates($class)
     {
+        foreach ($this->scheduledExtraUpdates[$class] as $oid)
+        {
+            $this->detectSingleEntityChanges($oid);
+        }
 
+        unset($this->scheduledExtraUpdates[$class]);
+
+        $this->executeUpdates($class);
     }
 }
