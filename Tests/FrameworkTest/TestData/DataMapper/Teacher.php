@@ -2,16 +2,14 @@
 
 namespace Tests\FrameworkTest\TestData\DataMapper;
 
+use Library\DataMapper\DataMapperPrimaryKey;
 use Library\DataMapper\DataMapperTimestamps;
 use Library\DataMapper\Collection\EntityCollection;
 
 /** @Entity */
 class Teacher
 {
-    use DataMapperTimestamps;
-
-    /** @Id */
-    protected $id;
+    use DataMapperTimestamps, DataMapperPrimaryKey;
 
     /** @Column(type="string", size="50") */
     protected $name;
@@ -26,11 +24,6 @@ class Teacher
     {
         $this->name = $name;
         $this->students = new EntityCollection();
-    }
-
-    public function getId()
-    {
-        return $this->id;
     }
 
     public function setName($name)

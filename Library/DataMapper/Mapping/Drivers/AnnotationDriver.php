@@ -30,7 +30,7 @@ class AnnotationDriver
         $table = isset($parsed['Entity']['name'])
             ? $parsed['Entity']['name']
             : $r->getShortName();
-        $metadata = new Metadata($table, $r);
+        $metadata = new Metadata($class, $table, $r);
 
         $properties = $r->getProperties();
         foreach ($properties as $property)
@@ -60,27 +60,10 @@ class AnnotationDriver
             {
                 $target = $parsedProperty[Metadata::ASSOC_HAS_ONE]['target'];
                 $targetShortName = substr($target, strrpos($target, '\\') + 1);
+                $nullable = isset($parsedProperty[Metadata::ASSOC_HAS_ONE]['nullable'])
+                    && $parsedProperty[Metadata::ASSOC_HAS_ONE]['nullable'];
 
-                $metadata->addAssociation([
-                    'type' => Metadata::ASSOC_HAS_ONE,
-                    'target' => $target,
-                    'propName' => $property->getName()
-                ]);
-
-                $column = new Column(
-                    lcfirst($targetShortName).'_id',
-                    $property->getName(),
-                    'integer',
-                    self::DEFAULT_INTEGER_SIZE
-                );
-                $column->setForeignKey();
-                if (isset($parsedProperty[Metadata::ASSOC_HAS_ONE]['nullable'])
-                    && $parsedProperty[Metadata::ASSOC_HAS_ONE]['nullable'])
-                {
-                    $column->setNullable();
-                }
-
-                $metadata->addColumn($column);
+                $metadata->addHasOneAssociation($targetShortName, $property->name(), $target, $nullable);
             }
             else if (isset($parsedProperty[Metadata::ASSOC_BELONGS_TO]))
             {

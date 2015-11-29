@@ -259,7 +259,8 @@ class DataMapper
      */
     public function persist($object)
     {
-        $id = $this->getId($object);
+        $metadata = $this->getMetadata(get_class($object));
+        $id = $metadata->reflProp($metadata->primaryKey()->name())->getValue($object);
 
         if (is_null($id))
         {
@@ -325,22 +326,6 @@ class DataMapper
         return $this->loadedMetadata[$class] = $this->mappingDriver->getMetadata($class);
     }
 
-    /**
-     * Gets the object id with reflection.
-     *
-     * @param $object
-     * @return mixed
-     */
-    protected function getId($object)
-    {
-        $metadata = $this->getMetadata(get_class($object));
-        $r = $metadata->getReflectionClass();
-        $property = $r->getProperty($metadata->primaryKey()->name());
-        $property->setAccessible(true);
-
-        return $property->getValue($object);
-    }
-
     protected function buildEntity($class, $data)
     {
         $metadata = $this->getMetadata($class);
@@ -352,7 +337,7 @@ class DataMapper
         {
             $property = $r->getProperty($column->propName());
             $property->setAccessible(true);
-            $property->setValue($entity, $data[$column->name()]);
+            $metadata->reflProp($column->propName())->setValue($entity, $data[$column->name()]);
         }
 
         return $entity;

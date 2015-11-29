@@ -3,7 +3,10 @@
 namespace Tests\FrameworkTest\DataMapper;
 
 use Library\DataMapper\Collection\EntityCollection;
+use Tests\FrameworkTest\TestData\DataMapper\Address;
 use Tests\FrameworkTest\TestData\DataMapper\SimpleEntity;
+use Tests\FrameworkTest\TestData\DataMapper\Student;
+use Tests\FrameworkTest\TestData\DataMapper\Teacher;
 
 class DataMapperTest extends DataMapperBaseTest
 {
@@ -332,5 +335,107 @@ class DataMapperTest extends DataMapperBaseTest
         $this->assertEquals($foundS2->getOne(), $s2->getOne());
         $this->assertEquals($foundS3->getOne(), $s3->getOne());
         $this->assertEquals($foundS3->getTwo(), $s3->getTwo());
+    }
+
+    public function testHasOneWhenInsertingNullInNullableAssociation()
+    {
+        // Arrange
+        $this->setUpAssociations();
+        $teacher = new Teacher('Tom');
+
+        // Act
+        $this->dm->persist($teacher);
+        $this->dm->flush();
+        $this->dm->detachAll();
+        $teacherData = $this->dm->queryBuilder()->table('Teacher')->where('id', '=', $teacher->getId())->select()[0];
+
+        // Assert
+        $this->assertNull($teacherData['address_id']);
+    }
+
+    public function testHasOneWhenInsertingWithUnknownChildEntity()
+    {
+        // Arrange
+        $this->setUpAssociations();
+        $teacher = new Teacher('Tom');
+        $address = new Address('street1');
+
+        // Act
+        $teacher->setAddress($address);
+        $this->dm->persist($teacher);
+        $this->dm->flush();
+        $this->dm->detachAll();
+        $teacherData = $this->dm->queryBuilder()->table('Teacher')->where('id', '=', $teacher->getId())->select()[0];
+        $addressData = $this->dm->queryBuilder()->table('Address')->where('id', '=', $address->getId())->select();
+
+        // Assert
+        $this->assertEquals(0, sizeof($addressData));
+        $this->assertNull($teacherData['address_id']);
+    }
+
+    public function testHasOneWhenInsertingWithNewChildEntity()
+    {
+        // Arrange
+        $this->setUpAssociations();
+        $teacher = new Teacher('Tom');
+        $address = new Address('street1');
+
+        // Act
+        $this->dm->persist($address);
+        $teacher->setAddress($address);
+        $this->dm->persist($teacher);
+        $this->dm->flush();
+        $this->dm->detachAll();
+        $teacherData = $this->dm->queryBuilder()->table('Teacher')->where('id', '=', $teacher->getId())->select()[0];
+        $addressData = $this->dm->queryBuilder()->table('Address')->where('id', '=', $address->getId())->select()[0];
+
+        // Assert
+        $this->assertEquals($address->getId(), $addressData['id']);
+        $this->assertEquals($address->getId(), $teacherData['address_id']);
+    }
+
+    public function testHasOneWhenInsertingWithManagedChildEntity()
+    {
+        // Arrange
+        $this->setUpAssociations();
+        $teacher = new Teacher('Tom');
+        $address = new Address('street1');
+
+        // Act
+        $this->dm->persist($address);
+        $this->dm->flush();
+        $teacher->setAddress($address);
+        $this->dm->persist($teacher);
+        $this->dm->flush();
+        $this->dm->detachAll();
+        $teacherData = $this->dm->queryBuilder()->table('Teacher')->where('id', '=', $teacher->getId())->select()[0];
+        $addressData = $this->dm->queryBuilder()->table('Address')->where('id', '=', $address->getId())->select()[0];
+
+        // Assert
+        $this->assertEquals($address->getId(), $addressData['id']);
+        $this->assertEquals($address->getId(), $teacherData['address_id']);
+    }
+
+    public function testHasOneWhenInsertingWithKnownChildEntity()
+    {
+        // ...
+
+        $this->assertTrue(false);
+    }
+
+    // *********************************************************************
+    // *********************************************************************
+    // *********************************************************************
+
+    public function testHasManyWhenInsertingWithEmptyCollection()
+    {
+        $teacher = new Teacher('Tom');
+        $this->persist($teacher);
+        $student = new Student('Jenn', $teacher);
+        $this->dm->persist($student);
+        $this->dm->flush();
+
+        $teacher->addStudent($student);
+        $this->dm->persist($teacher);
     }
 }

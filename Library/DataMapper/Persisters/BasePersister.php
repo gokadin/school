@@ -33,33 +33,30 @@ abstract class BasePersister
     protected $class;
 
     /**
+     * The class metadata.
+     *
+     * @var Metadata
+     */
+    protected $metadata;
+
+    /**
+     * The data mapper instance of query builder.
+     *
+     * @var QueryBuilder
+     */
+    protected $queryBuilder;
+
+    /**
      * @param DataMapper $dm
      * @param UnitOfWork $unitOfWork
+     * @param $class
      */
-    public function __construct(DataMapper $dm, UnitOfWork $unitOfWork)
+    public function __construct(DataMapper $dm, UnitOfWork $unitOfWork, $class)
     {
         $this->dm = $dm;
         $this->unitOfWork = $unitOfWork;
-    }
-
-    /**
-     * Sets the class the persister will be working on.
-     *
-     * @param $class
-     * @return $this
-     */
-    public function of($class)
-    {
         $this->class = $class;
-
-        return $this;
-    }
-
-    /**
-     * Performs the final operations common to all execute functions.
-     */
-    public function finish()
-    {
-        $this->class = null;
+        $this->queryBuilder = $dm->queryBuilder();
+        $this->metadata = $dm->getMetadata($class);
     }
 }

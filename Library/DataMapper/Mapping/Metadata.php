@@ -12,16 +12,23 @@ class Metadata
 
     protected $columns = [];
     protected $associations = [];
+    protected $class;
     protected $table;
     protected $reflectionClass;
     protected $primaryKey;
     protected $createdAt;
     protected $updatedAt;
 
-    public function __construct($table, ReflectionClass $r)
+    public function __construct($class, $table, ReflectionClass $r)
     {
+        $this->class = $class;
         $this->table = $table;
         $this->reflectionClass = $r;
+    }
+
+    public function className()
+    {
+        return $this->class;
     }
 
     public function table()
@@ -34,14 +41,31 @@ class Metadata
         return $this->reflectionClass;
     }
 
+    public function reflProp($propName)
+    {
+        $prop = $this->reflectionClass->getProperty($propName);
+        $prop->setAccessible(true);
+        return $prop;
+    }
+
     public function primaryKey()
     {
         return $this->primaryKey;
     }
 
+    public function hasCreatedAt()
+    {
+        return !is_null($this->createdAt);
+    }
+
     public function createdAt()
     {
         return $this->createdAt;
+    }
+
+    public function hasUpdatedAt()
+    {
+        return !is_null($this->updatedAt);
     }
 
     public function updatedAt()
@@ -97,9 +121,24 @@ class Metadata
         return $this->associations;
     }
 
-    public function getAssociation($fieldName)
+    public function getAssociation($propName)
     {
-        return $this->associations[$fieldName];
+        return $this->associations[$propName];
+    }
+
+    public function addHasOneAssociation($columnName, $propName, $target, $nullable)
+    {
+        $column = new Column($columnName, $propName, 'integer', self::DEFAULT_INTEGER_SIZE);
+        $column->setForeignKey();
+        $column->setNullable();
+        $this->columns[$columnName] = $column;
+
+        $this->associations[$propName] = [
+            'column' => $column,
+            'type' => self::ASSOC_HAS_ONE,
+            'target' => $target,
+            'isNullable' => $nullable
+        ];
     }
 
     public function addAssociation($data)
@@ -107,15 +146,14 @@ class Metadata
         switch ($data['type'])
         {
             case self::ASSOC_HAS_MANY:
-                $this->associations[$data['fieldName']] = [
+                $this->associations[$data['propName']] = [
                     'type' => $data['type'],
                     'target' => $data['target'],
                     'mappedBy' => $data['mappedBy']
                 ];
                 break;
-            case self::ASSOC_HAS_ONE:
             case self::ASSOC_BELONGS_TO:
-                $this->associations[$data['fieldName']] = [
+                $this->associations[$data['propName']] = [
                     'type' => $data['type'],
                     'target' => $data['target'],
                 ];

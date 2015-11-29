@@ -6,9 +6,9 @@ use Carbon\Carbon;
 use Library\DataMapper\DataMapper;
 use Exception;
 use Library\DataMapper\DataMapperException;
-use Library\DataMapper\Mapping\Column;
 use Library\DataMapper\Mapping\Metadata;
 use Library\DataMapper\Persisters\BatchEntityPersister;
+use Library\DataMapper\Persisters\EntityPersister;
 use Library\DataMapper\Persisters\SingleEntityPersister;
 
 /**
@@ -76,6 +76,11 @@ final class UnitOfWork
     private $states = [];
 
     /**
+     * @var array
+     */
+    private $visitedEntities = [];
+
+    /**
      * Sorted by class, then by hash.
      *
      * @var array
@@ -90,6 +95,13 @@ final class UnitOfWork
     private $scheduledUpdates = [];
 
     /**
+     * Sorted by class.
+     *
+     * @var array
+     */
+    private $scheduledExtraUpdates = [];
+
+    /**
      * Sorted by class, then by hash.
      *
      * @var array
@@ -97,14 +109,11 @@ final class UnitOfWork
     private $scheduledRemovals = [];
 
     /**
-     * @var SingleEntityPersister
+     * Entity persisters with classes as keys.
+     *
+     * @var array
      */
-    private $singleEntityPersister;
-
-    /**
-     * @var BatchEntityPersister
-     */
-    private $batchEntityPersister;
+    private $entityPersisters = [];
 
     /**
      * @param DataMapper $dm
@@ -244,11 +253,14 @@ final class UnitOfWork
     private function detachManaged($oid)
     {
         $entity = $this->entities[$oid];
+        $class = get_class($entity);
+        $metadata = $this->dm->getMetadata($class);
+        $id = $metadata->reflProp($metadata->primaryKey()->name())->getValue($entity);
 
         unset($this->entities[$oid]);
         unset($this->ids[$oid]);
         unset($this->originalData[$oid]);
-        unset($this->idMap[get_class($entity)][$this->getId($entity)]);
+        unset($this->idMap[$entity][$id]);
         unset($this->states[$oid]);
     }
 
@@ -311,6 +323,17 @@ final class UnitOfWork
     }
 
     /**
+     * Schedules the entity for extra update.
+     *
+     * @param $class
+     * @param $oid
+     */
+    private function scheduleExtraUpdate($class, $oid)
+    {
+        $this->scheduledExtraUpdates[$class][] = $oid;
+    }
+
+    /**
      * Clears all scheduled insertions.
      */
     private function clearInsertions()
@@ -335,35 +358,38 @@ final class UnitOfWork
     }
 
     /**
-     * Prepares the single entity persister for work.
-     *
-     * @param $class
-     * @return SingleEntityPersister
+     * Clears all extra updates.
      */
-    private function getSinglePersister($class)
+    private function clearExtraUpdates()
     {
-        if (is_null($this->singleEntityPersister))
-        {
-            $this->singleEntityPersister = new SingleEntityPersister($this->dm, $this);
-        }
-
-        return $this->singleEntityPersister->of($class);
+        $this->scheduledExtraUpdates = [];
     }
 
     /**
-     * Prepares the batch entity persister for work.
+     * Gets the class entity persister.
      *
      * @param $class
-     * @return BatchEntityPersister
+     * @return EntityPersister
      */
-    private function getBatchPersister($class)
+    private function getEntityPersister($class)
     {
-        if (is_null($this->batchEntityPersister))
+        if (!isset($this->entityPersisters[$class]))
         {
-            $this->batchEntityPersister = new BatchEntityPersister($this->dm, $this);
+            $this->entityPersisters[$class] = new EntityPersister($this->dm, $this, $class);
         }
 
-        return $this->batchEntityPersister->of($class);
+        return $this->entityPersisters[$class];
+    }
+
+    /**
+     * Figures out the dependecies for all classes and
+     * builds an order in which they must be commited.
+     *
+     * @return array
+     */
+    private function getCommitOrder()
+    {
+        return [];
     }
 
     /**
@@ -373,11 +399,29 @@ final class UnitOfWork
     {
         $this->dm->queryBuilder()->beginTransaction();
 
+        $commitOrder = $this->getCommitOrder();
+
         try
         {
-            $this->executeRemovals();
-            $this->executeUpdates();
-            $this->executeInsertions();
+            foreach ($commitOrder as $class)
+            {
+                $this->executeInsertions($class);
+            }
+
+            foreach ($commitOrder as $class)
+            {
+                $this->executeUpdates($class);
+            }
+
+            foreach ($commitOrder as $class)
+            {
+                $this->executeRemovals($class);
+            }
+
+            foreach ($commitOrder as $class)
+            {
+                $this->executeExtraUpdates($class);
+            }
 
             $this->dm->queryBuilder()->commit();
         }
@@ -391,71 +435,137 @@ final class UnitOfWork
 
     /**
      * Executes all insertions
+     *
+     * @param $class
      */
-    private function executeInsertions()
+    private function executeInsertions($class)
     {
-        foreach ($this->scheduledInsertions as $class => $oids)
+        $persister = $this->getEntityPersister($class);
+        $metadata = $this->dm->getMetadata($class);
+        $oids = $this->scheduledInsertions[$class];
+
+        foreach ($oids as $oid)
         {
-            $metadata = $this->dm->getMetadata($class);
-            $r = $metadata->getReflectionClass();
-            $queryBuilder = $this->dm->queryBuilder()->table($metadata->table());
+            $data = $this->prepareInsertionData($metadata, $oid);
 
-            $dataSet = [];
-            $originalDataSet = [];
-            foreach ($oids as $oid)
+            $persister->addInsert($oid, $data);
+        }
+
+        $ids = $persister->executeInserts();
+
+        foreach ($oids as $oid)
+        {
+            $metadata->reflProp($metadata->primaryKey()->name())->setValue($this->entities[$oid], $ids[$oid]);
+            if ($metadata->hasCreatedAt())
             {
-                $entity = $this->entities[$oid];
-                $data = [];
-                $originalData = [];
-                foreach ($metadata->columns() as $column)
-                {
-                    if ($column->isPrimaryKey())
-                    {
-                        continue;
-                    }
-
-                    $property = $r->getProperty($column->propName());
-                    $property->setAccessible(true);
-                    $value = $property->getValue($entity);
-
-                    if ($column->name() == Column::CREATED_AT && is_null($value) ||
-                        $column->name() == Column::UPDATED_AT && is_null($value))
-                    {
-                        $value = Carbon::now();
-                    }
-
-                    if (!is_null($value))
-                    {
-                        $data[$column->name()] = $value;
-                    }
-
-                    $originalData[$column->name()] = $value;
-                }
-
-                $dataSet[] = $data;
-                $originalDataSet[] = $originalData;
+                $metadata->reflProp($metadata->createdAt()->propName())
+                    ->setValue($this->entities[$oid], $this->originalData[$oid][$metadata->createdAt()->name()]);
+            }
+            if ($metadata->hasUpdatedAt())
+            {
+                $metadata->reflProp($metadata->updatedAt()->propName())
+                    ->setValue($this->entities[$oid], $this->originalData[$oid][$metadata->updatedAt()->name()]);
             }
 
-            $ids = $queryBuilder->insertMany($dataSet);
-
-            for ($i = 0; $i < sizeof($oids); $i++)
-            {
-                $property = $r->getProperty($metadata->primaryKey()->name());
-                $property->setAccessible(true);
-                $property->setValue($this->entities[$oids[$i]], $ids[$i]);
-                $createdAt = $r->getProperty($metadata->createdAt()->propName());
-                $createdAt->setAccessible(true);
-                $createdAt->setValue($this->entities[$oids[$i]], $dataSet[$i][$metadata->createdAt()->name()]);
-                $updatedAt = $r->getProperty($metadata->updatedAt()->propName());
-                $updatedAt->setAccessible(true);
-                $updatedAt->setValue($this->entities[$oids[$i]], $dataSet[$i][$metadata->updatedAt()->name()]);
-
-                $originalDataSet[$i][$metadata->primaryKey()->name()] = $ids[$i];
-                $this->addManaged($this->entities[$oids[$i]], $originalDataSet[$i]);
-            }
+            $this->originalData[$oid][$metadata->primaryKey()->name()] = $ids[$oid];
+            $this->addManaged($this->entities[$oid], $this->originalData[$oid]);
         }
 
         $this->clearInsertions();
+    }
+
+    private function prepareInsertionData(Metadata $metadata, $oid)
+    {
+        $data = [];
+
+        foreach ($metadata->columns() as $column)
+        {
+            if ($column->isPrimaryKey())
+            {
+                continue;
+            }
+
+            $value = $metadata->reflProp($column->propName())->getValue($this->entities[$oid]);
+
+            if ($column->isForeignKey())
+            {
+                $value = $this->processAssociationForInsert($this->entities[$oid],
+                    $metadata->getAssociation($column->propName()));
+
+                if (!is_null($value))
+                {
+                    $data[$column->name()] = null;
+                }
+
+                $this->originalData[$oid][$column->name()] = $value;
+                continue;
+            }
+
+            if ($column->isTimestamp() && is_null($value))
+            {
+                $value = Carbon::now();
+            }
+
+            if (!is_null($value))
+            {
+                $data[$column->name()] = $value;
+            }
+
+            $this->originalData[$oid][$column->name()] = $value;
+        }
+
+        return $data;
+    }
+
+    /**
+     * @param $entity
+     * @param $association
+     * @return null|object
+     */
+    private function processAssociationForInsert($entity, $association)
+    {
+        switch ($association['type'])
+        {
+            case Metadata::ASSOC_HAS_ONE:
+                return $this->processHasOneForInsert($entity, $association);
+        }
+    }
+
+    private function processHasOneForInsert($entity, $association)
+    {
+        $metadata = $this->dm->getMetadata(get_class($entity));
+        $column = $association['column'];
+
+        $assocValue = $metadata->reflProp($column->propName())->getValue($entity);
+
+        if (is_null($assocValue))
+        {
+            if ($association['isNullable'])
+            {
+                return null;
+            }
+
+            throw new DataMapperException('UnitOfWork.processHasOneForInsert : Association on '
+                .$column->propName().' cannot be null.');
+        }
+
+        $assocOid = spl_object_hash($assocValue);
+
+        if (!isset($this->states[$assocOid]))
+        {
+            throw new DataMapperException('UnitOfWork.processHasOneForInsert : Associated entity for '
+                .$column->propName().' was not persisted.');
+        }
+
+        // association was not yet persisted
+        if ($this->states[$assocOid] == self::STATE_NEW)
+        {
+            $this->scheduleExtraUpdate($metadata->className(), spl_object_hash($entity));
+
+            return null;
+        }
+
+        return $this->ids[$assocOid];
     }
 
     /**
@@ -556,7 +666,6 @@ final class UnitOfWork
     {
         $changeSet = [];
         $originalData = $this->originalData[$oid];
-        $r = $metadata->getReflectionClass();
 
         foreach ($metadata->columns() as $column)
         {
@@ -565,9 +674,7 @@ final class UnitOfWork
                 continue;
             }
 
-            $prop = $r->getProperty($column->propName());
-            $prop->setAccessible(true);
-            $actualValue = $prop->getValue($entity);
+            $actualValue = $metadata->reflProp($column->propName())->getValue($entity);
 
             if ($originalData[$column->name()] == $actualValue)
             {
@@ -578,21 +685,5 @@ final class UnitOfWork
         }
 
         return $changeSet;
-    }
-
-    /**
-     * Gets the object id with reflection.
-     *
-     * @param $object
-     * @return mixed
-     */
-    protected function getId($object)
-    {
-        $metadata = $this->dm->getMetadata(get_class($object));
-        $r = $metadata->getReflectionClass();
-        $property = $r->getProperty($metadata->primaryKey()->name());
-        $property->setAccessible(true);
-
-        return $property->getValue($object);
     }
 }
