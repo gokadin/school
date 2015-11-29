@@ -37,9 +37,11 @@ class DataMapperTest extends DataMapperBaseTest
         $this->dm->flush();
 
         // Assert
+        $this->assertNotNull($entities[0]->getId());
+        $startId = $entities[0]->getId();
         for ($i = 0; $i < 10; $i++)
         {
-            $this->assertNotNull($entities[$i]->getId());
+            $this->assertEquals($startId + $i, $entities[$i]->getId());
         }
     }
 

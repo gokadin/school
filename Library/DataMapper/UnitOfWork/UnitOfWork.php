@@ -8,7 +8,8 @@ use Exception;
 use Library\DataMapper\DataMapperException;
 use Library\DataMapper\Mapping\Column;
 use Library\DataMapper\Mapping\Metadata;
-use Symfony\Component\Translation\Tests\IdentityTranslatorTest;
+use Library\DataMapper\Persisters\BatchEntityPersister;
+use Library\DataMapper\Persisters\SingleEntityPersister;
 
 /**
  * Keeps track of all entities known to data mapper
@@ -94,6 +95,16 @@ final class UnitOfWork
      * @var array
      */
     private $scheduledRemovals = [];
+
+    /**
+     * @var SingleEntityPersister
+     */
+    private $singleEntityPersister;
+
+    /**
+     * @var BatchEntityPersister
+     */
+    private $batchEntityPersister;
 
     /**
      * @param DataMapper $dm
@@ -197,6 +208,11 @@ final class UnitOfWork
         return null;
     }
 
+    /**
+     * Detach an entity.
+     *
+     * @param $entity
+     */
     public function detach($entity)
     {
         $oid = spl_object_hash($entity);
@@ -319,6 +335,38 @@ final class UnitOfWork
     }
 
     /**
+     * Prepares the single entity persister for work.
+     *
+     * @param $class
+     * @return SingleEntityPersister
+     */
+    private function getSinglePersister($class)
+    {
+        if (is_null($this->singleEntityPersister))
+        {
+            $this->singleEntityPersister = new SingleEntityPersister($this->dm, $this);
+        }
+
+        return $this->singleEntityPersister->of($class);
+    }
+
+    /**
+     * Prepares the batch entity persister for work.
+     *
+     * @param $class
+     * @return BatchEntityPersister
+     */
+    private function getBatchPersister($class)
+    {
+        if (is_null($this->batchEntityPersister))
+        {
+            $this->batchEntityPersister = new BatchEntityPersister($this->dm, $this);
+        }
+
+        return $this->batchEntityPersister->of($class);
+    }
+
+    /**
      * Executes all scheduled work in the unit of work.
      */
     public function commit()
@@ -336,7 +384,8 @@ final class UnitOfWork
         catch (Exception $e)
         {
             $this->dm->queryBuilder()->rollBack();
-            // LOG
+
+            throw new DataMapperException('UnitOfWork.commit : '.$e->getMessage());
         }
     }
 
@@ -409,10 +458,18 @@ final class UnitOfWork
         $this->clearInsertions();
     }
 
+    /**
+     * Executes all removals.
+     */
     private function executeRemovals()
     {
         foreach ($this->scheduledRemovals as $class => $oids)
         {
+            if (sizeof($oids) == 1)
+            {
+                $this->getSinglePersister($class)->executeRemoval($this->ids[$oids[0]]);
+            }
+
             $ids = [];
             foreach ($oids as $oid)
             {
@@ -420,11 +477,7 @@ final class UnitOfWork
                 $this->detachManaged($oid);
             }
 
-            $metadata = $this->dm->getMetadata($class);
-
-            $this->dm->queryBuilder()->table($metadata->table())
-                ->where($metadata->primaryKey()->name(), 'in', '('.implode(',', $ids).')')
-                ->delete();
+            $this->getBatchPersister($class)->executeRemovals($ids);
         }
 
         $this->clearRemovals();
