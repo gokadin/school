@@ -181,11 +181,6 @@ class QueryBuilder
                 $str .= ', ';
             }
 
-            if (is_null($value))
-            {
-                $value = '';
-            }
-
             $str .= $key.' = :'.$key;
             $processed[':'.$key] = $value;
             $i++;

@@ -6,6 +6,7 @@ use Carbon\Carbon;
 use Library\DataMapper\DataMapper;
 use Exception;
 use Library\DataMapper\DataMapperException;
+use Library\DataMapper\Mapping\Association;
 use Library\DataMapper\Mapping\Metadata;
 use Library\DataMapper\Persisters\BatchEntityPersister;
 use Library\DataMapper\Persisters\EntityPersister;
@@ -418,7 +419,12 @@ final class UnitOfWork
      */
     private function getCommitOrder()
     {
-        return [];
+        $allClasses = array_merge(
+            array_keys($this->scheduledInsertions),
+            array_keys($this->scheduledUpdates),
+            array_keys($this->scheduledRemovals));
+
+        
     }
 
     /**
@@ -426,44 +432,34 @@ final class UnitOfWork
      */
     public function commit()
     {
-        $this->detectEntityChanges();
-
         $this->dm->queryBuilder()->beginTransaction();
 
-        //$commitOrder = $this->getCommitOrder();
+        $commitOrder = $this->getCommitOrder();
 
         try
         {
-//            foreach ($commitOrder as $class)
-//            {
             foreach ($this->scheduledInsertions as $class => $x)
             {
                 $this->executeInsertions($class);
             }
-//            }
 
-//            foreach ($commitOrder as $class)
-//            {
+            $this->detectEntityChanges();
+
             foreach ($this->scheduledUpdates as $class => $x)
             {
                 $this->executeUpdates($class);
             }
-//            }
 
-//            foreach ($commitOrder as $class)
-//            {
-            foreach ($this->scheduledRemovals as $class => $x)
+            rsort($commitOrder);
+
+            foreach ($commitOrder as $class)
             {
                 $this->executeRemovals($class);
             }
-//            }
 
-//            foreach ($commitOrder as $class)
+//            foreach ($this->scheduledExtraUpdates as $class => $x)
 //            {
-            foreach ($this->scheduledExtraUpdates as $class => $x)
-            {
-                $this->executeExtraUpdates($class);
-            }
+//                $this->executeExtraUpdates($class);
 //            }
 
             $this->dm->queryBuilder()->commit();
@@ -489,6 +485,8 @@ final class UnitOfWork
 
         foreach ($oids as $oid)
         {
+            $this->visitedEntities[$oid] = null;
+
             $data = $this->prepareInsertionData($metadata, $oid);
 
             $persister->addInsert($oid, $data);
@@ -562,22 +560,28 @@ final class UnitOfWork
 
     /**
      * @param $entity
-     * @param $association
+     * @param Association $association
      * @return null|object
      */
-    private function processAssociationForInsert($entity, $association)
+    private function processAssociationForInsert($entity, Association $association)
     {
-        switch ($association['type'])
+        switch ($association->type())
         {
             case Metadata::ASSOC_HAS_ONE:
                 return $this->processHasOneForInsert($entity, $association);
         }
     }
 
-    private function processHasOneForInsert($entity, $association)
+    /**
+     * @param $entity
+     * @param Association $association
+     * @return null
+     * @throws DataMapperException
+     */
+    private function processHasOneForInsert($entity, Association $association)
     {
         $metadata = $this->dm->getMetadata(get_class($entity));
-        $column = $association['column'];
+        $column = $association->column();
 
         $assocValue = $metadata->reflProp($column->propName())->getValue($entity);
 
@@ -603,7 +607,8 @@ final class UnitOfWork
         // association was not yet persisted
         if ($this->states[$assocOid] == self::STATE_NEW)
         {
-            $this->scheduleExtraUpdate($metadata->className(), spl_object_hash($entity));
+            //$this->scheduleExtraUpdate($metadata->className(), spl_object_hash($entity));
+            unset($this->visitedEntities[spl_object_hash($entity)]);
 
             return null;
         }
@@ -619,8 +624,14 @@ final class UnitOfWork
     private function executeRemovals($class)
     {
         $persister = $this->getEntityPersister($class);
+        $metadata = $this->dm->getMetadata($class);
         foreach ($this->scheduledRemovals[$class] as $oid)
         {
+            if ($metadata->hasAssociation())
+            {
+                $this->processCascadeRemoval($metadata, $oid, $persister);
+            }
+
             $persister->addRemoval($this->ids[$oid]);
             $this->detachManaged($oid);
         }
@@ -628,6 +639,32 @@ final class UnitOfWork
         $persister->executeRemovals();
 
         unset($this->scheduledRemovals[$class]);
+    }
+
+    /**
+     * Checks for any assocations marked for cascade removal.
+     *
+     * @param Metadata $metadata
+     * @param $oid
+     */
+    private function processCascadeRemoval(Metadata $metadata, $oid)
+    {
+        foreach ($metadata->associations() as $association)
+        {
+            if (!$association->hasDeleteCascade())
+            {
+                continue;
+            }
+
+            $assocValue = $metadata->reflProp($association->column()->propName())->getValue($this->entities[$oid]);
+
+            if (is_null($assocValue))
+            {
+                continue;
+            }
+
+            $this->getEntityPersister(get_class($assocValue))->addRemoval($this->ids[spl_object_hash($assocValue)]);
+        }
     }
 
     /**
@@ -665,7 +702,7 @@ final class UnitOfWork
 
         foreach ($this->states as $oid => $state)
         {
-            if ($state != self::STATE_MANAGED)
+            if ($state != self::STATE_MANAGED || isset($this->visitedEntities[$oid]))
             {
                 continue;
             }
@@ -696,6 +733,7 @@ final class UnitOfWork
      * @param $entity
      * @param $oid
      * @return array $changeSet
+     * @throws DataMapperException
      */
     private function buildChangeSet($entity, $oid)
     {
@@ -717,39 +755,37 @@ final class UnitOfWork
 
                 if (is_null($actualValue))
                 {
-                    // ...
+                    if (!is_null($originalData[$column->name()]))
+                    {
+                        $changeSet[$column->name()] = null;
+                    }
+
                     continue;
                 }
 
                 $actualValueOid = spl_object_hash($actualValue);
 
+                if (!isset($this->states[$actualValueOid]))
+                {
+                    throw new DataMapperException('UnitOfWork.buildChangeSet : Associated entity for '
+                        .$column->propName().' is not known to data mapper.');
+
+                    continue;
+                }
+
                 if (is_null($originalData[$column->name()]))
                 {
-                    if (!isset($this->states[$actualValueOid]))
-                    {
-                        continue;
-                    }
-
-                    switch ($this->states[$actualValueOid])
-                    {
-                        case self::STATE_NEW:
-                            // not applicable
-                            break;
-                        case self::STATE_KNOWN:
-                        case self::STATE_MANAGED:
-                            $changeSet[$column->name()] = $this->ids[$actualValueOid];
-                            break;
-                    }
+                    $changeSet[$column->name()] = $this->ids[$actualValueOid];
 
                     continue;
                 }
 
-                if (spl_object_hash($actualValue) === $this->idMap[$association['target']][$originalData[$column->name()]])
+                if ($actualValueOid === $this->idMap[$association['target']][$originalData[$column->name()]])
                 {
                     continue;
                 }
 
-                // ...
+                $changeSet[$column->name()] = $this->ids[$actualValueOid];
 
                 continue;
             }
@@ -762,6 +798,13 @@ final class UnitOfWork
             }
 
             $changeSet[$column->name()] = $actualValue;
+        }
+
+        if ($metadata->hasUpdatedAt())
+        {
+            $now = Carbon::now();
+            $changeSet[$metadata->updatedAt()->name()] = $now;
+            $metadata->reflProp($metadata->updatedAt()->propName())->setValue($entity, $now);
         }
 
         return $changeSet;

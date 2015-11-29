@@ -17,7 +17,7 @@ class Teacher
     /** @HasMany(target="Tests\FrameworkTest\TestData\DataMapper\Student", mappedBy="teacher") */
     protected $students;
 
-    /** @HasOne(target="Tests\FrameworkTest\TestData\DataMapper\Address", nullable="true") */
+    /** @HasOne(target="Tests\FrameworkTest\TestData\DataMapper\Address", cascade="delete, touch", nullable="true") */
     protected $address;
 
     public function __construct($name)
@@ -59,5 +59,10 @@ class Teacher
     public function setAddress(Address $address)
     {
         $this->address = $address;
+    }
+
+    public function removeAddress()
+    {
+        $this->address = null;
     }
 }

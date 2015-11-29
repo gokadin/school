@@ -49,12 +49,19 @@ class AnnotationDriver
             }
             else if (isset($parsedProperty[Metadata::ASSOC_HAS_MANY]))
             {
-                $metadata->addAssociation([
-                    'type' => Metadata::ASSOC_HAS_MANY,
-                    'target' => $parsedProperty[Metadata::ASSOC_HAS_MANY]['target'],
-                    'propName' => $property->getName(),
-                    'mappedBy' => $parsedProperty[Metadata::ASSOC_HAS_MANY]['mappedBy']
-                ]);
+                $target = $parsedProperty[Metadata::ASSOC_HAS_MANY]['target'];
+                $nullable = isset($parsedProperty[Metadata::ASSOC_HAS_ONE]['nullable'])
+                    && $parsedProperty[Metadata::ASSOC_HAS_ONE]['nullable'];
+                $mappedBy = $parsedProperty[Metadata::ASSOC_HAS_MANY]['mappedBy'];
+
+                $cascades = [];
+                if (isset($parsedProperty[Metadata::ASSOC_HAS_ONE]['cascade']))
+                {
+                    $cascaeString = $parsedProperty[Metadata::ASSOC_HAS_ONE]['cascade'];
+                    $cascades =  array_map('trim', explode(',', $cascaeString));
+                }
+
+                $metadata->addHasManyAssociation($property->getName(), $target, $cascades, $nullable, $mappedBy);
             }
             else if (isset($parsedProperty[Metadata::ASSOC_HAS_ONE]))
             {
@@ -63,33 +70,30 @@ class AnnotationDriver
                 $nullable = isset($parsedProperty[Metadata::ASSOC_HAS_ONE]['nullable'])
                     && $parsedProperty[Metadata::ASSOC_HAS_ONE]['nullable'];
 
-                $metadata->addHasOneAssociation($targetShortName, $property->getName(), $target, $nullable);
+                $cascades = [];
+                if (isset($parsedProperty[Metadata::ASSOC_HAS_ONE]['cascade']))
+                {
+                    $cascaeString = $parsedProperty[Metadata::ASSOC_HAS_ONE]['cascade'];
+                    $cascades =  array_map('trim', explode(',', $cascaeString));
+                }
+
+                $metadata->addHasOneAssociation($targetShortName, $property->getName(), $target, $cascades, $nullable);
             }
             else if (isset($parsedProperty[Metadata::ASSOC_BELONGS_TO]))
             {
                 $target = $parsedProperty[Metadata::ASSOC_BELONGS_TO]['target'];
                 $targetShortName = substr($target, strrpos($target, '\\') + 1);
+                $nullable = isset($parsedProperty[Metadata::ASSOC_BELONGS_TO]['nullable'])
+                    && $parsedProperty[Metadata::ASSOC_BELONGS_TO]['nullable'];
 
-                $metadata->addAssociation([
-                    'type' => Metadata::ASSOC_BELONGS_TO,
-                    'target' => $target,
-                    'propName' => $property->getName()
-                ]);
-
-                $column = new Column(
-                    lcfirst($targetShortName).'_id',
-                    $property->getName(),
-                    'integer',
-                    self::DEFAULT_INTEGER_SIZE
-                );
-                $column->setForeignKey();
-                if (isset($parsedProperty[Metadata::ASSOC_BELONGS_TO]['nullable'])
-                    && $parsedProperty[Metadata::ASSOC_BELONGS_TO]['nullable'])
+                $cascades = [];
+                if (isset($parsedProperty[Metadata::ASSOC_BELONGS_TO]['cascade']))
                 {
-                    $column->setNullable();
+                    $cascaeString = $parsedProperty[Metadata::ASSOC_BELONGS_TO]['cascade'];
+                    $cascades =  array_map('trim', explode(',', $cascaeString));
                 }
 
-                $metadata->addColumn($column);
+                $metadata->addBelongsToAssociation($targetShortName, $property->getName(), $target, $cascades, $nullable);
             }
         }
 

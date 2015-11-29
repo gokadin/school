@@ -10,6 +10,8 @@ class Metadata
     const ASSOC_HAS_MANY = 'HasMany';
     const ASSOC_HAS_ONE = 'HasOne';
     const ASSOC_BELONGS_TO = 'BelongsTo';
+    const CASCADE_DELETE = 'delete';
+    const CASCADE_TOUCH = 'touch';
 
     protected $columns = [];
     protected $associations = [];
@@ -127,39 +129,37 @@ class Metadata
         return $this->associations[$propName];
     }
 
-    public function addHasOneAssociation($columnName, $propName, $target, $nullable)
+    public function hasAssociation()
+    {
+        return sizeof($this->associations) > 0;
+    }
+
+    public function addHasOneAssociation($columnName, $propName, $target, $cascades, $nullable)
     {
         $column = new Column(lcfirst($columnName).'_id', $propName, 'integer', AnnotationDriver::DEFAULT_INTEGER_SIZE);
         $column->setForeignKey();
         $column->setNullable();
         $this->columns[$columnName] = $column;
 
-        $this->associations[$propName] = [
-            'column' => $column,
-            'type' => self::ASSOC_HAS_ONE,
-            'target' => $target,
-            'isNullable' => $nullable
-        ];
+        $this->associations[$propName] = new Association(
+            $column, self::ASSOC_HAS_ONE, $target, $cascades, $nullable);
     }
 
-    public function addAssociation($data)
+    public function addBelongsToAssociation($columnName, $propName, $target, $cascades, $nullable)
     {
-        switch ($data['type'])
-        {
-            case self::ASSOC_HAS_MANY:
-                $this->associations[$data['propName']] = [
-                    'type' => $data['type'],
-                    'target' => $data['target'],
-                    'mappedBy' => $data['mappedBy']
-                ];
-                break;
-            case self::ASSOC_BELONGS_TO:
-                $this->associations[$data['propName']] = [
-                    'type' => $data['type'],
-                    'target' => $data['target'],
-                ];
-                break;
-        }
+        $column = new Column(lcfirst($columnName).'_id', $propName, 'integer', AnnotationDriver::DEFAULT_INTEGER_SIZE);
+        $column->setForeignKey();
+        $column->setNullable();
+        $this->columns[$columnName] = $column;
+
+        $this->associations[$propName] = new Association(
+            $column, self::ASSOC_BELONGS_TO, $target, $cascades, $nullable);
+    }
+
+    public function addHasManyAssociation($propName, $target, $cascades, $nullable, $mappedBy)
+    {
+        $this->associations[$propName] = new Association(
+            null, self::ASSOC_HAS_MANY, $target, $cascades, $nullable, $mappedBy);
     }
 
     public function generateForeignKeyName()
