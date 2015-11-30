@@ -384,9 +384,21 @@ final class UnitOfWork
                     continue;
                 }
 
-                if ($classes[$assocClass] < $number)
+                switch ($association->type())
                 {
-                    continue;
+                    case Metadata::ASSOC_HAS_ONE:
+                    case Metadata::ASSOC_BELONGS_TO:
+                        if ($classes[$assocClass] < $number)
+                        {
+                            continue 2;
+                        }
+                        break;
+                    case Metadata::ASSOC_HAS_MANY:
+                        if ($classes[$assocClass] > $number)
+                        {
+                            continue 2;
+                        }
+                        break;
                 }
 
                 $classes[$class] = $classes[$assocClass];
@@ -490,16 +502,8 @@ final class UnitOfWork
 
         foreach ($metadata->columns() as $column)
         {
-            if ($column->isPrimaryKey())
+            if ($column->isPrimaryKey() || $column->isForeignKey())
             {
-                continue;
-            }
-
-            if ($column->isForeignKey())
-            {
-                $data[$column->name()] = $this->processAssociation($this->entities[$oid],
-                    $metadata->getAssociation($column->propName()));
-
                 continue;
             }
 
@@ -513,35 +517,46 @@ final class UnitOfWork
             $data[$column->name()] = $value;
         }
 
+        foreach ($this->processAssociations($oid, $metadata) as $columnName => $value)
+        {
+            $data[$columnName] = $value;
+        }
+
         return $data;
     }
 
-    /**
-     * @param $entity
-     * @param Association $association
-     * @return null|object
-     */
-    private function processAssociation($entity, Association $association)
+    private function processAssociations($oid, Metadata $metadata)
     {
-        switch ($association->type())
+        $assocData = [];
+
+        foreach ($metadata->associations() as $association)
         {
-            case Metadata::ASSOC_HAS_ONE:
-                return $this->processHasOne($entity, $association);
+            switch ($association->type())
+            {
+                case Metadata::ASSOC_HAS_ONE:
+                case Metadata::ASSOC_BELONGS_TO:
+                    $assocData[$association->column()->name()] = $this->processHasOne($oid, $metadata, $association);
+                    break;
+                case Metadata::ASSOC_HAS_MANY:
+                    $this->processHasMany($oid, $metadata, $association);
+                    continue;
+            }
         }
+
+        return $assocData;
     }
 
     /**
-     * @param $entity
+     * @param $oid
+     * @param Metadata $metadata
      * @param Association $association
-     * @return null
+     * @return null|integer
      * @throws DataMapperException
      */
-    private function processHasOne($entity, Association $association)
+    private function processHasOne($oid, Metadata $metadata, Association $association)
     {
-        $metadata = $this->dm->getMetadata(get_class($entity));
         $column = $association->column();
-
-        $assocValue = $metadata->reflProp($column->propName())->getValue($entity);
+        $assocValue = $metadata->reflProp($column->propName())->getValue($this->entities[$oid]);
 
         if (is_null($assocValue))
         {
@@ -565,12 +580,23 @@ final class UnitOfWork
         // association was not yet persisted
         if ($this->states[$assocOid] == self::STATE_NEW)
         {
-            unset($this->visitedEntities[spl_object_hash($entity)]);
+            unset($this->visitedEntities[$oid]);
 
             return null;
         }
 
         return $this->ids[$assocOid];
+    }
+
+    /**
+     * @param $oid
+     * @param Metadata $metadata
+     * @param Association $association
+     * @return null|integer
+     */
+    private function processHasMany($oid, Metadata $metadata, Association $association)
+    {
+        return null;
     }
 
     /**
@@ -722,21 +748,8 @@ final class UnitOfWork
 
         foreach ($metadata->columns() as $column)
         {
-            if ($column->isPrimaryKey())
+            if ($column->isPrimaryKey() || $column->isForeignKey())
             {
-                continue;
-            }
-
-            if ($column->isForeignKey())
-            {
-                $actualValue = $this->processAssociation($this->entities[$oid],
-                    $metadata->getAssociation($column->propName()));
-
-                if ($actualValue != $originalData[$column->name()])
-                {
-                    $changeSet[$column->name()] = $actualValue;
-                }
-
                 continue;
             }
 
@@ -748,6 +761,14 @@ final class UnitOfWork
             }
 
             $changeSet[$column->name()] = $actualValue;
+        }
+
+        foreach ($this->processAssociations($oid, $metadata) as $columnName => $actualValue)
+        {
+            if ($actualValue != $originalData[$columnName])
+            {
+                $changeSet[$columnName] = $actualValue;
+            }
         }
 
         if (sizeof($changeSet) > 0 && $metadata->hasUpdatedAt())

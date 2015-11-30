@@ -18,7 +18,7 @@ class Student
     /** @BelongsTo(target="Tests\FrameworkTest\TestData\DataMapper\Teacher") */
     protected $teacher;
 
-    public function __construct($name, Teacher $teacher)
+    public function __construct($name, $teacher)
     {
         $this->name = $name;
         $this->teacher = $teacher;
@@ -39,7 +39,7 @@ class Student
         return $this->name;
     }
 
-    public function setTeacher(Teacher $teacher)
+    public function setTeacher($teacher)
     {
         $this->teacher = $teacher;
     }

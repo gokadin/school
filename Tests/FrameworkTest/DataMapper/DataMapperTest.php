@@ -6,6 +6,7 @@ use Tests\FrameworkTest\TestData\DataMapper\AddressTwo;
 use Library\DataMapper\Collection\EntityCollection;
 use Tests\FrameworkTest\TestData\DataMapper\Address;
 use Tests\FrameworkTest\TestData\DataMapper\SimpleEntity;
+use Tests\FrameworkTest\TestData\DataMapper\Student;
 use Tests\FrameworkTest\TestData\DataMapper\Teacher;
 
 class DataMapperTest extends DataMapperBaseTest
@@ -752,5 +753,247 @@ class DataMapperTest extends DataMapperBaseTest
         $this->assertEquals($teacher->getId(), $foundTeacher->getId());
         $this->assertNotNull($foundTeacher->address());
         $this->assertEquals($address->getId(), $foundTeacher->address()->getId());
+    }
+
+    /*
+     * BELONGS TO INSERTS
+     */
+
+    /**
+     * @expectedException Exception
+     */
+    public function testBelongsToWhenInsertingWithUnkownOwningEntity()
+    {
+        // Arrange
+        $this->setUpAssociations();
+        $teacher = new Teacher('Tom');
+        $student = new Student('Jenn', $teacher);
+
+        // Act
+        $this->dm->persist($student);
+        $this->dm->flush();
+    }
+
+    public function testBelongsToWhenInsertingWithNewOwningEntity()
+    {
+        // Arrange
+        $this->setUpAssociations();
+        $teacher = new Teacher('Tom');
+        $student = new Student('Jenn', $teacher);
+
+        // Act
+        $this->dm->persist($teacher);
+        $this->dm->persist($student);
+        $this->dm->flush();
+        $this->dm->detachAll();
+        $teacherData = $this->dm->queryBuilder()->table('Teacher')->where('id', '=', $teacher->getId())->select()[0];
+        $studentData = $this->dm->queryBuilder()->table('Student')->where('id', '=', $student->getId())->select()[0];
+
+        // Assert
+        $this->assertEquals($teacher->getId(), $teacherData['id']);
+        $this->assertEquals($student->getId(), $studentData['id']);
+        $this->assertEquals($teacher->getId(), $studentData['teacher_id']);
+    }
+
+    public function testBelongsToWhenInsertingWithManagedOwningEntity()
+    {
+        // Arrange
+        $this->setUpAssociations();
+        $teacher = new Teacher('Tom');
+        $this->dm->persist($teacher);
+        $this->dm->flush();
+
+        // Act
+        $student = new Student('Jenn', $teacher);
+        $this->dm->persist($student);
+        $this->dm->flush();
+        $this->dm->detachAll();
+        $teacherData = $this->dm->queryBuilder()->table('Teacher')->where('id', '=', $teacher->getId())->select()[0];
+        $studentData = $this->dm->queryBuilder()->table('Student')->where('id', '=', $student->getId())->select()[0];
+
+        // Assert
+        $this->assertEquals($teacher->getId(), $teacherData['id']);
+        $this->assertEquals($student->getId(), $studentData['id']);
+        $this->assertEquals($teacher->getId(), $studentData['teacher_id']);
+    }
+
+    /**
+     * @expectedException Exception
+     */
+    public function testBelongsToWhenInsertingWithNullOwningEntityIfNonNullable()
+    {
+        // Arrange
+        $this->setUpAssociations();
+
+        // Act
+        $student = new Student('Jenn', null);
+        $this->dm->persist($student);
+        $this->dm->flush();
+    }
+
+    /*
+     * BELONGS TO UPDATES
+     */
+
+    public function testBelongsToWhenUpdatingFromExistingToNew()
+    {
+        // Arrange
+        $this->setUpAssociations();
+        $teacher = new Teacher('Tom');
+        $this->dm->persist($teacher);
+        $student = new Student('Jenn', $teacher);
+        $this->dm->persist($student);
+        $this->dm->flush();
+
+        // Act
+        $teacher2 = new Teacher('Brad');
+        $this->dm->persist($teacher2);
+        $student->setTeacher($teacher2);
+        $this->dm->flush();
+        $this->dm->detachAll();
+        $teacherData = $this->dm->queryBuilder()->table('Teacher')->where('id', '=', $teacher->getId())->select()[0];
+        $teacher2Data = $this->dm->queryBuilder()->table('Teacher')->where('id', '=', $teacher2->getId())->select()[0];
+        $studentData = $this->dm->queryBuilder()->table('Student')->where('id', '=', $student->getId())->select()[0];
+
+        // Assert
+        $this->assertEquals($teacher->getId(), $teacherData['id']);
+        $this->assertEquals($teacher2->getId(), $teacher2Data['id']);
+        $this->assertEquals($student->getId(), $studentData['id']);
+        $this->assertEquals($teacher2->getId(), $studentData['teacher_id']);
+    }
+
+    public function testBelongsToWhenUpdatingFromExistingToManaged()
+    {
+        // Arrange
+        $this->setUpAssociations();
+        $teacher = new Teacher('Tom');
+        $this->dm->persist($teacher);
+        $student = new Student('Jenn', $teacher);
+        $this->dm->persist($student);
+        $this->dm->flush();
+
+        // Act
+        $teacher2 = new Teacher('Brad');
+        $this->dm->persist($teacher2);
+        $this->dm->flush();
+        $student->setTeacher($teacher2);
+        $this->dm->flush();
+        $this->dm->detachAll();
+        $teacherData = $this->dm->queryBuilder()->table('Teacher')->where('id', '=', $teacher->getId())->select()[0];
+        $teacher2Data = $this->dm->queryBuilder()->table('Teacher')->where('id', '=', $teacher2->getId())->select()[0];
+        $studentData = $this->dm->queryBuilder()->table('Student')->where('id', '=', $student->getId())->select()[0];
+
+        // Assert
+        $this->assertEquals($teacher->getId(), $teacherData['id']);
+        $this->assertEquals($teacher2->getId(), $teacher2Data['id']);
+        $this->assertEquals($student->getId(), $studentData['id']);
+        $this->assertEquals($teacher2->getId(), $studentData['teacher_id']);
+    }
+
+    /**
+     * @expectedException Exception
+     */
+    public function testBelongsToWhenUpdatingFromExistingToNullForNonNullable()
+    {
+        // Arrange
+        $this->setUpAssociations();
+        $teacher = new Teacher('Tom');
+        $this->dm->persist($teacher);
+        $student = new Student('Jenn', $teacher);
+        $this->dm->persist($student);
+        $this->dm->flush();
+
+        // Act
+        $student->setTeacher(null);
+        $this->dm->flush();
+    }
+
+    /*
+     * BELONGS TO REMOVALS
+     */
+
+    public function testBelongsToWhenRemoving()
+    {
+        // Arrange
+        $this->setUpAssociations();
+        $teacher = new Teacher('Tom');
+        $this->dm->persist($teacher);
+        $student = new Student('Jenn', $teacher);
+        $this->dm->persist($student);
+        $this->dm->flush();
+
+        // Act
+        $this->dm->delete($student);
+        $this->dm->flush();
+        $this->dm->detachAll();
+        $teacherData = $this->dm->queryBuilder()->table('Teacher')->where('id', '=', $teacher->getId())->select()[0];
+        $studentData = $this->dm->queryBuilder()->table('Student')->where('id', '=', $student->getId())->select();
+
+        // Assert
+        $this->assertEquals($teacher->getId(), $teacherData['id']);
+        $this->assertEquals(0, sizeof($studentData));
+    }
+
+    /*
+     * BELONGS TO FIND
+     */
+
+    public function testBelongsToWhenFindingByIdWithExistingUnatachedOwner()
+    {
+        // Arrange
+        $this->setUpAssociations();
+        $teacher = new Teacher('Tom');
+        $this->dm->persist($teacher);
+        $student = new Student('Jenn', $teacher);
+        $this->dm->persist($student);
+        $this->dm->flush();
+
+        // Act
+        $this->dm->detachAll();
+        $foundStudent = $this->dm->find(Student::class, $student->getId());
+
+        // Assert
+        $this->assertEquals($student->getId(), $foundStudent->getId());
+        $this->assertNotNull($student->teacher());
+        $this->assertEquals($teacher->getId(), $student->teacher()->getId());
+    }
+
+    public function testBelongsToWhenFindingByIdWithExistingManagedOwner()
+    {
+        // Arrange
+        $this->setUpAssociations();
+        $teacher = new Teacher('Tom');
+        $this->dm->persist($teacher);
+        $student = new Student('Jenn', $teacher);
+        $this->dm->persist($student);
+        $this->dm->flush();
+
+        // Act
+        $this->dm->detach($student);
+        $foundStudent = $this->dm->find(Student::class, $student->getId());
+
+        // Assert
+        $this->assertEquals($student->getId(), $foundStudent->getId());
+        $this->assertNotNull($student->teacher());
+        $this->assertEquals($teacher->getId(), $student->teacher()->getId());
+    }
+
+    public function testBelongsToWhenFindingByIdWithExistingManagedOwnerAndEntity()
+    {
+        // Arrange
+        $this->setUpAssociations();
+        $teacher = new Teacher('Tom');
+        $this->dm->persist($teacher);
+        $student = new Student('Jenn', $teacher);
+        $this->dm->persist($student);
+        $this->dm->flush();
+
+        // Act
+        $foundStudent = $this->dm->find(Student::class, $student->getId());
+
+        // Assert
+        $this->assertEquals($student->getId(), $foundStudent->getId());
+        $this->assertNotNull($student->teacher());
+        $this->assertEquals($teacher->getId(), $student->teacher()->getId());
     }
 }

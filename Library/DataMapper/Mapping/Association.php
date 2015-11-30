@@ -18,14 +18,17 @@ class Association
      */
     private $cascades = [];
 
+    private $isNullable;
+
     private $mappedBy;
 
-    public function __construct($column, $type, $target, array $cascades, $mappedBy = null)
+    public function __construct($column, $type, $target, array $cascades, $isNullable, $mappedBy = null)
     {
         $this->column = $column;
         $this->type = $type;
         $this->target = $target;
         $this->cascades = $cascades;
+        $this->isNullable = $isNullable;
         $this->mappedBy = $mappedBy;
     }
 
@@ -51,7 +54,7 @@ class Association
 
     public function isNullable()
     {
-        return $this->column->isNullable();
+        return $this->isNullable;
     }
 
     public function mappedBy()
