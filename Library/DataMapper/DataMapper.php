@@ -78,20 +78,7 @@ class DataMapper
      */
     public function find($class, $id)
     {
-        $entity = $this->unitOfWork->find($class, $id);
-
-        if (!is_null($entity))
-        {
-            return $entity;
-        }
-
-        $metadata = $this->getMetadata($class);
-
-        $data = $this->queryBuilder()->table($metadata->table())
-            ->where($metadata->primaryKey()->propName(), '=', $id)
-            ->select();
-
-        return $this->handleSingleRawFoundData($class, $data);
+        return $this->unitOfWork->find($class, $id);
     }
 
     /**
@@ -238,19 +225,6 @@ class DataMapper
         return $collection;
     }
 
-    private function handleSingleRawFoundData($class, array $data)
-    {
-        if (sizeof($data) == 0)
-        {
-            return null;
-        }
-
-        $entity = $this->buildEntity($class, $data[0]);
-        $this->unitOfWork->addManaged($entity, $data[0]);
-
-        return $entity;
-    }
-
     /**
      * Marks the object for persistence
      * and adds it to the unit of work if not yet tracked.
@@ -324,33 +298,5 @@ class DataMapper
         }
 
         return $this->loadedMetadata[$class] = $this->mappingDriver->getMetadata($class);
-    }
-
-    protected function buildEntity($class, $data)
-    {
-        $metadata = $this->getMetadata($class);
-        $r = $metadata->getReflectionClass();
-
-        $entity = $r->newInstanceWithoutConstructor();
-
-        foreach ($metadata->columns() as $column)
-        {
-            if ($column->isForeignKey())
-            {
-                if (is_null($data[$column->name()]))
-                {
-                    continue;
-                }
-
-                $metadata->reflProp($column->propName())->setValue(
-                    $entity, $this->find($metadata->getAssociation($column->propName())->target(), $data[$column->name()]));
-
-                continue;
-            }
-
-            $metadata->reflProp($column->propName())->setValue($entity, $data[$column->name()]);
-        }
-
-        return $entity;
     }
 }

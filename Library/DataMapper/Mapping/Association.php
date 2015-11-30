@@ -13,6 +13,8 @@ class Association
 
     private $target;
 
+    private $propName;
+
     /**
      * @var array
      */
@@ -22,11 +24,12 @@ class Association
 
     private $mappedBy;
 
-    public function __construct($column, $type, $target, array $cascades, $isNullable, $mappedBy = null)
+    public function __construct($column, $type, $target, $propName, array $cascades, $isNullable, $mappedBy = null)
     {
         $this->column = $column;
         $this->type = $type;
         $this->target = $target;
+        $this->propName = $propName;
         $this->cascades = $cascades;
         $this->isNullable = $isNullable;
         $this->mappedBy = $mappedBy;
@@ -45,6 +48,11 @@ class Association
     public function target()
     {
         return $this->target;
+    }
+
+    public function propName()
+    {
+        return $this->propName;
     }
 
     public function cascades()

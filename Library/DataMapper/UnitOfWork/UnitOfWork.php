@@ -3,6 +3,8 @@
 namespace Library\DataMapper\UnitOfWork;
 
 use Carbon\Carbon;
+use Library\DataMapper\Collection\EntityCollection;
+use Library\DataMapper\Collection\PersistentCollection;
 use Library\DataMapper\DataMapper;
 use Exception;
 use Library\DataMapper\DataMapperException;
@@ -204,18 +206,148 @@ final class UnitOfWork
     }
 
     /**
+     * Finds the entity and loads it if necessary.
+     *
      * @param $class
      * @param $id
      * @return null
      */
     public function find($class, $id)
     {
-        if (isset($this->idMap[$class][$id]))
+        if ($this->isLoaded($class, $id))
         {
             return $this->entities[$this->idMap[$class][$id]];
         }
 
-        return null;
+        return $this->loadSingle($class, $id);
+    }
+
+    /**
+     * Checks if the entity is fully loaded in the unit of work.
+     *
+     * @param $class
+     * @param $id
+     * @return bool
+     */
+    private function isLoaded($class, $id)
+    {
+        return isset($this->idMap[$class][$id]) &&
+            $this->states[$this->idMap[$class][$id]] == self::STATE_MANAGED;
+    }
+
+    /**
+     * Loads a single entity from the database.
+     *
+     * @param $class
+     * @param $id
+     * @return mixed|null
+     */
+    private function loadSingle($class, $id)
+    {
+        $metadata = $this->dm->getMetadata($class);
+
+        $data = $this->dm->queryBuilder()->table($metadata->table())
+            ->where($metadata->primaryKey()->propName(), '=', $id)
+            ->select();
+
+        if (sizeof($data) == 0)
+        {
+            return null;
+        }
+
+        $entity = $this->buildEntity($class, $data[0]);
+
+        $this->addManaged($entity, $data[0]);
+
+        return $entity;
+    }
+
+    /**
+     * Builds an entity from raw data from the database.
+     *
+     * @param $class
+     * @param array $data
+     * @return mixed
+     */
+    private function buildEntity($class, array $data)
+    {
+        $metadata = $this->dm->getMetadata($class);
+        $r = $metadata->getReflectionClass();
+        $entity = $r->newInstanceWithoutConstructor();
+
+        foreach ($metadata->columns() as $column)
+        {
+            if ($column->isForeignKey())
+            {
+                continue;
+            }
+
+            $metadata->reflProp($column->propName())->setValue($entity, $data[$column->name()]);
+        }
+
+        $this->buildAssociations($entity, $metadata, $data);
+
+        return $entity;
+    }
+
+    private function buildAssociations($entity, Metadata $metadata, array $data)
+    {
+        foreach ($metadata->associations() as $association)
+        {
+            switch ($association->type())
+            {
+                case Metadata::ASSOC_HAS_ONE:
+                case Metadata::ASSOC_BELONGS_TO:
+                    $this->buildHasOne($entity, $metadata, $association, $data);
+                    break;
+                case Metadata::ASSOC_HAS_MANY:
+                    $this->buildHasMany($entity, $metadata, $association, $data);
+                    break;
+            }
+        }
+    }
+
+    private function buildHasOne($entity, Metadata $metadata, Association $association, array $data)
+    {
+        $assocEntity = $this->find($association->target(), $data[$association->column()->name()]);
+
+        if (!is_null($assocEntity))
+        {
+            $metadata->reflProp($association->propName())->setValue($entity, $assocEntity);
+        }
+    }
+
+    private function buildHasMany($entity, Metadata $metadata, Association $association, array $data)
+    {
+        $assocMetadata = $this->dm->getMetadata($association->target());
+
+        $ids = $this->dm->queryBuilder()->table($assocMetadata->table())
+            ->where($metadata->generateForeignKeyName(), '=', $data[$metadata->primaryKey()->name()])
+            ->select([$assocMetadata->primaryKey()->name()]);
+
+        if (sizeof($ids) == 0)
+        {
+            $metadata->reflProp($association->propName())->setValue(
+                $entity, new PersistentCollection($this->dm, $association->target()));
+
+            return;
+        }
+
+        $items = [];
+        foreach ($ids as $id)
+        {
+            if ($this->isLoaded($association->target(), $id))
+            {
+                $items[$id] = $this->entities[$this->idMap[$association->target()][$id]];
+
+                continue;
+            }
+
+            $items[$id] = null;
+        }
+
+        $metadata->reflProp($association->propName())->setValue(
+            $entity, new PersistentCollection($this->dm, $association->target(), $items));
     }
 
     /**
@@ -539,7 +671,7 @@ final class UnitOfWork
                     break;
                 case Metadata::ASSOC_HAS_MANY:
                     $this->processHasMany($oid, $metadata, $association);
-                    continue;
+                    continue 2;
             }
         }
 
@@ -596,7 +728,33 @@ final class UnitOfWork
      */
     private function processHasMany($oid, Metadata $metadata, Association $association)
     {
-        return null;
+        $assocValue = $metadata->reflProp($association->propName())->getValue($this->entities[$oid]);
+
+        if (is_null($assocValue) || !($assocValue instanceof EntityCollection))
+        {
+            return;
+        }
+
+        $items = [];
+        foreach ($assocValue->toArray() as $item)
+        {
+            if (is_null($item))
+            {
+                continue;
+            }
+
+            $itemOid = spl_object_hash($item);
+
+            if (!isset($this->states[$itemOid]))
+            {
+                continue;
+            }
+
+            $items[$this->ids[$itemOid]] = $item;
+        }
+
+        $collection = new PersistentCollection($this->dm, $association->target(), $items);
+        $metadata->reflProp($association->propName())->setValue($this->entities[$oid], $collection);
     }
 
     /**
@@ -651,7 +809,7 @@ final class UnitOfWork
                 continue;
             }
 
-            $assocValue = $metadata->reflProp($association->column()->propName())->getValue($this->entities[$oid]);
+            $assocValue = $metadata->reflProp($association->propName())->getValue($this->entities[$oid]);
 
             if (is_null($assocValue))
             {

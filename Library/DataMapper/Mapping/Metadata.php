@@ -142,7 +142,7 @@ class Metadata
         $this->columns[$columnName] = $column;
 
         $this->associations[$propName] = new Association(
-            $column, self::ASSOC_HAS_ONE, $target, $cascades, $nullable);
+            $column, self::ASSOC_HAS_ONE, $target, $propName, $cascades, $nullable);
     }
 
     public function addBelongsToAssociation($columnName, $propName, $target, $cascades, $nullable)
@@ -153,13 +153,13 @@ class Metadata
         $this->columns[$columnName] = $column;
 
         $this->associations[$propName] = new Association(
-            $column, self::ASSOC_BELONGS_TO, $target, $cascades, $nullable);
+            $column, self::ASSOC_BELONGS_TO, $target, $propName, $cascades, $nullable);
     }
 
     public function addHasManyAssociation($propName, $target, $cascades, $nullable, $mappedBy)
     {
         $this->associations[$propName] = new Association(
-            null, self::ASSOC_HAS_MANY, $target, $cascades, $nullable, $mappedBy);
+            null, self::ASSOC_HAS_MANY, $target, $propName, $cascades, $nullable, $mappedBy);
     }
 
     public function generateForeignKeyName()

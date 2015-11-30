@@ -2,6 +2,7 @@
 
 namespace Tests\FrameworkTest\DataMapper;
 
+use Library\DataMapper\Collection\PersistentCollection;
 use Tests\FrameworkTest\TestData\DataMapper\AddressTwo;
 use Library\DataMapper\Collection\EntityCollection;
 use Tests\FrameworkTest\TestData\DataMapper\Address;
@@ -995,5 +996,93 @@ class DataMapperTest extends DataMapperBaseTest
         $this->assertEquals($student->getId(), $foundStudent->getId());
         $this->assertNotNull($student->teacher());
         $this->assertEquals($teacher->getId(), $student->teacher()->getId());
+    }
+
+    /*
+     * HAS MANY INSERTS
+     */
+
+    public function testHasManyWhenInsertingThatTheEmptyEntityCollectionIsChangedToPersistent()
+    {
+        // Arrange
+        $this->setUpAssociations();
+        $teacher = new Teacher('Tom');
+
+        // Act
+        $this->dm->persist($teacher);
+        $this->dm->flush();
+
+        // Assert
+        $this->assertTrue($teacher->students() instanceof PersistentCollection);
+    }
+
+    public function testHasManyWhenInsertingThatTheNonEmptyEntityCollectionIsChangedToPersistent()
+    {
+        // Arrange
+        $this->setUpAssociations();
+        $teacher = new Teacher('Tom');
+        $this->dm->persist($teacher);
+        for ($i = 0; $i < 10; $i++)
+        {
+            $student = new Student('student'.$i, $teacher);
+            $this->dm->persist($student);
+            $teacher->addStudent($student);
+        }
+
+        // Act
+        $this->dm->flush();
+
+        // Assert
+        $this->assertTrue($teacher->students() instanceof PersistentCollection);
+        $this->assertEquals(10, $teacher->students()->count());
+    }
+
+    /*
+     * HAS MANY FINDS
+     */
+
+    public function testHasManyWhenFindingUnattachedEntityWithUnattachedItems()
+    {
+        // Arrange
+        $this->setUpAssociations();
+        $teacher = new Teacher('Tom');
+        $this->dm->persist($teacher);
+        for ($i = 0; $i < 10; $i++)
+        {
+            $student = new Student('student'.$i, $teacher);
+            $this->dm->persist($student);
+            $teacher->addStudent($student);
+        }
+        $this->dm->flush();
+
+        // Act
+        $this->dm->detachAll();
+        $foundTeacher = $this->dm->find(Teacher::class, $teacher->getId());
+
+        // Assert
+        $this->assertTrue($foundTeacher->students() instanceof PersistentCollection);
+        $this->assertEquals(10, $foundTeacher->students()->count());
+    }
+
+    public function testHasManyWhenFindingAttachedEntityAndAttachedItems()
+    {
+        // Arrange
+        $this->setUpAssociations();
+        $teacher = new Teacher('Tom');
+        $this->dm->persist($teacher);
+        for ($i = 0; $i < 10; $i++)
+        {
+            $student = new Student('student'.$i, $teacher);
+            $this->dm->persist($student);
+            $teacher->addStudent($student);
+        }
+        $this->dm->flush();
+
+        // Act
+        $foundTeacher = $this->dm->find(Teacher::class, $teacher->getId());
+
+        // Assert
+        $this->assertTrue($foundTeacher->students() instanceof PersistentCollection);
+        $this->assertEquals(10, $foundTeacher->students()->count());
     }
 }
