@@ -6,6 +6,7 @@ use Library\DataMapper\DataMapper;
 use Library\DataMapper\EntityCollection;
 use Tests\FrameworkTest\BaseTest;
 use Tests\FrameworkTest\TestData\DataMapper\Address;
+use Tests\FrameworkTest\TestData\DataMapper\AddressTwo;
 use Tests\FrameworkTest\TestData\DataMapper\SimpleEntity;
 use Library\DataMapper\Database\SchemaTool;
 use PDO;
@@ -64,7 +65,8 @@ abstract class DataMapperBaseTest extends BaseTest
         $this->classes = [
             Teacher::class,
             Student::class,
-            Address::class
+            Address::class,
+            AddressTwo::class
         ];
 
         $this->setUpBase();

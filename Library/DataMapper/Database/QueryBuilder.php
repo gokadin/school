@@ -206,7 +206,7 @@ class QueryBuilder
 
             foreach ($data as $id => $value)
             {
-                $setSegmentStr .= ' WHEN '.$id.' THEN '.$value;
+                $setSegmentStr .= ' WHEN '.$id.' THEN "'.$value.'"';
             }
 
             $setSegmentStr .= ' ELSE '.$field.' END';

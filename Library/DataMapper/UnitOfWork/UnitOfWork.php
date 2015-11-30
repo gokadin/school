@@ -96,13 +96,6 @@ final class UnitOfWork
     private $scheduledUpdates = [];
 
     /**
-     * Sorted by class.
-     *
-     * @var array
-     */
-    private $scheduledExtraUpdates = [];
-
-    /**
      * Sorted by class, then by hash.
      *
      * @var array
@@ -304,8 +297,9 @@ final class UnitOfWork
         $this->ids = [];
         $this->originalData = [];
         $this->states = [];
-        $this->clearInsertions();
-        $this->clearRemovals();
+        $this->scheduledInsertions = [];
+        $this->scheduledUpdates = [];
+        $this->scheduledRemovals = [];
     }
 
     /**
@@ -342,17 +336,6 @@ final class UnitOfWork
     }
 
     /**
-     * Schedules the entity for extra update.
-     *
-     * @param $class
-     * @param $oid
-     */
-    private function scheduleExtraUpdate($class, $oid)
-    {
-        $this->scheduledExtraUpdates[$class][] = $oid;
-    }
-
-    /**
      * Adds a change set for updates.
      *
      * @param $oid
@@ -361,38 +344,6 @@ final class UnitOfWork
     private function addChangeSet($oid, $changeSet)
     {
         $this->changeSets[$oid] = $changeSet;
-    }
-
-    /**
-     * Clears all scheduled insertions.
-     */
-    private function clearInsertions()
-    {
-        $this->scheduledInsertions = [];
-    }
-
-    /**
-     * Clears all scheduled removals.
-     */
-    private function clearRemovals()
-    {
-        $this->scheduledRemovals = [];
-    }
-
-    /**
-     * Clears all scheduled updates.
-     */
-    private function clearUpdates()
-    {
-        $this->scheduledUpdates = [];
-    }
-
-    /**
-     * Clears all extra updates.
-     */
-    private function clearExtraUpdates()
-    {
-        $this->scheduledExtraUpdates = [];
     }
 
     /**
@@ -419,12 +370,38 @@ final class UnitOfWork
      */
     private function getCommitOrder()
     {
-        $allClasses = array_merge(
+        $order = array_merge(
             array_keys($this->scheduledInsertions),
             array_keys($this->scheduledUpdates),
             array_keys($this->scheduledRemovals));
 
-        
+        array_flip($order);
+
+        foreach ($order as $class)
+        {
+            foreach ($this->dm->getMetadata($class)->associations() as $association)
+            {
+                $assocClass = $association->target();
+                if (!isset($order[$assocClass]))
+                {
+                    continue;
+                }
+
+                if ($order[$assocClass] > $order[$class])
+                {
+                    continue;
+                }
+
+                $temp = $order[$class];
+                $order[$class] = $assocClass;
+                $order[$assocClass] = $temp;
+            }
+        }
+
+        array_flip($order);
+        sort($order);
+
+        return $order;
     }
 
     /**
@@ -434,18 +411,22 @@ final class UnitOfWork
     {
         $this->dm->queryBuilder()->beginTransaction();
 
+        $this->processCascadeRemovals();
+
         $commitOrder = $this->getCommitOrder();
 
         try
         {
-            foreach ($this->scheduledInsertions as $class => $x)
+            foreach ($commitOrder as $class)
             {
                 $this->executeInsertions($class);
             }
 
             $this->detectEntityChanges();
 
-            foreach ($this->scheduledUpdates as $class => $x)
+            $commitOrder = $this->getCommitOrder(); // temp
+
+            foreach ($commitOrder as $class)
             {
                 $this->executeUpdates($class);
             }
@@ -457,10 +438,7 @@ final class UnitOfWork
                 $this->executeRemovals($class);
             }
 
-//            foreach ($this->scheduledExtraUpdates as $class => $x)
-//            {
-//                $this->executeExtraUpdates($class);
-//            }
+            $this->visitedEntities = [];
 
             $this->dm->queryBuilder()->commit();
         }
@@ -479,6 +457,11 @@ final class UnitOfWork
      */
     private function executeInsertions($class)
     {
+        if (!isset($this->scheduledInsertions[$class]))
+        {
+            return;
+        }
+
         $persister = $this->getEntityPersister($class);
         $metadata = $this->dm->getMetadata($class);
         $oids = $this->scheduledInsertions[$class];
@@ -587,7 +570,7 @@ final class UnitOfWork
 
         if (is_null($assocValue))
         {
-            if ($association['isNullable'])
+            if ($association->isNullable())
             {
                 return null;
             }
@@ -623,15 +606,15 @@ final class UnitOfWork
      */
     private function executeRemovals($class)
     {
+        if (!isset($this->scheduledRemovals[$class]))
+        {
+            return;
+        }
+
         $persister = $this->getEntityPersister($class);
-        $metadata = $this->dm->getMetadata($class);
+
         foreach ($this->scheduledRemovals[$class] as $oid)
         {
-            if ($metadata->hasAssociation())
-            {
-                $this->processCascadeRemoval($metadata, $oid, $persister);
-            }
-
             $persister->addRemoval($this->ids[$oid]);
             $this->detachManaged($oid);
         }
@@ -643,11 +626,28 @@ final class UnitOfWork
 
     /**
      * Checks for any assocations marked for cascade removal.
+     */
+    private function processCascadeRemovals()
+    {
+        $currentRemovals = $this->scheduledRemovals;
+        foreach ($currentRemovals as $class => $oids)
+        {
+            $metadata = $this->dm->getMetadata($class);
+
+            foreach ($oids as $oid)
+            {
+                $this->processSingleEntityCascadeRemovals($metadata, $oid);
+            }
+        }
+    }
+
+    /**
+     * Processes cascade removals recursively starting from a single entity.
      *
      * @param Metadata $metadata
      * @param $oid
      */
-    private function processCascadeRemoval(Metadata $metadata, $oid)
+    private function processSingleEntityCascadeRemovals(Metadata $metadata, $oid)
     {
         foreach ($metadata->associations() as $association)
         {
@@ -663,7 +663,19 @@ final class UnitOfWork
                 continue;
             }
 
-            $this->getEntityPersister(get_class($assocValue))->addRemoval($this->ids[spl_object_hash($assocValue)]);
+            $assocOid = spl_object_hash($assocValue);
+
+            if (isset($this->scheduledRemovals[$metadata->className()]) &&
+                isset($this->scheduledRemovals[$metadata->className()][$assocOid]))
+            {
+                continue;
+            }
+
+            $assocMetadata = $this->dm->getMetadata(get_class($assocValue));
+
+            $this->scheduleRemoval($assocMetadata->className(), $assocOid);
+
+            $this->processSingleEntityCascadeRemovals($assocMetadata, $assocOid);
         }
     }
 
@@ -674,6 +686,11 @@ final class UnitOfWork
      */
     private function executeUpdates($class)
     {
+        if (!isset($this->scheduledUpdates[$class]))
+        {
+            return;
+        }
+
         $persister = $this->getEntityPersister($class);
 
         foreach ($this->scheduledUpdates[$class] as $oid)
@@ -702,7 +719,7 @@ final class UnitOfWork
 
         foreach ($this->states as $oid => $state)
         {
-            if ($state != self::STATE_MANAGED || isset($this->visitedEntities[$oid]))
+            if ($state != self::STATE_MANAGED || array_key_exists($oid, $this->visitedEntities))
             {
                 continue;
             }
@@ -780,7 +797,7 @@ final class UnitOfWork
                     continue;
                 }
 
-                if ($actualValueOid === $this->idMap[$association['target']][$originalData[$column->name()]])
+                if ($actualValueOid === $this->idMap[$association->target()][$originalData[$column->name()]])
                 {
                     continue;
                 }
@@ -800,7 +817,7 @@ final class UnitOfWork
             $changeSet[$column->name()] = $actualValue;
         }
 
-        if ($metadata->hasUpdatedAt())
+        if (sizeof($changeSet) > 0 && $metadata->hasUpdatedAt())
         {
             $now = Carbon::now();
             $changeSet[$metadata->updatedAt()->name()] = $now;
@@ -808,22 +825,5 @@ final class UnitOfWork
         }
 
         return $changeSet;
-    }
-
-    /**
-     * Executes all extra updates for the class.
-     *
-     * @param $class
-     */
-    private function executeExtraUpdates($class)
-    {
-        foreach ($this->scheduledExtraUpdates[$class] as $oid)
-        {
-            $this->detectSingleEntityChanges($oid);
-        }
-
-        unset($this->scheduledExtraUpdates[$class]);
-
-        $this->executeUpdates($class);
     }
 }

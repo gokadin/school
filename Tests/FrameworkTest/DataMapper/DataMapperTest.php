@@ -2,6 +2,7 @@
 
 namespace Tests\FrameworkTest\DataMapper;
 
+use Tests\FrameworkTest\TestData\DataMapper\AddressTwo;
 use Library\DataMapper\Collection\EntityCollection;
 use Tests\FrameworkTest\TestData\DataMapper\Address;
 use Tests\FrameworkTest\TestData\DataMapper\SimpleEntity;
@@ -337,7 +338,7 @@ class DataMapperTest extends DataMapperBaseTest
     }
 
     /*
-     * HAS MANY INSERTS
+     * HAS ONE INSERTS
      */
 
     public function testHasOneWhenInsertingNullInNullableAssociation()
@@ -423,10 +424,10 @@ class DataMapperTest extends DataMapperBaseTest
     }
 
     /*
-     * HAS MANY UPDATES
+     * HAS ONE UPDATES
      */
 
-    public function testHasManyWhenUpdatingFromNullToNewEntity()
+    public function testHasOneWhenUpdatingFromNullToNewEntity()
     {
         // Arrange
         $this->setUpAssociations();
@@ -449,7 +450,7 @@ class DataMapperTest extends DataMapperBaseTest
         $this->assertEquals($address->getId(), $teacherData['address_id']);
     }
 
-    public function testHasManyWhenUpdatingFromNullToManagedEntity()
+    public function testHasOneWhenUpdatingFromNullToManagedEntity()
     {
         // Arrange
         $this->setUpAssociations();
@@ -476,7 +477,7 @@ class DataMapperTest extends DataMapperBaseTest
     /**
      * @expectedException Exception
      */
-    public function testHasManyWhenUpdatingFromNullToUnknownEntity()
+    public function testHasOneWhenUpdatingFromNullToUnknownEntity()
     {
         // Arrange
         $this->setUpAssociations();
@@ -498,7 +499,7 @@ class DataMapperTest extends DataMapperBaseTest
         $this->assertNull($teacherData['address_id']);
     }
 
-    public function testHasManyWhenUpdatingFromEntityToNull()
+    public function testHasOneWhenUpdatingFromEntityToNull()
     {
         // Arrange
         $this->setUpAssociations();
@@ -521,7 +522,7 @@ class DataMapperTest extends DataMapperBaseTest
         $this->assertNull($teacherData['address_id']);
     }
 
-    public function testHasManyWhenUpdatingFromEntityToDifferentNewEntity()
+    public function testHasOneWhenUpdatingFromEntityToDifferentNewEntity()
     {
         // Arrange
         $this->setUpAssociations();
@@ -548,7 +549,7 @@ class DataMapperTest extends DataMapperBaseTest
         $this->assertEquals($address2->getId(), $teacherData['address_id']);
     }
 
-    public function testHasManyWhenUpdatingFromEntityToDifferentManagedEntity()
+    public function testHasOneWhenUpdatingFromEntityToDifferentManagedEntity()
     {
         // Arrange
         $this->setUpAssociations();
@@ -579,7 +580,7 @@ class DataMapperTest extends DataMapperBaseTest
     /**
      * @expectedException Exception
      */
-    public function testHasManyWhenUpdatingFromEntityToDifferentUnknownEntity()
+    public function testHasOneWhenUpdatingFromEntityToDifferentUnknownEntity()
     {
         // Arrange
         $this->setUpAssociations();
@@ -629,6 +630,30 @@ class DataMapperTest extends DataMapperBaseTest
 
         // Assert
         $this->assertEquals(0, sizeof($addressData));
+        $this->assertEquals(0, sizeof($teacherData));
+    }
+
+    public function testHasOneWhenDeletingOwningEntityWithCascadeDeleteDisabled()
+    {
+        // Arrange
+        $this->setUpAssociations();
+        $teacher = new Teacher('Tom');
+        $this->dm->persist($teacher);
+        $addressNoCascade = new AddressTwo('street1');
+        $this->dm->persist($addressNoCascade);
+        $teacher->setAddressNoCascade($addressNoCascade);
+        $this->dm->flush();
+
+        // Act
+        $this->dm->delete($teacher);
+        $this->dm->flush();
+        $this->dm->detachAll();
+        $teacherData = $this->dm->queryBuilder()->table('Teacher')->where('id', '=', $teacher->getId())->select();
+        $addressNoCascadeData = $this->dm->queryBuilder()->table('AddressTwo')
+            ->where('id', '=', $addressNoCascade->getId())->select()[0];
+
+        // Assert
+        $this->assertEquals($addressNoCascade->getId(), $addressNoCascadeData['id']);
         $this->assertEquals(0, sizeof($teacherData));
     }
 }

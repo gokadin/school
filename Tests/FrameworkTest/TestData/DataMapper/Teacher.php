@@ -20,6 +20,9 @@ class Teacher
     /** @HasOne(target="Tests\FrameworkTest\TestData\DataMapper\Address", cascade="delete, touch", nullable="true") */
     protected $address;
 
+    /** @HasOne(target="Tests\FrameworkTest\TestData\DataMapper\AddressTwo", nullable="true") */
+    protected $addressNoCascade;
+
     public function __construct($name)
     {
         $this->name = $name;
@@ -64,5 +67,20 @@ class Teacher
     public function removeAddress()
     {
         $this->address = null;
+    }
+
+    public function addressNoCascade()
+    {
+        return $this->addressNoCascade;
+    }
+
+    public function setAddressNoCascade(AddressTwo $address)
+    {
+        $this->addressNoCascade = $address;
+    }
+
+    public function removeAddressNoCascade()
+    {
+        $this->addressNoCascade = null;
     }
 }
