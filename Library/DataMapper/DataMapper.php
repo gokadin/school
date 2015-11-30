@@ -335,8 +335,19 @@ class DataMapper
 
         foreach ($metadata->columns() as $column)
         {
-            $property = $r->getProperty($column->propName());
-            $property->setAccessible(true);
+            if ($column->isForeignKey())
+            {
+                if (is_null($data[$column->name()]))
+                {
+                    continue;
+                }
+
+                $metadata->reflProp($column->propName())->setValue(
+                    $entity, $this->find($metadata->getAssociation($column->propName())->target(), $data[$column->name()]));
+
+                continue;
+            }
+
             $metadata->reflProp($column->propName())->setValue($entity, $data[$column->name()]);
         }
 

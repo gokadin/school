@@ -235,6 +235,20 @@ class DataMapperTest extends DataMapperBaseTest
         $this->assertNull($foundS1);
     }
 
+    /**
+     * @expectedException Exception
+     */
+    public function testDeleteWhenEntityIsUnknown()
+    {
+        // Arrange
+        $this->setUpSimpleEntity();
+        $s1 = new SimpleEntity(1, 2, '1', '2');
+
+        // Act
+        $this->dm->delete($s1);
+        $this->dm->flush();
+    }
+
     public function testDeleteMultiple()
     {
         // Arrange
@@ -391,6 +405,27 @@ class DataMapperTest extends DataMapperBaseTest
         $teacher->setAddress($address);
         $this->dm->persist($teacher);
         $this->dm->persist($address);
+        $this->dm->flush();
+        $this->dm->detachAll();
+        $teacherData = $this->dm->queryBuilder()->table('Teacher')->where('id', '=', $teacher->getId())->select()[0];
+        $addressData = $this->dm->queryBuilder()->table('Address')->where('id', '=', $address->getId())->select()[0];
+
+        // Assert
+        $this->assertEquals($address->getId(), $addressData['id']);
+        $this->assertEquals($address->getId(), $teacherData['address_id']);
+    }
+
+    public function testHasOneWhenInsertingWithNewChildEntityInDifferentOrder()
+    {
+        // Arrange
+        $this->setUpAssociations();
+        $teacher = new Teacher('Tom');
+        $address = new Address('street1');
+
+        // Act
+        $teacher->setAddress($address);
+        $this->dm->persist($address);
+        $this->dm->persist($teacher);
         $this->dm->flush();
         $this->dm->detachAll();
         $teacherData = $this->dm->queryBuilder()->table('Teacher')->where('id', '=', $teacher->getId())->select()[0];
@@ -655,5 +690,67 @@ class DataMapperTest extends DataMapperBaseTest
         // Assert
         $this->assertEquals($addressNoCascade->getId(), $addressNoCascadeData['id']);
         $this->assertEquals(0, sizeof($teacherData));
+    }
+
+    /*
+     * HAS ONE FIND
+     */
+
+    public function testHasOneWhenFindingByIdDetachedEntitiesWithNullChildEntity()
+    {
+        // Arrange
+        $this->setUpAssociations();
+        $teacher = new Teacher('Tom');
+        $this->dm->persist($teacher);
+        $this->dm->flush();
+
+        // Act
+        $this->dm->detachAll();
+        $foundTeacher = $this->dm->find(Teacher::class, $teacher->getId());
+
+        // Assert
+        $this->assertEquals($teacher->getId(), $foundTeacher->getId());
+        $this->assertNull($foundTeacher->address());
+    }
+
+    public function testHasOneWhenFindingByIdDetachedEntitiesWithExisitingChildEntity()
+    {
+        // Arrange
+        $this->setUpAssociations();
+        $teacher = new Teacher('Tom');
+        $this->dm->persist($teacher);
+        $address = new Address('street1');
+        $teacher->setAddress($address);
+        $this->dm->persist($address);
+        $this->dm->flush();
+
+        // Act
+        $this->dm->detachAll();
+        $foundTeacher = $this->dm->find(Teacher::class, $teacher->getId());
+
+        // Assert
+        $this->assertEquals($teacher->getId(), $foundTeacher->getId());
+        $this->assertNotNull($foundTeacher->address());
+        $this->assertEquals($address->getId(), $foundTeacher->address()->getId());
+    }
+
+    public function testHasOneWhenFindingByIdAttachedEntitiesWithExisitingChildEntity()
+    {
+        // Arrange
+        $this->setUpAssociations();
+        $teacher = new Teacher('Tom');
+        $this->dm->persist($teacher);
+        $address = new Address('street1');
+        $teacher->setAddress($address);
+        $this->dm->persist($address);
+        $this->dm->flush();
+
+        // Act
+        $foundTeacher = $this->dm->find(Teacher::class, $teacher->getId());
+
+        // Assert
+        $this->assertEquals($teacher->getId(), $foundTeacher->getId());
+        $this->assertNotNull($foundTeacher->address());
+        $this->assertEquals($address->getId(), $foundTeacher->address()->getId());
     }
 }
