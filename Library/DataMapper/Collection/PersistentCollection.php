@@ -39,6 +39,7 @@ final class PersistentCollection extends AbstractEntityCollection implements Obs
 
     protected $sortingRules = [];
     protected $wheres = [];
+    protected $stateChanged;
 
     public function __construct(DataMapper $dm, $class, array $items = [])
     {
@@ -51,6 +52,7 @@ final class PersistentCollection extends AbstractEntityCollection implements Obs
         $this->items = $items;
         $this->count = sizeof($items);
         $this->useSubset = false;
+        $this->stateChanged = false;
 
         $this->uow->subscribe($this);
     }
@@ -166,52 +168,36 @@ final class PersistentCollection extends AbstractEntityCollection implements Obs
         return $this->loadIndex($index);
     }
 
-    public function slice($offset, $length = null)
+    public function slice($offset, $length = -1)
     {
         $this->execute();
 
-        $slice = [];
-        $ids = keys($this->items);
-        $count = $this->count;
-        if ($this->useSubset)
-        {
-            $ids = $this->subset;
-            $count = $this->subsetCount;
-        }
-
-        if (is_null($length))
-        {
-            for ($i = 0; $i < $count; $i++)
-            {
-                if ($i < $offset)
-                {
-                    continue;
-                }
-
-                $slice[] = $ids[$i];
-            }
-
-            return $this->loadArray($slice);
-        }
-
+        $allIds = $this->useSubset ? $this->subset : array_keys($this->items);
+        $i = 0;
         $lengthCounter = 0;
-        for ($i = 0; $i < $count; $i++)
+        foreach ($allIds as $id)
         {
             if ($i < $offset)
             {
+                $i++;
                 continue;
             }
 
-            $slice[] = $ids[$i];
-
             $lengthCounter++;
-            if ($lengthCounter >= $length)
+
+            if ($lengthCounter > $length)
             {
                 break;
             }
+
+            $ids[] = $id;
+
+            $i++;
         }
 
-        return $this->loadArray($ids);
+        $this->loadIds($ids);
+
+        return array_values($this->getActiveItems());
     }
 
     public function where($var, $operator, $value = null)
@@ -237,11 +223,17 @@ final class PersistentCollection extends AbstractEntityCollection implements Obs
         }
 
         $this->wheres[] = ['var' => $var, 'operator' => $operator, 'value' => $value, 'link' => $link];
+
+        $this->stateChanged = true;
+
+        return $this;
     }
 
     public function sortBy($property, $ascending = true)
     {
         $this->sortingRules[$property] = $ascending;
+
+        $this->stateChanged = true;
 
         return $this;
     }
@@ -394,6 +386,13 @@ final class PersistentCollection extends AbstractEntityCollection implements Obs
 
         $this->useSubset = true;
 
+        if (!$this->stateChanged)
+        {
+            return;
+        }
+
+        $this->stateChanged = false;
+
         $queryBuilder = $this->dm->queryBuilder()->table($this->metadata->table())
             ->where($this->metadata->primaryKey()->propName(), 'in', '('.implode(',', array_keys($this->items)).')');
 
@@ -403,8 +402,6 @@ final class PersistentCollection extends AbstractEntityCollection implements Obs
 
         $this->subset = $queryBuilder->select([$this->metadata->primaryKey()->propName()]);
         $this->subsetCount = sizeof($this->subset);
-
-        $this->resetState();
     }
 
     protected function executeWheres(QueryBuilder &$queryBuilder)

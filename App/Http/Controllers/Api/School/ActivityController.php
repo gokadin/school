@@ -11,24 +11,18 @@ class ActivityController extends Controller
     public function getTeacherActivities(GetTeacherActivitiesRequest $request, UserRepository $userRepository)
     {
         $activities = $userRepository->getLoggedInUser()->activities()
-            ->sortBy($request->sortBy, $request->sortAscending)
-            ->slice($request->page * $request->max, $request->max);
+            ->sortBy($request->sortBy, $request->sortAscending);
 
         foreach ($request->filters as $property => $string)
         {
-            switch ($property)
-            {
-                case 'name':
-                    
-                    break;
-            }
+            $activities->where($property, 'LIKE', '%'.$string.'%');
         }
 
-        return $activities;
-    }
+        $totalCount = $activities->count();
 
-    public function getTeacherActivityCount(UserRepository $userRepository)
-    {
-        return $userRepository->getLoggedInUser()->activities()->count();
+        return [
+            'activities' => $activities->slice($request->page * $request->max, $request->max),
+            'totalCount' => $totalCount
+        ];
     }
 }

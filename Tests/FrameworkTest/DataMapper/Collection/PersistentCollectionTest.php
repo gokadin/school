@@ -349,7 +349,7 @@ class PersistentCollectionTest extends DataMapperBaseTest
         $this->assertEquals(26, $first->getOne());
     }
 
-    public function testStateIsResetAfterSelecting()
+    public function testStateIsNotResetAfterSelecting()
     {
         // Arrange
         $this->setUpSimpleEntity();
@@ -374,6 +374,6 @@ class PersistentCollectionTest extends DataMapperBaseTest
 
         // Assert
         $this->assertEquals(26, $first->getOne());
-        $this->assertEquals(0, $firstAgain->getOne());
+        $this->assertEquals(26, $firstAgain->getOne());
     }
 }

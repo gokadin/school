@@ -10,6 +10,8 @@ Vue.component('activities', {
             searchName: '',
             searchRate: '',
             searchPeriod: '',
+            searchFields: {},
+            searchDelayTimer: null,
             total: 0,
             sortBy: 'name',
             sortAscending: true,
@@ -34,17 +36,41 @@ Vue.component('activities', {
                 return;
             }
 
-            this.$http.post('/api/school/teacher-activities', {
-                page: this.page,
-                max: this.max,
-                sortBy: this.sortBy,
-                sortAscending: this.sortAscending,
-                filters: {
-                    'name': value
-                }
-            }, function(activities) {
-                this.activities = activities;
-            });
+            if (value == '') {
+                delete(this.searchFields.name);
+            } else {
+                this.searchFields.name = value;
+            }
+
+            this.doSearch();
+        },
+
+        'searchRate': function(value, oldValue) {
+            if (value.trim() == oldValue.trim()) {
+                return;
+            }
+
+            if (value == '') {
+                delete(this.searchFields.rate);
+            } else {
+                this.searchFields.rate = value;
+            }
+
+            this.doSearch();
+        },
+
+        'searchPeriod': function(value, oldValue) {
+            if (value.trim() == oldValue.trim()) {
+                return;
+            }
+
+            if (value == '') {
+                delete(this.searchFields.period);
+            } else {
+                this.searchFields.period = value;
+            }
+
+            this.doSearch();
         }
     },
 
@@ -55,12 +81,9 @@ Vue.component('activities', {
             sortBy: this.sortBy,
             sortAscending: this.sortAscending,
             filters: {}
-        }, function(activities) {
-            this.activities = activities;
-        });
-
-        this.$http.get('/api/school/teacher-activities/total', function(total) {
-            this.total = total;
+        }, function(response) {
+            this.activities = response.activities;
+            this.total = response.totalCount;
         });
     },
 
@@ -76,8 +99,9 @@ Vue.component('activities', {
                 sortBy: this.sortBy,
                 sortAscending: this.sortAscending,
                 filters: {}
-            }, function(activities) {
-                this.activities = activities;
+            }, function(response) {
+                this.activities = response.activities;
+                this.total = response.totalCount;
                 this.page--;
             });
         },
@@ -93,10 +117,28 @@ Vue.component('activities', {
                 sortBy: this.sortBy,
                 sortAscending: this.sortAscending,
                 filters: {}
-            }, function(activities) {
-                this.activities = activities;
+            }, function(response) {
+                this.activities = response.activities;
+                this.total = response.totalCount;
                 this.page++;
             });
+        },
+
+        doSearch: function() {
+            clearTimeout(this.searchDelayTimer);
+            this.searchDelayTimer = setTimeout(function() {
+                this.page = 0;
+                this.$http.post('/api/school/teacher-activities', {
+                    page: this.page,
+                    max: this.max,
+                    sortBy: this.sortBy,
+                    sortAscending: this.sortAscending,
+                    filters: this.searchFields
+                }, function(response) {
+                    this.activities = response.activities;
+                    this.total = response.totalCount;
+                });
+            }.bind(this), 200);
         }
     }
 });
