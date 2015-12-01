@@ -10,6 +10,8 @@ use Exception;
 use Library\DataMapper\DataMapperException;
 use Library\DataMapper\Mapping\Association;
 use Library\DataMapper\Mapping\Metadata;
+use Library\DataMapper\Observable;
+use Library\DataMapper\Observer;
 use Library\DataMapper\Persisters\BatchEntityPersister;
 use Library\DataMapper\Persisters\EntityPersister;
 use Library\DataMapper\Persisters\SingleEntityPersister;
@@ -18,8 +20,14 @@ use Library\DataMapper\Persisters\SingleEntityPersister;
  * Keeps track of all entities known to data mapper
  * and their states.
  */
-final class UnitOfWork
+final class UnitOfWork implements Observable
 {
+    /**
+     * Lets the collections know that the unit of work
+     * finished commiting changes.
+     */
+    const EVENT_COMMITED = 'EVENT_COMMITED';
+
     /**
      * Entity does not exist in the database.
      */
@@ -36,6 +44,13 @@ final class UnitOfWork
      * unit of work.
      */
     const STATE_MANAGED = 'STATE_MANAGED';
+
+    /**
+     * Observers of the observable pattern.
+     *
+     * @var array
+     */
+    private $observers = [];
 
     /**
      * @var DataMapper
@@ -127,6 +142,15 @@ final class UnitOfWork
     }
 
     /**
+     * @param $oid
+     * @return array
+     */
+    public function findId($oid)
+    {
+        return isset($this->ids[$oid]) ? $this->ids[$oid] : null;
+    }
+
+    /**
      * Adds the fully loaded entity to the unit of work.
      *
      * @param $entity
@@ -168,12 +192,16 @@ final class UnitOfWork
      * which does not yet exist in the database.
      *
      * @param $entity
+     * @param null $oid
      */
-    public function addNew($entity)
+    public function addNew($entity, $oid = null)
     {
-        $oid = spl_object_hash($entity);
+        if (is_null($oid))
+        {
+            $oid = spl_object_hash($entity);
+        }
 
-        if (isset($this->states[$oid]) && $this->states[$oid] == self::STATE_NEW)
+        if (isset($this->states[$oid]))
         {
             return;
         }
@@ -250,16 +278,50 @@ final class UnitOfWork
             ->where($metadata->primaryKey()->propName(), '=', $id)
             ->select();
 
-        if (sizeof($data) == 0)
+        $result = $this->processFoundData($class, $data);
+
+        return sizeof($result) == 0 ? null : $result[0];
+    }
+
+    /**
+     * @param $class
+     * @param array $ids
+     * @return array
+     */
+    public function loadMany($class, array $ids)
+    {
+        $metadata = $this->dm->getMetadata($class);
+
+        $allData = $this->dm->queryBuilder()->table($metadata->table())
+            ->where($metadata->primaryKey()->propName(), 'in', '('.implode(',', $ids).')')
+            ->select();
+
+        return $this->processFoundData($class, $allData);
+    }
+
+    /**
+     * @param $class
+     * @param array $allData
+     * @return array
+     */
+    public function processFoundData($class, array $allData)
+    {
+        if (sizeof($allData) == 0)
         {
-            return null;
+            return [];
         }
 
-        $entity = $this->buildEntity($class, $data[0]);
+        $result = [];
+        foreach ($allData as $data)
+        {
+            $entity = $this->buildEntity($class, $data);
 
-        $this->addManaged($entity, $data[0]);
+            $result[] = $entity;
 
-        return $entity;
+            $this->addManaged($entity, $data);
+        }
+
+        return $result;
     }
 
     /**
@@ -328,7 +390,7 @@ final class UnitOfWork
         if (sizeof($ids) == 0)
         {
             $metadata->reflProp($association->propName())->setValue(
-                $entity, new PersistentCollection($this->dm, $association->target()));
+                $entity, new PersistentCollection($this->dm, $this, $association->target()));
 
             return;
         }
@@ -347,7 +409,7 @@ final class UnitOfWork
         }
 
         $metadata->reflProp($association->propName())->setValue(
-            $entity, new PersistentCollection($this->dm, $association->target(), $items));
+            $entity, new PersistentCollection($this->dm, $this, $association->target(), $items));
     }
 
     /**
@@ -540,7 +602,7 @@ final class UnitOfWork
 
         $classes = array_flip($classes);
 
-        $reverse ? rsort($classes) : sort($classes);
+        $reverse ? krsort($classes) : ksort($classes);
 
         return $classes;
     }
@@ -574,6 +636,8 @@ final class UnitOfWork
             }
 
             $this->dm->queryBuilder()->commit();
+
+            $this->notify(self::EVENT_COMMITED);
         }
         catch (Exception $e)
         {
@@ -735,6 +799,17 @@ final class UnitOfWork
             return;
         }
 
+        $this->processEntityCollection($oid, $assocValue, $metadata, $association);
+    }
+
+    /**
+     * @param $oid
+     * @param EntityCollection $assocValue
+     * @param Metadata $metadata
+     * @param Association $association
+     */
+    private function processEntityCollection($oid, $assocValue, Metadata $metadata, Association $association)
+    {
         $items = [];
         foreach ($assocValue->toArray() as $item)
         {
@@ -750,10 +825,10 @@ final class UnitOfWork
                 continue;
             }
 
-            $items[$this->ids[$itemOid]] = $item;
+            $items[$itemOid] = $item;
         }
 
-        $collection = new PersistentCollection($this->dm, $association->target(), $items);
+        $collection = new PersistentCollection($this->dm, $this, $association->target(), $items);
         $metadata->reflProp($association->propName())->setValue($this->entities[$oid], $collection);
     }
 
@@ -937,5 +1012,19 @@ final class UnitOfWork
         }
 
         return $changeSet;
+    }
+
+
+    public function subscribe(Observer $observer)
+    {
+        $this->observers[] = $observer;
+    }
+
+    private function notify($event)
+    {
+        foreach ($this->observers as $observer)
+        {
+            $observer->update($event);
+        }
     }
 }

@@ -113,10 +113,10 @@ class DataMapper
     public function findAll($class)
     {
         $metadata = $this->getMetadata($class);
-        $allData = $this->queryBuilder->table($metadata->table())
-            ->select();
 
-        return $this->handleMultipleRawFoundData($class, $allData);
+        $allData = $this->queryBuilder()->table($metadata->table())->select();
+
+        return new EntityCollection($this->unitOfWork->processFoundData($class, $allData));
     }
 
     /**
@@ -129,13 +129,7 @@ class DataMapper
      */
     public function findIn($class, array $ids)
     {
-        $metadata = $this->getMetadata($class);
-
-        $allData = $this->queryBuilder->table($metadata->table())
-            ->where($metadata->primaryKey()->name(), 'in', '('.implode(',', $ids).')')
-            ->select();
-
-        return $this->handleMultipleRawFoundData($class, $allData);
+        return new EntityCollection($this->unitOfWork->loadMany($class, $ids));
     }
 
     /**
@@ -151,7 +145,7 @@ class DataMapper
     {
         $queryBuilder = $this->_findBy($class, $conditions);
 
-        return $this->handleMultipleRawFoundData($class, $queryBuilder->select());
+        return new EntityCollection($this->unitOfWork->processFoundData($class, $queryBuilder->select()));
     }
 
     /**
@@ -168,7 +162,8 @@ class DataMapper
 
         $data = $queryBuilder->limit(1)->select();
 
-        return $this->handleSingleRawFoundData($class, $data);
+        $result = $this->unitOfWork->processFoundData($class, $data);
+        return sizeof($result) == 0 ? null : $result[0];
     }
 
     /**
@@ -197,32 +192,6 @@ class DataMapper
         }
 
         return $queryBuilder;
-    }
-
-    /**
-     * Takes care of the data returned from a query from
-     * the found methods.
-     *
-     * @param $class
-     * @param array $allData
-     * @return EntityCollection
-     */
-    private function handleMultipleRawFoundData($class, array $allData)
-    {
-        if (sizeof($allData) == 0)
-        {
-            return new EntityCollection();
-        }
-
-        $collection = new EntityCollection();
-        foreach ($allData as $data)
-        {
-            $entity = $this->buildEntity($class, $data);
-            $this->unitOfWork->addManaged($entity, $data);
-            $collection->add($entity);
-        }
-
-        return $collection;
     }
 
     /**

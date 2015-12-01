@@ -16,6 +16,10 @@ use Tests\FrameworkTest\TestData\DataMapper\Student;
 abstract class DataMapperBaseTest extends BaseTest
 {
     protected $schemaTool;
+
+    /**
+     * @var PDO
+     */
     protected $dao;
     protected $dm;
     protected $classes;
@@ -77,5 +81,7 @@ abstract class DataMapperBaseTest extends BaseTest
         parent::tearDown();
 
         $this->schemaTool->drop();
+
+        $this->dao = null;
     }
 }

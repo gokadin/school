@@ -1037,6 +1037,32 @@ class DataMapperTest extends DataMapperBaseTest
         $this->assertEquals(10, $teacher->students()->count());
     }
 
+    public function testHasManyWhenInsertingWithNewCollectionItems()
+    {
+        // Arrange
+        $this->setUpAssociations();
+        $teacher = new Teacher('Tom');
+        $this->dm->persist($teacher);
+        for ($i = 0; $i < 10; $i++)
+        {
+            $student = new Student('student'.$i, $teacher);
+            $this->dm->persist($student);
+            $teacher->addStudent($student);
+        }
+
+        // Act
+        $this->dm->flush();
+        $allStudentData = $this->dm->queryBuilder()->table('Student')->select();
+
+        // Assert
+        $this->assertTrue($teacher->students() instanceof PersistentCollection);
+        $this->assertEquals(10, $teacher->students()->count());
+        foreach ($allStudentData as $studentData)
+        {
+            $this->assertEquals($teacher->getId(), $studentData['teacher_id']);
+        }
+    }
+
     /*
      * HAS MANY FINDS
      */
@@ -1084,5 +1110,80 @@ class DataMapperTest extends DataMapperBaseTest
         // Assert
         $this->assertTrue($foundTeacher->students() instanceof PersistentCollection);
         $this->assertEquals(10, $foundTeacher->students()->count());
+    }
+
+    /*
+     * HAS MANY UPDATES
+     */
+
+    public function testHasManyWhenUpdatingAfterAddingNewEntities()
+    {
+        // Arrange
+        $this->setUpAssociations();
+        $teacher = new Teacher('Tom');
+        $this->dm->persist($teacher);
+        $student0 = new Student('student0', $teacher);
+        $this->dm->persist($student0);
+        $teacher->addStudent($student0);
+        for ($i = 1; $i < 10; $i++)
+        {
+            $student = new Student('student'.$i, $teacher);
+            $this->dm->persist($student);
+            $teacher->addStudent($student);
+        }
+        $this->dm->flush();
+
+        // Act
+        $extraS1 = new Student('extra1', $teacher);
+        $extraS2 = new Student('extra2', $teacher);
+        $this->dm->persist($extraS1);
+        $this->dm->persist($extraS2);
+        $teacher->addStudent($extraS1);
+        $teacher->addStudent($extraS2);
+        $this->dm->flush();
+        $student0Data = $this->dm->queryBuilder()->table('Student')->where('id', '=', $student0->getId())->select()[0];
+        $extraS1Data = $this->dm->queryBuilder()->table('Student')->where('id', '=', $extraS1->getId())->select()[0];
+
+        // Assert
+        $this->assertTrue($teacher->students() instanceof PersistentCollection);
+        $this->assertEquals(12, $teacher->students()->count());
+        $this->assertEquals($teacher->getId(), $student0Data['teacher_id']);
+        $this->assertEquals($teacher->getId(), $extraS1Data['teacher_id']);
+    }
+
+    public function testHasManyWhenUpdatingAfterAddingManagedEntities()
+    {
+        // Arrange
+        $this->setUpAssociations();
+        $teacher = new Teacher('Tom');
+        $this->dm->persist($teacher);
+        $student0 = new Student('student0', $teacher);
+        $this->dm->persist($student0);
+        $teacher->addStudent($student0);
+        for ($i = 1; $i < 10; $i++)
+        {
+            $student = new Student('student'.$i, $teacher);
+            $this->dm->persist($student);
+            $teacher->addStudent($student);
+        }
+        $this->dm->flush();
+
+        // Act
+        $extraS1 = new Student('extra1', $teacher);
+        $extraS2 = new Student('extra2', $teacher);
+        $this->dm->persist($extraS1);
+        $this->dm->persist($extraS2);
+        $this->dm->flush();
+        $teacher->addStudent($extraS1);
+        $teacher->addStudent($extraS2);
+        $this->dm->flush();
+        $student0Data = $this->dm->queryBuilder()->table('Student')->where('id', '=', $student0->getId())->select()[0];
+        $extraS1Data = $this->dm->queryBuilder()->table('Student')->where('id', '=', $extraS1->getId())->select()[0];
+
+        // Assert
+        $this->assertTrue($teacher->students() instanceof PersistentCollection);
+        $this->assertEquals(12, $teacher->students()->count());
+        $this->assertEquals($teacher->getId(), $student0Data['teacher_id']);
+        $this->assertEquals($teacher->getId(), $extraS1Data['teacher_id']);
     }
 }

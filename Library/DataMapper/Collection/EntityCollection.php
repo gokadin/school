@@ -12,7 +12,8 @@ class EntityCollection extends AbstractEntityCollection
     {
         parent::__construct();
 
-        $this->add($entities);
+        $this->items = $entities;
+        $this->count = sizeof($entities);
     }
 
     public function add($value)

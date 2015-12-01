@@ -4,54 +4,70 @@ namespace Library\DataMapper\Collection;
 
 use Library\DataMapper\Database\QueryBuilder;
 use Library\DataMapper\DataMapper;
-use SplObjectStorage;
+use Library\DataMapper\Observer;
+use Library\DataMapper\UnitOfWork\UnitOfWork;
 use ArrayIterator;
 use Exception;
 
-/*
- * 1) Should never instantiate this class.
- * 2) When adding an entity, if it is not already persisted,
- *    it will not be usable in any collection operations, not even count().
+/**
+ * Used in many relashionships to keep track of
+ * both loaded and not yet loaded entities.
  */
-final class PersistentCollection extends AbstractEntityCollection
+final class PersistentCollection extends AbstractEntityCollection implements Observer
 {
+    /**
+     * @var DataMapper
+     */
     protected $dm;
-    protected $class;
-    protected $metadata;
-    protected $primaryKeyColumn;
-    protected $primaryKeyProperty;
 
-    protected $items;
-    protected $subset;
+    /**
+     * @var UnitOfWork
+     */
+    protected $uow;
+
+    /**
+     * @var \Library\DataMapper\Mapping\Metadata
+     */
+    protected $metadata;
+
+    protected $items = [];
+    protected $subset = [];
     protected $useSubset;
     protected $subsetCount;
-    protected $addedItems;
-    protected $removedItems;
-    protected $isChanged;
+    protected $newItems = [];
+    protected $removedItems = [];
 
     protected $sortingRules = [];
     protected $wheres = [];
 
-    public function __construct(DataMapper $dm, $class, array $items = [])
+    public function __construct(DataMapper $dm, UnitOfWork $uow, $class, array $items = [])
     {
         parent::__construct();
 
         $this->dm = $dm;
-        $this->class = $class;
+        $this->uow = $uow;
         $this->metadata = $this->dm->getMetadata($class);
-        $this->primaryKeyColumn = $this->metadata->primaryKey();
-        $this->primaryKeyProperty = null;
 
         $this->items = $items;
-        $this->count = sizeof($this->items);
-        $this->addedItems = new SplObjectStorage();
-        $this->removedItems = new SplObjectStorage();
-        $this->isChanged = false;
+        $this->count = sizeof($items);
         $this->useSubset = false;
+
+        $uow->subscribe($this);
+    }
+
+    protected function addNew($entity, $oid)
+    {
+        $this->newItems[$oid] = $entity;
+        $this->uow->addNew($entity, $oid);
     }
 
     public function add($value)
     {
+        if (is_null($value))
+        {
+            return;
+        }
+
         is_array($value)
             ? $this->addMany($value)
             : $this->addOne($value);
@@ -59,16 +75,22 @@ final class PersistentCollection extends AbstractEntityCollection
 
     protected function addOne($entity)
     {
-        $id = $this->getEntityId($entity);
-        $this->markAdded($entity, $id);
+        $oid = spl_object_hash($entity);
 
+//        if (isset($this->removedItems[$oid]))
+//        {
+//            unset($this->removedItems[$oid]);
+//            return;
+//        }
+
+        $id = $this->uow->findId($oid);
         if (is_null($id))
         {
+            $this->addNew($entity, $oid);
             return;
         }
 
-        $this->items[] = $entity;
-
+        $this->items[$id] = $entity;
         $this->count++;
     }
 
@@ -82,88 +104,29 @@ final class PersistentCollection extends AbstractEntityCollection
 
     public function remove($value)
     {
-        is_array($value)
-            ? $this->removeMany($value)
-            : $this->removeOne($value);
+//        is_array($value)
+//            ? $this->removeMany($value)
+//            : $this->removeOne($value);
     }
-
-    protected function removeOne($entity)
-    {
-        $id = $this->getEntityId($entity);
-
-        unset($this->items[$id]);
-
-        $this->markRemoved($entity, $id);
-
-        $this->count--;
-    }
-
-    protected function removeMany($entities)
-    {
-        foreach ($entities as $entity)
-        {
-            $this->removeOne($entity);
-        }
-    }
-
-    public function isChanged()
-    {
-        return $this->isChanged;
-    }
-
-    protected function getEntityId($entity)
-    {
-        if (is_null($this->primaryKeyProperty))
-        {
-            $this->primaryKeyProperty = $this->metadata->getReflectionClass()
-                ->getProperty($this->primaryKeyColumn->name());
-            $this->primaryKeyProperty->setAccessible(true);
-
-        }
-
-        return $this->primaryKeyProperty->getValue($entity);
-    }
-
-    public function addedItems()
-    {
-        return $this->addedItems;
-    }
-
-    public function removedItems()
-    {
-        return $this->removedItems;
-    }
-
-    protected function markAdded($entity, $id)
-    {
-        if ($this->removedItems->contains($entity))
-        {
-            $this->removedItems->detach($entity);
-            return;
-        }
-
-        $this->addedItems->attach($entity, $id);
-
-        $this->isChanged = true;
-    }
-
-    protected function markRemoved($entity, $id)
-    {
-        if ($this->addedItems->contains($entity))
-        {
-            if ($this->addedItems[$entity] == null)
-            {
-                $this->count++;
-            }
-
-            $this->addedItems->detach($entity);
-            return;
-        }
-
-        $this->removedItems->attach($entity, $id);
-
-        $this->isChanged = true;
-    }
+//
+//    protected function removeOne($entity)
+//    {
+//        $id = $this->getEntityId($entity);
+//
+//        unset($this->items[$id]);
+//
+//        $this->markRemoved($entity, $id);
+//
+//        $this->count--;
+//    }
+//
+//    protected function removeMany($entities)
+//    {
+//        foreach ($entities as $entity)
+//        {
+//            $this->removeOne($entity);
+//        }
+//    }
 
     public function resetState()
     {
@@ -354,7 +317,7 @@ final class PersistentCollection extends AbstractEntityCollection
             return $this->buildFromIdList($ids);
         }
 
-        foreach ($this->dm->findIn($this->class, $ids) as $entity)
+        foreach ($this->dm->findIn($this->metadata->className(), $ids) as $entity)
         {
             $id = $this->getEntityId($entity);
             $results[$id] = $entity;
@@ -386,7 +349,7 @@ final class PersistentCollection extends AbstractEntityCollection
             {
                 if (is_null($this->items[$id]))
                 {
-                    $entity = $this->dm->find($this->class, $id);
+                    $entity = $this->dm->find($this->metadata->className(), $id);
                     $this->items[$id] = $entity;
 
                     return  $entity;
@@ -472,5 +435,55 @@ final class PersistentCollection extends AbstractEntityCollection
         }
 
         return $results;
+    }
+
+    protected function handleEventCommited()
+    {
+        $this->processPostCommitAddedItems();
+
+        $this->processPostCommitRemovedItems();
+    }
+
+    protected function processPostCommitAddedItems()
+    {
+        foreach ($this->newItems as $oid => $newItem)
+        {
+            $id = $this->uow->findId($oid);
+
+            if (is_null($id))
+            {
+                continue;
+            }
+
+            $this->items[$id] = $newItem;
+            $this->count++;
+
+            unset($this->newItems[$oid]);
+        }
+    }
+
+    protected function processPostCommitRemovedItems()
+    {
+        foreach ($this->removedItems as $oid => $removedItem)
+        {
+            $id = $this->uow->findId($oid);
+
+            if (!is_null($id))
+            {
+                continue;
+            }
+
+            unset($this->removedItems[$oid]);
+        }
+    }
+
+    public function update($event)
+    {
+        switch ($event)
+        {
+            case UnitOfWork::EVENT_COMMITED:
+                $this->handleEventCommited();
+                break;
+        }
     }
 }
