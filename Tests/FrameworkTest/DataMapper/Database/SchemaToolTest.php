@@ -49,6 +49,8 @@ class SchemaToolTest extends BaseTest
         parent::tearDown();
 
         $this->schemaTool->drop();
+
+        $this->dao = null;
     }
 
     protected function tableExists($table)

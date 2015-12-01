@@ -82,6 +82,10 @@ class PersistentCollectionTest extends DataMapperBaseTest
         $e1 = new SimpleEntity(1, 2, 'one', 'two');
         $e2 = new SimpleEntity(1, 2, 'one', 'two');
         $e3 = new SimpleEntity(1, 2, 'one', 'two');
+        $this->dm->persist($e1);
+        $this->dm->persist($e2);
+        $this->dm->persist($e3);
+        $this->dm->flush();
         $collection = new PersistentCollection($this->dm, SimpleEntity::class, [
             $e1, $e2, $e3 // simulates adding with corresponding ids
         ]);
@@ -99,6 +103,7 @@ class PersistentCollectionTest extends DataMapperBaseTest
         $this->setUpSimpleEntity();
         $se = new SimpleEntity(1, 2, 'one', 'two');
         $this->dm->persist($se);
+        $this->dm->flush();
         $collection = new PersistentCollection($this->dm, SimpleEntity::class, [$se->getId() => null]);
 
         // Act
@@ -119,6 +124,7 @@ class PersistentCollectionTest extends DataMapperBaseTest
         $this->dm->persist($se1);
         $this->dm->persist($se2);
         $this->dm->persist($se3);
+        $this->dm->flush();
         $collection = new PersistentCollection($this->dm, SimpleEntity::class, [
             $se1->getId() => null,
             $se2->getId() => null,
@@ -146,6 +152,7 @@ class PersistentCollectionTest extends DataMapperBaseTest
         $this->dm->persist($se1);
         $this->dm->persist($se2);
         $this->dm->persist($se3);
+        $this->dm->flush();
         $collection = new PersistentCollection($this->dm, SimpleEntity::class, [
             $se1->getId() => null,
             $se2->getId() => null,
@@ -166,10 +173,17 @@ class PersistentCollectionTest extends DataMapperBaseTest
     {
         // Arrange
         $this->setUpSimpleEntity();
+        $se1 = new SimpleEntity(1, 2, 'one', 'two');
+        $se2 = new SimpleEntity(1, 2, 'one', 'two');
+        $se3 = new SimpleEntity(1, 2, 'one', 'two');
+        $this->dm->persist($se1);
+        $this->dm->persist($se2);
+        $this->dm->persist($se3);
+        $this->dm->flush();
         $collection = new PersistentCollection($this->dm, SimpleEntity::class, [
-            $this->dm->persist(new SimpleEntity(1, 2, 'one1', 'two1')) => null,
-            $this->dm->persist(new SimpleEntity(1, 2, 'one2', 'two2')) => null,
-            $this->dm->persist(new SimpleEntity(1, 2, 'one3', 'two3')) => null,
+            $se1->getId() => null,
+            $se2->getId() => null,
+            $se3->getId() => null,
         ]);
 
         $encoded = json_encode($collection);
@@ -184,21 +198,27 @@ class PersistentCollectionTest extends DataMapperBaseTest
         // Arrange
         $this->setUpSimpleEntity();
         $ids = [];
+        $entities = [];
         $firstHalf = [];
         $secondHalf = [];
         for ($i = 0; $i < 100; $i++)
         {
             $entity = new SimpleEntity($i, 2, 'one', 'two');
-            $id = $this->dm->persist($entity);
-            $ids[] = $id;
+            $entities[] = $entity;
+            $this->dm->persist($entity);
+        }
+        $this->dm->flush();
+        for ($i = 0; $i < 100; $i++)
+        {
+            $ids[] = $entities[$i]->getId();
 
             if ($i < 50)
             {
-                $firstHalf[$id] = null;
+                $firstHalf[$entities[$i]->getId()] = null;
                 continue;
             }
 
-            $secondHalf[] = $entity;
+            $secondHalf[] = $entities[$i];
         }
         $collection = new PersistentCollection($this->dm, SimpleEntity::class, $firstHalf);
         $collection->add($secondHalf);
@@ -228,11 +248,17 @@ class PersistentCollectionTest extends DataMapperBaseTest
         // Arrange
         $this->setUpSimpleEntity();
         $sortedIds = [];
+        $entities = [];
         for ($i = 0; $i < 100; $i++)
         {
             $entity = new SimpleEntity($i, 2, 'one', 'two');
-            $id = $this->dm->persist($entity);
-            $sortedIds[$id] = $entity;
+            $entities[] = $entity;
+            $this->dm->persist($entity);
+        }
+        $this->dm->flush();
+        for ($i = 0; $i < 100; $i++)
+        {
+            $sortedIds[$entities[$i]->getId()] = null;
         }
         $collection = new PersistentCollection($this->dm, SimpleEntity::class, $sortedIds);
         $sortedIds = array_keys($sortedIds);
@@ -261,18 +287,23 @@ class PersistentCollectionTest extends DataMapperBaseTest
         $sortedIds = [];
         $firstHalf = [];
         $secondHalf = [];
+        $entities = [];
         for ($i = 0; $i < 100; $i++)
         {
             $entity = new SimpleEntity($i, 2, 'one', 'two');
-            $sortedIds[] = $this->dm->persist($entity);
-
+            $entities[] = $entity;
+            $this->dm->persist($entity);
+        }
+        $this->dm->flush();
+        for ($i = 0; $i < 100; $i++)
+        {
+            $sortedIds[] = $entities[$i]->getId();
             if ($i < 50)
             {
-                $firstHalf[$entity->getId()] = null;
+                $firstHalf[$entities[$i]->getId()] = null;
                 continue;
             }
-
-            $secondHalf[$entity->getId()] = $entity;
+            $secondHalf[] = $entities[$i];
         }
         $collection = new PersistentCollection($this->dm, SimpleEntity::class, $firstHalf);
         $collection->add($secondHalf);
@@ -290,5 +321,59 @@ class PersistentCollectionTest extends DataMapperBaseTest
 
         // Assert
         $this->assertEquals($sortedIds, $collection->getIdList());
+    }
+
+    public function testWhere()
+    {
+        // Arrange
+        $this->setUpSimpleEntity();
+        $entities = [];
+        for ($i = 0; $i < 50; $i++)
+        {
+            $entity = new SimpleEntity($i, 2, '1', '2');
+            $entities[] = $entity;
+            $this->dm->persist($entity);
+        }
+        $this->dm->flush();
+        $ids = [];
+        for ($i = 0; $i < 50; $i++)
+        {
+            $ids[$entities[$i]->getId()] = null;
+        }
+        $collection = new PersistentCollection($this->dm, SimpleEntity::class, $ids);
+
+        // Act
+        $first = $collection->where('one', '>', 25)->first();
+
+        // Assert
+        $this->assertEquals(26, $first->getOne());
+    }
+
+    public function testStateIsResetAfterSelecting()
+    {
+        // Arrange
+        $this->setUpSimpleEntity();
+        $entities = [];
+        for ($i = 0; $i < 50; $i++)
+        {
+            $entity = new SimpleEntity($i, 2, '1', '2');
+            $entities[] = $entity;
+            $this->dm->persist($entity);
+        }
+        $this->dm->flush();
+        $ids = [];
+        for ($i = 0; $i < 50; $i++)
+        {
+            $ids[$entities[$i]->getId()] = null;
+        }
+        $collection = new PersistentCollection($this->dm, SimpleEntity::class, $ids);
+
+        // Act
+        $first = $collection->where('one', '>', 25)->first();
+        $firstAgain = $collection->first();
+
+        // Assert
+        $this->assertEquals(26, $first->getOne());
+        $this->assertEquals(0, $firstAgain->getOne());
     }
 }

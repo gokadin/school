@@ -270,7 +270,7 @@ final class UnitOfWork implements Observable
      * @param $id
      * @return mixed|null
      */
-    private function loadSingle($class, $id)
+    public function loadSingle($class, $id)
     {
         $metadata = $this->dm->getMetadata($class);
 

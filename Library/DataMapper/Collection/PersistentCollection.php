@@ -77,12 +77,6 @@ final class PersistentCollection extends AbstractEntityCollection implements Obs
     {
         $oid = spl_object_hash($entity);
 
-//        if (isset($this->removedItems[$oid]))
-//        {
-//            unset($this->removedItems[$oid]);
-//            return;
-//        }
-
         $id = $this->uow->findId($oid);
         if (is_null($id))
         {
@@ -104,29 +98,39 @@ final class PersistentCollection extends AbstractEntityCollection implements Obs
 
     public function remove($value)
     {
-//        is_array($value)
-//            ? $this->removeMany($value)
-//            : $this->removeOne($value);
+        is_array($value)
+            ? $this->removeMany($value)
+            : $this->removeOne($value);
     }
-//
-//    protected function removeOne($entity)
-//    {
-//        $id = $this->getEntityId($entity);
-//
-//        unset($this->items[$id]);
-//
-//        $this->markRemoved($entity, $id);
-//
-//        $this->count--;
-//    }
-//
-//    protected function removeMany($entities)
-//    {
-//        foreach ($entities as $entity)
-//        {
-//            $this->removeOne($entity);
-//        }
-//    }
+
+    protected function removeOne($entity)
+    {
+        $oid = spl_object_hash($entity);
+
+        if (isset($this->newItems[$oid]))
+        {
+            unset($this->newItems[$oid]);
+            return;
+        }
+
+        $id = $this->uow->findId($oid);
+
+        if (is_null($id))
+        {
+            return;
+        }
+
+        unset($this->items[$id]);
+        $this->count--;
+    }
+
+    protected function removeMany($entities)
+    {
+        foreach ($entities as $entity)
+        {
+            $this->removeOne($entity);
+        }
+    }
 
     public function resetState()
     {
@@ -246,7 +250,9 @@ final class PersistentCollection extends AbstractEntityCollection implements Obs
     {
         $this->execute();
 
-        return array_values($this->loadAll());
+        $this->loadAll();
+
+        return array_values($this->getActiveItems());
     }
 
     public function toIdMap()
@@ -260,19 +266,21 @@ final class PersistentCollection extends AbstractEntityCollection implements Obs
     {
         $this->execute();
 
-        return $this->useSubset
-            ? $this->subset
-            : array_keys($this->items);
+        return array_keys($this->getActiveItems());
     }
 
     public function getIterator()
     {
-        return new ArrayIterator($this->toArray());
+        $this->loadAll();
+
+        return new ArrayIterator(array_values($this->getActiveItems()));
     }
 
     public function jsonSerialize()
     {
-        return $this->toArray();
+        $this->loadAll();
+
+        return array_values($this->getActiveItems());
     }
 
     /**
@@ -284,8 +292,8 @@ final class PersistentCollection extends AbstractEntityCollection implements Obs
     protected function loadAll()
     {
         return $this->useSubset ?
-            $this->loadArray($this->subset) :
-            $this->loadArray(array_keys($this->items));
+            $this->loadIds($this->subset) :
+            $this->loadIds(array_keys($this->items));
     }
 
     /**
@@ -297,34 +305,54 @@ final class PersistentCollection extends AbstractEntityCollection implements Obs
      *
      * @return array
      */
-    protected function loadArray(array $ids)
+    protected function loadIds(array $ids)
     {
-        $unloadedIds = [];
-        $results = [];
-        foreach ($this->items as $id => $item)
+        $idsToLoad = [];
+        foreach ($ids as $id)
         {
-            if (!is_null($item))
+            if (is_null($this->items[$id]))
             {
-                $results[$id] = $item;
-                continue;
+                $idsToLoad[] = $id;
             }
-
-            $unloadedIds[] = $id;
         }
 
-        if (sizeof($unloadedIds) == 0)
+        if (sizeof($idsToLoad) == 0)
         {
-            return $this->buildFromIdList($ids);
+            return;
         }
 
-        foreach ($this->dm->findIn($this->metadata->className(), $ids) as $entity)
+        $this->uow->loadMany($this->metadata->className(), $idsToLoad);
+
+        foreach ($idsToLoad as $id)
         {
-            $id = $this->getEntityId($entity);
-            $results[$id] = $entity;
-            $this->items[$id] = $entity;
+            $this->items[$id] = $this->uow->find($this->metadata->className(), $id);
+        }
+    }
+
+    private function loadId($id)
+    {
+        if (!is_null($this->items[$id]))
+        {
+            return;
         }
 
-        return $results;
+        $this->items[$id] = $this->uow->loadSingle($this->metadata->className(), $id);
+    }
+
+    private function getActiveItems()
+    {
+        if (!$this->useSubset)
+        {
+            return $this->items;
+        }
+
+        $activeItems = [];
+        foreach ($this->subset as $id)
+        {
+            $activeItems[$id] = $this->items[$id];
+        }
+
+        return $activeItems;
     }
 
     protected function loadIndex($index)
@@ -347,13 +375,7 @@ final class PersistentCollection extends AbstractEntityCollection implements Obs
         {
             if ($i == $index)
             {
-                if (is_null($this->items[$id]))
-                {
-                    $entity = $this->dm->find($this->metadata->className(), $id);
-                    $this->items[$id] = $entity;
-
-                    return  $entity;
-                }
+                $this->loadId($id);
 
                 return $this->items[$id];
             }
@@ -373,14 +395,16 @@ final class PersistentCollection extends AbstractEntityCollection implements Obs
         $this->useSubset = true;
 
         $queryBuilder = $this->dm->queryBuilder()->table($this->metadata->table())
-            ->where($this->metadata->primaryKey()->fieldName(), 'in', '('.implode(',', array_keys($this->items)).')');
+            ->where($this->metadata->primaryKey()->propName(), 'in', '('.implode(',', array_keys($this->items)).')');
 
         $this->executeWheres($queryBuilder);
 
         $this->executeSortingRules($queryBuilder);
 
-        $this->subset = $queryBuilder->select([$this->metadata->primaryKey()->fieldName()]);
+        $this->subset = $queryBuilder->select([$this->metadata->primaryKey()->propName()]);
         $this->subsetCount = sizeof($this->subset);
+
+        $this->resetState();
     }
 
     protected function executeWheres(QueryBuilder &$queryBuilder)
@@ -413,7 +437,7 @@ final class PersistentCollection extends AbstractEntityCollection implements Obs
                 throw new Exception('PersistentCollection.sortBy : invalid property '.$propery);
             }
 
-            $queryBuilder->sortBy($column->fieldName(), $ascending);
+            $queryBuilder->sortBy($column->propName(), $ascending);
         }
     }
 
