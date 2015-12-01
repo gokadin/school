@@ -16,16 +16,11 @@ class PersistentCollectionTest extends DataMapperBaseTest
 
         // Act
         $collection = new PersistentCollection($this->dm, SimpleEntity::class, [
-            new SimpleEntity(1, 2, 'one', 'two'),
-            new SimpleEntity(1, 2, 'one', 'two'),
-            new SimpleEntity(1, 2, 'one', 'two'),
+            1, 2, 3
         ]);
 
         // Assert
         $this->assertEquals(3, $collection->count());
-        $this->assertFalse($collection->isChanged());
-        $this->assertEquals(0, $collection->addedItems()->count());
-        $this->assertEquals(0, $collection->removedItems()->count());
     }
 
     public function testAddingNonPersistedItemsCorrectlyChangesState()
@@ -42,11 +37,6 @@ class PersistentCollectionTest extends DataMapperBaseTest
 
         // Assert
         $this->assertEquals(0, $collection->count());
-        $this->assertTrue($collection->isChanged());
-        $this->assertEquals(0, $collection->removedItems()->count());
-        $this->assertEquals(2, $collection->addedItems()->count());
-        $this->assertTrue($collection->addedItems()->contains($e1));
-        $this->assertTrue($collection->addedItems()->contains($e2));
     }
 
     public function testAddingPersistedItemsCorrectlyChangesState()
@@ -58,6 +48,7 @@ class PersistentCollectionTest extends DataMapperBaseTest
         $e2 = new SimpleEntity(1, 2, 'one', 'two');
         $this->dm->persist($e1);
         $this->dm->persist($e2);
+        $this->dm->flush();
 
         // Act
         $collection->add($e1);
@@ -65,11 +56,6 @@ class PersistentCollectionTest extends DataMapperBaseTest
 
         // Assert
         $this->assertEquals(2, $collection->count());
-        $this->assertTrue($collection->isChanged());
-        $this->assertEquals(0, $collection->removedItems()->count());
-        $this->assertEquals(2, $collection->addedItems()->count());
-        $this->assertTrue($collection->addedItems()->contains($e1));
-        $this->assertTrue($collection->addedItems()->contains($e2));
     }
 
     public function testRemovingItemsCorrectlyChangesState()
@@ -87,10 +73,6 @@ class PersistentCollectionTest extends DataMapperBaseTest
 
         // Assert
         $this->assertEquals(0, $collection->count());
-        $this->assertTrue($collection->isChanged());
-        $this->assertEquals(0, $collection->removedItems()->count());
-        $this->assertEquals(1, $collection->addedItems()->count());
-        $this->assertTrue($collection->addedItems()->contains($e2));
     }
 
     public function testRemovingItemsCorrectlyChangesStateWhenItemsWereFirstAddedInConstructor()
@@ -109,10 +91,6 @@ class PersistentCollectionTest extends DataMapperBaseTest
 
         // Assert
         $this->assertEquals(2, $collection->count());
-        $this->assertTrue($collection->isChanged());
-        $this->assertEquals(1, $collection->removedItems()->count());
-        $this->assertEquals(0, $collection->addedItems()->count());
-        $this->assertTrue($collection->removedItems()->contains($e1));
     }
 
     public function testThatWhenRequestingUnloadedItemItLoadsItCorrectly()

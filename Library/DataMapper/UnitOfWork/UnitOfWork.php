@@ -390,7 +390,7 @@ final class UnitOfWork implements Observable
         if (sizeof($ids) == 0)
         {
             $metadata->reflProp($association->propName())->setValue(
-                $entity, new PersistentCollection($this->dm, $this, $association->target()));
+                $entity, new PersistentCollection($this->dm, $association->target()));
 
             return;
         }
@@ -409,7 +409,7 @@ final class UnitOfWork implements Observable
         }
 
         $metadata->reflProp($association->propName())->setValue(
-            $entity, new PersistentCollection($this->dm, $this, $association->target(), $items));
+            $entity, new PersistentCollection($this->dm, $association->target(), $items));
     }
 
     /**
@@ -828,7 +828,7 @@ final class UnitOfWork implements Observable
             $items[$itemOid] = $item;
         }
 
-        $collection = new PersistentCollection($this->dm, $this, $association->target(), $items);
+        $collection = new PersistentCollection($this->dm, $association->target(), $items);
         $metadata->reflProp($association->propName())->setValue($this->entities[$oid], $collection);
     }
 

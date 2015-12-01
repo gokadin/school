@@ -68,6 +68,11 @@ class DataMapper
         }
     }
 
+    public function unitOfWork()
+    {
+        return $this->unitOfWork;
+    }
+
     /**
      * Finds the object by id and fully loads it
      * in the unit of work unless already there.

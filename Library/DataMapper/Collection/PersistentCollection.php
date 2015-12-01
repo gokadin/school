@@ -40,19 +40,19 @@ final class PersistentCollection extends AbstractEntityCollection implements Obs
     protected $sortingRules = [];
     protected $wheres = [];
 
-    public function __construct(DataMapper $dm, UnitOfWork $uow, $class, array $items = [])
+    public function __construct(DataMapper $dm, $class, array $items = [])
     {
         parent::__construct();
 
         $this->dm = $dm;
-        $this->uow = $uow;
+        $this->uow = $dm->unitOfWork();
         $this->metadata = $this->dm->getMetadata($class);
 
         $this->items = $items;
         $this->count = sizeof($items);
         $this->useSubset = false;
 
-        $uow->subscribe($this);
+        $this->uow->subscribe($this);
     }
 
     protected function addNew($entity, $oid)
