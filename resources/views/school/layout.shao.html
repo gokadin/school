@@ -139,7 +139,10 @@
     </div>
 
     <div id="content">
-        @yield('content')
+        <div is="activities-index" id="mount-point">
+            @{{ uri }}
+            @yield('content')
+        </div>
     </div>
 </div>
 

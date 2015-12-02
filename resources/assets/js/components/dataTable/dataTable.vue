@@ -15,11 +15,9 @@
             <div class="table">
                 <table cellspacing="0">
                     <tr>
-                        <th v-bind:class="['sortable', sortFields.name == 'asc' ? 'sorted-asc' : '', sortFields.name == 'desc' ? 'sorted-desc' : '']" @click="sortBy('name')">Name</th>
-                        <th v-bind:class="['sortable', sortFields.rate == 'asc' ? 'sorted-asc' : '', sortFields.rate == 'desc' ? 'sorted-desc' : '']" @click="sortBy('rate')">Rate</th>
-                        <th v-bind:class="['sortable', sortFields.period == 'asc' ? 'sorted-asc' : '', sortFields.period == 'desc' ? 'sorted-desc' : '']" @click="sortBy('period')">Period</th>
-                        <th v-bind:class="['sortable', sortFields.students == 'asc' ? 'sorted-asc' : '', sortFields.students == 'desc' ? 'sorted-desc' : '']" @click="sortBy('students')">Students</th>
-                        <th>Actions</th>
+                        <th v-for="colName in columns">
+                            {{ colName }}
+                        </th>
                     </tr>
                     <tr v-for="activity in activities | filterBy mainFilter">
                         <td>@{{ activity.name }}</td>
@@ -37,22 +35,168 @@
                     </tr>
                 </table>
             </div>
+            <div class="footer">
+                <div class="showing">
+                    Showing @{{ page * max + 1 }}
+                    to @{{ ((page + 1) * max) > total ? total : (page + 1) * max }}
+                    of @{{ total }} <span>entries</span>
+                </div>
+                <div class="page-selector">
+                    <button v-bind:class="{'disabled': !hasPreviousPage}" @click="previousPage()">
+                        <i class="fa fa-arrow-left"></i>
+                    </button>
+                    <button>
+                        @{{ page + 1 }}
+                    </button>
+                    <button v-bind:class="{'disabled': !hasNextPage}" @click="nextPage">
+                        <i class="fa fa-arrow-right"></i>
+                    </button>
+                </div>
+            </div>
         </div>
     </div>
 </template>
 
-<style lang="sass">
-
-</style>
-
 <script>
 export default {
-    props: ['title'],
+    props: ['title', 'uri', 'columns'],
 
     data: function() {
         return {
-            mainFilter: ''
+            activities: [],
+            mainFilter: '',
+            searchName: '',
+            searchRate: '',
+            searchPeriod: '',
+            searchFields: {},
+            searchDelayTimer: null,
+            total: 0,
+            sortFields: {
+                name: 'asc',
+                rate: 'none',
+                period: 'none',
+                students: 'none'
+            },
+            page: 0,
+            max: 10
+        };
+    },
+
+    computed: {
+        hasPreviousPage: function() {
+            return this.page > 0;
+        },
+
+        hasNextPage: function() {
+            return this.page * this.max <= this.total - this.max;
+        }
+    },
+
+    watch: {
+        'searchName': function(value, oldValue) {
+            if (value.trim() == oldValue.trim()) {
+                return;
+            }
+
+            if (value == '') {
+                delete(this.searchFields.name);
+            } else {
+                this.searchFields.name = value;
+            }
+
+            this.doSearch();
+        },
+
+        'searchRate': function(value, oldValue) {
+            if (value.trim() == oldValue.trim()) {
+                return;
+            }
+
+            if (value == '') {
+                delete(this.searchFields.rate);
+            } else {
+                this.searchFields.rate = value;
+            }
+
+            this.doSearch();
+        },
+
+        'searchPeriod': function(value, oldValue) {
+            if (value.trim() == oldValue.trim()) {
+                return;
+            }
+
+            if (value == '') {
+                delete(this.searchFields.period);
+            } else {
+                this.searchFields.period = value;
+            }
+
+            this.doSearch();
+        }
+    },
+
+    created: function() {
+        this.doRequest();
+    },
+
+    methods: {
+        previousPage: function() {
+            if (!this.hasPreviousPage) {
+                return;
+            }
+
+            this.page--;
+
+            this.doRequest();
+        },
+
+        nextPage: function() {
+            if (!this.hasNextPage) {
+                return;
+            }
+
+            this.page++;
+
+            this.doRequest();
+        },
+
+        doSearch: function() {
+            clearTimeout(this.searchDelayTimer);
+            this.searchDelayTimer = setTimeout(function() {
+                this.page = 0;
+
+                this.doRequest();
+            }.bind(this), 200);
+        },
+
+        sortBy: function(prop) {
+            if (this.sortFields[prop] == 'none') {
+                this.sortFields[prop] = 'asc';
+            } else if (this.sortFields[prop] == 'asc') {
+                this.sortFields[prop] = 'desc';
+            } else if (this.sortFields[prop] == 'desc') {
+                this.sortFields[prop] = 'none';
+            }
+
+            this.doRequest();
+        },
+
+        doRequest: function() {
+            this.$http.post(this.uri, {
+                page: this.page,
+                max: this.max,
+                sortingRules: this.sortFields,
+                filters: this.searchFields
+            }, function(response) {
+                this.activities = response.activities;
+                this.total = response.totalCount;
+            });
         }
     }
 }
 </script>
+
+<style lang="sass">
+
+</style>
