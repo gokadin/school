@@ -13,8 +13,12 @@ Vue.component('activities', {
             searchFields: {},
             searchDelayTimer: null,
             total: 0,
-            sortBy: 'name',
-            sortAscending: true,
+            sortFields: {
+                name: 'asc',
+                rate: 'none',
+                period: 'none',
+                students: 'none'
+            },
             page: 0,
             max: 10
         };
@@ -75,16 +79,7 @@ Vue.component('activities', {
     },
 
     created: function() {
-        this.$http.post('/api/school/teacher-activities', {
-            page: this.page,
-            max: this.max,
-            sortBy: this.sortBy,
-            sortAscending: this.sortAscending,
-            filters: {}
-        }, function(response) {
-            this.activities = response.activities;
-            this.total = response.totalCount;
-        });
+        this.doRequest();
     },
 
     methods: {
@@ -93,17 +88,9 @@ Vue.component('activities', {
                 return;
             }
 
-            this.$http.post('/api/school/teacher-activities', {
-                page: this.page - 1,
-                max: this.max,
-                sortBy: this.sortBy,
-                sortAscending: this.sortAscending,
-                filters: {}
-            }, function(response) {
-                this.activities = response.activities;
-                this.total = response.totalCount;
-                this.page--;
-            });
+            this.page--;
+
+            this.doRequest();
         },
 
         nextPage: function() {
@@ -111,34 +98,42 @@ Vue.component('activities', {
                 return;
             }
 
-            this.$http.post('/api/school/teacher-activities', {
-                page: this.page + 1,
-                max: this.max,
-                sortBy: this.sortBy,
-                sortAscending: this.sortAscending,
-                filters: {}
-            }, function(response) {
-                this.activities = response.activities;
-                this.total = response.totalCount;
-                this.page++;
-            });
+            this.page++;
+
+            this.doRequest();
         },
 
         doSearch: function() {
             clearTimeout(this.searchDelayTimer);
             this.searchDelayTimer = setTimeout(function() {
                 this.page = 0;
-                this.$http.post('/api/school/teacher-activities', {
-                    page: this.page,
-                    max: this.max,
-                    sortBy: this.sortBy,
-                    sortAscending: this.sortAscending,
-                    filters: this.searchFields
-                }, function(response) {
-                    this.activities = response.activities;
-                    this.total = response.totalCount;
-                });
+
+                this.doRequest();
             }.bind(this), 200);
+        },
+
+        sortBy: function(prop) {
+            if (this.sortFields[prop] == 'none') {
+                this.sortFields[prop] = 'asc';
+            } else if (this.sortFields[prop] == 'asc') {
+                this.sortFields[prop] = 'desc';
+            } else if (this.sortFields[prop] == 'desc') {
+                this.sortFields[prop] = 'none';
+            }
+
+            this.doRequest();
+        },
+
+        doRequest: function() {
+            this.$http.post('/api/school/teacher-activities', {
+                page: this.page,
+                max: this.max,
+                sortingRules: this.sortFields,
+                filters: this.searchFields
+            }, function(response) {
+                this.activities = response.activities;
+                this.total = response.totalCount;
+            });
         }
     }
 });

@@ -659,10 +659,10 @@ button:disabled {
     content: "";
     font-size: 13px;
     right: 20px; }
-  #school .data-table-1 .table table th.sortable:before {
+  #school .data-table-1 .table table th.sortable:not(.sorted-desc):before {
     margin-top: -4px;
     content: "\f106"; }
-  #school .data-table-1 .table table th.sortable:after {
+  #school .data-table-1 .table table th.sortable:not(.sorted-asc):after {
     margin-top: 4px;
     content: "\f107"; }
   #school .data-table-1 .table table td {

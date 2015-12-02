@@ -26,10 +26,10 @@
                 <div class="table">
                     <table cellspacing="0">
                         <tr>
-                            <th class="sortable" @click="sortBy('name')">Name</th>
-                            <th class="sortable" @click="sortBy('rate')">Rate</th>
-                            <th class="sortable" @click="sortBy('period')">Period</th>
-                            <th class="sortable" @click="sortBy('students')">Students</th>
+                            <th v-bind:class="['sortable', sortFields.name == 'asc' ? 'sorted-asc' : '', sortFields.name == 'desc' ? 'sorted-desc' : '']" @click="sortBy('name')">Name</th>
+                            <th v-bind:class="['sortable', sortFields.rate == 'asc' ? 'sorted-asc' : '', sortFields.rate == 'desc' ? 'sorted-desc' : '']" @click="sortBy('rate')">Rate</th>
+                            <th v-bind:class="['sortable', sortFields.period == 'asc' ? 'sorted-asc' : '', sortFields.period == 'desc' ? 'sorted-desc' : '']" @click="sortBy('period')">Period</th>
+                            <th v-bind:class="['sortable', sortFields.students == 'asc' ? 'sorted-asc' : '', sortFields.students == 'desc' ? 'sorted-desc' : '']" @click="sortBy('students')">Students</th>
                             <th>Actions</th>
                         </tr>
                         <tr v-for="activity in activities | filterBy mainFilter">

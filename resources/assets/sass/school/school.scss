@@ -178,12 +178,12 @@ a:hover {
         right: 20px;
       }
 
-      th.sortable:before {
+      th.sortable:not(.sorted-desc):before {
         margin-top: -4px;
         content: "\f106";
       }
 
-      th.sortable:after {
+      th.sortable:not(.sorted-asc):after {
         margin-top: 4px;
         content: "\f107";
       }

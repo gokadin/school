@@ -10,8 +10,20 @@ class ActivityController extends Controller
 {
     public function getTeacherActivities(GetTeacherActivitiesRequest $request, UserRepository $userRepository)
     {
-        $activities = $userRepository->getLoggedInUser()->activities()
-            ->sortBy($request->sortBy, $request->sortAscending);
+        $activities = $userRepository->getLoggedInUser()->activities();
+
+        foreach ($request->sortingRules as $property => $ascending)
+        {
+            switch ($ascending)
+            {
+                case 'asc':
+                    $activities->sortBy($property, true);
+                    break;
+                case 'desc':
+                    $activities->sortBy($property, false);
+                    break;
+            }
+        }
 
         foreach ($request->filters as $property => $string)
         {
