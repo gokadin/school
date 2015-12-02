@@ -6,23 +6,16 @@
     Activities
 </div>
 
-<activities></activities>
+<data-table title="Activity list"></data-table>
+
+<div class="content-padding">
+    <activities></activities>
+</div>
 
 <template id="activities-template">
     <div class="content-padding">
         <div class="panel-1">
             <div class="data-table-1">
-                <div class="header">
-                    <div class="title">
-                        Activity list
-                    </div>
-                    <div class="filter">
-                        <label>
-                            <span>Filter:</span>
-                            <input type="text" v-model="mainFilter" placeholder="Type to filter..." />
-                        </label>
-                    </div>
-                </div>
                 <div class="table">
                     <table cellspacing="0">
                         <tr>
