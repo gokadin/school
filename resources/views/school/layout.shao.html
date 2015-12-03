@@ -139,10 +139,9 @@
     </div>
 
     <div id="content">
-        <div is="activities-index" id="mount-point">
-            @{{ uri }}
+        <component :is="currentView" inline-template>
             @yield('content')
-        </div>
+        </component>
     </div>
 </div>
 

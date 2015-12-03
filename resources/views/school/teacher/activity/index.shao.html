@@ -9,9 +9,10 @@
 <div class="content-padding">
     <data-table
             title="Activity list"
-            uri="@{{ uri }}"
-            columns="@{{ columns }}">
-    </data-table>
+            :columns="columns"
+            :uri="uri"
+            :actions="actions"
+    ></data-table>
 </div>
 
 @stop()

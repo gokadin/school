@@ -20,9 +20,9 @@
                         </th>
                     </tr>
                     <tr v-for="activity in activities | filterBy mainFilter">
-                        <td>@{{ activity.name }}</td>
-                        <td>@{{ activity.rate }}</td>
-                        <td>@{{ activity.period }}</td>
+                        <td>{{ activity.name }}</td>
+                        <td>{{ activity.rate }}</td>
+                        <td>{{ activity.period }}</td>
                         <td>0</td>
                         <td>x</td>
                     </tr>
@@ -37,16 +37,16 @@
             </div>
             <div class="footer">
                 <div class="showing">
-                    Showing @{{ page * max + 1 }}
-                    to @{{ ((page + 1) * max) > total ? total : (page + 1) * max }}
-                    of @{{ total }} <span>entries</span>
+                    Showing {{ page * max + 1 }}
+                    to {{ ((page + 1) * max) > total ? total : (page + 1) * max }}
+                    of {{ total }} <span>entries</span>
                 </div>
                 <div class="page-selector">
                     <button v-bind:class="{'disabled': !hasPreviousPage}" @click="previousPage()">
                         <i class="fa fa-arrow-left"></i>
                     </button>
                     <button>
-                        @{{ page + 1 }}
+                        {{ page + 1 }}
                     </button>
                     <button v-bind:class="{'disabled': !hasNextPage}" @click="nextPage">
                         <i class="fa fa-arrow-right"></i>
@@ -59,7 +59,7 @@
 
 <script>
 export default {
-    props: ['title', 'uri', 'columns'],
+    props: ['title', 'uri', 'columns', 'actions'],
 
     data: function() {
         return {

@@ -1,9 +1,11 @@
 <script>
-var Vue = new Vue({
-    el: 'body',
-
-    data: {
-        uri: 'abcdesffff'
+export default {
+    data: function() {
+        return {
+            uri: '/api/school/teacher-activities',
+            columns: ['name', 'rate', 'period', 'students', 'actions'],
+            actions: 'blabla'
+        };
     }
-})
+};
 </script>
