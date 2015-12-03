@@ -93,7 +93,8 @@ class Activity implements JsonSerializable
             'name' => $this->name,
             'rate' => $this->rate,
             'period' => $this->period,
-            'location' => $this->location
+            'location' => $this->location,
+            'students' => 0
         ];
     }
 }

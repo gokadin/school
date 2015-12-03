@@ -33,7 +33,7 @@ class ActivityController extends Controller
         $totalCount = $activities->count();
 
         return [
-            'activities' => $activities->slice($request->page * $request->max, $request->max),
+            'dataSet' => $activities->slice($request->page * $request->max, $request->max),
             'totalCount' => $totalCount
         ];
     }

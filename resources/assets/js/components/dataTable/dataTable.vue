@@ -15,22 +15,27 @@
             <div class="table">
                 <table cellspacing="0">
                     <tr>
-                        <th v-for="colName in columns">
-                            {{ colName }}
+                        <th v-for="column in columns">
+                            {{ column.display }}
                         </th>
+                        <th>Actions</th>
                     </tr>
-                    <tr v-for="activity in activities | filterBy mainFilter">
-                        <td>{{ activity.name }}</td>
-                        <td>{{ activity.rate }}</td>
-                        <td>{{ activity.period }}</td>
-                        <td>0</td>
+                    <tr v-for="data in dataSet | filterBy mainFilter">
+                        <td v-for="column in columns">
+                            {{ data[column.name] }}
+                        </td>
                         <td>x</td>
                     </tr>
                     <tr>
-                        <td><input typ="text" placeholder="Search name" v-model="searchName" /></td>
-                        <td><input typ="text" placeholder="Search rate" v-model="searchRate" /></td>
-                        <td><input typ="text" placeholder="Search period" v-model="searchPeriod" /></td>
-                        <td></td>
+                        <td v-for="column in columns">
+                            <input
+                                    type="text"
+                                    v-if="column.searchable"
+                                    placeholder="Search {{ column.display }}..."
+                                    v-model="oldSearchData[column.name]"
+                                    @input="inputChanged(column.name)"
+                            />
+                        </td>
                         <td></td>
                     </tr>
                 </table>
@@ -42,13 +47,13 @@
                     of {{ total }} <span>entries</span>
                 </div>
                 <div class="page-selector">
-                    <button v-bind:class="{'disabled': !hasPreviousPage}" @click="previousPage()">
+                    <button :class="{'disabled': !hasPreviousPage}" @click="previousPage()">
                         <i class="fa fa-arrow-left"></i>
                     </button>
                     <button>
                         {{ page + 1 }}
                     </button>
-                    <button v-bind:class="{'disabled': !hasNextPage}" @click="nextPage">
+                    <button :class="{'disabled': !hasNextPage}" @click="nextPage">
                         <i class="fa fa-arrow-right"></i>
                     </button>
                 </div>
@@ -63,22 +68,14 @@ export default {
 
     data: function() {
         return {
-            activities: [],
-            mainFilter: '',
-            searchName: '',
-            searchRate: '',
-            searchPeriod: '',
-            searchFields: {},
-            searchDelayTimer: null,
+            dataSet: [],
             total: 0,
-            sortFields: {
-                name: 'asc',
-                rate: 'none',
-                period: 'none',
-                students: 'none'
-            },
             page: 0,
-            max: 10
+            max: 10,
+            mainFilter: '',
+            oldSearchData: {},
+            searchData: {},
+            searchDelayTimer: null
         };
     },
 
@@ -92,55 +89,36 @@ export default {
         }
     },
 
-    watch: {
-        'searchName': function(value, oldValue) {
-            if (value.trim() == oldValue.trim()) {
-                return;
-            }
-
-            if (value == '') {
-                delete(this.searchFields.name);
-            } else {
-                this.searchFields.name = value;
-            }
-
-            this.doSearch();
-        },
-
-        'searchRate': function(value, oldValue) {
-            if (value.trim() == oldValue.trim()) {
-                return;
-            }
-
-            if (value == '') {
-                delete(this.searchFields.rate);
-            } else {
-                this.searchFields.rate = value;
-            }
-
-            this.doSearch();
-        },
-
-        'searchPeriod': function(value, oldValue) {
-            if (value.trim() == oldValue.trim()) {
-                return;
-            }
-
-            if (value == '') {
-                delete(this.searchFields.period);
-            } else {
-                this.searchFields.period = value;
-            }
-
-            this.doSearch();
-        }
-    },
-
     created: function() {
         this.doRequest();
     },
 
     methods: {
+        inputChanged: function(name) {
+            if (this.oldSearchData[name] == '') {
+                if (name in this.searchData) {
+                    delete(this.searchData[name]);
+
+                    this.doSearch();
+                }
+
+                return;
+            }
+
+            if (!(name in this.searchData)) {
+                this.searchData[name] = this.oldSearchData[name];
+
+                this.doSearch();
+                return;
+            }
+
+            if (this.oldSearchData[name] != this.searchData[name]) {
+                this.searchData[name] = this.oldSearchData[name];
+
+                this.doSearch();
+            }
+        },
+
         previousPage: function() {
             if (!this.hasPreviousPage) {
                 return;
@@ -170,26 +148,26 @@ export default {
             }.bind(this), 200);
         },
 
-        sortBy: function(prop) {
-            if (this.sortFields[prop] == 'none') {
-                this.sortFields[prop] = 'asc';
-            } else if (this.sortFields[prop] == 'asc') {
-                this.sortFields[prop] = 'desc';
-            } else if (this.sortFields[prop] == 'desc') {
-                this.sortFields[prop] = 'none';
-            }
-
-            this.doRequest();
-        },
+//        sortBy: function(prop) {
+//            if (this.sortFields[prop] == 'none') {
+//                this.sortFields[prop] = 'asc';
+//            } else if (this.sortFields[prop] == 'asc') {
+//                this.sortFields[prop] = 'desc';
+//            } else if (this.sortFields[prop] == 'desc') {
+//                this.sortFields[prop] = 'none';
+//            }
+//
+//            this.doRequest();
+//        },
 
         doRequest: function() {
             this.$http.post(this.uri, {
                 page: this.page,
                 max: this.max,
-                sortingRules: this.sortFields,
-                filters: this.searchFields
+                sortingRules: {},
+                filters: this.searchData
             }, function(response) {
-                this.activities = response.activities;
+                this.dataSet = response.dataSet;
                 this.total = response.totalCount;
             });
         }

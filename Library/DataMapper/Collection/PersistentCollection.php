@@ -197,7 +197,13 @@ final class PersistentCollection extends AbstractEntityCollection implements Obs
 
         $this->loadIds($ids);
 
-        return array_values($this->getActiveItems());
+        $result = [];
+        foreach ($ids as $id)
+        {
+            $result[] = $this->items[$id];
+        }
+
+        return $result;
     }
 
     public function where($var, $operator, $value = null)
