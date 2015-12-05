@@ -44,6 +44,11 @@ class Column
         return $this->type;
     }
 
+    public function isBoolean()
+    {
+        return $this->type == 'boolean';
+    }
+
     public function isPrimaryKey()
     {
         return $this->isPrimaryKey;

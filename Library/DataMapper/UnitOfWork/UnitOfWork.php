@@ -344,7 +344,14 @@ final class UnitOfWork implements Observable
                 continue;
             }
 
-            $metadata->reflProp($column->propName())->setValue($entity, $data[$column->name()]);
+            $value = $data[$column->name()];
+
+            if ($column->isBoolean())
+            {
+                $value = $value == 1 ? true : false;
+            }
+
+            $metadata->reflProp($column->propName())->setValue($entity, $value);
         }
 
         $this->buildAssociations($entity, $metadata, $data);
@@ -705,9 +712,19 @@ final class UnitOfWork implements Observable
 
             $value = $metadata->reflProp($column->propName())->getValue($this->entities[$oid]);
 
+            if ($column->isBoolean())
+            {
+                $value = $value ? 1 : 0;
+            }
+
             if ($column->isTimestamp() && is_null($value))
             {
                 $value = Carbon::now();
+            }
+
+            if (is_null($value) && $column->isDefault())
+            {
+                $value = $column->defaultValue();
             }
 
             $data[$column->name()] = $value;

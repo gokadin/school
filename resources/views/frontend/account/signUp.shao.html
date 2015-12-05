@@ -2,7 +2,7 @@
 
 @section('content')
 
-@inject('\Library\Facades\Form')
+@inject('\Library\Http\Form')
 
 <div class="memberships">
 
@@ -44,9 +44,9 @@
 
 <div class="signup">
 
-    {!! Form::open('', 'POST', ['id' => 'signup-form', 'class' => 'custom-1']) !!}
+    {!! $form->open('', 'POST', ['id' => 'signup-form', 'class' => 'custom-1']) !!}
 
-    {!! Form::hidden('subscriptionType', '1') !!}
+    {!! $form->hidden('subscriptionType', '1') !!}
 
     <div class="g-form-header">
         Sign up
@@ -55,30 +55,30 @@
     <div class="g-form-body">
 
         <div class="form-row">
-            {!! Form::label('firstName', 'First name', ['class' => 'required']) !!}
-            {!! Form::text('firstName', null, ['placeholder' => 'First name']) !!}
-            {!! Form::error('firstName') !!}
+            {!! $form->label('firstName', 'First name', ['class' => 'required']) !!}
+            {!! $form->text('firstName', null, ['placeholder' => 'First name']) !!}
+            {!! $form->error('firstName') !!}
         </div>
 
         <div class="form-row">
-            {!! Form::label('lastName', 'Last name', ['class' => 'required']) !!}
-            {!! Form::text('lastName', null, ['placeholder' => 'Last name']) !!}
-            {!! Form::error('lastName') !!}
+            {!! $form->label('lastName', 'Last name', ['class' => 'required']) !!}
+            {!! $form->text('lastName', null, ['placeholder' => 'Last name']) !!}
+            {!! $form->error('lastName') !!}
         </div>
 
         <div class="form-row">
-            {!! Form::label('email', 'Email', ['class' => 'required']) !!}
-            {!! Form::text('email', null, ['placeholder' => 'Email']) !!}
-            {!! Form::error('email') !!}
+            {!! $form->label('email', 'Email', ['class' => 'required']) !!}
+            {!! $form->text('email', null, ['placeholder' => 'Email']) !!}
+            {!! $form->error('email') !!}
         </div>
 
     </div>
 
     <div class="g-form-footer">
-        {!! Form::button('Sign up', ['type' => 'submit']) !!}
+        {!! $form->button('Sign up', ['type' => 'submit']) !!}
     </div>
 
-    {!! Form::close() !!}
+    {!! $form->close() !!}
 
 </div>
 

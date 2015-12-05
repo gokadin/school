@@ -1,13 +1,14 @@
 <?php
 
-namespace App\Domain\Settings;
+namespace App\Domain\Setting;
 
 use Library\DataMapper\DataMapperPrimaryKey;
+use JsonSerializable;
 
 /**
  * @Entity(name="form_field")
  */
-class FormField
+class FormField implements JsonSerializable
 {
     use DataMapperPrimaryKey;
 
@@ -17,11 +18,18 @@ class FormField
     /** @Column(type="string") */
     private $displayName;
 
-    /** @Column(type="string") */
-    private $type;
+    /** @Column(type="string", default="text") */
+    private $value;
 
-    /** @BelongsTo(target="App\Domain\Settings\StudentRegistrationForm") */
+    /** @BelongsTo(target="App\Domain\Setting\StudentRegistrationForm") */
     private $form;
+
+    public function __construct(StudentRegistrationForm $form, $name, $displayName)
+    {
+        $this->form = $form;
+        $this->name = $name;
+        $this->displayName = $displayName;
+    }
 
     public function name()
     {
@@ -43,14 +51,14 @@ class FormField
         $this->displayName = $displayName;
     }
 
-    public function type()
+    public function value()
     {
-        return $this->type;
+        return $this->value;
     }
 
-    public function setType($type)
+    public function setValue($value)
     {
-        $this->type = $type;
+        $this->value = $value;
     }
 
     public function form()
@@ -61,5 +69,13 @@ class FormField
     public function setForm($form)
     {
         $this->form = $form;
+    }
+
+    public function jsonSerialize()
+    {
+        return [
+            'displayName' => $this->displayName,
+            'value' => $this->value
+        ];
     }
 }

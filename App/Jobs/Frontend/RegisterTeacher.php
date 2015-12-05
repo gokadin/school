@@ -3,6 +3,7 @@
 namespace App\Jobs\Frontend;
 
 use App\Events\Frontend\TeacherRegistered;
+use App\Events\Frontend\UserLoggedIn;
 use App\Jobs\Job;
 use App\Repositories\UserRepository;
 use Library\Http\Response;

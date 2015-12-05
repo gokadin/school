@@ -546,6 +546,28 @@ button:disabled {
   min-height: 100%; }
 #school a:hover {
   text-decoration: none; }
+#school button.button-red,
+#school button.button-green,
+#school button.button-gray {
+  height: 30px;
+  width: 150px;
+  border: 1px solid #cccccc;
+  cursor: pointer;
+  color: #fff; }
+#school button.button-red {
+  background-color: #a94442; }
+#school button.button-green {
+  background-color: #67b168; }
+#school button.button-gray {
+  background-color: #f2f2f2;
+  color: black; }
+#school button.button-long {
+  width: 180px; }
+#school button.button-tall {
+  height: 40px; }
+#school button.button-large {
+  height: 40px;
+  font-weight: 600; }
 #school #content .content-padding {
   padding: 30px 20px; }
 #school #content .main-title {
@@ -758,11 +780,16 @@ button:disabled {
     font-style: normal;
     display: inline-block;
     width: 25px;
-    font-size: 22px; }
+    font-size: 22px;
+    vertical-align: middle; }
   #school .checkbox-1 i:before {
     content: "\f096"; }
   #school .checkbox-1 input:checked ~ i:before {
     content: "\f046"; }
+#school .checkbox-1.disabled i {
+  color: grey; }
+#school .checkbox-1.disabled i:before {
+  content: "\f046"; }
 @media screen and (max-width: 480px) {
   #school #content .main-title {
     text-align: center; }

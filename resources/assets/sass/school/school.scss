@@ -6,6 +6,42 @@ a:hover {
   text-decoration: none;
 }
 
+button.button-red,
+button.button-green,
+button.button-gray {
+  height: 30px;
+  width: 150px;
+  border: 1px solid #cccccc;
+  cursor: pointer;
+  color: #fff;
+}
+
+button.button-red {
+  background-color: #a94442;
+}
+
+button.button-green {
+  background-color: #67b168;
+}
+
+button.button-gray {
+  background-color: #f2f2f2;
+  color: black;
+}
+
+button.button-long {
+  width: 180px;
+}
+
+button.button-tall {
+  height: 40px;
+}
+
+button.button-large {
+  height: 40px;
+  font-weight: 600;
+}
+
 #content {
   .content-padding {
     padding: 30px 20px;
@@ -329,6 +365,7 @@ a:hover {
     display: inline-block;
     width: 25px;
     font-size: 22px;
+    vertical-align: middle;
   }
 
   i:before {
@@ -336,6 +373,16 @@ a:hover {
   }
 
   input:checked ~ i:before {
+    content: "\f046";
+  }
+}
+
+.checkbox-1.disabled {
+  i {
+    color: grey;
+  }
+
+  i:before {
     content: "\f046";
   }
 }

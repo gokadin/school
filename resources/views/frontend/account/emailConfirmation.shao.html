@@ -2,13 +2,13 @@
 
 @section('content')
 
-@inject('\Library\Facades\Form')
+@inject('\Library\Http\Form')
 
 <div class="emailConfirmation">
 
-    {{ Form::open('frontend.account.registerTeacher', 'POST', ['id' => 'confirm-form', 'class' => 'custom-1']) }}
+    {!! $form->open('frontend.account.registerTeacher', 'POST', ['id' => 'confirm-form', 'class' => 'custom-1']) !!}
 
-    {{ Form::hidden('tempTeacherId', $tempTeacher->getId()) }}
+    {!! $form->hidden('tempTeacherId', $tempTeacher->getId()) !!}
 
     <div class="g-form-header">
         Complete registration
@@ -17,29 +17,29 @@
     <div class="g-form-body">
 
         <div class="form-row">
-            {{ Form::label('name', 'Name') }}
+            {!! $form->label('name', 'Name') !!}
             <div class="g-form-input g-form-text">{{ $tempTeacher->name() }}</div>
         </div>
 
         <div class="form-row">
-            {{ Form::label('password', 'Create password', ['class' => 'required']) }}
-            {{ Form::password('password') }}
-            {{ Form::error('password') }}
+            {!! $form->label('password', 'Create password', ['class' => 'required']) !!}
+            {!! $form->password('password') !!}
+            {!! $form->error('password') !!}
         </div>
 
         <div class="form-row">
-            {{ Form::label('confirmPassword', 'Confirm password', ['class' => 'required']) }}
-            {{ Form::password('confirmPassword') }}
-            {{ Form::error('confirmPassword') }}
+            {!! $form->label('confirmPassword', 'Confirm password', ['class' => 'required']) !!}
+            {!! $form->password('confirmPassword') !!}
+            {!! $form->error('confirmPassword') !!}
         </div>
 
     </div>
 
     <div class="g-form-footer">
-        {{ Form::button('Finish and login', ['type' => 'submit']) }}
+        {!! $form->button('Finish and login', ['type' => 'submit']) !!}
     </div>
 
-    {{ Form::close() }}
+    {!! $form->close() !!}
 
 </div>
 

@@ -4,6 +4,8 @@ namespace App\Repositories;
 
 use App\Domain\Activities\Activity;
 use App\Domain\School\School;
+use App\Domain\Setting\StudentRegistrationForm;
+use App\Domain\Setting\TeacherSettings;
 use App\Domain\Subscriptions\Subscription;
 use App\Domain\Users\TempStudent;
 use App\Domain\Users\TempTeacher;
@@ -92,11 +94,21 @@ class UserRepository extends Repository
             return false;
         }
 
+        $schoolAddress = new Address();
+        $this->dm->persist($schoolAddress);
         $school = new School('Your School');
-        $school->setAddress(new Address());
+        $school->setAddress($schoolAddress);
+        $this->dm->persist($school);
 
+        $registrationForm = new StudentRegistrationForm();
+        $this->dm->persist($registrationForm);
+        $settings = new TeacherSettings($registrationForm);
+        $this->dm->persist($settings);
+
+        $teacherAddress = new Address();
+        $this->dm->persist($teacherAddress);
         $teacher = new Teacher($tempTeacher->firstName(), $tempTeacher->lastName(),
-            $tempTeacher->email(), md5($data['password']), $subscription, new Address(), $school);
+            $tempTeacher->email(), md5($data['password']), $subscription, $teacherAddress, $school, $settings);
         $this->dm->persist($teacher);
 
         $this->dm->delete($tempTeacher);
@@ -180,5 +192,16 @@ class UserRepository extends Repository
         }
 
         return $user;
+    }
+
+    public function getTeacherSettings()
+    {
+        $teacher = $this->user;
+
+        $id = $this->dm->queryBuilder()->table('teacher_settings')
+            ->where('teacher_id', '=', $teacher->getId())
+            ->select(['id']);
+
+        return $this->dm->find(TeacherSettings::class, $id);
     }
 }

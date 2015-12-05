@@ -70,8 +70,8 @@ class AccountController extends Controller
         $this->response->route('frontend.index.index');
     }
 
-    public function signUpLand(Session $session)
+    public function signUpLand()
     {
-        return $this->view->make('frontend.account.signUpLand', ['confn' => $session->getFlash()]);
+        return $this->view->make('frontend.account.signUpLand', ['confn' => $this->session->getFlash()]);
     }
 }

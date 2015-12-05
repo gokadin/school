@@ -3,7 +3,6 @@
 namespace App\Repositories;
 
 use App\Domain\Activities\Activity;
-use PDOException;
 
 class ActivityRepository extends Repository
 {
@@ -16,15 +15,9 @@ class ActivityRepository extends Repository
             $activity->setLocation($data['location']);
         }
 
-        try
-        {
-            $this->dm->persist($activity);
-            return $activity;
-        }
-        catch (PDOException $e)
-        {
-            $this->log->error('ActivityRepository.create : could not create activity : '.$e->getMessage());
-            return false;
-        }
+        $this->dm->persist($activity);
+        $this->dm->flush();
+
+        return $activity;
     }
 }

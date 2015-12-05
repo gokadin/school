@@ -3,6 +3,7 @@
 namespace App\Domain\Users;
 
 use App\Domain\Activities\Activity;
+use App\Domain\Setting\TeacherSettings;
 use Library\DataMapper\Collection\EntityCollection;
 use Library\DataMapper\DataMapperPrimaryKey;
 use Library\DataMapper\DataMapperTimestamps;
@@ -35,10 +36,14 @@ class Teacher
     /** @HasOne(target="App\Domain\School\School") */
     protected $school;
 
+    /** @HasOne(target="App\Domain\Setting\TeacherSettings") */
+    private $settings;
+
     /** @HasMany(target="App\Domain\Activities\Activity", mappedBy="activity") */
     protected $activities;
 
-    public function __construct($firstName, $lastName, $email, $password, $subscription, $address, $school)
+    public function __construct($firstName, $lastName, $email, $password, $subscription,
+                                $address, $school, TeacherSettings $settings)
     {
         $this->firstName = $firstName;
         $this->lastName = $lastName;
@@ -47,6 +52,7 @@ class Teacher
         $this->subscription = $subscription;
         $this->address = $address;
         $this->school = $school;
+        $this->settings = $settings;
         $this->activities = new EntityCollection();
     }
 
@@ -123,6 +129,16 @@ class Teacher
     public function setSchool($school)
     {
         $this->school = $school;
+    }
+
+    public function settings()
+    {
+        return $this->settings;
+    }
+
+    public function setSettings($settings)
+    {
+        $this->settings = $settings;
     }
 
     /**

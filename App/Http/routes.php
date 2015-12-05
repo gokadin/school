@@ -29,6 +29,10 @@ Route::group(['namespace' => 'Api', 'prefix' => '/api', 'as' => 'api', 'middlewa
     Route::group(['namespace' => 'School', 'prefix' => '/school', 'as' => 'school', 'middleware' => 'VerifyAuthentication'], function() {
         Route::post('/teacher-activities', 'ActivityController@getTeacherActivities');
         Route::get('/teacher-new-students', 'StudentController@getNewStudents');
+
+        Route::group(['namespace' => 'Teacher', 'prefix' => '/teacher', 'as' =>'teacher'], function() {
+            Route::get('/get-registration-form', 'SettingController@getRegistration');
+        });
     });
 });
 

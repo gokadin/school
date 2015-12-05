@@ -22,8 +22,9 @@ return [
         App\Domain\Common\Address::class,
         App\Domain\School\School::class,
         App\Domain\Activities\Activity::class,
-        App\Domain\Settings\StudentRegistrationForm::class,
-        App\Domain\Settings\FormField::class
+        App\Domain\Setting\StudentRegistrationForm::class,
+        App\Domain\Setting\FormField::class,
+        App\Domain\Setting\TeacherSettings::class
     ]
 
 ];
