@@ -101,7 +101,7 @@ i.fa {
   .form-1 .form-1-footer button {
     background-color: #67b168;
     border: 1px solid #CCCCCC;
-    width: 80px;
+    width: 120px;
     height: 30px;
     color: white;
     font-size: 17px; }
@@ -587,12 +587,21 @@ button:disabled {
       -moz-border-radius: 0px;
       border-radius: 0px;
       border: 1px solid #cccccc; }
-    #school .form-1 .form-row input[type="text"]:focus {
+    #school .form-1 .form-row input[type="text"]:focus,
+    #school .form-1 .form-row select:focus {
       border-color: #808080; }
     #school .form-1 .form-row input[type="text"].valid {
       border-color: #67b168; }
     #school .form-1 .form-row input[type="text"].invalid {
       border-color: #b94a48; }
+    #school .form-1 .form-row select {
+      height: 40px;
+      width: 75%;
+      -webkit-border-radius: 0;
+      -moz-border-radius: 0;
+      border-radius: 0;
+      border: 1px solid #cccccc;
+      background-color: white; }
     #school .form-1 .form-row .form-error {
       margin-top: 5px;
       margin-left: 25%; }
@@ -607,7 +616,7 @@ button:disabled {
       vertical-align: middle; }
     #school .form-1 .form-buttons button[type="submit"] {
       background-color: #67b168;
-      width: 120px;
+      width: 150px;
       height: 40px;
       cursor: pointer;
       color: white;

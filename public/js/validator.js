@@ -153,7 +153,7 @@
         $.ajax({
             async: false,
             type: 'POST',
-            url: '/ajax/exists',
+            url: '/api/exists',
             datatype: 'html',
             data: {modelName: modelName, columnName: columnName, value: value},
             success: function(data) {

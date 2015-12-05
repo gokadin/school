@@ -57,6 +57,7 @@ Route::group([
         Route::group(['prefix' => '/students', 'as' => 'student'], function ()
         {
             Route::get('/', 'StudentController@index');
+            Route::post('/pre-register', 'StudentController@preRegister');
             Route::get('/create', 'StudentController@create');
             Route::post('/create', 'StudentController@store');
             Route::put('/edit', 'StudentController@update');

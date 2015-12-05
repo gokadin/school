@@ -6,17 +6,17 @@
 </template>
 
 <style lang="sass">
-    .flash {
-        color: blue;
+.flash {
+    color: blue;
 
-        span {
-            background-color: yellow;
-        }
+    span {
+        background-color: yellow;
     }
+}
 
-    .flash-close {
-        color: red;
-    }
+.flash-close {
+    color: red;
+}
 </style>
 
 <script>

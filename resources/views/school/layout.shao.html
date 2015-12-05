@@ -118,12 +118,12 @@
                     </a>
                     <ul>
                         <li>
-                            <a href="@path('school.teacher.index.index')">
+                            <a href="@path('school.teacher.student.index')">
                                 View
                             </a>
                         </li>
                         <li>
-                            <a href="@path('school.teacher.index.index')">
+                            <a href="@path('school.teacher.student.create')">
                                 Create
                             </a>
                         </li>
@@ -139,7 +139,7 @@
     </div>
 
     <div id="content">
-        <component :is="currentView" inline-template>
+        <component is="{{ str_replace('.', '-', currentRoute()) }}" inline-template>
             @yield('content')
         </component>
     </div>

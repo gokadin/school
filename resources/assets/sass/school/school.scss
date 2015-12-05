@@ -63,7 +63,8 @@ a:hover {
       border: 1px solid #cccccc;
     }
 
-    input[type="text"]:focus {
+    input[type="text"]:focus,
+    select:focus {
       border-color: #808080;
     }
 
@@ -73,6 +74,16 @@ a:hover {
 
     input[type="text"].invalid {
       border-color: $color-error;
+    }
+
+    select {
+      height: 40px;
+      width: 75%;
+      -webkit-border-radius: 0;
+      -moz-border-radius: 0;
+      border-radius: 0;
+      border: 1px solid #cccccc;
+      background-color: white;
     }
 
     .form-error {
@@ -97,7 +108,7 @@ a:hover {
 
     button[type="submit"] {
       background-color: $color-main;
-      width: 120px;
+      width: 150px;
       height: 40px;
       cursor: pointer;
       color: white;

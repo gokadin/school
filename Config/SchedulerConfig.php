@@ -21,5 +21,10 @@ class SchedulerConfig
             $userRepository = new UserRepository();
             $userRepository->removeExpiredTempTeachers();
         })->dailyAt('3:00');
+
+        $scheduler->add('remove expired temp students', function() {
+            $userRepository = new UserRepository();
+            $userRepository->removeExpiredTempStudents();
+        })->dailyAt('3:30');
     }
 }

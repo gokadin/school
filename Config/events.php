@@ -12,6 +12,10 @@ return [
 
     App\Events\Frontend\UserLoggedIn::class => [
         App\Listeners\Frontend\LogUserLogin::class
+    ],
+
+    App\Events\School\StudentPreRegistered::class => [
+        App\Listeners\School\SendStudentPreRegistrationEmail::class
     ]
 
 ];

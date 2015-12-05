@@ -168,6 +168,24 @@ final class PersistentCollection extends AbstractEntityCollection implements Obs
         return $this->loadIndex($index);
     }
 
+    /**
+     * Find an entity by its id.
+     *
+     * @param $id
+     * @return null
+     */
+    public function find($id)
+    {
+        if (!array_key_exists($id, $this->items))
+        {
+            return null;
+        }
+
+        $this->loadId($id);
+
+        return $this->items[$id];
+    }
+
     public function slice($offset, $length = -1)
     {
         $this->execute();

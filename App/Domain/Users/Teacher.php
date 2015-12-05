@@ -125,6 +125,9 @@ class Teacher
         $this->school = $school;
     }
 
+    /**
+     * @return PersistentCollection
+     */
     public function activities()
     {
         return $this->activities;

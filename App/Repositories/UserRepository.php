@@ -2,13 +2,14 @@
 
 namespace App\Repositories;
 
+use App\Domain\Activities\Activity;
 use App\Domain\School\School;
 use App\Domain\Subscriptions\Subscription;
+use App\Domain\Users\TempStudent;
 use App\Domain\Users\TempTeacher;
 use App\Domain\Users\Teacher;
 use App\Domain\Users\Student;
 use App\Domain\Common\Address;
-use PDOException;
 
 class UserRepository extends Repository
 {
@@ -21,48 +22,49 @@ class UserRepository extends Repository
 
     public function preRegisterTeacher(array $data)
     {
-        $this->dm->beginTransaction();
+        $subscription = new Subscription($data['subscriptionType']);
+        $this->dm->persist($subscription);
 
-        try
-        {
-            $subscription = new Subscription($data['subscriptionType']);
-            $this->dm->persist($subscription);
+        $confirmationCode = md5(rand(999, 999999));
 
-            $confirmationCode = md5(rand(999, 999999));
+        $tempTeacher = new TempTeacher(
+            $data['firstName'],
+            $data['lastName'],
+            $data['email'],
+            $subscription,
+            $confirmationCode
+        );
+        $this->dm->persist($tempTeacher);
 
-            $tempTeacher = new TempTeacher(
-                $data['firstName'],
-                $data['lastName'],
-                $data['email'],
-                $subscription,
-                $confirmationCode
-            );
-            $this->dm->persist($tempTeacher);
+        $this->dm->flush();
 
-            $this->dm->commit();
-            return $tempTeacher;
-        }
-        catch (PDOException $e)
-        {
-            $this->dm->rollBack();
-            $this->log->error('UserRepository.preRegisterTeacher : could not pre-register teacher : ' .$e->getMessage());
-            return false;
-        }
+        return $tempTeacher;
+    }
+
+    public function preRegisterStudent(Teacher $teacher, Activity $activity, array $data)
+    {
+        $confirmationCode = md5(rand(999, 999999));
+
+        $tempStudent = new TempStudent($teacher, $activity, $data['firstName'], $data['lastName'],
+            $data['email'], $confirmationCode);
+        $this->dm->persist($tempStudent);
+
+        $this->dm->flush();
+
+        return $tempStudent;
     }
 
     public function removeExpiredTempTeachers()
     {
-        try
-        {
-
-        }
-        catch (PDOException $e)
-        {
-            $this->log->error('UserRepository.removeExpiredTempTeachers : could not delete expired temp teachers : '
-                .$e->getMessage());
-        }
         $this->dm->queryBuilder()->table('temp_teachers')
             ->where('created_at', '<', 'DATE_SUB(NOW(), INTERVAL 1 DAY)')
+            ->delete();
+    }
+
+    public function removeExpiredTempStudents()
+    {
+        $this->dm->queryBuilder()->table('temp_students')
+            ->where('created_at', '<', 'DATE_SUB(NOW(), INTERVAL 7 DAY)')
             ->delete();
     }
 
@@ -80,28 +82,18 @@ class UserRepository extends Repository
             return false;
         }
 
-        $this->dm->beginTransaction();
+        $school = new School('Your School');
+        $school->setAddress(new Address());
 
-        try
-        {
-            $school = new School('Your School');
-            $school->setAddress(new Address());
+        $teacher = new Teacher($tempTeacher->firstName(), $tempTeacher->lastName(),
+            $tempTeacher->email(), md5($data['password']), $subscription, new Address(), $school);
+        $this->dm->persist($teacher);
 
-            $teacher = new Teacher($tempTeacher->firstName(), $tempTeacher->lastName(),
-                $tempTeacher->email(), md5($data['password']), $subscription, new Address(), $school);
-            $this->dm->persist($teacher);
+        $this->dm->delete($tempTeacher);
 
-            $this->dm->delete($tempTeacher);
+        $this->dm->flush();
 
-            $this->dm->commit();
-            return $teacher;
-        }
-        catch (PDOException $e)
-        {
-            $this->dm->rollBack();
-            $this->log->error('UserRepository.registerTeacher : could not register teacher : '.$e->getMessage());
-            return false;
-        }
+        return $teacher;
     }
 
     public function loginTeacher(Teacher $teacher)
