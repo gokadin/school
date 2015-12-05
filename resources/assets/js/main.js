@@ -10,7 +10,9 @@ new Vue({
     el: 'body',
 
     components: {
-        schoolTeacherActivityIndex: require('./components/school/teacher/activitiesIndex.vue'),
-        schoolTeacherStudentCreate: require('./components/school/teacher/studentsCreate.vue')
+        schoolTeacherActivityIndex: require('./components/school/teacher/activity/index.vue'),
+        schoolTeacherStudentIndex: require('./components/school/teacher/student/index.vue'),
+        schoolTeacherStudentCreate: require('./components/school/teacher/student/create.vue'),
+        schoolTeacherSettingIndex: require('./components/school/teacher/setting/index.vue')
     }
 });

@@ -3,15 +3,19 @@
 namespace App\Domain\Users;
 
 use App\Domain\Activities\Activity;
+use Carbon\Carbon;
 use Library\DataMapper\DataMapperPrimaryKey;
 use Library\DataMapper\DataMapperTimestamps;
+use JsonSerializable;
 
 /**
  * @Entity(name="temp_students")
  */
-class TempStudent
+class TempStudent implements JsonSerializable
 {
     use DataMapperPrimaryKey, DataMapperTimestamps;
+
+    const DAYS_BEFORE_EXPIRING = 7;
 
     /** @Column(type="string", nullable) */
     protected $firstName;
@@ -100,5 +104,22 @@ class TempStudent
     public function setActivity(Activity $activity)
     {
         $this->activity = $activity;
+    }
+
+    public function isExpired()
+    {
+        return $this->createdAt < Carbon::now()->subDays(self::DAYS_BEFORE_EXPIRING);
+    }
+
+    public function jsonSerialize()
+    {
+        return [
+            'firstName' => $this->firstName,
+            'lastName' => $this->lastName,
+            'email' => $this->email,
+            'created_at' => $this->createdAt,
+            'activityName' => $this->activity->name(),
+            'status' => $this->isExpired() ? 'expired' : 'pending'
+        ];
     }
 }

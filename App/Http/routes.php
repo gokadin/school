@@ -28,6 +28,7 @@ Route::group(['namespace' => 'Frontend', 'as' => 'frontend', 'middleware' => 'Ve
 Route::group(['namespace' => 'Api', 'prefix' => '/api', 'as' => 'api', 'middleware' => 'VerifyCsrfToken'], function() {
     Route::group(['namespace' => 'School', 'prefix' => '/school', 'as' => 'school', 'middleware' => 'VerifyAuthentication'], function() {
         Route::post('/teacher-activities', 'ActivityController@getTeacherActivities');
+        Route::get('/teacher-new-students', 'StudentController@getNewStudents');
     });
 });
 
@@ -59,9 +60,11 @@ Route::group([
             Route::get('/', 'StudentController@index');
             Route::post('/pre-register', 'StudentController@preRegister');
             Route::get('/create', 'StudentController@create');
-            Route::post('/create', 'StudentController@store');
-            Route::put('/edit', 'StudentController@update');
-            Route::delete('/delete', 'StudentController@destroy');
+        });
+
+        Route::group(['prefix' => '/settings', 'as' => 'setting'], function()
+        {
+            Route::get('/', 'SettingController@index');
         });
     });
 });

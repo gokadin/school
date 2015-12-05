@@ -121,6 +121,7 @@ a:hover {
   .header {
     height: 60px;
     border-bottom: 1px solid #ddd;
+    position: relative;
 
     .title, .filter {
       width: 50%;
@@ -136,6 +137,7 @@ a:hover {
 
     .filter {
       text-align: right;
+      padding-right: 40px;
 
       input {
         height: 30px;
@@ -151,6 +153,27 @@ a:hover {
       input:focus {
         border-color: #808080;
       }
+    }
+
+    .collapse-table-button {
+      text-align: center;
+      width: 25px;
+      height: 25px;
+      position: absolute;
+      top: 15px;
+      right: 6px;
+      font-size: 26px;
+      cursor: pointer;
+      content: "";
+      font-family: FontAwesome;
+    }
+
+    .collapse-table-button.open:after {
+      content: "\f107";
+    }
+
+    .collapse-table-button.closed:after {
+      content: "\f105";
     }
   }
 

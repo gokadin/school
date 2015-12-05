@@ -54,6 +54,16 @@ class UserRepository extends Repository
         return $tempStudent;
     }
 
+    public function getNewStudentsOf(Teacher $teacher)
+    {
+        $ids = $this->dm->queryBuilder()->table('temp_students')
+            ->where('teacher_id', '=', $teacher->getId())
+            ->select(['id']);
+
+
+        return $this->dm->findIn(TempStudent::class, $ids);
+    }
+
     public function removeExpiredTempTeachers()
     {
         $this->dm->queryBuilder()->table('temp_teachers')
@@ -64,7 +74,7 @@ class UserRepository extends Repository
     public function removeExpiredTempStudents()
     {
         $this->dm->queryBuilder()->table('temp_students')
-            ->where('created_at', '<', 'DATE_SUB(NOW(), INTERVAL 7 DAY)')
+            ->where('created_at', '<', 'DATE_SUB(NOW(), INTERVAL '.TempStudent::DAYS_BEFORE_EXPIRING.' DAY)')
             ->delete();
     }
 

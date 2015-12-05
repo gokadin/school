@@ -623,7 +623,8 @@ button:disabled {
       font-weight: 600; }
 #school .data-table-1 .header {
   height: 60px;
-  border-bottom: 1px solid #ddd; }
+  border-bottom: 1px solid #ddd;
+  position: relative; }
   #school .data-table-1 .header .title, #school .data-table-1 .header .filter {
     width: 50%;
     float: left;
@@ -633,7 +634,8 @@ button:disabled {
   #school .data-table-1 .header .title {
     font-size: 18px; }
   #school .data-table-1 .header .filter {
-    text-align: right; }
+    text-align: right;
+    padding-right: 40px; }
     #school .data-table-1 .header .filter input {
       height: 30px;
       width: 200px;
@@ -645,6 +647,21 @@ button:disabled {
       padding: 0 5px; }
     #school .data-table-1 .header .filter input:focus {
       border-color: #808080; }
+  #school .data-table-1 .header .collapse-table-button {
+    text-align: center;
+    width: 25px;
+    height: 25px;
+    position: absolute;
+    top: 15px;
+    right: 6px;
+    font-size: 26px;
+    cursor: pointer;
+    content: "";
+    font-family: FontAwesome; }
+  #school .data-table-1 .header .collapse-table-button.open:after {
+    content: "\f107"; }
+  #school .data-table-1 .header .collapse-table-button.closed:after {
+    content: "\f105"; }
 #school .data-table-1 .table table {
   width: 100%;
   border-collapse: collapse; }
