@@ -315,6 +315,31 @@ a:hover {
   }
 }
 
+.checkbox-1 {
+  height: 30px;
+  line-height: 30px;
+
+  input {
+    display: none;
+  }
+
+  i {
+    font-family: FontAwesome;
+    font-style: normal;
+    display: inline-block;
+    width: 25px;
+    font-size: 22px;
+  }
+
+  i:before {
+    content: "\f096";
+  }
+
+  input:checked ~ i:before {
+    content: "\f046";
+  }
+}
+
 @import 'school-responsive';
 @import 'layout';
 @import 'activities';

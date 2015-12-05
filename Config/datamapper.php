@@ -21,7 +21,9 @@ return [
         App\Domain\Subscriptions\Subscription::class,
         App\Domain\Common\Address::class,
         App\Domain\School\School::class,
-        App\Domain\Activities\Activity::class
+        App\Domain\Activities\Activity::class,
+        App\Domain\Settings\StudentRegistrationForm::class,
+        App\Domain\Settings\FormField::class
     ]
 
 ];

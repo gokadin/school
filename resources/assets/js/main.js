@@ -11,6 +11,7 @@ new Vue({
 
     components: {
         schoolTeacherActivityIndex: require('./components/school/teacher/activity/index.vue'),
+        schoolTeacherActivityCreate: require('./components/school/teacher/activity/create.vue'),
         schoolTeacherStudentIndex: require('./components/school/teacher/student/index.vue'),
         schoolTeacherStudentCreate: require('./components/school/teacher/student/create.vue'),
         schoolTeacherSettingIndex: require('./components/school/teacher/setting/index.vue'),

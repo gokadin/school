@@ -748,6 +748,21 @@ button:disabled {
       background: none;
       border: none;
       outline: none; }
+#school .checkbox-1 {
+  height: 30px;
+  line-height: 30px; }
+  #school .checkbox-1 input {
+    display: none; }
+  #school .checkbox-1 i {
+    font-family: FontAwesome;
+    font-style: normal;
+    display: inline-block;
+    width: 25px;
+    font-size: 22px; }
+  #school .checkbox-1 i:before {
+    content: "\f096"; }
+  #school .checkbox-1 input:checked ~ i:before {
+    content: "\f046"; }
 @media screen and (max-width: 480px) {
   #school #content .main-title {
     text-align: center; }
