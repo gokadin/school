@@ -2,6 +2,33 @@
 
 @section('content')
 
-seet
+<div class="main-title">
+    Settings
+</div>
+
+<div class="content-padding">
+    <div class="panel-1">
+        <div id="settings-menu" class="clearfix">
+            <div class="setting">
+                <a href="#" class="box">
+                    <i class="fa fa-university"></i>
+                    <p>School<br />information</p>
+                </a>
+            </div>
+            <div class="setting">
+                <a href="@path('school.teacher.setting.registrationForm')" class="box">
+                    <i class="fa fa-check-square-o"></i>
+                    <p>Student<br />registration form</p>
+                </a>
+            </div>
+            <div class="setting">
+                <a href="#" class="box">
+                    <i class="fa fa-cog"></i>
+                    <p>Preferences</p>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
 
 @stop()

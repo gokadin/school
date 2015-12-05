@@ -13,6 +13,7 @@ new Vue({
         schoolTeacherActivityIndex: require('./components/school/teacher/activity/index.vue'),
         schoolTeacherStudentIndex: require('./components/school/teacher/student/index.vue'),
         schoolTeacherStudentCreate: require('./components/school/teacher/student/create.vue'),
-        schoolTeacherSettingIndex: require('./components/school/teacher/setting/index.vue')
+        schoolTeacherSettingIndex: require('./components/school/teacher/setting/index.vue'),
+        schoolTeacherSettingRegistrationForm: require('./components/school/teacher/setting/registrationForm.vue')
     }
 });

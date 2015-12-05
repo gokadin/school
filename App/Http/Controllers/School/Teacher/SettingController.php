@@ -10,4 +10,9 @@ class SettingController extends Controller
     {
         return $this->view->make('school.teacher.setting.index');
     }
+
+    public function registrationForm()
+    {
+        return $this->view->make('school.teacher.setting.registrationForm');
+    }
 }
