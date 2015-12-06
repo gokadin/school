@@ -2,27 +2,38 @@
 export default {
     data: function () {
         return {
+            originalData: {},
             regularFields: {},
-            extraFields: {},
+            extraFields: [],
             defaultFields: {}
         };
     },
 
     created: function () {
         this.$http.get('/api/school/teacher/get-registration-form', function(data) {
+            this.originalData = data;
             this.regularFields = data.regularFields;
-            this.extraFields = data.extraFields;
             this.defaultFields = data.defaultFields;
+            this.extraFields = data.extraFields;
         });
     },
 
     methods: {
         addExtra: function() {
-
+            this.extraFields.push({newExtra: ''});
         },
 
         removeExtra: function(val) {
+            this.extraFields.splice(val, 1);
+        },
 
+        submit: function() {
+            this.$http.post('/api/school/teacher/update-registration-form', {
+                regularFields: this.regularFields,
+                extraFields: this.extraFields
+            }, function(response) {
+
+            });
         }
     }
 }

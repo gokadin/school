@@ -362,6 +362,16 @@ class Router
 
     protected function processRequest($request)
     {
+        if (!is_array($request->rules()))
+        {
+            if ($request->rules() && $request->authorize())
+            {
+                return true;
+            }
+
+            return false;
+        }
+
         if (!$request->authorize() ||
             !$this->validator->make($request->all(), $request->rules()))
         {

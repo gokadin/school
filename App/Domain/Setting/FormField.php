@@ -18,9 +18,6 @@ class FormField implements JsonSerializable
     /** @Column(type="string") */
     private $displayName;
 
-    /** @Column(type="string", default="text") */
-    private $value;
-
     /** @BelongsTo(target="App\Domain\Setting\StudentRegistrationForm") */
     private $form;
 
@@ -51,16 +48,6 @@ class FormField implements JsonSerializable
         $this->displayName = $displayName;
     }
 
-    public function value()
-    {
-        return $this->value;
-    }
-
-    public function setValue($value)
-    {
-        $this->value = $value;
-    }
-
     public function form()
     {
         return $this->form;
@@ -71,11 +58,15 @@ class FormField implements JsonSerializable
         $this->form = $form;
     }
 
+    public static function generateName($string)
+    {
+        return preg_replace('/\s+/', '', $string);
+    }
+
     public function jsonSerialize()
     {
         return [
             'displayName' => $this->displayName,
-            'value' => $this->value
         ];
     }
 }

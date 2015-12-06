@@ -89,6 +89,25 @@ class StudentRegistrationForm implements JsonSerializable
         $this->occupation = $occupation;
     }
 
+    public function setField($name, $value)
+    {
+        switch ($name)
+        {
+            case 'address':
+                $this->address = $value;
+                break;
+            case 'dateOfBirth':
+                $this->dateOfBirth = $value;
+                break;
+            case 'gender':
+                $this->gender = $value;
+                break;
+            case 'occupation':
+                $this->occupation = $value;
+                break;
+        }
+    }
+
     public function defaultFields()
     {
         return [
