@@ -164,11 +164,11 @@ export default {
             this.$http.post(this.uri, {
                 page: this.page,
                 max: this.max,
-                sortingRules: {},
-                filters: this.searchData
+                sortingRules: this.sortingRules,
+                searchRules: this.searchData
             }, function(response) {
-                this.dataSet = response.dataSet;
-                this.total = response.totalCount;
+                this.dataSet = response.data;
+                this.total = response.pagination.totalCount;
             });
         }
     }

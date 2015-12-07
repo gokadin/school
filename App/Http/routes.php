@@ -27,10 +27,13 @@ Route::group(['namespace' => 'Frontend', 'as' => 'frontend', 'middleware' => 'Ve
 
 Route::group(['namespace' => 'Api', 'prefix' => '/api', 'as' => 'api', 'middleware' => 'VerifyCsrfToken'], function() {
     Route::group(['namespace' => 'School', 'prefix' => '/school', 'as' => 'school', 'middleware' => 'VerifyAuthentication'], function() {
-        Route::post('/teacher-activities', 'ActivityController@getTeacherActivities');
+
         Route::get('/teacher-new-students', 'StudentController@getNewStudents');
 
         Route::group(['namespace' => 'Teacher', 'prefix' => '/teacher', 'as' =>'teacher'], function() {
+            Route::group(['prefix' => '/activities', 'as' => 'activity'], function() {
+                Route::post('/', 'ActivityController@index');
+            });
             Route::get('/get-registration-form', 'SettingController@getRegistration');
             Route::post('/update-registration-form', 'SettingController@updateRegistrationForm');
         });

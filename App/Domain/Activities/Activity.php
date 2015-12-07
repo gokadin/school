@@ -5,12 +5,11 @@ namespace App\Domain\Activities;
 use App\Domain\Users\Teacher;
 use Library\DataMapper\DataMapperPrimaryKey;
 use Library\DataMapper\DataMapperTimestamps;
-use JsonSerializable;
 
 /**
  * @Entity(name="activities")
  */
-class Activity implements JsonSerializable
+class Activity
 {
     use DataMapperPrimaryKey, DataMapperTimestamps;
 
@@ -28,6 +27,9 @@ class Activity implements JsonSerializable
 
     /** @BelongsTo(target="\App\Domain\Users\Teacher") */
     protected $teacher;
+
+    /** @HasMany(target="\App\Domain\Users\Student", mappedBy="activity") */
+    protected $students;
 
     public function __construct(Teacher $teacher, $name, $rate, $period)
     {
@@ -87,14 +89,8 @@ class Activity implements JsonSerializable
         $this->teacher = $teacher;
     }
 
-    public function jsonSerialize()
+    public function students()
     {
-        return [
-            'name' => $this->name,
-            'rate' => $this->rate,
-            'period' => $this->period,
-            'location' => $this->location,
-            'students' => 0
-        ];
+        return $this->students;
     }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Domain\Users;
 
+use App\Domain\Activities\Activity;
 use Library\DataMapper\DataMapperTimestamps;
 use Library\DataMapper\DataMapperPrimaryKey;
 
@@ -18,9 +19,13 @@ class Student
     /** @HasOne(target="App\Domain\Common\Address") */
     protected $address;
 
-    public function __construct($email)
+    /** @HasOne(target="App\Domain\Activities\Activity") */
+    private $activity;
+
+    public function __construct($email, Activity $activity)
     {
         $this->email = $email;
+        $this->activity = $activity;
     }
 
     public function setEmail($email)
@@ -41,5 +46,15 @@ class Student
     public function setAddress($address)
     {
         $this->address = $address;
+    }
+
+    public function activity()
+    {
+        return $this->activity;
+    }
+
+    public function setActivity($activity)
+    {
+        $this->activity = $activity;
     }
 }
