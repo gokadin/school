@@ -191,13 +191,13 @@ final class PersistentCollection extends AbstractEntityCollection implements Obs
         $this->execute();
 
         $allIds = $this->useSubset ? $this->subset : array_keys($this->items);
-        if ($length == -1 || $length > sizeof($allIds) - $offset - 1)
+        if ($length == -1 || $length - 1 > sizeof($allIds) - $offset)
         {
             $length = sizeof($allIds) - $offset - 1;
         }
 
         $ids = [];
-        foreach (range($offset, $offset + $length) as $index)
+        foreach (range($offset, $offset + $length - 1) as $index)
         {
             $ids[] = $allIds[$index];
         }

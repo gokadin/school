@@ -85,7 +85,7 @@ export default {
         },
 
         hasNextPage: function() {
-            return this.page * this.max <= this.total - this.max;
+            return (this.page + 1) * this.max < this.total;
         }
     },
 

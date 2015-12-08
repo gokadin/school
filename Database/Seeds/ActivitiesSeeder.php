@@ -12,7 +12,7 @@ class ActivitiesSeeder extends Seeder
     {
         $teachers = $this->dm->findAll(Teacher::class);
 
-        foreach (range(0, 50) as $index)
+        for ($i = 0; $i < 50; $i++)
         {
             $this->dm->persist(new Activity(
                 $teachers->at($this->faker->numberBetween(0, $teachers->count() - 1)),

@@ -14,6 +14,6 @@ class ActivityController extends ApiController
         $searchRules = $request->dataExists('searchRules') ? $request->searchRules : [];
 
         return $this->respondOk($activityRepository->paginate(
-            $request->page, $request->max > 20 ?: 20, $sortingRules, $searchRules));
+            $request->page, $request->max > 20 ? 20 : $request->max, $sortingRules, $searchRules));
     }
 }
