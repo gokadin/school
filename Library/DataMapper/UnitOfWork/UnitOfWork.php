@@ -712,11 +712,6 @@ final class UnitOfWork implements Observable
 
             $value = $metadata->reflProp($column->propName())->getValue($this->entities[$oid]);
 
-            if ($column->isBoolean())
-            {
-                $value = $value ? 1 : 0;
-            }
-
             if ($column->isTimestamp() && is_null($value))
             {
                 $value = Carbon::now();
@@ -725,6 +720,7 @@ final class UnitOfWork implements Observable
             if (is_null($value) && $column->isDefault())
             {
                 $value = $column->defaultValue();
+                $metadata->reflProp($column->propName())->setValue($this->entities[$oid], $value);
             }
 
             $data[$column->name()] = $value;

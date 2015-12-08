@@ -15,7 +15,7 @@ class TeacherSettings
     /** @HasOne(target="App\Domain\Setting\StudentRegistrationForm") */
     private $registrationForm;
 
-    /** @Column(type="boolean", default="1") */
+    /** @Column(type="boolean", default="true") */
     private $showTips;
 
     public function __construct($registrationForm)

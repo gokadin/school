@@ -122,7 +122,20 @@ class MySqlDriver
     public function insert($str, $data)
     {
         $stmt = $this->dao->prepare($str);
-        $stmt->execute($data);
+        $i = 1;
+        foreach ($data as $value)
+        {
+            if (is_bool($value))
+            {
+                $stmt->bindValue($i, $value, PDO::PARAM_BOOL);
+            }
+            else
+            {
+                $stmt->bindValue($i, $value);
+            }
+            $i++;
+        }
+        $stmt->execute();
 
         return $this->dao->lastInsertId();
     }
@@ -240,9 +253,18 @@ class MySqlDriver
         if ($column->isDefault())
         {
             $columnStr .= ' DEFAULT';
-            is_string($column->defaultValue())
-                ? $columnStr .= ' \''.$column->defaultValue().'\''
-                : $columnStr .= ' '.$column->defaultValue();
+            if (is_string($column->defaultValue()))
+            {
+                $columnStr .= ' \''.$column->defaultValue().'\'';
+            }
+            else if (is_bool($column->defaultValue()))
+            {
+                $columnStr .= ' '.($column->defaultValue() ? 1 : 0);
+            }
+            else
+            {
+                $columnStr .= ' '.$column->defaultValue();
+            }
         }
 
         return $columnStr;

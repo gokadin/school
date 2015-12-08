@@ -7,6 +7,12 @@ class Column
     const UPDATED_AT = 'updated_at';
     const CREATED_AT = 'created_at';
 
+    const TYPE_STRING = 'string';
+    const TYPE_INTEGER = 'integer';
+    const TYPE_TEXT = 'text';
+    const TYPE_DECIMAL = 'decimal';
+    const TYPE_BOOLEAN = 'boolean';
+
     protected $columnName;
     protected $propName;
     protected $isPrimaryKey;
@@ -46,7 +52,7 @@ class Column
 
     public function isBoolean()
     {
-        return $this->type == 'boolean';
+        return $this->type == self::TYPE_BOOLEAN;
     }
 
     public function isPrimaryKey()

@@ -115,24 +115,24 @@ class AnnotationDriver
             : $propName;
         $type = isset($parsed['Column']['type'])
             ? $parsed['Column']['type']
-            : 'integer';
+            : Column::TYPE_INTEGER;
 
         $size = 0;
         switch ($type)
         {
-            case 'text':
+            case Column::TYPE_TEXT:
                 $size = self::TEXT_SIZE;
                 break;
-            case 'boolean':
+            case Column::TYPE_BOOLEAN:
                 $size = self::BOOLEAN_SIZE;
                 break;
-            case 'string':
+            case Column::TYPE_STRING:
                 $size = isset($parsed['Column']['size'])
                     ? $parsed['Column']['size']
                     : self::DEFAULT_STRING_SIZE;
                 break;
-            case 'integer':
-            case 'decimal':
+            case Column::TYPE_INTEGER:
+            case Column::TYPE_DECIMAL:
                 $size = isset($parsed['Column']['size'])
                     ? $parsed['Column']['size']
                     : self::DEFAULT_INTEGER_SIZE;
@@ -149,7 +149,7 @@ class AnnotationDriver
 
         $columnArgs = $parsed['Column'];
 
-        if ($type == 'decimal')
+        if ($type == Column::TYPE_DECIMAL)
         {
             $column->setPrecision(isset($columnArgs['precision'])
                 ? $columnArgs['precision']
@@ -168,7 +168,23 @@ class AnnotationDriver
 
         if (isset($columnArgs['default']))
         {
-            $column->setDefaultValue($columnArgs['default']);
+            switch ($type)
+            {
+                case Column::TYPE_BOOLEAN:
+                    $defaultValue = $columnArgs['default'];
+                    if ($defaultValue == 'true' || $defaultValue == 1)
+                    {
+                        $column->setDefaultValue(true);
+                    }
+                    else
+                    {
+                        $column->setDefaultValue(false);
+                    }
+                    break;
+                default:
+                    $column->setDefaultValue($columnArgs['default']);
+                    break;
+            }
         }
 
         if (isset($columnArgs['unique']))

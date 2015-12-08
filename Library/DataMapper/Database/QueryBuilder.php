@@ -131,7 +131,12 @@ class QueryBuilder
         }
         $data = $processed;
 
-        $str .= ' VALUES('.implode(',', array_keys($data)).')';
+        $qString = '?';
+        for ($i = 1; $i < sizeof($data); $i++)
+        {
+            $qString .= ',?';
+        }
+        $str .= ' VALUES('.$qString.')';
 
         $this->clear();
 
