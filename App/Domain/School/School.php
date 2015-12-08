@@ -18,9 +18,10 @@ class School
     /** @HasOne(target="App\Domain\Common\Address") */
     protected $address;
 
-    public function __construct($name)
+    public function __construct($name, $address)
     {
         $this->name = $name;
+        $this->address = $address;
     }
 
     public function name()
