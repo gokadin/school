@@ -1,3 +1,43 @@
+<template>
+    <div class="panel-1">
+        <div id="form-options">
+            <form v-on:submit.prevent class="form-1">
+
+                <div class="form-title">
+                    Customize registration form
+                </div>
+
+                <div class="checkbox-1 disabled" v-for="field in defaultFields">
+                    <label>
+                        <i></i>{{ field.displayName }}
+                    </label>
+                </div>
+
+                <div class="checkbox-1" v-for="field in regularFields">
+                    <label>
+                        <input type="checkbox" name="@{{ $key }}" value="1" v-model="regularFields[$key]['value']" />
+                        <i></i>{{ field.displayName }}
+                    </label>
+                </div>
+
+                <div class="form-row" v-for="fieldId in extraFields">
+                    <input type="text" name="extra[]" placeholder="Field name" v-model="extraFields[$index]['displayName']" />
+                    <i class="fa fa-close" @click="removeExtra($index)"></i>
+                </div>
+
+                <div class="form-row">
+                    <button type="button" class="button-gray" @click="addExtra()">Add extra field</button>
+                </div>
+
+                <div class="form-buttons">
+                    <button type="submit" class="button-green button-large" @click="submit()">Update</button>
+                </div>
+
+            </form>
+        </div>
+    </div>
+</template>
+
 <script>
 export default {
     data: function () {
