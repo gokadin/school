@@ -23,10 +23,7 @@ class TeachersSeeder extends Seeder
         $school = new School($this->faker->word, $schoolAddress);
         $this->dm->persist($school);
 
-        $form = new StudentRegistrationForm();
-        $this->dm->persist($form);
-
-        $teacherSettings = new TeacherSettings($form);
+        $teacherSettings = new TeacherSettings(StudentRegistrationForm::defaultJson());
         $this->dm->persist($teacherSettings);
 
         $teacherAddress = new Address();

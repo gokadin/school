@@ -2,51 +2,34 @@
 
 namespace App\Domain\Setting;
 
-use Library\DataMapper\Collection\EntityCollection;
-use Library\DataMapper\DataMapperPrimaryKey;
-use Library\DataMapper\DataMapperTimestamps;
-use JsonSerializable;
-
-/**
- * @Entity(name="student_registration_form")
- */
 class StudentRegistrationForm implements JsonSerializable
 {
-    use DataMapperPrimaryKey, DataMapperTimestamps;
+    private $requiredFields = [
+        'firstName' => 'First name',
+        'lastName' => 'Last name'
+    ];
 
-    /** @HasMany(target="App\Domain\Setting\FormField", mappedBy="form") */
-    private $fields;
+    /**
+     * @var array ExtraField
+     */
+    private $extraFields = [];
 
-    /** @Column(type="boolean", default="0") */
     private $address;
 
-    /** @Column(type="boolean", default="0") */
     private $dateOfBirth;
 
-    /** @Column(type="boolean", default="0") */
     private $gender;
 
-    /** @Column(type="boolean", default="0") */
     private $occupation;
 
-    public function __construct()
+    public function extraFields()
     {
-        $this->fields = new EntityCollection();
+        return $this->extraFields;
     }
 
-    public function fields()
+    public function setExtraFields($extraFields)
     {
-        return $this->fields;
-    }
-
-    public function addField(FormField $field)
-    {
-        $this->fields->add($field);
-    }
-
-    public function removeField(FormField $field)
-    {
-        $this->fields->remove($field);
+        $this->extraFields = $extraFields;
     }
 
     public function address()
@@ -89,44 +72,35 @@ class StudentRegistrationForm implements JsonSerializable
         $this->occupation = $occupation;
     }
 
-    public function setField($name, $value)
+    public static function defaultJson()
     {
-        switch ($name)
+        return json_encode([
+            'firstName' => 'First name',
+            'lastName' => 'Last name',
+            'gender' => 'Gender',
+            'extraFields' => []
+        ]);
+    }
+
+    public static function MakeFromJson($json)
+    {
+        $result = json_decode($json);
+    }
+
+    public function generateJson()
+    {
+        $result = $this->requiredFields;
+
+        if ($this->address) $result['address'] = 'Address';
+        if ($this->dateOfBirth) $result['dateOfBirth'] = 'Date of birth';
+        if ($this->gender) $result['gender'] = 'Gender';
+        if ($this->occupation) $result['occupation'] = 'Occupation';
+
+        foreach ($this->extraFields as $field)
         {
-            case 'address':
-                $this->address = $value;
-                break;
-            case 'dateOfBirth':
-                $this->dateOfBirth = $value;
-                break;
-            case 'gender':
-                $this->gender = $value;
-                break;
-            case 'occupation':
-                $this->occupation = $value;
-                break;
+            $result['extraFields'][$field->name()] = $field->displayName();
         }
-    }
 
-    public function defaultFields()
-    {
-        return [
-            'firstName' => ['displayName' => 'First name', 'value' => 1],
-            'lastName' => ['displayName' => 'Last name', 'value' => 1]
-        ];
-    }
-
-    public function jsonSerialize()
-    {
-        return [
-            'defaultFields' => $this->defaultFields(),
-            'extraFields' => $this->fields,
-            'regularFields' => [
-                'address' => ['displayName' => 'Address', 'value' => $this->address],
-                'dateOfBirth' => ['displayName' => 'Date of birth', 'value' => $this->dateOfBirth],
-                'gender' => ['displayName' => 'Gender', 'value' => $this->gender],
-                'occupation' => ['displayName' => 'Occupation', 'value' => $this->occupation],
-            ]
-        ];
+        return json_encode($result);
     }
 }

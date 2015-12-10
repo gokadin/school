@@ -2,28 +2,16 @@
 
 namespace App\Domain\Setting;
 
-use Library\DataMapper\DataMapperPrimaryKey;
 use JsonSerializable;
 
-/**
- * @Entity(name="form_field")
- */
-class FormField implements JsonSerializable
+class ExtraField implements JsonSerializable
 {
-    use DataMapperPrimaryKey;
-
-    /** @Column(type="string") */
     private $name;
 
-    /** @Column(type="string") */
     private $displayName;
 
-    /** @BelongsTo(target="App\Domain\Setting\StudentRegistrationForm") */
-    private $form;
-
-    public function __construct(StudentRegistrationForm $form, $name, $displayName)
+    public function __construct($name, $displayName)
     {
-        $this->form = $form;
         $this->name = $name;
         $this->displayName = $displayName;
     }
@@ -46,16 +34,6 @@ class FormField implements JsonSerializable
     public function setDisplayName($displayName)
     {
         $this->displayName = $displayName;
-    }
-
-    public function form()
-    {
-        return $this->form;
-    }
-
-    public function setForm($form)
-    {
-        $this->form = $form;
     }
 
     public static function generateName($string)

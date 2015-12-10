@@ -12,7 +12,7 @@ class TeacherSettings
 {
     use DataMapperPrimaryKey, DataMapperTimestamps;
 
-    /** @HasOne(target="App\Domain\Setting\StudentRegistrationForm") */
+    /** @Column(type="text") */
     private $registrationForm;
 
     /** @Column(type="boolean", default="true") */
