@@ -13,13 +13,6 @@ abstract class BaseTest extends TestCase
     protected $database;
     protected $dm;
 
-    public function setUp()
-    {
-        parent::setUp();
-
-        $this->app = $this->createApplication();
-    }
-
     public function setUpDatabase()
     {
         $this->database = new Database([

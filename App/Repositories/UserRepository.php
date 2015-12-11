@@ -100,9 +100,7 @@ class UserRepository extends Repository
         $school->setAddress($schoolAddress);
         $this->dm->persist($school);
 
-        $registrationForm = new StudentRegistrationForm();
-        $this->dm->persist($registrationForm);
-        $settings = new TeacherSettings($registrationForm);
+        $settings = new TeacherSettings(StudentRegistrationForm::defaultJson());
         $this->dm->persist($settings);
 
         $teacherAddress = new Address();

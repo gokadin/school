@@ -2,105 +2,119 @@
 
 namespace App\Domain\Setting;
 
+use JsonSerializable;
+
 class StudentRegistrationForm implements JsonSerializable
 {
-    private $requiredFields = [
-        'firstName' => 'First name',
-        'lastName' => 'Last name'
-    ];
+    /**
+     * @return array
+     */
+     private static function requiredFields() {
+         return [
+             new FormField('firstName', 'First name', true),
+             new FormField('lastName', 'Last name', true)
+         ];
+     }
 
     /**
-     * @var array ExtraField
+     * @var array FormField
+     */
+    private $fields = [];
+
+    /**
+     * @var array FormField
      */
     private $extraFields = [];
 
-    private $address;
+    /**
+     * @return array FormField
+     */
+    public function fields()
+    {
+        return $this->fields;
+    }
 
-    private $dateOfBirth;
+    /**
+     * @param FormField $field
+     */
+    public function addField(FormField $field)
+    {
+        $this->fields[] = $field;
+    }
 
-    private $gender;
-
-    private $occupation;
-
+    /**
+     * @return array FormField
+     */
     public function extraFields()
     {
         return $this->extraFields;
     }
 
-    public function setExtraFields($extraFields)
+    /**
+     * @param FormField $field
+     */
+    public function addExtraField(FormField $field)
     {
-        $this->extraFields = $extraFields;
+        $this->extraFields[] = $field;
     }
 
-    public function address()
-    {
-        return $this->address;
-    }
-
-    public function setAddress($address)
-    {
-        $this->address = $address;
-    }
-
-    public function dateOfBirth()
-    {
-        return $this->dateOfBirth;
-    }
-
-    public function setDateOfBirth($dateOfBirth)
-    {
-        $this->dateOfBirth = $dateOfBirth;
-    }
-
-    public function gender()
-    {
-        return $this->gender;
-    }
-
-    public function setGender($gender)
-    {
-        $this->gender = $gender;
-    }
-
-    public function occupation()
-    {
-        return $this->occupation;
-    }
-
-    public function setOccupation($occupation)
-    {
-        $this->occupation = $occupation;
-    }
-
+    /**
+     * @return string
+     */
     public static function defaultJson()
     {
         return json_encode([
-            'firstName' => 'First name',
-            'lastName' => 'Last name',
-            'gender' => 'Gender',
+            'requiredFields' => self::requiredFields(),
+            'fields' => [
+                new FormField('gender', 'Gender', true),
+                new FormField('occupation', 'Occupation', true),
+                new FormField('dateOfBirth', 'Date of birth', true),
+                new FormField('address', 'Address', true)
+            ],
             'extraFields' => []
         ]);
     }
 
-    public static function MakeFromJson($json)
+    /**
+     * @param $json
+     * @return StudentRegistrationForm
+     */
+    public static function makeFromJson($json)
     {
-        $result = json_decode($json);
-    }
+        $form = new StudentRegistrationForm();
+        $decoded = json_decode($json, true);
 
-    public function generateJson()
-    {
-        $result = $this->requiredFields;
-
-        if ($this->address) $result['address'] = 'Address';
-        if ($this->dateOfBirth) $result['dateOfBirth'] = 'Date of birth';
-        if ($this->gender) $result['gender'] = 'Gender';
-        if ($this->occupation) $result['occupation'] = 'Occupation';
-
-        foreach ($this->extraFields as $field)
+        foreach ($decoded as $fieldType => $fields)
         {
-            $result['extraFields'][$field->name()] = $field->displayName();
+            switch ($fieldType )
+            {
+                case 'fields':
+                    foreach ($fields as $field)
+                    {
+                        $form->addField(new FormField($field['name'], $field['displayName'], $field['active']));
+                    }
+                    break;
+                case 'extraFields':
+                    foreach ($fields as $field)
+                    {
+                        $form->addExtraField(new FormField($field['name'], $field['displayName'], $field['active']));
+                    }
+                    break;
+            }
         }
 
-        return json_encode($result);
+        return $form;
+    }
+
+    /**
+     * @return string
+     */
+    public function jsonSerialize()
+    {
+        return [
+            'requiredFields' => self::requiredFields(),
+            'fields' => $this->fields,
+            'extraFields' => $this->extraFields
+        ];
     }
 }

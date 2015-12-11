@@ -7,21 +7,21 @@
                     Customize registration form
                 </div>
 
-                <div class="checkbox-1 disabled" v-for="field in defaultFields">
+                <div class="checkbox-1 disabled" v-for="field in requiredFields">
                     <label>
                         <i></i>{{ field.displayName }}
                     </label>
                 </div>
 
-                <div class="checkbox-1" v-for="field in regularFields">
+                <div class="checkbox-1" v-for="field in fields">
                     <label>
-                        <input type="checkbox" name="@{{ $key }}" value="1" v-model="regularFields[$key]['value']" />
+                        <input type="checkbox" name="{{ field.name }}" value="1" v-model="field['active']" />
                         <i></i>{{ field.displayName }}
                     </label>
                 </div>
 
-                <div class="form-row" v-for="fieldId in extraFields">
-                    <input type="text" name="extra[]" placeholder="Field name" v-model="extraFields[$index]['displayName']" />
+                <div class="form-row" v-for="field in extraFields">
+                    <input type="text" name="extra[]" placeholder="Field name" v-model="field['displayName']" />
                     <i class="fa fa-close" @click="removeExtra($index)"></i>
                 </div>
 
@@ -42,18 +42,16 @@
 export default {
     data: function () {
         return {
-            originalData: {},
-            regularFields: {},
+            requiredFields: {},
+            fields: {},
             extraFields: [],
-            defaultFields: {}
         };
     },
 
     created: function () {
         this.$http.get('/api/school/teacher/get-registration-form', function(data) {
-            this.originalData = data;
-            this.regularFields = data.regularFields;
-            this.defaultFields = data.defaultFields;
+            this.requiredFields = data.requiredFields;
+            this.fields = data.fields;
             this.extraFields = data.extraFields;
         });
     },
@@ -69,7 +67,8 @@ export default {
 
         submit: function() {
             this.$http.post('/api/school/teacher/update-registration-form', {
-                regularFields: this.regularFields,
+                requiredFields: this.requiredFields,
+                fields: this.fields,
                 extraFields: this.extraFields
             }, function(response) {
 
