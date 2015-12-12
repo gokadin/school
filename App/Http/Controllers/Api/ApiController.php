@@ -10,7 +10,7 @@ abstract class ApiController extends Controller
     const STATUS_INTERNAL_SERVER_ERROR = 500;
     const STATUS_BAD_REQUEST = 401;
 
-    public function respondOk($data)
+    public function respondOk($data = [])
     {
         return $this->response->json($data, self::STATUS_OK);
     }

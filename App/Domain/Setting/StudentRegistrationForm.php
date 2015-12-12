@@ -27,6 +27,19 @@ class StudentRegistrationForm implements JsonSerializable
     private $extraFields = [];
 
     /**
+     * @var array
+     */
+    private $errors = [];
+
+    /**
+     * @param array $data
+     */
+    public function __construct(array $data)
+    {
+        $this->makeFromJson($data);
+    }
+
+    /**
      * @return array FormField
      */
     public function fields()
@@ -58,6 +71,16 @@ class StudentRegistrationForm implements JsonSerializable
         $this->extraFields[] = $field;
     }
 
+    public function hasErrors()
+    {
+        return sizeof($this->errors) > 0;
+    }
+
+    public function errors()
+    {
+        return $this->errors;
+    }
+
     /**
      * @return string
      */
@@ -76,34 +99,94 @@ class StudentRegistrationForm implements JsonSerializable
     }
 
     /**
-     * @param $json
+     * @param $data
      * @return StudentRegistrationForm
+     * @internal param $json
      */
-    public static function makeFromJson($json)
+    private function makeFromJson($data)
     {
-        $form = new StudentRegistrationForm();
-        $decoded = json_decode($json, true);
-
-        foreach ($decoded as $fieldType => $fields)
+        if (sizeof($data) == 0)
         {
-            switch ($fieldType )
+            return;
+        }
+
+        if (!$this->validate($data))
+        {
+            return;
+        }
+
+        foreach ($data['fields'] as $field)
+        {
+            $this->addField(new FormField($field['name'], $field['displayName'], $field['active']));
+        }
+
+        foreach ($data['extraFields'] as $field)
+        {
+            if ($field['displayName'] == '')
             {
-                case 'fields':
-                    foreach ($fields as $field)
-                    {
-                        $form->addField(new FormField($field['name'], $field['displayName'], $field['active']));
-                    }
-                    break;
-                case 'extraFields':
-                    foreach ($fields as $field)
-                    {
-                        $form->addExtraField(new FormField($field['name'], $field['displayName'], $field['active']));
-                    }
-                    break;
+                continue;
+            }
+
+            if ($field['name'] == '')
+            {
+                $field['name'] = preg_replace('\'/\s+/\'', '', $field['displayName']);
+            }
+
+            $this->addExtraField(new FormField($field['name'], $field['displayName'], $field['active']));
+        }
+    }
+
+    private function validate($data)
+    {
+        if (!array_key_exists('fields', $data))
+        {
+            $this->errors[] = 'Fields are missing.';
+            return false;
+        }
+
+        if (!array_key_exists('extraFields', $data))
+        {
+            $this->errors[] = 'Extra fields are missing.';
+            return false;
+        }
+
+        foreach ($data['fields'] as $field)
+        {
+            if (!isset($field['name']))
+            {
+                $this->errors[] = 'Field name is missing or empty.';
+                return false;
+            }
+
+            if (!isset($field['displayName']))
+            {
+                $this->errors[] = 'Display name for '.$field['name'].' is missing or empty.';
+                return false;
+            }
+
+            if (!isset($field['active']))
+            {
+                $this->errors[] = 'Active value for '.$field['name'].' is missing or empty.';
+                return false;
             }
         }
 
-        return $form;
+        foreach ($data['extraFields'] as $field)
+        {
+            if (!array_key_exists('name', $field))
+            {
+                $this->errors[] = 'Extra field name is missing';
+                return false;
+            }
+
+            if (!array_key_exists('displayName', $field))
+            {
+                $this->errors[] = 'Display name for '.$field['name'].' is missing.';
+                return false;
+            }
+        }
+
+        return true;
     }
 
     /**

@@ -2,13 +2,13 @@
 
 namespace App\Http\Controllers\Api\School\Teacher;
 
-use App\Domain\Setting\FormField;
-use App\Http\Controllers\Controller;
+use App\Domain\Setting\StudentRegistrationForm;
+use App\Http\Controllers\Api\ApiController;
 use App\Http\Requests\Api\School\UpdateRegistrationFormRequest;
 use App\Repositories\UserRepository;
 use Library\DataMapper\DataMapper;
 
-class SettingController extends Controller
+class SettingController extends ApiController
 {
     public function getRegistration(UserRepository $userRepository)
     {
@@ -18,50 +18,20 @@ class SettingController extends Controller
     public function updateRegistrationForm(UpdateRegistrationFormRequest $request,
                                            UserRepository $userRepository, DataMapper $dm)
     {
-        $form = $userRepository->getLoggedInUser()->settings()->registrationForm();
+        $form = new StudentRegistrationForm($request->form);
 
-        foreach ($request->regularFields as $name => $data)
+        if ($form->hasErrors())
         {
-            $form->setField($name, $data['value']);
+            return $this->respondBadRequest(['errors' => [
+                $form->getErrors()
+            ]]);;
         }
 
-        $displayNames = [];
-        foreach ($request->extraFields as $data)
-        {
-            if ($data['displayName'] == '')
-            {
-                continue;
-            }
-
-            $displayNames[] = $data['displayName'];
-        }
-
-        $currentDisplayNames = [];
-        foreach ($form->fields() as $field)
-        {
-            if (!in_array($field->displayName(), $displayNames))
-            {
-                $dm->delete($field);
-                $form->removeField($field);
-
-                continue;
-            }
-
-            $currentDisplayNames[] = $field->displayName();
-        }
-
-        foreach ($displayNames as $displayName)
-        {
-            if (!in_array($displayName, $currentDisplayNames))
-            {
-                $field = new FormField($form, FormField::generateName($displayName), $displayName);
-                $dm->persist($field);
-                $form->addField($field);
-            }
-        }
-
+        $userRepository->getLoggedInUser()->settings()->setRegistrationForm(json_encode($form));
         $dm->flush();
 
-        return true;
+        return $this->respondOk([
+            'extraFields' => $form->extraFields()
+        ]);
     }
 }

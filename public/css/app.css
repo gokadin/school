@@ -544,6 +544,8 @@ button:disabled {
 
 #school #container, #school #content {
   min-height: 100%; }
+#school #content {
+  position: relative; }
 #school a:hover {
   text-decoration: none; }
 #school button.button-red,

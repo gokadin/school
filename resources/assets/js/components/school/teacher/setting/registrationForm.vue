@@ -30,12 +30,18 @@
                 </div>
 
                 <div class="form-buttons">
+                    <button type="button" class="button-gray button-large" @click="showPreview()">Preview</button>
                     <button type="submit" class="button-green button-large" @click="submit()">Update</button>
                 </div>
 
             </form>
         </div>
     </div>
+
+    <modal v-ref:modal>
+        <h1>hello!</h1>
+        <button type="button" class="button-gray" @click="closePreview()">Close</button>
+    </modal>
 </template>
 
 <script>
@@ -45,6 +51,7 @@ export default {
             requiredFields: {},
             fields: {},
             extraFields: [],
+            errors: []
         };
     },
 
@@ -58,7 +65,7 @@ export default {
 
     methods: {
         addExtra: function() {
-            this.extraFields.push({newExtra: ''});
+            this.extraFields.push({name: '', displayName: '', active: true});
         },
 
         removeExtra: function(val) {
@@ -66,13 +73,24 @@ export default {
         },
 
         submit: function() {
-            this.$http.post('/api/school/teacher/update-registration-form', {
-                requiredFields: this.requiredFields,
-                fields: this.fields,
-                extraFields: this.extraFields
-            }, function(response) {
+            this.$http.post('/api/school/teacher/update-registration-form', JSON.stringify({
+                form: {
+                    fields: this.fields,
+                    extraFields: this.extraFields
+                }
+            }), function(response) {
+                this.extraFields = response.extraFields;
 
+                this.$dispatch('flash', 'success', 'Registration form updated!');
             });
+        },
+
+        showPreview: function() {
+            this.$refs.modal.open();
+        },
+
+        closePreview: function() {
+            this.$refs.modal.close();
         }
     }
 }
@@ -90,6 +108,12 @@ export default {
             vertical-align: middle;
             cursor: pointer;
             margin-left: 8px;
+        }
+
+        .form-buttons button:first-child {
+            margin-right: 20px;
+            font-size: 16px;
+            font-weight: 400;
         }
     }
 </style>
