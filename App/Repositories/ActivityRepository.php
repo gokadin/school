@@ -50,4 +50,13 @@ class ActivityRepository extends AuthenticatedRepository
         $this->dm->delete($activity);
         $this->dm->flush();
     }
+
+    public function update(Activity $activity, array $data)
+    {
+        $activity->setName($data['name']);
+        $activity->setRate($data['rate']);
+        $activity->setPeriod($data['period']);
+
+        $this->dm->flush();
+    }
 }

@@ -752,12 +752,14 @@ button:disabled {
         #school .data-table-1 .table table .actions ul li i {
           font-family: FontAwesome;
           content: "";
-          font-style: normal; }
+          font-style: normal;
+          font-size: 20px; }
         #school .data-table-1 .table table .actions ul li i.delete:after {
           content: "\f00d";
           color: #a94442;
           font-size: 18px; }
         #school .data-table-1 .table table .actions ul li i.update:after {
+          color: #4C4C4C;
           content: "\f040"; }
   #school .data-table-1 .footer {
     height: 60px;
@@ -819,8 +821,7 @@ button:disabled {
   #school .checkbox-1.disabled i:before {
     content: "\f046"; }
   #school .modal-1 {
-    width: 600px;
-    height: 800px; }
+    width: 600px; }
     #school .modal-1 .header, #school .modal-1 .body, #school .modal-1 .footer {
       padding: 10px; }
     #school .modal-1 .header {

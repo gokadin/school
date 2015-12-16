@@ -319,6 +319,7 @@ button.button-large {
               font-family: FontAwesome;
               content: "";
               font-style: normal;
+              font-size: 20px;
             }
 
             i.delete:after {
@@ -328,6 +329,7 @@ button.button-large {
             }
 
             i.update:after {
+              color: #4C4C4C;
               content: "\f040";
             }
           }
@@ -437,7 +439,6 @@ button.button-large {
 
 .modal-1 {
   width: 600px;
-  height: 800px;
 
   .header, .body, .footer {
     padding: 10px;

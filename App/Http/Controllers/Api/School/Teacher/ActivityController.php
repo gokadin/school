@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\School\Teacher;
 
 use App\Http\Controllers\Api\ApiController;
 use App\Http\Requests\Api\School\GetTeacherActivitiesRequest;
+use App\Http\Requests\Api\School\UpdateActivityRequest;
 use App\Repositories\ActivityRepository;
 use App\Repositories\UserRepository;
 
@@ -28,6 +29,20 @@ class ActivityController extends ApiController
         }
 
         $activityRepository->delete($activity);
+
+        return $this->respondOk();
+    }
+
+    public function update(UpdateActivityRequest $request, UserRepository $userRepository, ActivityRepository $activityRepository, $activityId)
+    {
+        $activity = $userRepository->getLoggedInUser()->activities()->find($activityId);
+
+        if (is_null($activity))
+        {
+            return $this->respondUnauthorized();
+        }
+
+        $activityRepository->update($activity, $request->all());
 
         return $this->respondOk();
     }

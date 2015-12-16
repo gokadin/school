@@ -74,8 +74,32 @@
         <p slot="message">Are you sure?</p>
     </confirm-modal>
 
-    <modal v-ref:updateModal>
-        hello
+    <modal v-ref:update-modal>
+        <div class="modal-1">
+            <div class="header">
+                Edit activity
+            </div>
+            <div class="body">
+                <form class="form-1">
+                    <div class="form-row">
+                        <label>Name</label>
+                        <input type="text" value="{{ updatedActivityData.name }}" placeholder="Name" v-model="updatedActivityData.name" />
+                    </div>
+                    <div class="form-row">
+                        <label>Rate</label>
+                        <input type="text" value="{{ updatedActivityData.rate }}" placeholder="Rate" v-model="updatedActivityData.rate" />
+                    </div>
+                    <div class="form-row">
+                        <label>Period</label>
+                        <input type="text" value="{{ updatedActivityData.period }}" placeholder="Period" v-model="updatedActivityData.period" />
+                    </div>
+                </form>
+            </div>
+            <div class="footer">
+                <button class="button-red button-short" @click="closeConfirmUpdate()">Cancel</button>
+                <button class="button-green" @click="confirmUpdate()">Update</button>
+            </div>
+        </div>
     </modal>
 </template>
 
@@ -90,7 +114,9 @@ export default {
             mainFilter: '',
             oldSearchData: {},
             searchData: {},
-            searchDelayTimer: null
+            searchDelayTimer: null,
+            currentActivity: null,
+            updatedActivityData: {}
         };
     },
 
@@ -188,8 +214,36 @@ export default {
             }.bind(this));
         },
 
-        doUpdate: function(action, data) {
+        doUpdate: function(activity) {
+            this.currentActivity = activity;
+            this.updatedActivityData.name = activity.name;
+            this.updatedActivityData.rate = activity.rate;
+            this.updatedActivityData.period = activity.period;
+            this.$refs.updateModal.open();
+        },
 
+        confirmUpdate: function() {
+            this.closeConfirmUpdate();
+
+            this.currentActivity.name = this.updatedActivityData.name;
+            this.currentActivity.rate = this.updatedActivityData.rate;
+            this.currentActivity.period = this.updatedActivityData.period;
+
+            this.$http.put('/api/school/teacher/activities/' + this.currentActivity.id, {
+                name: this.currentActivity.name,
+                rate: this.currentActivity.rate,
+                period: this.currentActivity.period
+            }, function(response, status) {
+                if (status == 200) {
+                    this.$dispatch('flash', 'success', 'Activity updated!');
+                } else {
+                    this.$dispatch('flash', 'error', 'Could not update activity! Please try again.');
+                }
+            });
+        },
+
+        closeConfirmUpdate: function() {
+            this.$refs.updateModal.close();
         },
 
         doRequest: function() {
