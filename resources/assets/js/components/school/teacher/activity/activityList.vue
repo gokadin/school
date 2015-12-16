@@ -83,7 +83,7 @@
                 <form class="form-1">
                     <div class="form-row">
                         <label>Name</label>
-                        <input type="text" value="{{ updatedActivityData.name }}" placeholder="Name" v-model="updatedActivityData.name" />
+                        <input type="text" v-bind:value="updatedActivityData.name" placeholder="Name" v-model="updatedActivityData.name" />
                     </div>
                     <div class="form-row">
                         <label>Rate</label>

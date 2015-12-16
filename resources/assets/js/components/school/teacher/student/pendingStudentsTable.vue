@@ -1,5 +1,5 @@
 <template>
-    <div class="panel-1">
+    <div class="panel-1" v-show="newStudents.length > 0">
         <div class="data-table-1">
             <div class="header">
                 <div class="title">

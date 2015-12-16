@@ -56,10 +56,11 @@
 
 <style lang="sass">
     .flash {
-        position: absolute;
-        top: 5px;
+        position: fixed;
+        top: 20px;
         left: 50%;
-        width: 60%;
+        width: 450px;
+        min-height: 50px;
         transform: translateX(-50%);
         border: 1px solid #cccccc;
         -webkit-border-radius: 4px;

@@ -129,10 +129,27 @@
                         </li>
                     </ul>
                 </li>
-                <li class="@if (currentNameContains('school.teacher.setting.')) active @endif ">
-                    <a href="@path('school.teacher.setting.index')">
+                <li class="multi-level @if (currentNameContains('school.teacher.setting.')) open active @endif ">
+                    <a href="javascript:;">
                         <i class="fa fa-cog"></i>Settings
                     </a>
+                    <ul>
+                        <li>
+                            <a href="@path('school.teacher.setting.schoolInformation')">
+                                School information
+                            </a>
+                        </li>
+                        <li>
+                            <a href="@path('school.teacher.setting.registrationForm')">
+                                Registration form
+                            </a>
+                        </li>
+                        <li>
+                            <a href="@path('school.teacher.setting.preferences')">
+                                Preferences
+                            </a>
+                        </li>
+                    </ul>
                 </li>
                 <li>
                     <a href="@path('school.teacher.index.index')">

@@ -74,8 +74,14 @@ Route::group([
 
         Route::group(['prefix' => '/settings', 'as' => 'setting'], function()
         {
-            Route::get('/', 'SettingController@index');
+            Route::get('/school-information', 'SettingController@schoolInformation');
             Route::get('/registrationForm', 'SettingController@registrationForm');
+            Route::get('/preferences', 'SettingController@preferences');
+        });
+
+        Route::group(['prefix' => '/account', 'as' => 'account'], function()
+        {
+            Route::get('/', 'AccountController@index');
         });
     });
 });
