@@ -44,4 +44,10 @@ class ActivityRepository extends AuthenticatedRepository
 
         return $activity;
     }
+
+    public function delete(Activity $activity)
+    {
+        $this->dm->delete($activity);
+        $this->dm->flush();
+    }
 }

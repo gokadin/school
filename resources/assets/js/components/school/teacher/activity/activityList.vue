@@ -3,7 +3,7 @@
         <div class="data-table-1">
             <div class="header">
                 <div class="title">
-                    {{ title }}
+                    Activity list
                 </div>
                 <div class="filter">
                     <label>
@@ -15,27 +15,35 @@
             <div class="table">
                 <table cellspacing="0">
                     <tr>
-                        <th v-for="column in columns">
-                            {{ column.display }}
-                        </th>
+                        <th>Name</th>
+                        <th>Rate</th>
+                        <th>Period</th>
+                        <th>Students</th>
                         <th>Actions</th>
                     </tr>
-                    <tr v-for="data in dataSet | filterBy mainFilter">
-                        <td v-for="column in columns">
-                            {{ data[column.name] }}
+                    <tr v-for="activity in activities | filterBy mainFilter">
+                        <td>{{ activity.name }}</td>
+                        <td>{{ activity.rate }}</td>
+                        <td>{{ activity.period }}</td>
+                        <td>{{ activity.studentCount }}</td>
+                        <td class="actions">
+                            <ul>
+                                <li><i class="delete" title="delete" @click="doDelete(activity)"></i></li>
+                                <li><i class="update" title="update" @click="doUpdate(activity)"></i></li>
+                            </ul>
                         </td>
-                        <td>x</td>
                     </tr>
                     <tr>
-                        <td v-for="column in columns">
-                            <input
-                                    type="text"
-                                    v-if="column.searchable"
-                                    placeholder="Search {{ column.display }}..."
-                                    v-model="oldSearchData[column.name]"
-                                    @input="inputChanged(column.name)"
-                            />
+                        <td>
+                            <input type="text" placeholder="Search name" v-model="oldSearchData['name']" @input="inputChanged('name')"/>
                         </td>
+                        <td>
+                            <input type="text" placeholder="Search rate" v-model="oldSearchData['rate']" @input="inputChanged('rate')"/>
+                        </td>
+                        <td>
+                            <input type="text" placeholder="Search period" v-model="oldSearchData['period']" @input="inputChanged('period')"/>
+                        </td>
+                        <td></td>
                         <td></td>
                     </tr>
                 </table>
@@ -60,15 +68,22 @@
             </div>
         </div>
     </div>
+
+    <confirm-modal v-ref:confirm>
+        <p slot="title">Delete activity</p>
+        <p slot="message">Are you sure?</p>
+    </confirm-modal>
+
+    <modal v-ref:updateModal>
+        hello
+    </modal>
 </template>
 
 <script>
 export default {
-    props: ['title', 'uri', 'columns', 'actions'],
-
     data: function() {
         return {
-            dataSet: [],
+            activities: [],
             total: 0,
             page: 0,
             max: 10,
@@ -160,14 +175,31 @@ export default {
 //            this.doRequest();
 //        },
 
+        doDelete: function(activity) {
+            this.$refs.confirm.ifConfirm(function() {
+                this.$http.delete('/api/school/teacher/activities/' + activity.id, function(response, status) {
+                    if (status == 200) {
+                        this.doRequest();
+                        this.$dispatch('flash', 'success', 'Activity deleted!');
+                    } else {
+                        this.$dispatch('flash', 'error', 'Could not delete activity! Please try again.');
+                    }
+                }.bind(this));
+            }.bind(this));
+        },
+
+        doUpdate: function(action, data) {
+
+        },
+
         doRequest: function() {
-            this.$http.post(this.uri, {
+            this.$http.post('/api/school/teacher/activities/', {
                 page: this.page,
                 max: this.max,
                 sortingRules: this.sortingRules,
                 searchRules: this.searchData
             }, function(response) {
-                this.dataSet = response.data;
+                this.activities = response.data;
                 this.total = response.pagination.totalCount;
             });
         }

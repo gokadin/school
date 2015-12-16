@@ -3,9 +3,9 @@ Vue.use(require('vue-resource'));
 Vue.http.headers.common['CSRFTOKEN'] = document.getElementById('csrf-token').getAttribute('content');
 
 Vue.component('flash', require('./components/flash.vue'))
-Vue.component('dataTable', require('./components/dataTable.vue'))
 Vue.component('infoBox', require('./components/infoBox.vue'))
 Vue.component('modal', require('./components/modal.vue'))
+Vue.component('confirmModal', require('./components/confirmModal.vue'))
 
 new Vue({
     el: 'body',
@@ -18,6 +18,7 @@ new Vue({
 
     components: {
         pendingStudentsTable: require('./components/school/teacher/student/pendingStudentsTable.vue'),
+        activityList: require('./components/school/teacher/activity/activityList.vue'),
         customizeRegistrationForm: require('./components/school/teacher/setting/registrationForm.vue')
     },
 

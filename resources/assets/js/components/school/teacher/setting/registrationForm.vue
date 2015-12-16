@@ -39,8 +39,30 @@
     </div>
 
     <modal v-ref:modal>
-        <h1>hello!</h1>
-        <button type="button" class="button-gray" @click="closePreview()">Close</button>
+        <div class="modal-1">
+            <div class="header">
+                Registration form preview
+            </div>
+            <div class="body">
+                <form class="form-1">
+                    <div class="form-row" v-for="field in requiredFields">
+                        <label>{{ field.displayName }}</label>
+                        <input type="text" placeholder="{{ field.displayName }}" />
+                    </div>
+                    <div class="form-row" v-for="field in fields">
+                        <label>{{ field.displayName }}</label>
+                        <input type="text" placeholder="{{ field.displayName }}" />
+                    </div>
+                    <div class="form-row" v-for="field in extraFields">
+                        <label>{{ field.displayName }}</label>
+                        <input type="text" placeholder="{{ field.displayName }}" />
+                    </div>
+                </form>
+            </div>
+            <div class="footer">
+                <button type="button" class="button-red" @click="closePreview()">Close</button>
+            </div>
+        </div>
     </modal>
 </template>
 

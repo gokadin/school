@@ -7,17 +7,7 @@
 </div>
 
 <div class="content-padding">
-    <data-table
-            title="Activity list"
-            :columns="[
-                { name: 'name', display: 'Name', sortable: true, searchable: true },
-                { name: 'rate', display: 'Rate', sortable: true, searchable: true },
-                { name: 'period', display: 'Period', sortable: true, searchable: true },
-                { name: 'studentCount', display: 'Students', acasortable: true, searchable: false }
-            ]"
-            uri="/api/school/teacher/activities/"
-            actions="actions"
-    ></data-table>
+    <activity-list></activity-list>
 </div>
 
 @stop()

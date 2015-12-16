@@ -33,6 +33,7 @@ Route::group(['namespace' => 'Api', 'prefix' => '/api', 'as' => 'api', 'middlewa
         Route::group(['namespace' => 'Teacher', 'prefix' => '/teacher', 'as' =>'teacher'], function() {
             Route::group(['prefix' => '/activities', 'as' => 'activity'], function() {
                 Route::post('/', 'ActivityController@index');
+                Route::delete('/{activityId}', 'ActivityController@destroy');
             });
             Route::get('/get-registration-form', 'SettingController@getRegistration');
             Route::post('/update-registration-form', 'SettingController@updateRegistrationForm');

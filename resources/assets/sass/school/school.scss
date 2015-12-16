@@ -14,10 +14,13 @@ button.button-red,
 button.button-green,
 button.button-gray {
   height: 30px;
-  width: 150px;
+  width: 140px;
   border: 1px solid #cccccc;
   cursor: pointer;
   color: #fff;
+  -webkit-border-radius: 3px;
+  -moz-border-radius: 3px;
+  border-radius: 3px;
 }
 
 button.button-red {
@@ -35,6 +38,10 @@ button.button-gray {
 
 button.button-long {
   width: 180px;
+}
+
+button.button-short {
+  width: 100px;
 }
 
 button.button-tall {
@@ -267,8 +274,14 @@ button.button-large {
         border-bottom: 1px solid #ddd;
       }
 
-      tr:not(:first-child):not(:last-child):hover td {
-        background-color: #f2f2f2;
+      tr:not(:first-child):not(:last-child):hover {
+        td {
+          background-color: #f2f2f2;
+        }
+
+        .actions ul {
+          display: block;
+        }
       }
 
       tr:last-child {
@@ -288,6 +301,35 @@ button.button-large {
 
           input:focus {
             border-color: #808080;
+          }
+        }
+      }
+
+      .actions {
+        ul {
+          display: none;
+          list-style: outside none none;
+
+          li {
+            display: inline-block;
+            cursor: pointer;
+            margin-right: 10px;
+
+            i {
+              font-family: FontAwesome;
+              content: "";
+              font-style: normal;
+            }
+
+            i.delete:after {
+              content: "\f00d";
+              color: #a94442;
+              font-size: 18px;
+            }
+
+            i.update:after {
+              content: "\f040";
+            }
           }
         }
       }
@@ -388,6 +430,35 @@ button.button-large {
 
   i:before {
     content: "\f046";
+  }
+}
+
+/* MODAL */
+
+.modal-1 {
+  width: 600px;
+  height: 800px;
+
+  .header, .body, .footer {
+    padding: 10px;
+  }
+
+  .header {
+    height: 50px;
+    line-height: 30px;
+    border-bottom: 1px solid #cccccc;
+    font-size: 18px;
+  }
+
+  .body {
+
+  }
+
+  .footer {
+    border-top: 1px solid #cccccc;
+    height: 50px;
+    line-height: 30px;
+    text-align: right;
   }
 }
 
