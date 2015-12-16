@@ -100,7 +100,8 @@ button.button-large {
       line-height: 40px;
     }
 
-    input[type="text"] {
+    input[type="text"],
+    input[type="password"] {
       width: 75%;
       height: 40px;
       padding: 0 5px;
@@ -111,15 +112,18 @@ button.button-large {
     }
 
     input[type="text"]:focus,
+    input[type="password"]:focus ,
     select:focus {
       border-color: #808080;
     }
 
-    input[type="text"].valid {
+    input[type="text"].valid,
+    input[type="password"].valid {
       border-color: $color-main;
     }
 
-    input[type="text"].invalid {
+    input[type="text"].invalid,
+    input[type="password"].invalid {
       border-color: $color-error;
     }
 
@@ -463,7 +467,56 @@ button.button-large {
   }
 }
 
+.switcher-1 {
+  float: left;
+
+  ul {
+    list-style: outside none none;
+    border: 1px solid #e2e2e2;
+    width: 230px;
+    background-color: white;
+
+    li {
+      position: relative;
+
+      a {
+        display: block;
+        width: 100%;
+        padding: 20px;
+        color: #808080;
+      }
+
+      a:after {
+        font-family: FontAwesome;
+        content: "\f054";
+        position: absolute;
+        right: 15px;
+        top: 50%;
+        height: 10px;
+        margin-top: -5px;
+        font-size: 13px;
+        color: #808080;
+      }
+    }
+
+    li:not(:last-child) {
+      border-bottom: 1px solid #e2e2e2;
+    }
+
+    li:hover, li.active {
+      a, a:after {
+        color: #444;
+      }
+    }
+  }
+}
+
+.switcher-1-content {
+  margin-left: 260px;
+}
+
 @import 'school-responsive';
 @import 'layout';
 @import 'activities';
 @import 'settings';
+@import 'account';

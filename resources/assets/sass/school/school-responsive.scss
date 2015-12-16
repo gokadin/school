@@ -1,3 +1,20 @@
+@media screen and (max-width: 850px) {
+  .switcher-1 {
+    width: 100%;
+    float: none;
+    margin-bottom: 30px;
+
+    ul {
+      width: 100%;
+    }
+  }
+
+  .switcher-1-content {
+    width: 100%;
+    margin-left: 0;
+  }
+}
+
 @media screen and (max-width: 480px) {
   #content .main-title {
     text-align: center;

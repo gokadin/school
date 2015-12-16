@@ -25,10 +25,14 @@ class Session
         else
             $this->clearErrors();
 
-        if (!$this->shouldClearFlash())
-            $_SESSION[self::SHOULD_CLEAR_FLASH_KEY] = true;
-        else
+        if ($this->shouldClearFlash())
+        {
             $this->clearFlash();
+        }
+        else
+        {
+            $_SESSION[self::SHOULD_CLEAR_FLASH_KEY] = true;
+        }
 
         $_SESSION['token'] = $this->generateToken(); // TODO: move from here
     }
@@ -72,8 +76,8 @@ class Session
 
     public function setFlash($string, $type = "success", $duration = 0)
     {
-        if ($type != "success" || $type != "error")
-            $type = "success";
+        if ($type != 'success' && $type != 'error')
+            $type = 'success';
             
         if (!is_int($duration) || $duration < 0)
             $duration = 0;
@@ -82,6 +86,9 @@ class Session
         $_SESSION[self::FLASH_TYPE_KEY] = $type;
         $_SESSION[self::FLASH_DURATION_KEY] = $duration;
         $_SESSION[self::SHOULD_CLEAR_FLASH_KEY] = false;
+
+        setcookie(self::FLASH_KEY, htmlspecialchars($string), time() + (365 * 24 * 60 * 60));
+        setcookie(self::FLASH_TYPE_KEY, htmlspecialchars($type), time() + (365 * 24 * 60 * 60));
     }
 
     public function getErrors()
@@ -136,6 +143,16 @@ class Session
         $this->remove(self::FLASH_KEY);
         $this->remove(self::FLASH_TYPE_KEY);
         $this->remove(self::FLASH_DURATION_KEY);
+
+        if (isset($_COOKIE[self::FLASH_KEY]))
+        {
+            setcookie(self::FLASH_KEY, '', time() - 1);
+        }
+
+        if (isset($_COOKIE[self::FLASH_TYPE_KEY]))
+        {
+            setcookie(self::FLASH_TYPE_KEY, '', time() - 1);
+        }
     }
 
     protected function shouldClearErrors()
@@ -151,6 +168,6 @@ class Session
         if (!isset($_SESSION[self::SHOULD_CLEAR_FLASH_KEY]))
             return false;
 
-        return $_SESSION[self::SHOULD_CLEAR_FLASH_KEY];
+        return $_SESSION[self::SHOULD_CLEAR_FLASH_KEY] === true;
     }
 }

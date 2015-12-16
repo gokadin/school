@@ -207,7 +207,7 @@ class Shao
 
         if ($functionName == 'include')
         {
-            return $this->shaoFunctions->_include($functionArgs[0], $this->currentView);
+            return $this->shaoFunctions->_include($functionArgs[0]);
         }
 
         if (!method_exists($this->shaoFunctions, $functionName))

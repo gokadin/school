@@ -1,0 +1,13 @@
+<div class="switcher-1">
+    <ul>
+        <li class="@if (currentRoute() == 'school.teacher.account.index') active @endif ">
+            <a href="@path('school.teacher.account.index')">Profile</a>
+        </li>
+        <li class="@if (currentRoute() == 'school.teacher.account.personalInfo') active @endif ">
+            <a href="@path('school.teacher.account.personalInfo')">Personal info</a>
+        </li>
+        <li class="@if (currentRoute() == 'school.teacher.account.password') active @endif ">
+            <a href="@path('school.teacher.account.password')">Password</a>
+        </li>
+    </ul>
+</div>

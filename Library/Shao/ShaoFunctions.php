@@ -61,9 +61,9 @@ class ShaoFunctions
         return '<?php viewFactoryYield(\''.$str.'\'); ?>';
     }
 
-    public function _include($str, $currentFile)
+    public function _include($str)
     {
-        $requestedFile = View::VIEW_FOLDER.'/'.substr($currentFile, 0, strrpos($currentFile, '/')).'/'.$str;
+        $requestedFile = __DIR__.'/../../'.View::VIEW_FOLDER.'/'.str_replace('.', '/', $str);
 
         $validExtensions = ['.php', '.html'];
         $validShaoExtensions = ['.shao.php', '.shao.html'];
@@ -89,6 +89,11 @@ class ShaoFunctions
 
     public function inject($class, $varName = null)
     {
+        if (substr($class, 0, 1) == '\\')
+        {
+            $class = substr($class, 1);
+        }
+
         $resolved = $this->container->resolve($class);
         $view = $this->container->resolveInstance('view');
 

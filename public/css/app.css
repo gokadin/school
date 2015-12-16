@@ -610,7 +610,8 @@ button:disabled {
         float: left;
         font-size: 17px;
         line-height: 40px; }
-      #school .form-1 .form-row input[type="text"] {
+      #school .form-1 .form-row input[type="text"],
+      #school .form-1 .form-row input[type="password"] {
         width: 75%;
         height: 40px;
         padding: 0 5px;
@@ -619,11 +620,14 @@ button:disabled {
         border-radius: 0px;
         border: 1px solid #cccccc; }
       #school .form-1 .form-row input[type="text"]:focus,
+      #school .form-1 .form-row input[type="password"]:focus,
       #school .form-1 .form-row select:focus {
         border-color: #808080; }
-      #school .form-1 .form-row input[type="text"].valid {
+      #school .form-1 .form-row input[type="text"].valid,
+      #school .form-1 .form-row input[type="password"].valid {
         border-color: #67b168; }
-      #school .form-1 .form-row input[type="text"].invalid {
+      #school .form-1 .form-row input[type="text"].invalid,
+      #school .form-1 .form-row input[type="password"].invalid {
         border-color: #b94a48; }
       #school .form-1 .form-row select {
         height: 40px;
@@ -834,6 +838,46 @@ button:disabled {
       height: 50px;
       line-height: 30px;
       text-align: right; }
+  #school .switcher-1 {
+    float: left; }
+    #school .switcher-1 ul {
+      list-style: outside none none;
+      border: 1px solid #e2e2e2;
+      width: 230px;
+      background-color: white; }
+      #school .switcher-1 ul li {
+        position: relative; }
+        #school .switcher-1 ul li a {
+          display: block;
+          width: 100%;
+          padding: 20px;
+          color: #808080; }
+        #school .switcher-1 ul li a:after {
+          font-family: FontAwesome;
+          content: "\f054";
+          position: absolute;
+          right: 15px;
+          top: 50%;
+          height: 10px;
+          margin-top: -5px;
+          font-size: 13px;
+          color: #808080; }
+      #school .switcher-1 ul li:not(:last-child) {
+        border-bottom: 1px solid #e2e2e2; }
+      #school .switcher-1 ul li:hover a, #school .switcher-1 ul li:hover a:after, #school .switcher-1 ul li.active a, #school .switcher-1 ul li.active a:after {
+        color: #444; }
+  #school .switcher-1-content {
+    margin-left: 260px; }
+  @media screen and (max-width: 850px) {
+    #school .switcher-1 {
+      width: 100%;
+      float: none;
+      margin-bottom: 30px; }
+      #school .switcher-1 ul {
+        width: 100%; }
+    #school .switcher-1-content {
+      width: 100%;
+      margin-left: 0; } }
   @media screen and (max-width: 480px) {
     #school #content .main-title {
       text-align: center; }
@@ -1107,3 +1151,5 @@ button:disabled {
       #school #settings-menu .setting .box:hover {
         cursor: pointer;
         background-color: #e6e6e6; }
+  #school #profile {
+    width: 100%; }

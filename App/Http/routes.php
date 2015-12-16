@@ -2,6 +2,8 @@
 
 use Library\Facades\Router as Route;
 
+/* FRONTEND */
+
 Route::group(['namespace' => 'Frontend', 'as' => 'frontend', 'middleware' => 'VerifyCsrfToken'], function() {
     Route::group(['as' => 'index'], function() {
         Route::get('/', 'IndexController@index');
@@ -25,6 +27,10 @@ Route::group(['namespace' => 'Frontend', 'as' => 'frontend', 'middleware' => 'Ve
     });
 });
 
+/*
+ * API
+ */
+
 Route::group(['namespace' => 'Api', 'prefix' => '/api', 'as' => 'api', 'middleware' => 'VerifyCsrfToken'], function() {
     Route::group(['namespace' => 'School', 'prefix' => '/school', 'as' => 'school', 'middleware' => 'VerifyAuthentication'], function() {
 
@@ -41,6 +47,10 @@ Route::group(['namespace' => 'Api', 'prefix' => '/api', 'as' => 'api', 'middlewa
         });
     });
 });
+
+/*
+ * SCHOOL
+ */
 
 Route::group([
     'namespace' => 'School',
@@ -82,6 +92,9 @@ Route::group([
         Route::group(['prefix' => '/account', 'as' => 'account'], function()
         {
             Route::get('/', 'AccountController@index');
+            Route::get('/personal-info', 'AccountController@personalInfo');
+            Route::get('/password', 'AccountController@password');
+            Route::post('/password', 'AccountController@updatePassword');
         });
     });
 });

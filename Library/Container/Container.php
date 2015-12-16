@@ -15,10 +15,14 @@ class Container
 
     public function registerInstance($name, $instance)
     {
+        $class = get_class($instance);
+
         $this->instances[$name] = [
-            'class' => get_class($instance),
+            'class' => $class,
             'instance' => $instance
         ];
+
+        $this->resolvedConcretes[$class] = $instance;
     }
 
     public function registerInterface($interface, $concrete)
@@ -136,14 +140,6 @@ class Container
         if (isset($this->resolvedConcretes[$concrete]))
         {
             return $this->resolvedConcretes[$concrete];
-        }
-
-        foreach ($this->instances as $registeredInstance)
-        {
-            if ($registeredInstance['class'] == $concrete)
-            {
-                return $registeredInstance['instance'];
-            }
         }
 
         return $this->resolvedConcretes[$concrete] = $this->resolveClassRecursive($concrete, $r);

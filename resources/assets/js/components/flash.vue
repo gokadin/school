@@ -17,6 +17,10 @@
             }
         },
 
+        created: function() {
+            this.checkCookiesForFlash();
+        },
+
         computed: {
             flashClasses: function() {
                 var type = this.type;
@@ -49,6 +53,32 @@
 
             close: function() {
                 this.show = false;
+            },
+
+            checkCookiesForFlash: function () {
+                var cookies = document.cookie.split(';');
+
+                var message = '';
+                var type = '';
+
+                for (var i = 0; i < cookies.length; i++) {
+                    var key = cookies[i].substring(0, cookies[i].indexOf('=')).trim();
+
+                    if (key == 'flash') {
+                        message = decodeURIComponent(
+                                cookies[i].substring(cookies[i].indexOf('=') + 1)).split('+').join(' ');
+                    }
+
+                    if (key == 'flashType') {
+                        type = cookies[i].substring(cookies[i].indexOf('=') + 1);
+                    }
+                }
+
+                if (message == '' || type == '') {
+                    return;
+                }
+
+                this.flash(type, message);
             }
         }
     }

@@ -2,11 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Jobs\Job;
 use Library\Controller\Controller as BackController;
 use Library\Http\Response;
 use Library\Http\View;
-use Library\Queue\Queue;
 use Library\Session\Session;
 
 abstract class Controller extends BackController
@@ -16,16 +14,10 @@ abstract class Controller extends BackController
     protected $response;
     protected $queue;
 
-    public function __construct(View $view, Session $session, Response $response, Queue $queue)
+    public function __construct(View $view, Session $session, Response $response)
     {
         $this->view = $view;
         $this->session = $session;
         $this->response = $response;
-        $this->queue = $queue;
-    }
-
-    protected function dispatchJob(Job $job)
-    {
-        $this->queue->push($job);
     }
 }

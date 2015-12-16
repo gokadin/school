@@ -202,4 +202,11 @@ class UserRepository extends Repository
 
         return $this->dm->find(TeacherSettings::class, $id);
     }
+
+    public function updatePassword($password)
+    {
+        $this->getLoggedInUser()->setPassword($password);
+
+        $this->dm->flush();
+    }
 }
