@@ -49,6 +49,11 @@ Route::group(['namespace' => 'Api', 'prefix' => '/api', 'as' => 'api', 'middlewa
                 Route::delete('/{activityId}', 'ActivityController@destroy');
                 Route::put('/{activityId}', 'ActivityController@update');
             });
+
+            Route::group(['prefix' => '/students', 'as' => 'student'], function() {
+                Route::post('/', 'StudentController@index');
+            });
+
             Route::get('/get-registration-form', 'SettingController@getRegistration');
             Route::post('/update-registration-form', 'SettingController@updateRegistrationForm');
         });

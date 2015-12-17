@@ -5,15 +5,12 @@ namespace App\Http\Controllers\School\Teacher;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\School\StoreActivityRequest;
 use App\Jobs\School\CreateActivity;
-use App\Repositories\UserRepository;
 
 class ActivityController extends Controller
 {
-    public function index(UserRepository $userRepository)
+    public function index()
     {
-        $activities = $userRepository->getLoggedInUser()->activities();
-
-        return $this->view->make('school.teacher.activity.index', compact('activities'));
+        return $this->view->make('school.teacher.activity.index');
     }
 
     public function create()

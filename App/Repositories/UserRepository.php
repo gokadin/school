@@ -7,15 +7,26 @@ use App\Domain\School\School;
 use App\Domain\Setting\StudentRegistrationForm;
 use App\Domain\Setting\TeacherSettings;
 use App\Domain\Subscriptions\Subscription;
+use App\Domain\Transformers\StudentTransformer;
 use App\Domain\Users\TempStudent;
 use App\Domain\Users\TempTeacher;
 use App\Domain\Users\Teacher;
 use App\Domain\Users\Student;
 use App\Domain\Common\Address;
+use Library\DataMapper\DataMapper;
+use Library\Log\Log;
 
 class UserRepository extends Repository
 {
     protected $user;
+    protected $studentTransformer;
+
+    public function __construct(DataMapper $dm, Log $log, StudentTransformer $studentTransformer)
+    {
+        parent::__construct($dm, $log);
+
+        $this->studentTransformer = $studentTransformer;
+    }
 
     public function findTempTeacher($id)
     {
@@ -238,5 +249,17 @@ class UserRepository extends Repository
         $user->setEmail($data['email']);
 
         $this->dm->flush();
+    }
+
+    public function paginate($pageNumber, $pageCount, array $sortingRules = [], array $searchRules = [])
+    {
+        $students = $this->user->students();
+
+        $result = $this->paginateCollection($students, $pageNumber, $pageCount, $sortingRules, $searchRules);
+
+        return [
+            'data' => $this->studentTransformer->transformCollection($result['data']),
+            'pagination' => $result['pagination']
+        ];
     }
 }

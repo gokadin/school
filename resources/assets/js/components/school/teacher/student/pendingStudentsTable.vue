@@ -1,5 +1,5 @@
 <template>
-    <div class="panel-1" v-show="newStudents.length > 0">
+    <div id="pending-students" class="panel-1" v-if="newStudents.length > 0">
         <div class="data-table-1">
             <div class="header">
                 <div class="title">
@@ -43,7 +43,7 @@
 export default {
     data: function() {
         return {
-            newStudents: {},
+            newStudents: [],
             mainFilter: '',
             newStudentsOpen: true
         };
@@ -58,6 +58,10 @@ export default {
 </script>
 
 <style lang="sass">
+    #pending-students {
+        margin-bottom: 20px;
+    }
+
     .expired span,
     .pending span {
         padding: 3px;

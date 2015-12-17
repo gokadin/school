@@ -18,6 +18,7 @@ new Vue({
 
     components: {
         pendingStudentsTable: require('./components/school/teacher/student/pendingStudentsTable.vue'),
+        studentList: require('./components/school/teacher/student/studentList.vue'),
         activityList: require('./components/school/teacher/activity/activityList.vue'),
         customizeRegistrationForm: require('./components/school/teacher/setting/registrationForm.vue')
     },
