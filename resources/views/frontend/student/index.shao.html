@@ -1,0 +1,79 @@
+@layout('frontend.layout')
+
+@inject('Library\Http\Form')
+
+@section('content')
+
+<h1>Welcome to instructioner bla bla bla</h1>
+
+<div class="default-center">
+    {!! $form->open('frontend.student.register', 'POST', ['id' => 'register-student-form', 'class' => 'form-1']) !!}
+
+    {!! $form->hidden('tempStudentId', $tempStudentId) !!}
+
+    <div class="form-title">
+        Register
+    </div>
+
+    @foreach ($registrationForm['requiredFields'] as $field)
+        <div class="form-row">
+            {!! $form->label($field['name'], $field['displayName']) !!}
+            @if ($field['name'] == 'firstName')
+                {!! $form->text($field['name'], $firstName, ['placeholder' => $field['displayName']]) !!}
+            @elseif ($field['name'] == 'lastName')
+                {!! $form->text($field['name'], $lastName, ['placeholder' => $field['displayName']]) !!}
+            @endif
+        </div>
+    @endforeach
+
+    @foreach ($registrationForm['fields'] as $field)
+        @if ($field['active'] == true)
+            @if ($field['name'] == 'address')
+                <div class="form-row">
+                    {!! $form->label('address', 'Address') !!}
+                    {!! $form->text('address', null, ['placeholder' => 'Address']) !!}
+                </div>
+                <div class="form-row">
+                    {!! $form->label('city', 'City') !!}
+                    {!! $form->text('city', null, ['placeholder' => 'City']) !!}
+                </div>
+                <div class="form-row">
+                    {!! $form->label('country', 'Country') !!}
+                    {!! $form->text('country', null, ['placeholder' => 'Country']) !!}
+                </div>
+            @elseif ($field['name'] == 'gender')
+                <div class="form-row">
+                    <label>Gender</label>
+                    <label class="radio-label">Male
+                        <input type="radio" name="gender" value="male" />
+                        <i class="radio-icon"></i>
+                    </label>
+                    <label class="radio-label">Female
+                        <input type="radio" name="gender" value="female" />
+                        <i class="radio-icon"></i>
+                    </label>
+                </div>
+            @else
+                <div class="form-row">
+                    {!! $form->label($field['name'], $field['displayName']) !!}
+                    {!! $form->text($field['name'], null, ['placeholder' => $field['displayName']]) !!}
+                </div>
+            @endif
+        @endif
+    @endforeach
+
+    @foreach ($registrationForm['extraFields'] as $field)
+        <div class="form-row">
+            {!! $form->label($field['name'], $field['displayName']) !!}
+            {!! $form->text($field['name'], null, ['placeholder' => $field['displayName']]) !!}
+        </div>
+    @endforeach
+
+    <div class="form-buttons">
+        <button type="submit" class="button-green">Register</button>
+    </div>
+
+    {!! $form->close() !!}
+</div>
+
+@stop()

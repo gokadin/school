@@ -3,33 +3,29 @@
 namespace App\Domain\Users;
 
 use App\Domain\Activities\Activity;
+use App\Domain\Common\Address;
 
 /**
  * @Entity(name="students")
  */
 class Student extends User
 {
-    /** @HasOne(target="App\Domain\Common\Address") */
-    protected $address;
-
     /** @HasOne(target="App\Domain\Activities\Activity") */
     protected $activity;
 
-    public function __construct($email, Activity $activity)
+    /** @BelongsTo(target="App\Domain\Users\Teacher") */
+    private $teacher;
+
+    /** @Column(type="text", nullable) */
+    private $extraInfo;
+
+    public function __construct($firstName, $lastName, $email, $password, Address $address,
+                                Activity $activity, Teacher $teacher)
     {
-        parent::__construct($email);
+        parent::__construct($firstName, $lastName, $email, $password, $address);
 
         $this->activity = $activity;
-    }
-
-    public function address()
-    {
-        return $this->address;
-    }
-
-    public function setAddress($address)
-    {
-        $this->address = $address;
+        $this->teacher = $teacher;
     }
 
     public function activity()
@@ -40,5 +36,25 @@ class Student extends User
     public function setActivity($activity)
     {
         $this->activity = $activity;
+    }
+
+    public function teacher()
+    {
+        return $this->teacher;
+    }
+
+    public function setTeacher(Teacher $teacher)
+    {
+        $this->teacher = $teacher;
+    }
+
+    public function extraInfo()
+    {
+        return json_decode($this->extraInfo, true);
+    }
+
+    public function setExtraInfo($extraInfo)
+    {
+        $this->extraInfo = json_encode($extraInfo);
     }
 }

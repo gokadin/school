@@ -64,128 +64,116 @@ i.fa {
   }
 }
 
-/* FORMS */
-
 .form-1 {
-  .form-1-header {
-    height: 40px;
-    line-height: 40px;
-    color: white;
-    background-color: $color-main;
-    font-size: 22px;
-    padding-left: 10px;
+  width: 100%;
+  padding: 20px;
+
+  .form-title {
+    font-size: 18px;
+    margin-bottom: 30px;
   }
 
-  .form-1-body {
-    border: 1px solid $color-main;
-    border-bottom: 1px solid #cccccc;
-    padding-top: 20px;
-    padding-bottom: 20px;
+  .form-row {
+    margin: 20px 0;
 
-    .form-1-row {
-      margin: 10px 0;
+    label {
+      width: 25%;
+      float: left;
+      font-size: 17px;
+      line-height: 40px;
+    }
 
-      label {
-        height: 35px;
-        line-height: 35px;
-        width: 30%;
-        text-align: right;
-        margin-right: 10px;
-        font-size: 18px;
-        font-weight: normal;
+    label.radio-label {
+      width: auto;
+      margin-right: 30px;
+
+      input[type="radio"] {
+        margin-left: 5px;
+        display: none;
       }
 
-      label.required:after {
-        content: "*";
-        color: $color-error;
-      }
-
-      .form-error {
-        color: $color-error;
-        margin-left: 30%;
-        padding-left: 16px;
-      }
-
-      input[type="text"],
-      input[type="password"],
-      input[type="email"] {
-        height: 34px;
-        border: 1px solid #cccccc;
-        width: 50%;
-        padding: 6px 12px;
+      i.radio-icon:after {
+        font-style: normal;
+        font-family: FontAwesome;
+        content: "\f10c";
         font-size: 16px;
       }
 
-      input[type="text"]:focus,
-      input[type="password"]:focus,
-      input[type="email"]:focus,
-      textarea:focus {
-        border-color: #5c5c5c;
+      input[type="radio"]:checked + i.radio-icon:after {
+        content: "\f192";
       }
+    }
 
-      input[type="text"].valid,
-      input[type="password"].valid,
-      input[type="email"].valid
-      textarea.valid {
-        border-color: $color-main;
-      }
+    input[type="text"],
+    input[type="password"] {
+      width: 75%;
+      height: 40px;
+      padding: 0 5px;
+      -webkit-border-radius: 0px;
+      -moz-border-radius: 0px;
+      border-radius: 0px;
+      border: 1px solid #cccccc;
+    }
 
-      input[type="text"].invalid,
-      input[type="password"].invalid,
-      input[type="email"].invalid
-      textarea.invalid {
-        border-color: $color-error
-      }
+    input[type="text"]:focus,
+    input[type="password"]:focus ,
+    select:focus {
+      border-color: #808080;
+    }
 
-      select {
-        height: 34px;
-        width: 50%;
-        border: 1px solid #cccccc;
-        background-color: white;
-      }
+    input[type="text"].valid,
+    input[type="password"].valid {
+      border-color: $color-main;
+    }
+
+    input[type="text"].invalid,
+    input[type="password"].invalid {
+      border-color: $color-error;
+    }
+
+    select {
+      height: 40px;
+      width: 75%;
+      -webkit-border-radius: 0;
+      -moz-border-radius: 0;
+      border-radius: 0;
+      border: 1px solid #cccccc;
+      background-color: white;
+    }
+
+    .form-error {
+      margin-top: 5px;
+      margin-left: 25%;
     }
   }
 
-  .form-1-footer {
-    height: 50px;
-    border: 1px solid $color-main;
-    border-top: none;
+  .form-row:after {
+    clear: both;
+    content: "";
+    display: table;
+  }
 
-    button {
+  .form-buttons {
+    text-align: right;
+    height: 60px;
+    line-height: 60px;
+
+    label {
+      margin-right: 50px;
+    }
+
+    input[type="checkbox"] {
+      margin-right: 5px;
+      vertical-align: middle;
+    }
+
+    button[type="submit"] {
       background-color: $color-main;
-      border: 1px solid #CCCCCC;
-      width: 120px;
-      height: 30px;
+      width: 150px;
+      height: 40px;
+      cursor: pointer;
       color: white;
-      font-size: 17px;
-    }
-
-    .form-1-create-another {
-      label {
-        height: 50px;
-        line-height: 50px;
-        margin-left: 20px;
-        font-weight: normal;
-      }
-
-      input[type="checkbox"] {
-        margin-left: 5px;
-        margin-top: 0;
-        position: relative;
-        vertical-align: middle;
-      }
-    }
-
-    .form-1-cancel {
-      margin-left: 30%;
-
-      button {
-        background-color: $color-error;
-      }
-    }
-
-    .form-1-submit {
-      margin-left: 5px;
+      font-weight: 600;
     }
   }
 }
@@ -195,21 +183,8 @@ a
   outline: 0;
 }
 
-
 a:hover, a:active, a:focus {
   outline: 0;
-}
-
-.modal-dialog
-{
-  z-index: 1050;
-}
-
-input[type="file"]:focus,
-input[type="radio"]:focus,
-input[type="checkbox"]:focus
-{
-  outline: none;
 }
 
 /* DEFAULT LAYOUTS */
@@ -219,196 +194,6 @@ input[type="checkbox"]:focus
   margin-left: 2%;
   margin-right: 2%;
   margin-top: 20px;
-}
-
-.default-wide
-{
-  margin-left: 2%;
-  margin-right: 2%;
-  margin-top: 20px;
-}
-
-/* FORMS */
-
-/* Custom style 1 */
-
-.custom-1 .form-row
-{
-
-}
-
-.custom-1 label
-{
-  display: inline-block;
-  text-align: right;
-  font-size: 22px;
-  line-height: 40px;
-  height: 40px;
-  width: 35%;
-  font-weight: normal;
-}
-
-.custom-1 label.required:after
-{
-  content: "*";
-  color: darkred;
-}
-
-.custom-1 input
-{
-  display: inline-block;
-  clear: both;
-  margin-bottom: 5px;
-  margin-top: 5px;
-  color: #333;
-  padding-right: 5px;
-  border-radius: 0;
-  border: 1px solid #CCC;
-  width: 55%;
-  height: 40px;
-  padding-left: 5px;
-  margin-left: 5px;
-  font-size: 20px;
-}
-
-.custom-1 select
-{
-  display: inline-block;
-  clear: both;
-  margin-bottom: 5px;
-  margin-top: 5px;
-  border-radius: 0;
-  border: 1px solid #CCC;
-  width: 55%;
-  height: 40px;
-  font-size: 17px;
-  margin-left: 5px;
-  padding-left: 5px;
-  padding-right: 5px;
-  background-color: white;
-}
-
-.custom-1 input.valid
-{
-  border-color: #67b168 !important;
-}
-
-.custom-1 input.invalid
-{
-  border-color: darkred !important;
-}
-
-.custom-1 input[type=text]:focus,
-.custom-1 input[type=email]:focus,
-.custom-1 input[type=password]:focus
-{
-  border-color: #666666;
-}
-
-.custom-1 .form-row div.form-error
-{
-  color: darkred;
-  font-size: 14px;
-  margin-left: 35%;
-  padding-left: 10px;
-}
-
-/* JQUERY UI TABS */
-
-.tabs-styled
-{
-  border: none;
-  padding: 0;
-}
-
-.tabs-styled .ui-tabs-nav
-{
-  background: none;
-  border: none;
-  border-bottom: 1px solid #ccc;
-  border-radius: 0px;
-  padding-left: 0px;
-}
-
-.tabs-styled .ui-tabs-nav li
-{
-  border-radius: 0px;
-  width: 120px;
-  height: 40px;
-  padding-bottom: 40px !important;
-  background: white !important;
-}
-
-.tabs-styled .ui-tabs-nav li:hover
-{
-  border: 1px solid #ccc;
-  border-bottom: none;
-}
-
-.tabs-styled .ui-tabs-nav li.ui-tabs-active
-{
-  padding-bottom: 40px;
-  border: none;
-  border-top: 3px solid #D11919;
-  border-left: 1px solid #ccc;
-  border-right: 1px solid #ccc;
-}
-
-.tabs-styled .ui-tabs-nav .ui-tabs-anchor
-{
-  width: 120px;
-  padding: 0;
-  line-height: 35px;
-  text-align: center;
-  font-size: 18px;
-  font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
-}
-
-.tabs-styled.ui-tabs div.ui-tabs-panel
-{
-  padding: 0 !important;
-  padding-top: 20px !important;
-}
-
-/* FLASH */
-
-#flash
-{
-  display: none;
-}
-
-#flash.active
-{
-  display: block;
-  height: 50px;
-  background-color: #ccc;
-  font-size: 22px;
-  text-align: left;
-  line-height: 50px;
-  padding-right: 15px;
-  padding-left: 15px;
-  margin-bottom: 10px;
-  border-radius: 3px;
-}
-
-#flash.active span
-{
-  float: right;
-}
-
-#flash.success
-{
-  background-color: green;
-}
-
-#flash.error
-{
-
-}
-
-.flash-close
-{
-
 }
 
 /* DISABLED BUTTON */

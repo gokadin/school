@@ -7,16 +7,6 @@ use JsonSerializable;
 class StudentRegistrationForm implements JsonSerializable
 {
     /**
-     * @return array
-     */
-     private static function requiredFields() {
-         return [
-             new FormField('firstName', 'First name', true),
-             new FormField('lastName', 'Last name', true)
-         ];
-     }
-
-    /**
      * @var array FormField
      */
     private $fields = [];
@@ -37,6 +27,14 @@ class StudentRegistrationForm implements JsonSerializable
     public function __construct(array $data)
     {
         $this->makeFromJson($data);
+    }
+
+    public function requiredFields()
+    {
+        return [
+            new FormField('firstName', 'First name', true),
+            new FormField('lastName', 'Last name', true)
+        ];
     }
 
     /**
@@ -195,7 +193,7 @@ class StudentRegistrationForm implements JsonSerializable
     public function jsonSerialize()
     {
         return [
-            'requiredFields' => self::requiredFields(),
+            'requiredFields' => $this->requiredFields(),
             'fields' => $this->fields,
             'extraFields' => $this->extraFields
         ];

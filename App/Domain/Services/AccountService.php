@@ -3,6 +3,7 @@
 namespace App\Domain\Services;
 
 use App\Repositories\UserRepository;
+use Library\Events\EventManager;
 use Library\Queue\Queue;
 
 class AccountService extends Service
@@ -12,9 +13,9 @@ class AccountService extends Service
      */
     private $userRepository;
 
-    public function __construct(Queue $queue, UserRepository $userRepository)
+    public function __construct(Queue $queue, EventManager $eventManager, UserRepository $userRepository)
     {
-        parent::__construct($queue);
+        parent::__construct($queue, $eventManager);
 
         $this->userRepository = $userRepository;
     }

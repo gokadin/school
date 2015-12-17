@@ -25,6 +25,13 @@ Route::group(['namespace' => 'Frontend', 'as' => 'frontend', 'middleware' => 'Ve
         Route::get('/confirm/{id}-{code}', 'AccountController@emailConfirmation');
         Route::post('/confirm', 'AccountController@registerTeacher');
     });
+
+    Route::group(['prefix' => '/student', 'as' => 'student'], function()
+    {
+        Route::get('/register/{id}-{code}', 'StudentController@index');
+        Route::get('/not-found', 'StudentController@notFound');
+        Route::post('/register', 'StudentController@register');
+    });
 });
 
 /*

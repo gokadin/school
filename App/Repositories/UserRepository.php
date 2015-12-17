@@ -22,6 +22,15 @@ class UserRepository extends Repository
         return $this->dm->find(TempTeacher::class, $id);
     }
 
+    /**
+     * @param $id
+     * @return null|TempStudent
+     */
+    public function findTempStudent($id)
+    {
+        return $this->dm->find(TempStudent::class, $id);
+    }
+
     public function preRegisterTeacher(array $data)
     {
         $subscription = new Subscription($data['subscriptionType']);
@@ -114,6 +123,16 @@ class UserRepository extends Repository
         $this->dm->flush();
 
         return $teacher;
+    }
+
+    public function registerStudent(Student $student, TempStudent $tempStudent)
+    {
+        $this->dm->persist($student->address());
+        $this->dm->persist($student);
+
+        $this->dm->delete($tempStudent);
+
+        $this->dm->flush();
     }
 
     public function loginTeacher(Teacher $teacher)
