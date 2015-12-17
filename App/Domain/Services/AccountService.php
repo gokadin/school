@@ -19,6 +19,13 @@ class AccountService extends Service
         $this->userRepository = $userRepository;
     }
 
+    public function updatePersonalInfo(array $data)
+    {
+        $this->userRepository->updatePersonalInfo($data);
+
+        return true;
+    }
+
     public function updatePassword(array $data)
     {
         $user = $this->userRepository->getLoggedInUser();

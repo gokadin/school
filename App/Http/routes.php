@@ -93,6 +93,7 @@ Route::group([
         {
             Route::get('/', 'AccountController@index');
             Route::get('/personal-info', 'AccountController@personalInfo');
+            Route::post('/personal-info', 'AccountController@updatePersonalInfo');
             Route::get('/password', 'AccountController@password');
             Route::post('/password', 'AccountController@updatePassword');
         });

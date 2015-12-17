@@ -209,4 +209,15 @@ class UserRepository extends Repository
 
         $this->dm->flush();
     }
+
+    public function updatePersonalInfo(array $data)
+    {
+        $user = $this->getLoggedInUser();
+
+        $user->setFirstName($data['firstName']);
+        $user->setLastName($data['lastName']);
+        $user->setEmail($data['email']);
+
+        $this->dm->flush();
+    }
 }

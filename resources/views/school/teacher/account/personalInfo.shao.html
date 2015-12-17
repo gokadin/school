@@ -1,5 +1,7 @@
 @layout('school.layout')
 
+@inject('\Library\Http\Form')
+
 @section('content')
 
 <div class="main-title">
@@ -11,10 +13,58 @@
     @include('school.teacher.account.switcher')
 
     <div class="switcher-1-content">
-        <div id="profile" class="panel-1">
-            Personal info
+        <div class="panel-1">
+            {!! $form->open('school.teacher.account.personalInfo', 'POST', ['id' => 'personal-info-form', 'class' => 'form-1']) !!}
+
+            <div class="form-title">
+                Update personal information
+            </div>
+
+            <div class="form-row">
+                {!! $form->label('firstName', 'First name') !!}
+                {!! $form->text('firstName', $user->firstName(), ['placeholder' => 'First name']) !!}
+                {!! $form->error('firstName') !!}
+            </div>
+
+            <div class="form-row">
+                {!! $form->label('lastName', 'Last name') !!}
+                {!! $form->text('lastName', $user->lastName(), ['placeholder' => 'Last name']) !!}
+                {!! $form->error('lastName') !!}
+            </div>
+
+            <div class="form-row">
+                {!! $form->label('email', 'Email') !!}
+                {!! $form->text('email', $user->email(), ['placeholder' => 'Email']) !!}
+                {!! $form->error('email') !!}
+            </div>
+
+            <div class="form-buttons">
+                <button type="reset" class="button-gray button-large button-short">Reset</button>
+                <button type="submit" class="button-green">Update</button>
+            </div>
+
+            {!! $form->close() !!}
         </div>
     </div>
 </div>
+
+@stop()
+
+@section('javascript')
+
+<script type="text/javascript">
+    $('#personal-info-form').validate({
+        firstName: [
+            {rule: 'required', message: 'first name password is required'}
+        ],
+        lastName: [
+            {rule: 'required', message: 'last name is required'}
+        ],
+        email: [
+            {rule: 'required', message: 'email is required'},
+            {rule: 'email', message: 'must be a valid email'}
+        ]
+    });
+</script>
 
 @stop()
