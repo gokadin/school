@@ -433,8 +433,42 @@ button.button-large {
   margin-left: 260px;
 }
 
+.switcher-2 {
+  ul {
+    display: flex;
+    flex-wrap: wrap;
+    list-style: none;
+    background-color: white;
+    border-bottom: 1px solid #cccccc;
+    padding-left: 10px;
+
+    li {
+      height: 40px;
+      flex-basis: 120px;
+
+      a {
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        i {
+          margin-right: 7px;
+          position: relative;
+          top: -1px;
+        }
+      }
+    }
+
+    li.active, li:hover a { background-color: #f8f8f8; }
+
+    li.active { border-bottom: 2px solid #26a69a; }
+  }
+}
+
 @import 'school-responsive';
 @import 'layout';
 @import 'activities';
 @import 'settings';
 @import 'account';
+@import 'students';

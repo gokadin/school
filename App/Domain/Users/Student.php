@@ -19,6 +19,9 @@ class Student extends User
     /** @Column(type="text", nullable) */
     private $extraInfo;
 
+    /** @Column(type="boolean", default="true") */
+    private $active;
+
     public function __construct($firstName, $lastName, $email, $password, Address $address,
                                 Activity $activity, Teacher $teacher)
     {
@@ -56,5 +59,15 @@ class Student extends User
     public function setExtraInfo($extraInfo)
     {
         $this->extraInfo = json_encode($extraInfo);
+    }
+
+    public function active()
+    {
+        return $this->active;
+    }
+
+    public function setActive($active)
+    {
+        $this->active = $active;
     }
 }

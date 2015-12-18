@@ -6,12 +6,29 @@
     Students
 </div>
 
-<div class="content-padding">
-    @include('school.teacher.student.switcher')
+@include('school.teacher.student.switcher')
 
-    <div class="switcher-1-content">
-        <div class="panel-1">
-            profile
+<div id="student-profile" class="content-padding">
+    <div class="grid-row">
+        <div class="grid-col-1">
+            <div class="panel-1 picture">
+                <img src="/images/defaultProfilePicture.png" width="160">
+                <div class="name">{{ $student->name() }}</div>
+                <div class="@if ($student->active()) status-active @else status-inactive @endif ">
+                    <i class="fa fa-circle"></i>@if ($student->active())Active @else Inactive @endif
+                </div>
+                <div class="date">Member since {{ $student->createdAt()->format('F Y') }}</div>
+            </div>
+        </div>
+        <div class="grid-col-3">
+            <div class="panel-1 information">
+                <div class="info-section">
+                    <div class="title">Personal information</div>
+                    <div class="content">
+                        contetn here
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>

@@ -351,6 +351,11 @@ final class UnitOfWork implements Observable
                 $value = $value == 1 ? true : false;
             }
 
+            if ($column->isTimestamp())
+            {
+                $value = Carbon::parse($value);
+            }
+
             $metadata->reflProp($column->propName())->setValue($entity, $value);
         }
 

@@ -1,0 +1,54 @@
+#student-profile {
+  .picture {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+    margin-right: 20px;
+
+    img {
+      border: 1px solid #26a69a;
+    }
+
+    .name {
+      margin-top: 10px;
+      font-size: 18px;
+    }
+
+    .status-active, .status-inactive {
+      margin-top: 5px;
+
+      i {
+        margin-right: 5px;
+        font-size: 14px;
+      }
+    }
+
+    .status-active i { color: #67b168; }
+    .status-inactive i { color: #a94442; }
+
+    .date {
+      font-style: italic;
+      color: #808080;
+      font-size: 14px;
+      margin-top: 10px;
+      text-align: center;
+    }
+  }
+
+  .information {
+    .info-section {
+      padding: 20px;
+
+      .title {
+        font-size: 20px;
+      }
+
+      .content {
+        margin-top: 20px;
+      }
+    }
+  }
+}
+
+@import 'students-responsive';

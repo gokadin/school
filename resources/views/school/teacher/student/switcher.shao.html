@@ -1,7 +1,13 @@
-<div class="switcher-1">
+<div class="switcher-2">
     <ul>
         <li class="@if (currentRoute() == 'school.teacher.student.show') active @endif ">
-            <a href="@path('school.teacher.student.show')">Profile</a>
+            <a href="/school/teacher/students/{{ $student->getId() }}"><i class="fa fa-user"></i>Profile</a>
+        </li>
+        <li class="@if (currentRoute() == 'school.teacher.student.test') active @endif ">
+            <a href="/school/teacher/students/{{ $student->getId() }}"><i class="fa fa-cogs"></i>Activity</a>
+        </li>
+        <li class="@if (currentRoute() == 'school.teacher.student.test') active @endif ">
+            <a href="/school/teacher/students/{{ $student->getId() }}"><i class="fa fa-envelope"></i>Messages</a>
         </li>
     </ul>
 </div>
