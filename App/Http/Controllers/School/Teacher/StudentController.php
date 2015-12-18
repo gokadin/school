@@ -5,6 +5,7 @@ namespace App\Http\Controllers\School\Teacher;
 use App\Domain\Services\StudentService;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\School\PreRegisterStudentRequest;
+use App\Http\Requests\School\ShowStudentRequest;
 use App\Repositories\UserRepository;
 use Library\Http\Response;
 use Library\Http\View;
@@ -48,5 +49,11 @@ class StudentController extends Controller
         $request->createAnother == 1
             ? $this->response->route('school.teacher.student.create')
             : $this->response->route('school.teacher.student.index');
+    }
+
+    public function show(ShowStudentRequest $request)
+    {
+        return $this->view->make('school.teacher.student.show',
+            $this->studentService->getProfile($request->id));
     }
 }

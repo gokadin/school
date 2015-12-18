@@ -51,4 +51,11 @@ class StudentService extends Service
 
         return true;
     }
+
+    public function getProfile($id)
+    {
+        $student = $this->userRepository->findStudent($id);
+
+        return ['student' => $student];
+    }
 }

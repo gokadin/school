@@ -249,6 +249,11 @@ button.button-large {
               color: #4C4C4C;
               content: "\f040";
             }
+
+            i.show:after {
+              content: "\f06e";
+              font-size: 17px;
+            }
           }
         }
       }

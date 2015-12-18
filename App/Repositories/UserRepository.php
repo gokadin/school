@@ -42,6 +42,11 @@ class UserRepository extends Repository
         return $this->dm->find(TempStudent::class, $id);
     }
 
+    public function findStudent($id)
+    {
+        return $this->dm->find(Student::class, $id);
+    }
+
     public function preRegisterTeacher(array $data)
     {
         $subscription = new Subscription($data['subscriptionType']);

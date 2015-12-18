@@ -298,6 +298,9 @@ button:disabled {
         #school .data-table-1 .table table .actions ul li i.update:after {
           color: #4C4C4C;
           content: "\f040"; }
+        #school .data-table-1 .table table .actions ul li i.show:after {
+          content: "\f06e";
+          font-size: 17px; }
   #school .data-table-1 .footer {
     height: 60px;
     padding: 0 20px; }

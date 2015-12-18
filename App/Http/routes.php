@@ -92,6 +92,7 @@ Route::group([
             Route::get('/', 'StudentController@index');
             Route::post('/pre-register', 'StudentController@preRegister');
             Route::get('/create', 'StudentController@create');
+            Route::get('/{id}', 'StudentController@show');
         });
 
         Route::group(['prefix' => '/settings', 'as' => 'setting'], function()

@@ -45,4 +45,12 @@ class LoginService extends Service
 
         return false;
     }
+
+    /**
+     * @return \App\Domain\Users\User
+     */
+    public function user()
+    {
+        return $this->userRepository->getLoggedInUser();
+    }
 }

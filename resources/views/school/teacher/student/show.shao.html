@@ -1,0 +1,19 @@
+@layout('school.layout')
+
+@section('content')
+
+<div class="main-title">
+    Students
+</div>
+
+<div class="content-padding">
+    @include('school.teacher.student.switcher')
+
+    <div class="switcher-1-content">
+        <div class="panel-1">
+            profile
+        </div>
+    </div>
+</div>
+
+@stop()

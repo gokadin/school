@@ -21,7 +21,7 @@ class Validator
         $this->errors = [];
 
         if ($rules == null || sizeof($rules) == 0)
-            return false;
+            return true;
 
         $errors = [];
         $isValid = true;

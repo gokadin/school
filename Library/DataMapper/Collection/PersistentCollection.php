@@ -186,6 +186,11 @@ final class PersistentCollection extends AbstractEntityCollection implements Obs
         return $this->items[$id];
     }
 
+    public function containsId($id)
+    {
+        return array_key_exists($id, $this->items);
+    }
+
     public function slice($offset, $length = -1)
     {
         $this->execute();

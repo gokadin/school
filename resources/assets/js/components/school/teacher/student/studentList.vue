@@ -29,6 +29,7 @@
                         <td class="actions">
                             <ul>
                                 <li><i class="delete" title="delete" @click="doDelete(student)"></i></li>
+                                <li><i class="show" title="profile" @click="doShow(student)"></i></li>
                             </ul>
                         </td>
                     </tr>
@@ -183,6 +184,10 @@
                         }
                     }.bind(this));
                 }.bind(this));
+            },
+
+            doShow: function(student) {
+                window.location.href = student.id;
             },
 
             doRequest: function() {

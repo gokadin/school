@@ -6,7 +6,7 @@ class Request
 {
     protected $method;
     protected $uri;
-    protected $data;
+    private $data;
 
     public function __construct($method = null, $uri = null, $data = null)
     {
