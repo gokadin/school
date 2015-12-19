@@ -76,6 +76,12 @@ class StudentRegistrationService extends Service
         $student = new Student($data['firstName'], $data['lastName'], $tempStudent->email(), md5('admin'),
             $address, $tempStudent->activity(), $tempStudent->teacher());
 
+        foreach ($form['fields'] as $field)
+        {
+            $setterName = 'set'.ucfirst($field['name']);
+            $student->$setterName($data[$field['name']]);
+        }
+
         $extraInfo = [];
         foreach ($form['extraFields'] as $field)
         {

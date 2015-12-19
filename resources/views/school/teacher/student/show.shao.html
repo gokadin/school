@@ -8,26 +8,81 @@
 
 @include('school.teacher.student.switcher')
 
-<div id="student-profile" class="content-padding">
-    <div class="grid-row">
-        <div class="grid-col-1">
-            <div class="panel-1 picture">
-                <img src="/images/defaultProfilePicture.png" width="160">
-                <div class="name">{{ $student->name() }}</div>
-                <div class="@if ($student->active()) status-active @else status-inactive @endif ">
-                    <i class="fa fa-circle"></i>@if ($student->active())Active @else Inactive @endif
-                </div>
-                <div class="date">Member since {{ $student->createdAt()->format('F Y') }}</div>
+<div id="student-profile" class="content-padding grid-row">
+    <div class="picture grid-col-1">
+        <div class="panel-1">
+            <img src="/images/defaultProfilePicture.png" width="160">
+            <div class="name">{{ $student->name() }}</div>
+            <div class="@if ($student->active()) status-active @else status-inactive @endif ">
+                <i class="fa fa-circle"></i>@if ($student->active())Active @else Inactive @endif
             </div>
+            <div class="date">Member since {{ $student->createdAt()->format('F Y') }}</div>
         </div>
-        <div class="grid-col-3">
-            <div class="panel-1 information">
-                <div class="info-section">
-                    <div class="title">Personal information</div>
-                    <div class="content">
-                        contetn here
+    </div>
+    <div class="information grid-col-3">
+        <div class="panel-1">
+            <div class="info-section">
+                <div class="title">Personal information</div>
+                <div class="content">
+                    <div class="info-element">
+                        <div class="info-label">Name:</div>
+                        <div class="info-value">{{ $student->name() }}</div>
                     </div>
+                    <div class="info-element">
+                        <div class="info-label">Email:</div>
+                        <div class="info-value">{{ $student->email() }}</div>
+                    </div>
+                    @foreach ($registrationForm['fields'] as $field)
+                        @if ($field['name'] == 'address' || !$field['active'])
+                            {{!! continue !!}}
+                        @endif
+
+                        <div class="info-element">
+                            <div class="info-label">{{ $field['displayName'] }}:</div>
+                            <div class="info-value">
+                                {{ $student->$field['name']() == '' ? 'n/a' : $student->$field['name']() }}
+                            </div>
+                        </div>
+                    @endforeach
                 </div>
+                @if ($registrationForm['fields'][array_search('address', $registrationForm['fields'])]['active'])
+                    <div class="title">Address</div>
+                    <div class="content">
+                        <div class="info-element">
+                            <div class="info-label">Street</div>
+                            <div class="info-value">
+                                {{ $student->address()->street() == '' ? 'n/a' : $student->address()->street() }}
+                            </div>
+                        </div>
+                        <div class="info-element">
+                            <div class="info-label">City</div>
+                            <div class="info-value">
+                                {{ $student->address()->city() == '' ? 'n/a' : $student->address()->city() }}
+                            </div>
+                        </div>
+                        <div class="info-element">
+                            <div class="info-label">Country</div>
+                            <div class="info-value">
+                                {{ $student->address()->country() == '' ? 'n/a' : $student->address()->country() }}
+                            </div>
+                        </div>
+                    </div>
+                @endif
+                @if (sizeof($student->extraInfo()) > 0)
+                    <div class="title">Additional information</div>
+                    <div class="content">
+                        @foreach ($registrationForm['extraFields'] as $field)
+                        @if (!isset($student->extraInfo()[$field['name']]))
+                            {{!! continue !!}}
+                        @endif
+
+                        <div class="info-element">
+                            <div class="info-label">{{ $field['displayName'] }}:</div>
+                            <div class="info-value">{{ $student->extraInfo()[$field['name']] }}</div>
+                        </div>
+                        @endforeach
+                    </div>
+                @endif
             </div>
         </div>
     </div>

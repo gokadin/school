@@ -82,6 +82,8 @@ i.fa {
   .form-title {
     font-size: 18px;
     margin-bottom: 30px;
+    height: 30px;
+    border-bottom: 1px solid #26a69a;
   }
 
   .form-row {
@@ -145,6 +147,7 @@ i.fa {
     }
 
     select {
+      flex-basis: 70%;
       height: 40px;
       width: 75%;
       -webkit-border-radius: 0;

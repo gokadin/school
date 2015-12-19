@@ -22,6 +22,15 @@ class Student extends User
     /** @Column(type="boolean", default="true") */
     private $active;
 
+    /** @Column(type="string", nullable) */
+    private $gender;
+
+    /** @Column(type="datetime", nullable) */
+    private $dateOfBirth;
+
+    /** @Column(type="string", nullable) */
+    private $occupation;
+
     public function __construct($firstName, $lastName, $email, $password, Address $address,
                                 Activity $activity, Teacher $teacher)
     {
@@ -69,5 +78,35 @@ class Student extends User
     public function setActive($active)
     {
         $this->active = $active;
+    }
+
+    public function gender()
+    {
+        return $this->gender;
+    }
+
+    public function setGender($gender)
+    {
+        $this->gender = $gender;
+    }
+
+    public function dateOfBirth()
+    {
+        return $this->dateOfBirth;
+    }
+
+    public function setDateOfBirth($dateOfBirth)
+    {
+        $this->dateOfBirth = $dateOfBirth;
+    }
+
+    public function occupation()
+    {
+        return $this->occupation;
+    }
+
+    public function setOccupation($occupation)
+    {
+        $this->occupation = $occupation;
     }
 }

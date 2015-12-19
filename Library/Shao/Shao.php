@@ -31,6 +31,7 @@ class Shao
         }
 
         $this->parseRawPhp($content);
+        $this->parseRawPhpAndEscape($content);
         $this->parseEchoAndEscape($content);
         $this->parseEcho($content);
         $this->parseAngularSymbol($content);
@@ -81,6 +82,12 @@ class Shao
     {
         $str = str_replace('{{{', '<?php htmlEntities(', $str);
         $str = str_replace('}}}', ') ?>', $str);
+    }
+
+    private function parseRawPhpAndEscape(&$str)
+    {
+        $str = str_replace('{{!!', '<?php ', $str);
+        $str = str_replace('!!}}', ' ?>', $str);
     }
 
     private function parseEcho(&$str)

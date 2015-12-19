@@ -56,6 +56,9 @@ class StudentService extends Service
     {
         $student = $this->userRepository->findStudent($id);
 
-        return ['student' => $student];
+        return [
+            'student' => $student,
+            'registrationForm' => json_decode($student->teacher()->settings()->registrationForm(), true)
+        ];
     }
 }
