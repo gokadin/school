@@ -4,14 +4,14 @@ namespace App\Domain\Transformers;
 
 class StudentTransformer extends Transformer
 {
-    public function transform($student, array $overrides = [])
+    public function transform($student)
     {
-        return array_merge([
+        return $this->applyModifiers([
             'id' => $student->getId(),
             'firstName' => $student->firstName(),
             'lastName' => $student->lastName(),
             'email' => $student->email(),
             'activityName' => $student->activity()->name()
-        ], $overrides);
+        ]);
     }
 }

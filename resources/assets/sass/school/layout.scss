@@ -177,52 +177,6 @@ header {
     }
   }
 
-  .search {
-    height: 100px;
-
-    .search-wrapper {
-      position: relative;
-      margin: 0 auto;
-      width: 200px;
-      height: 100%;
-
-      #search {
-        height: 40px;
-        width: 200px;
-        margin-top: 30px;
-        background-color: $color-menu-background;
-        border: none;
-        border-bottom: 1px solid $color-menu-text;
-        color: $color-menu-text;
-        padding: 0 20px 0 5px;
-      }
-
-      #search:focus {
-        color: $color-menu-text-hover;
-        border-bottom: 1px solid $color-menu-text-hover;
-      }
-
-      i {
-        position: absolute;
-        color: $color-menu-text;
-        height: 20px;
-        top: 50%;
-        margin-top: -8px;
-        right: 2px;
-      }
-
-      #search-results {
-        position: absolute;
-        width: 200px;
-        height: 300px;
-        background-color: white;
-        left: 0;
-        z-index: 100;
-        display: none;
-      }
-    }
-  }
-
   .menu-only {
     a, i {
       color: $color-menu-text;

@@ -71,7 +71,9 @@ class MySqlDriver
                 $str .= ' '.$wheres[$i]['link'];
             }
 
-            $str .= ' '.$wheres[$i]['var'];
+            $var = $this->parseWhereVar($wheres[$i]['var']);
+
+            $str .= ' '.$var;
             $str .= ' '.$wheres[$i]['operator'];
 
             $value = $wheres[$i]['value'];
@@ -87,6 +89,23 @@ class MySqlDriver
         }
 
         return $str;
+    }
+
+    private function parseWhereVar($var)
+    {
+        $segments = explode(' ', $var);
+        if (sizeof($segments) > 1)
+        {
+            return 'CONCAT('.$segments[0].', \' \', '.$segments[1].')';
+        }
+
+        $segments = explode('%', $var);
+        if (sizeof($segments) > 1)
+        {
+            return 'CONCAT('.$segments[0].', \'%\', '.$segments[1].')';
+        }
+
+        return $var;
     }
 
     public function buildSorts(array $rules)

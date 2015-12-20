@@ -4,15 +4,15 @@ namespace App\Domain\Transformers;
 
 class ActivityTransformer extends Transformer
 {
-    public function transform($activity, array $overrides = [])
+    public function transform($activity)
     {
-        return array_merge([
+        return $this->applyModifiers([
             'id' => $activity->getId(),
             'name' => $activity->name(),
             'rate' => $activity->rate(),
             'period' => $activity->period(),
             'location' => $activity->location(),
             'studentCount' => $activity->students()->count()
-        ], $overrides);
+        ]);
     }
 }

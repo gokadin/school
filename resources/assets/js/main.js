@@ -6,6 +6,7 @@ Vue.component('flash', require('./components/flash.vue'))
 Vue.component('infoBox', require('./components/infoBox.vue'))
 Vue.component('modal', require('./components/modal.vue'))
 Vue.component('confirmModal', require('./components/confirmModal.vue'))
+Vue.component('search', require('./components/search.vue'))
 
 new Vue({
     el: 'body',

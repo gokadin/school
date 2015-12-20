@@ -43,7 +43,10 @@ Route::group(['namespace' => 'Api', 'prefix' => '/api', 'as' => 'api', 'middlewa
 
         Route::get('/teacher-new-students', 'StudentController@getNewStudents');
 
-        Route::group(['namespace' => 'Teacher', 'prefix' => '/teacher', 'as' =>'teacher'], function() {
+        Route::group(['namespace' => 'Teacher', 'prefix' => '/teacher', 'as' =>'teacher'], function()
+        {
+            Route::get('/search/{search}', 'SearchController@index');
+
             Route::group(['prefix' => '/activities', 'as' => 'activity'], function() {
                 Route::post('/', 'ActivityController@index');
                 Route::delete('/{activityId}', 'ActivityController@destroy');
