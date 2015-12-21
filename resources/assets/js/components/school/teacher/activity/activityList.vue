@@ -83,15 +83,23 @@
                 <form class="form-1">
                     <div class="form-row">
                         <label>Name</label>
-                        <input type="text" v-bind:value="updatedActivityData.name" placeholder="Name" v-model="updatedActivityData.name" />
+                        <input type="text" placeholder="Name" v-model="updatedName" />
                     </div>
                     <div class="form-row">
                         <label>Rate</label>
-                        <input type="text" value="{{ updatedActivityData.rate }}" placeholder="Rate" v-model="updatedActivityData.rate" />
+                        <input type="text" placeholder="Rate" v-model="updatedRate" />
                     </div>
                     <div class="form-row">
                         <label>Period</label>
-                        <input type="text" value="{{ updatedActivityData.period }}" placeholder="Period" v-model="updatedActivityData.period" />
+                        <select name="period" v-model="updatedPeriod">
+                            <option value="lesson">per lesson</option>
+                            <option value="30 mins">per 30 mins</option>
+                            <option value="45 mins">per 45 mins</option>
+                            <option value="hour">per hour</option>
+                            <option value="1 hour 30 mins">per 1 hour 30 mins</option>
+                            <option value="month">per month</option>
+                            <option value="year">per year</option>
+                        </select>
                     </div>
                 </form>
             </div>
@@ -155,6 +163,9 @@ export default {
             searchDelayTimer: null,
             currentActivity: null,
             updatedActivityData: {},
+            updatedName: '',
+            updatedRate: '',
+            updatedPeriod: '',
             currentStudents: []
         };
     },
@@ -255,18 +266,18 @@ export default {
 
         doUpdate: function(activity) {
             this.currentActivity = activity;
-            this.updatedActivityData.name = activity.name;
-            this.updatedActivityData.rate = activity.rate;
-            this.updatedActivityData.period = activity.period;
+            this.updatedName = activity.name;
+            this.updatedRate = activity.rate;
+            this.updatedPeriod = activity.period;
             this.$refs.updateModal.open();
         },
 
         confirmUpdate: function() {
             this.closeConfirmUpdate();
 
-            this.currentActivity.name = this.updatedActivityData.name;
-            this.currentActivity.rate = this.updatedActivityData.rate;
-            this.currentActivity.period = this.updatedActivityData.period;
+            this.currentActivity.name = this.updatedName;
+            this.currentActivity.rate = this.updatedRate;
+            this.currentActivity.period = this.updatedPeriod;
 
             this.$http.put('/api/school/teacher/activities/' + this.currentActivity.id, {
                 name: this.currentActivity.name,

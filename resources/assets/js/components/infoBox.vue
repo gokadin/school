@@ -34,6 +34,7 @@ export default {
     background-color: #e9ffe6;
     padding: 10px 100px;
     margin-bottom: 20px;
+    min-height: 60px;
 
     p {
         font-size: 17px;
@@ -43,7 +44,8 @@ export default {
 
     .info-box-icon {
         position: absolute;
-        top: 15px;
+        top: 50%;
+        margin-top: -25px;
         left: 15px;
         height: 50px;
         line-height: 50px;

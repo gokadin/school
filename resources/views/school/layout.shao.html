@@ -121,6 +121,11 @@
                         </li>
                     </ul>
                 </li>
+                <li class="@if (currentNameContains('school.teacher.calendar.')) active @endif ">
+                    <a href="@path('school.teacher.calendar.index')">
+                        <i class="fa fa-calendar"></i>Calendar
+                    </a>
+                </li>
                 <li class="multi-level @if (currentNameContains('school.teacher.setting.')) open active @endif ">
                     <a href="javascript:;">
                         <i class="fa fa-cog"></i>Settings

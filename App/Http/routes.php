@@ -99,6 +99,11 @@ Route::group([
             Route::get('/{id}', 'StudentController@show');
         });
 
+        Route::group(['prefix' => '/calendar', 'as' => 'calendar'], function()
+        {
+            Route::get('/', 'CalendarController@index');
+        });
+
         Route::group(['prefix' => '/settings', 'as' => 'setting'], function()
         {
             Route::get('/school-information', 'SettingController@schoolInformation');

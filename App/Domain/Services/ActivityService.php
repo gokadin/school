@@ -4,6 +4,9 @@ namespace App\Domain\Services;
 
 use App\Domain\Transformers\StudentTransformer;
 use App\Repositories\ActivityRepository;
+use App\Repositories\UserRepository;
+use Library\Events\EventManager;
+use Library\Queue\Queue;
 
 class ActivityService extends LoginService
 {
@@ -17,8 +20,11 @@ class ActivityService extends LoginService
      */
     private $studentTransformer;
 
-    public function __construct(ActivityRepository $activityRepository, StudentTransformer $studentTransformer)
+    public function __construct(Queue $queue, EventManager $eventManager, UserRepository $userRepository,
+                                ActivityRepository $activityRepository, StudentTransformer $studentTransformer)
     {
+        parent::__construct($queue, $eventManager, $userRepository);
+
         $this->activityRepository = $activityRepository;
         $this->studentTransformer = $studentTransformer;
     }
@@ -42,5 +48,14 @@ class ActivityService extends LoginService
 
         return $this->studentTransformer->only(['id', 'fullName'])
             ->transformCollection($activity->students()->toArray());
+    }
+
+    public function create(array $data)
+    {
+        $data['teacher'] = $this->user();
+
+        $this->activityRepository->create($data);
+
+        return true;
     }
 }
