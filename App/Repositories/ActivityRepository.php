@@ -18,6 +18,11 @@ class ActivityRepository extends AuthenticatedRepository
         $this->transformer = $transformer;
     }
 
+    public function find($id)
+    {
+        return $this->dm->find(Activity::class, $id);
+    }
+
     public function paginate($pageNumber, $pageCount, array $sortingRules = [], array $searchRules = [])
     {
         $activities = $this->user->activities();

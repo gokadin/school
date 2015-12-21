@@ -49,6 +49,7 @@ Route::group(['namespace' => 'Api', 'prefix' => '/api', 'as' => 'api', 'middlewa
 
             Route::group(['prefix' => '/activities', 'as' => 'activity'], function() {
                 Route::post('/', 'ActivityController@index');
+                Route::get('/{id}/students', 'ActivityController@students');
                 Route::delete('/{activityId}', 'ActivityController@destroy');
                 Route::put('/{activityId}', 'ActivityController@update');
             });
@@ -103,6 +104,7 @@ Route::group([
             Route::get('/school-information', 'SettingController@schoolInformation');
             Route::get('/registrationForm', 'SettingController@registrationForm');
             Route::get('/preferences', 'SettingController@preferences');
+            Route::put('/preferences', 'SettingController@updatePreferences');
         });
 
         Route::group(['prefix' => '/account', 'as' => 'account'], function()

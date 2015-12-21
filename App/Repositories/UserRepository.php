@@ -87,7 +87,6 @@ class UserRepository extends Repository
             ->where('teacher_id', '=', $teacher->getId())
             ->select(['id']);
 
-
         return $this->dm->findIn(TempStudent::class, $ids);
     }
 

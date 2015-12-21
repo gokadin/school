@@ -290,6 +290,11 @@ final class UnitOfWork implements Observable
      */
     public function loadMany($class, array $ids)
     {
+        if (sizeof($ids) == 0)
+        {
+            return [];
+        }
+
         $metadata = $this->dm->getMetadata($class);
 
         $allData = $this->dm->queryBuilder()->table($metadata->table())

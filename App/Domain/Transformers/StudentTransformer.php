@@ -10,6 +10,7 @@ class StudentTransformer extends Transformer
             'id' => $student->getId(),
             'firstName' => $student->firstName(),
             'lastName' => $student->lastName(),
+            'fullName' => $student->name(),
             'email' => $student->email(),
             'activityName' => $student->activity()->name()
         ]);

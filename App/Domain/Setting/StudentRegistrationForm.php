@@ -84,8 +84,9 @@ class StudentRegistrationForm implements JsonSerializable
      */
     public static function defaultJson()
     {
+        $instance = new StudentRegistrationForm([]);
         return json_encode([
-            'requiredFields' => self::requiredFields(),
+            'requiredFields' => $instance->requiredFields(),
             'fields' => [
                 new FormField('gender', 'Gender', true),
                 new FormField('occupation', 'Occupation', true),

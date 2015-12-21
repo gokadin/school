@@ -25,7 +25,7 @@
                         <td>{{ activity.name }}</td>
                         <td>{{ activity.rate }}</td>
                         <td>{{ activity.period }}</td>
-                        <td>{{ activity.studentCount }}</td>
+                        <td class="student-count"><i @click="showStudents(activity)">{{ activity.studentCount }}</i></td>
                         <td class="actions">
                             <ul>
                                 <li><i class="delete" title="delete" @click="doDelete(activity)"></i></li>
@@ -101,6 +101,43 @@
             </div>
         </div>
     </modal>
+
+    <modal v-ref:students-modal>
+        <div class="modal-1">
+            <div class="header">
+                Students of {{ currentActivity.name }}
+            </div>
+            <div class="body">
+                <div class="simple-list" v-if="currentStudents.length > 0">
+                    <div class="student-filter">
+                        <input type="text" placeholder="Filter students" v-model="studentFilter" />
+                    </div>
+                    <ul>
+                        <li v-for="student in currentStudents | filterBy studentFilter">
+                            <div class="picture">
+                                <img src="/images/defaultProfilePicture.png" width="30" />
+                            </div>
+                            <div class="name">{{ student.fullName }}</div>
+                            <div class="profile-link">
+                                <a href="/school/teacher/students/{{ student.id }}">
+                                    <button type="button" class="button-green">
+                                        Profile
+                                        <i class="fa fa-arrow-circle-right"></i>
+                                    </button>
+                                </a>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+                <div class="no-activity-students" v-if="currentStudents.length == 0">
+                    There are no students for this activity yet.
+                </div>
+            </div>
+            <div class="footer">
+                <button class="button-red button-short" @click="closeStudentsModal()">Close</button>
+            </div>
+        </div>
+    </modal>
 </template>
 
 <script>
@@ -112,11 +149,13 @@ export default {
             page: 0,
             max: 10,
             mainFilter: '',
+            studentFilter: '',
             oldSearchData: {},
             searchData: {},
             searchDelayTimer: null,
             currentActivity: null,
-            updatedActivityData: {}
+            updatedActivityData: {},
+            currentStudents: []
         };
     },
 
@@ -246,6 +285,20 @@ export default {
             this.$refs.updateModal.close();
         },
 
+        showStudents: function(activity) {
+            this.$http.get('/api/school/teacher/activities/' + activity.id + '/students', function(response) {
+                this.currentStudents = response.students;
+            });
+
+            this.currentActivity = activity;
+
+            this.$refs.studentsModal.open();
+        },
+
+        closeStudentsModal: function() {
+            this.$refs.studentsModal.close();
+        },
+
         doRequest: function() {
             this.$http.post('/api/school/teacher/activities/', {
                 page: this.page,
@@ -262,5 +315,92 @@ export default {
 </script>
 
 <style lang="sass">
+    .student-count {
+        i {
+            font-style: normal;
+            cursor: pointer;
+            display: inline-block;
+            width: 25px;
+            height: 25px;
+            line-height: 25px;
+            border-radius: 3px;
+            text-align: center;
+        }
 
+        i:hover {
+            background-color: #26a69a;
+            color: #fff;
+        }
+    }
+
+    .no-activity-students {
+        text-align: center;
+        margin: 20px 0;
+    }
+
+    .simple-list {
+        .student-filter {
+            height: 40px;
+
+            input {
+                height: 40px;
+                width: 100%;
+                border-radius: 0;
+                border: 1px solid #cccccc;
+                padding: 10px;
+                font-size: 20px;
+            }
+        }
+
+        ul {
+            width: 100%;
+            margin: 20px 0;
+            list-style: none;
+
+            li {
+                display: flex;
+                align-items: center;
+                height: 40px;
+                border-top: 1px solid #f2f2f2;
+                width: 100%;
+
+                .picture {
+                    flex-basis: 40px;
+                    padding: 5px;
+                }
+
+                .name {
+                    flex-basis: 90%;
+                    font-size: 18px;
+                    padding: 0 5px;
+                }
+
+                .profile-link {
+                    flex-basis: 10%;
+
+                    button {
+                        position: relative;
+
+                        i {
+                            position: absolute;
+                            text-align: right;
+                            color: white;
+                            right: 8px;
+                            height: 30px;
+                            line-height: 30px;
+                            top: 0;
+                        }
+                    }
+                }
+            }
+
+            li:last-child {
+                border-bottom: 1px solid #f2f2f2;
+            }
+
+            li:hover {
+                background-color: #f2f2f2;
+            }
+        }
+    }
 </style>

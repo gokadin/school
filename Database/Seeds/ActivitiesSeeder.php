@@ -15,7 +15,7 @@ class ActivitiesSeeder extends Seeder
         for ($i = 0; $i < 50; $i++)
         {
             $this->dm->persist(new Activity(
-                $teachers->at($this->faker->numberBetween(0, $teachers->count() - 1)),
+                $teachers->first(),
                 $this->faker->word,
                 $this->faker->numberBetween(10, 80),
                 $this->faker->word
