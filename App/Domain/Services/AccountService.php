@@ -2,24 +2,8 @@
 
 namespace App\Domain\Services;
 
-use App\Repositories\UserRepository;
-use Library\Events\EventManager;
-use Library\Queue\Queue;
-
-class AccountService extends Service
+class AccountService extends AuthenticatedService
 {
-    /**
-     * @var UserRepository
-     */
-    private $userRepository;
-
-    public function __construct(Queue $queue, EventManager $eventManager, UserRepository $userRepository)
-    {
-        parent::__construct($queue, $eventManager);
-
-        $this->userRepository = $userRepository;
-    }
-
     public function updatePersonalInfo(array $data)
     {
         $this->userRepository->updatePersonalInfo($data);
@@ -29,9 +13,7 @@ class AccountService extends Service
 
     public function updatePassword(array $data)
     {
-        $user = $this->userRepository->getLoggedInUser();
-
-        if ($user->password() != md5($data['currentPassword']))
+        if ($this->user->password() != md5($data['currentPassword']))
         {
             return false;
         }

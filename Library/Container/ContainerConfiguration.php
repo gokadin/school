@@ -12,13 +12,13 @@ use Library\Http\View;
 use Library\Http\ViewFactory;
 use Library\Log\Log;
 use Library\Queue\Queue;
-use Library\Redis\Redis;
 use Library\Routing\Router;
 use Library\Database\Database;
 use Library\DataMapper\DataMapper;
 use Library\Http\Form;
 use Library\Session\Session;
 use Library\Shao\Shao;
+use Library\Transformer\Transformer;
 use Library\Validation\Validator;
 
 class ContainerConfiguration
@@ -47,6 +47,8 @@ class ContainerConfiguration
         $eventManagerConfig = require $app->basePath().'Config/events.php';
         $this->container->registerInstance('eventManager',
             new EventManager($eventManagerConfig, $this->container, $queue));
+        $transformerConfig = require $app->basePath().'Config/transformations.php';
+        $this->container->registerInstance('transformer', new Transformer($transformerConfig));
 
         // ORM
         $datamapperConfig = require $app->basePath().'Config/datamapper.php';

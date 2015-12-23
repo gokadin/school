@@ -2,45 +2,28 @@
 
 namespace App\Http\Controllers\School\Teacher;
 
+use App\Domain\Services\StudentRegistrationService;
 use App\Domain\Services\StudentService;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\School\PreRegisterStudentRequest;
 use App\Http\Requests\School\ShowStudentRequest;
-use App\Repositories\UserRepository;
-use Carbon\Carbon;
-use Library\Http\Response;
-use Library\Http\View;
-use Library\Session\Session;
 
 class StudentController extends Controller
 {
-    /**
-     * @var StudentService
-     */
-    private $studentService;
-
-    public function __construct(View $view, Session $session, Response $response, StudentService $studentService)
-    {
-        parent::__construct($view, $session, $response);
-
-        $this->studentService = $studentService;
-    }
-
     public function index()
     {
         return $this->view->make('school.teacher.student.index');
     }
 
-    public function create(UserRepository $userRepository)
+    public function create(StudentRegistrationService $studentRegistrationService)
     {
-        return $this->view->make('school.teacher.student.create', [
-            'activities' => $userRepository->getLoggedInUser()->activities()
-        ]);
+        return $this->view->make('school.teacher.student.create',
+            $studentRegistrationService->preparePreRegistrationData());
     }
 
-    public function preRegister(PreRegisterStudentRequest $request)
+    public function preRegister(PreRegisterStudentRequest $request, StudentService $studentService)
     {
-        if (!$this->studentService->preRegister($request->all()))
+        if (!$studentService->preRegister($request->all()))
         {
             $this->session->setFlash('There was an error while registering your student. please try again.', 'error');
             $this->response->route('school.teacher.student.create');
@@ -52,9 +35,9 @@ class StudentController extends Controller
             : $this->response->route('school.teacher.student.index');
     }
 
-    public function show(ShowStudentRequest $request)
+    public function show(ShowStudentRequest $request, StudentService $studentService)
     {
         return $this->view->make('school.teacher.student.show',
-            $this->studentService->getProfile($request->id));
+            $studentService->getProfile($request->id));
     }
 }

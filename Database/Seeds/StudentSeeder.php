@@ -27,6 +27,7 @@ class StudentSeeder extends Seeder
                 md5('admin'),
                 $address,
                 $activities->at($this->faker->numberBetween(0, $activities->count() - 1)),
+                $this->faker->numberBetween(10, 60),
                 $teachers->first()
             ));
         }

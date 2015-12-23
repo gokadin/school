@@ -85,6 +85,9 @@ i.fa {
         font-size: 16px; }
       .form-1 .form-row label.radio-label input[type="radio"]:checked + i.radio-icon:after {
         content: "\f192"; }
+    .form-1 .form-row .search-select {
+      flex-basis: 70%;
+      height: 40px; }
     .form-1 .form-row input[type="text"],
     .form-1 .form-row input[type="password"] {
       flex-basis: 70%;
@@ -448,6 +451,32 @@ button:disabled {
       background-color: #f8f8f8; }
     #school .switcher-2 ul li.active {
       border-bottom: 2px solid #26a69a; }
+  #school .search-select {
+    position: relative; }
+    #school .search-select select {
+      display: none; }
+    #school .search-select input {
+      width: 100%; }
+    #school .search-select input:focus ~ div {
+      display: block; }
+    #school .search-select > div {
+      display: none;
+      position: absolute;
+      width: 100%;
+      max-height: 150px;
+      background-color: white;
+      border: 1px solid #cccccc;
+      overflow-y: auto; }
+      #school .search-select > div > div {
+        height: 30px;
+        line-height: 30px;
+        padding: 0 5px;
+        cursor: pointer; }
+      #school .search-select > div > div.chosen {
+        background-color: #26a69a;
+        color: #fff; }
+      #school .search-select > div > div:not(:last-child) {
+        border-bottom: 1px solid #e2e2e2; }
   @media screen and (max-width: 850px) {
     #school .switcher-1 {
       width: 100%;
@@ -742,3 +771,69 @@ button:disabled {
         margin-bottom: 20px; }
       #school #student-profile .information {
         flex-basis: 100%; } }
+  #school #monthly-calendar .header {
+    display: flex;
+    align-items: center;
+    height: 60px;
+    padding: 0 10px; }
+    #school #monthly-calendar .header button {
+      height: 35px;
+      border: 1px solid #cccccc;
+      background: #fff;
+      font-size: 12px;
+      font-weight: 600;
+      line-height: 35px; }
+    #school #monthly-calendar .header button:hover {
+      background-color: #f2f2f2;
+      cursor: pointer; }
+    #school #monthly-calendar .header .navigation {
+      flex-basis: 10%; }
+      #school #monthly-calendar .header .navigation button {
+        width: 35px; }
+    #school #monthly-calendar .header .today {
+      flex-basis: 10%; }
+      #school #monthly-calendar .header .today button {
+        width: 60px;
+        margin-left: 20px; }
+    #school #monthly-calendar .header .display {
+      flex-basis: 60%;
+      text-align: center;
+      font-size: 14px;
+      font-weight: 600; }
+    #school #monthly-calendar .header .mode {
+      flex-basis: 20%; }
+  #school #monthly-calendar .body {
+    padding: 0 10px 10px 10px; }
+    #school #monthly-calendar .body table {
+      border-collapse: collapse;
+      width: 100%; }
+      #school #monthly-calendar .body table tr th, #school #monthly-calendar .body table tr td {
+        border: 1px solid #ddd; }
+      #school #monthly-calendar .body table tr th {
+        height: 50px;
+        width: 14%;
+        font-size: 13px;
+        border-bottom: 1px solid #bbb; }
+      #school #monthly-calendar .body table tr td {
+        height: 100px;
+        position: relative; }
+        #school #monthly-calendar .body table tr td .top {
+          height: 20px;
+          text-align: right;
+          font-size: 12px;
+          padding: 3px; }
+        #school #monthly-calendar .body table tr td .top.faded {
+          color: #808080; }
+        #school #monthly-calendar .body table tr td .events {
+          height: 80px; }
+        #school #monthly-calendar .body table tr td .add {
+          position: absolute;
+          font-size: 22px;
+          bottom: 5px;
+          right: 5px;
+          display: none;
+          cursor: pointer; }
+          #school #monthly-calendar .body table tr td .add i {
+            color: #26a69a; }
+      #school #monthly-calendar .body table tr td:hover .add {
+        display: block; }

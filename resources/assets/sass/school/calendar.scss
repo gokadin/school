@@ -1,0 +1,105 @@
+#monthly-calendar {
+  .header {
+    display: flex;
+    align-items: center;
+    height: 60px;
+    padding: 0 10px;
+
+    button {
+      height: 35px;
+      border: 1px solid #cccccc;
+      background: #fff;
+      font-size: 12px;
+      font-weight: 600;
+      line-height: 35px;
+    }
+
+    button:hover {
+      background-color: #f2f2f2;
+      cursor: pointer;
+    }
+
+    .navigation {
+      flex-basis: 10%;
+
+      button { width: 35px; }
+    }
+
+    .today {
+      flex-basis: 10%;
+
+      button {
+        width: 60px;
+        margin-left: 20px;
+      }
+    }
+
+    .display {
+      flex-basis: 60%;
+      text-align: center;
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .mode {
+      flex-basis: 20%;
+    }
+  }
+
+  .body {
+    padding: 0 10px 10px 10px;
+
+    table {
+      border-collapse: collapse;
+      width: 100%;
+
+      tr {
+        th, td {
+          border: 1px solid #ddd;
+        }
+
+        th {
+          height: 50px;
+          width: 14%;
+          font-size: 13px;
+          border-bottom: 1px solid #bbb;
+        }
+
+        td {
+          height: 100px;
+          position: relative;
+
+          .top {
+            height: 20px;
+            text-align: right;
+            font-size: 12px;
+            padding: 3px;
+          }
+
+          .top.faded {
+            color: #808080;
+          }
+
+          .events {
+            height: 80px;
+          }
+
+          .add {
+            position: absolute;
+            font-size: 22px;
+            bottom: 5px;
+            right: 5px;
+            display: none;
+            cursor: pointer;
+
+            i { color: #26a69a; }
+          }
+        }
+
+        td:hover {
+          .add { display: block; }
+        }
+      }
+    }
+  }
+}

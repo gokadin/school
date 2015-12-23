@@ -2,7 +2,9 @@
 
 namespace App\Domain\Services;
 
+use App\Domain\Activities\Activity;
 use App\Domain\Common\Address;
+use App\Domain\Transformers\ActivityTransformer;
 use App\Domain\Users\Student;
 use App\Domain\Users\TempStudent;
 use App\Events\Frontend\StudentRegistered;
@@ -10,20 +12,8 @@ use App\Repositories\UserRepository;
 use Library\Events\EventManager;
 use Library\Queue\Queue;
 
-class StudentRegistrationService extends Service
+class StudentRegistrationService extends AuthenticatedService
 {
-    /**
-     * @var UserRepository
-     */
-    private $userRepository;
-
-    public function __construct(Queue $queue, EventManager $eventManager, UserRepository $userRepository)
-    {
-        parent::__construct($queue, $eventManager);
-
-        $this->userRepository = $userRepository;
-    }
-
     public function validateTempStudent($id, $code)
     {
         $tempStudent = $this->userRepository->findTempStudent($id);
@@ -34,6 +24,14 @@ class StudentRegistrationService extends Service
         }
 
         return $tempStudent;
+    }
+
+    public function preparePreRegistrationData()
+    {
+        return [
+            'activities' => $this->transformer->of(Activity::class)
+                ->only(['id', 'name', 'rate'])->transform($this->user->activities()->toArray())
+        ];
     }
 
     public function prepareRegistrationData(TempStudent $tempStudent)
@@ -74,7 +72,7 @@ class StudentRegistrationService extends Service
         }
 
         $student = new Student($data['firstName'], $data['lastName'], $tempStudent->email(), md5('admin'),
-            $address, $tempStudent->activity(), $tempStudent->teacher());
+            $address, $tempStudent->activity(), $data['customPrice'], $tempStudent->teacher());
 
         foreach ($form['fields'] as $field)
         {

@@ -3,15 +3,15 @@
 namespace App\Repositories;
 
 use App\Domain\Activities\Activity;
-use App\Domain\Transformers\ActivityTransformer;
 use Library\DataMapper\DataMapper;
 use Library\Log\Log;
+use Library\Transformer\Transformer;
 
 class ActivityRepository extends AuthenticatedRepository
 {
     protected $transformer;
 
-    public function __construct(DataMapper $dm, Log $log, UserRepository $userRepository, ActivityTransformer $transformer)
+    public function __construct(DataMapper $dm, Log $log, UserRepository $userRepository, Transformer $transformer)
     {
         parent::__construct($dm, $log, $userRepository);
 
@@ -29,10 +29,10 @@ class ActivityRepository extends AuthenticatedRepository
 
         $result = $this->paginateCollection($activities, $pageNumber, $pageCount, $sortingRules, $searchRules);
 
-        return [
-            'data' => $this->transformer->transformCollection($result['data']),
+        return array(
+            'data' => $this->transformer->of(Activity::class)->transform($result['data']),
             'pagination' => $result['pagination']
-        ];
+        );
     }
 
     public function create($data)

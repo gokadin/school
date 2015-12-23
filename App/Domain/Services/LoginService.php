@@ -5,24 +5,9 @@ namespace App\Domain\Services;
 use App\Domain\Users\Student;
 use App\Domain\Users\Teacher;
 use App\Events\Frontend\UserLoggedIn;
-use App\Repositories\UserRepository;
-use Library\Events\EventManager;
-use Library\Queue\Queue;
 
-class LoginService extends Service
+class LoginService extends AuthenticatedService
 {
-    /**
-     * @var UserRepository
-     */
-    private $userRepository;
-
-    public function __construct(Queue $queue, EventManager $eventManager, UserRepository $userRepository)
-    {
-        parent::__construct($queue, $eventManager);
-
-        $this->userRepository = $userRepository;
-    }
-
     public function login(array $data)
     {
         $teacher = $this->userRepository->attemptLogin(Teacher::class, $data['email'], md5($data['password']));

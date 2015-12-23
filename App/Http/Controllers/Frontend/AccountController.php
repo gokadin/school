@@ -11,23 +11,9 @@ use App\Http\Requests\Frontend\RegistrationRequest;
 use App\Jobs\Frontend\PreRegisterTeacher;
 use App\Jobs\Frontend\RegisterTeacher;
 use App\Repositories\UserRepository;
-use Library\Http\Response;
-use Library\Http\View;
-use Library\Session\Session;
 
 class AccountController extends Controller
 {
-    /**
-     * @var LoginService
-     */
-    private $loginService;
-
-    public function __construct(View $view, Session $session, Response $response, LoginService $loginService)
-    {
-        parent::__construct($view, $session, $response);
-        $this->loginService = $loginService;
-    }
-
     public function index()
     {
         return $this->view->make('frontend.account.index');
@@ -40,9 +26,9 @@ class AccountController extends Controller
         ]);
     }
 
-    public function login(LoginRequest $request)
+    public function login(LoginRequest $request, LoginService $loginService)
     {
-        if (!$this->loginService->login($request->all()))
+        if (!$loginService->login($request->all()))
         {
             $this->session->setFlash('Incorrect login. Please try again.', 'error');
             $this->response->route('frontend.account.index');

@@ -3,24 +3,9 @@
 namespace App\Domain\Services;
 
 use App\Events\School\StudentPreRegistered;
-use App\Repositories\UserRepository;
-use Library\Events\EventManager;
-use Library\Queue\Queue;
 
-class StudentService extends Service
+class StudentService extends AuthenticatedService
 {
-    /**
-     * @var UserRepository
-     */
-    private $userRepository;
-
-    public function __construct(Queue $queue, EventManager $eventManager, UserRepository $userRepository)
-    {
-        parent::__construct($queue, $eventManager);
-
-        $this->userRepository = $userRepository;
-    }
-
     public function getStudentList(array $data)
     {
         $sortingRules = isset($data['sortingRules']) ? $data['sortingRules'] : [];
@@ -32,15 +17,14 @@ class StudentService extends Service
 
     public function preRegister(array $data)
     {
-        $teacher = $this->userRepository->getLoggedInUser();
-        $activity = $teacher->activities()->find($data['activityId']);
+        $activity = $this->user->activities()->find($data['activityId']);
 
         if (is_null($activity))
         {
             return false;
         }
 
-        $tempStudent = $this->userRepository->preRegisterStudent($teacher, $activity, $data);
+        $tempStudent = $this->userRepository->preRegisterStudent($this->user, $activity, $data);
 
         if (is_null($tempStudent))
         {

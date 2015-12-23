@@ -2,31 +2,26 @@
 
 namespace App\Domain\Services;
 
-use App\Domain\Transformers\StudentTransformer;
+use App\Domain\Users\Student;
 use App\Repositories\ActivityRepository;
 use App\Repositories\UserRepository;
 use Library\Events\EventManager;
 use Library\Queue\Queue;
+use Library\Transformer\Transformer;
 
-class ActivityService extends LoginService
+class ActivityService extends AuthenticatedService
 {
     /**
      * @var ActivityRepository
      */
     private $activityRepository;
 
-    /**
-     * @var StudentTransformer
-     */
-    private $studentTransformer;
-
-    public function __construct(Queue $queue, EventManager $eventManager, UserRepository $userRepository,
-                                ActivityRepository $activityRepository, StudentTransformer $studentTransformer)
+    public function __construct(Queue $queue, EventManager $eventManager, Transformer $transformer,
+                                UserRepository $userRepository, ActivityRepository $activityRepository)
     {
-        parent::__construct($queue, $eventManager, $userRepository);
+        parent::__construct($queue, $eventManager, $transformer, $userRepository);
 
         $this->activityRepository = $activityRepository;
-        $this->studentTransformer = $studentTransformer;
     }
 
     public function getActivityList(array $data)
@@ -46,8 +41,8 @@ class ActivityService extends LoginService
             return false;
         }
 
-        return $this->studentTransformer->only(['id', 'fullName'])
-            ->transformCollection($activity->students()->toArray());
+        return $this->transformer->of(Student::class)->only(['id', 'fullName'])
+            ->transform($activity->students()->toArray());
     }
 
     public function create(array $data)
@@ -55,6 +50,32 @@ class ActivityService extends LoginService
         $data['teacher'] = $this->user();
 
         $this->activityRepository->create($data);
+
+        return true;
+    }
+
+    public function delete($id)
+    {
+        $activity = $this->user->activities()->find($id);
+        if (is_null($activity))
+        {
+            return false;
+        }
+
+        $this->activityRepository->delete($activity);
+
+        return true;
+    }
+
+    public function update($data, $id)
+    {
+        $activity = $this->user->activities()->find($id);
+        if (is_null($activity))
+        {
+            return false;
+        }
+
+        $this->activityRepository->update($activity, $data);
 
         return true;
     }

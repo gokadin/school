@@ -8,65 +8,34 @@ use App\Http\Requests\Api\School\GetTeacherActivitiesRequest;
 use App\Http\Requests\Api\School\UpdateActivityRequest;
 use App\Repositories\ActivityRepository;
 use App\Repositories\UserRepository;
-use Library\Http\Response;
-use Library\Http\View;
-use Library\Session\Session;
 
 class ActivityController extends ApiController
 {
-    /**
-     * @var ActivityService
-     */
-    private $activityService;
-
-    public function __construct(View $view, Session $session, Response $response, ActivityService $activityService)
+    public function index(GetTeacherActivitiesRequest $request, ActivityService $activityService)
     {
-        parent::__construct($view, $session, $response);
-
-        $this->activityService = $activityService;
+        return $this->respondOk($activityService->getActivityList($request->all()));
     }
 
-    public function index(GetTeacherActivitiesRequest $request)
+    public function students(ActivityService $activityService, $id)
     {
-        return $this->respondOk($this->activityService->getActivityList($request->all()));
+        $students = $activityService->getActivityStudentList($id);
+
+        return !$students
+            ? $this->respondBadRequest()
+            : $this->respondOk(['students' => $students]);
     }
 
-    public function students($id)
+    public function destroy(ActivityService $activityService, $activityId)
     {
-        $students = $this->activityService->getActivityStudentList($id);
-        if (!$students)
-        {
-            $this->respondBadRequest();
-        }
-
-        return $this->respondOk(['students' => $students]);
+        return !$activityService->delete($activityId)
+            ? $this->respondUnauthorized()
+            : $this->respondOk();
     }
 
-    public function destroy(UserRepository $userRepository, ActivityRepository $activityRepository, $activityId)
+    public function update(UpdateActivityRequest $request, ActivityService $activityService, $activityId)
     {
-        $activity = $userRepository->getLoggedInUser()->activities()->find($activityId);
-
-        if (is_null($activity))
-        {
-            return $this->respondUnauthorized();
-        }
-
-        $activityRepository->delete($activity);
-
-        return $this->respondOk();
-    }
-
-    public function update(UpdateActivityRequest $request, UserRepository $userRepository, ActivityRepository $activityRepository, $activityId)
-    {
-        $activity = $userRepository->getLoggedInUser()->activities()->find($activityId);
-
-        if (is_null($activity))
-        {
-            return $this->respondUnauthorized();
-        }
-
-        $activityRepository->update($activity, $request->all());
-
-        return $this->respondOk();
+        return !$activityService->update($request->all(), $request->activityId)
+            ? $this->respondUnauthorized()
+            : $this->respondOk();
     }
 }

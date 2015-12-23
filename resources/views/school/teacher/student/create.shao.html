@@ -46,11 +46,18 @@
 
         <div class="form-row">
             {!! $form->label('activity', 'Activity') !!}
-            <select id="activityId" name="activityId">
-                @foreach ($activities as $activity)
-                    <option value="{{ $activity->getId() }}">{{ $activity->name() }}</option>
-                @endforeach
-            </select>
+            <search-select name="activityId"
+                           :data="{{ $activities }}"
+                           value="id"
+                           display="name"
+                           placeholder="Select an activity">
+            </search-select>
+        </div>
+
+        <div class="form-row">
+            {!! $form->label('customPrice', 'Custom price') !!}
+            {!! $form->text('customPrice', null, ['placeholder' => 'Custom price']) !!}
+            {!! $form->error('customPrice') !!}
         </div>
 
         <div class="form-buttons">
@@ -75,6 +82,9 @@
         email: [
             {rule: 'required', message: 'email is required'},
             {rule: 'email', message: 'must be a valid email'}
+        ],
+        customPrice: [
+            {rule: 'numeric', message: 'must be a valid number'}
         ]
     });
 </script>

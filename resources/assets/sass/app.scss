@@ -119,6 +119,11 @@ i.fa {
       }
     }
 
+    .search-select {
+      flex-basis: 70%;
+      height: 40px;
+    }
+
     input[type="text"],
     input[type="password"] {
       flex-basis: 70%;

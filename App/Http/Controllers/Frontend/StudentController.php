@@ -11,29 +11,16 @@ use Library\Session\Session;
 
 class StudentController extends Controller
 {
-    /**
-     * @var StudentRegistrationService
-     */
-    private $studentRegistrationService;
-
-    public function __construct(View $view, Session $session, Response $response,
-                                StudentRegistrationService $studentRegistrationService)
+    public function index(StudentRegistrationService $studentRegistrationService, $id, $code)
     {
-        parent::__construct($view, $session, $response);
-
-        $this->studentRegistrationService = $studentRegistrationService;
-    }
-
-    public function index($id, $code)
-    {
-        $tempStudent = $this->studentRegistrationService->validateTempStudent($id, $code);
+        $tempStudent = $studentRegistrationService->validateTempStudent($id, $code);
         if (!$tempStudent)
         {
             $this->response->route('frontend.student.notFound');
         }
 
         return $this->view->make('frontend.student.index',
-            $this->studentRegistrationService->prepareRegistrationData($tempStudent));
+            $studentRegistrationService->prepareRegistrationData($tempStudent));
     }
 
     public function notFound()

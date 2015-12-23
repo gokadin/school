@@ -31,12 +31,16 @@ class Student extends User
     /** @Column(type="string", nullable) */
     private $occupation;
 
+    /** @Column(type="decimal") */
+    private $customPrice;
+
     public function __construct($firstName, $lastName, $email, $password, Address $address,
-                                Activity $activity, Teacher $teacher)
+                                Activity $activity, $customPrice, Teacher $teacher)
     {
         parent::__construct($firstName, $lastName, $email, $password, $address);
 
         $this->activity = $activity;
+        $this->customPrice = $customPrice;
         $this->teacher = $teacher;
     }
 
@@ -108,5 +112,15 @@ class Student extends User
     public function setOccupation($occupation)
     {
         $this->occupation = $occupation;
+    }
+
+    public function customPrice()
+    {
+        return $this->customPrice;
+    }
+
+    public function setCustomPrice($customPrice)
+    {
+        $this->customPrice = $customPrice;
     }
 }
