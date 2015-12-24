@@ -1,7 +1,14 @@
 var Vue = require('vue');
+
+global.jQuery = require('jquery');
+var $ = global.jQuery;
+window.$ = $;
+
 Vue.use(require('vue-resource'));
 var moment = require('moment');
 Vue.use(moment);
+
+window.Vue = Vue;
 
 Vue.http.headers.common['CSRFTOKEN'] = document.getElementById('csrf-token').getAttribute('content');
 
