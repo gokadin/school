@@ -1,0 +1,9 @@
+@media screen and (max-width: 480px) {
+  .profile {
+    flex-wrap: wrap; }
+    .profile .picture {
+      flex-basis: 100%;
+      margin-right: 0;
+      margin-bottom: 20px; }
+    .profile .information {
+      flex-basis: 100%; } }

@@ -1,9 +1,7 @@
 <template>
-    <div class="search-select">
-        <select name="{{ name }}">
-            <option v-for="d in data" value="d[value]" v-model="selected[value]">
-                {{ d[display] }}
-            </option>
+    <div class="search-select" tabindex="0" @focus="handleMainFocused()">
+        <select v-el:select name="{{ name }}" v-model="selected[value]">
+            <option v-for="d in data" value="{{ d[value] }}"></option>
         </select>
         <div class="fake-select" @mousedown.prevent @click="handleFakeClick()">
             {{ selected[display] }}
@@ -67,6 +65,18 @@ export default {
             return this.chosenIndex == index;
         },
 
+        handleMainFocused: function () {
+            if (this.showResults) {
+                return;
+            }
+
+            this.showResults = true;
+
+            Vue.nextTick(function() {
+                this.$els.searchInput.focus();
+            }.bind(this))
+        },
+
         handleFakeClick: function() {
             if (this.showResults) {
                 return;
@@ -100,6 +110,7 @@ export default {
             this.selected[this.display] = $('.results .chosen:first').data('display');
             this.search = '';
             this.showResults = false;
+            $(this.$els.select).trigger('change');
         },
 
         handleUp: function() {
@@ -131,6 +142,7 @@ export default {
             this.search = '';
             this.showResults = false;
             this.chosenIndex = 0;
+            $(this.$els.select).trigger('change');
         },
 
         handleResultMouseover: function(index) {

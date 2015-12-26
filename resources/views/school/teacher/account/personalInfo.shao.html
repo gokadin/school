@@ -8,43 +8,40 @@
     Account
 </div>
 
+@include('school.teacher.account.switcher')
+
 <div class="content-padding">
+    <div class="panel-1">
+        {!! $form->open('school.teacher.account.personalInfo', 'POST', ['id' => 'personal-info-form', 'class' => 'form-1']) !!}
 
-    @include('school.teacher.account.switcher')
-
-    <div class="switcher-1-content">
-        <div class="panel-1">
-            {!! $form->open('school.teacher.account.personalInfo', 'POST', ['id' => 'personal-info-form', 'class' => 'form-1']) !!}
-
-            <div class="form-title">
-                Update personal information
-            </div>
-
-            <div class="form-row">
-                {!! $form->label('firstName', 'First name') !!}
-                {!! $form->text('firstName', $user->firstName(), ['placeholder' => 'First name']) !!}
-                {!! $form->error('firstName') !!}
-            </div>
-
-            <div class="form-row">
-                {!! $form->label('lastName', 'Last name') !!}
-                {!! $form->text('lastName', $user->lastName(), ['placeholder' => 'Last name']) !!}
-                {!! $form->error('lastName') !!}
-            </div>
-
-            <div class="form-row">
-                {!! $form->label('email', 'Email') !!}
-                {!! $form->text('email', $user->email(), ['placeholder' => 'Email']) !!}
-                {!! $form->error('email') !!}
-            </div>
-
-            <div class="form-buttons">
-                <button type="reset" class="button-gray button-large button-short">Reset</button>
-                <button type="submit" class="button-green button-large">Update</button>
-            </div>
-
-            {!! $form->close() !!}
+        <div class="form-title">
+            Update personal information
         </div>
+
+        <div class="form-row">
+            {!! $form->label('firstName', 'First name') !!}
+            {!! $form->text('firstName', $user->firstName(), ['placeholder' => 'First name']) !!}
+            {!! $form->error('firstName') !!}
+        </div>
+
+        <div class="form-row">
+            {!! $form->label('lastName', 'Last name') !!}
+            {!! $form->text('lastName', $user->lastName(), ['placeholder' => 'Last name']) !!}
+            {!! $form->error('lastName') !!}
+        </div>
+
+        <div class="form-row">
+            {!! $form->label('email', 'Email') !!}
+            {!! $form->text('email', $user->email(), ['placeholder' => 'Email']) !!}
+            {!! $form->error('email') !!}
+        </div>
+
+        <div class="form-buttons">
+            <button type="reset" class="button-gray button-large button-short">Reset</button>
+            <button type="submit" class="button-green button-large">Update</button>
+        </div>
+
+        {!! $form->close() !!}
     </div>
 </div>
 

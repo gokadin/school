@@ -444,7 +444,7 @@ button.button-large {
 
     li {
       height: 40px;
-      flex-basis: 120px;
+      flex-basis: 140px;
 
       a {
         height: 100%;
@@ -545,5 +545,6 @@ button.button-large {
 @import 'activities';
 @import 'settings';
 @import 'account';
+@import 'profile';
 @import 'students';
 @import 'calendar';

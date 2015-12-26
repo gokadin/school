@@ -8,10 +8,12 @@
 
 @include('school.teacher.student.switcher')
 
-<div id="student-profile" class="content-padding grid-row">
+<div id="student-profile" class="content-padding grid-row profile">
     <div class="picture grid-col-1">
         <div class="panel-1">
-            <img src="/images/defaultProfilePicture.png" width="160">
+            <div class="img-container">
+                <img src="/images/defaultProfilePicture.png" width="160" height="auto">
+            </div>
             <div class="name">{{ $student->name() }}</div>
             <div class="@if ($student->active()) status-active @else status-inactive @endif ">
                 <i class="fa fa-circle"></i>@if ($student->active())Active @else Inactive @endif

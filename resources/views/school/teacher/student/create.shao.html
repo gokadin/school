@@ -50,7 +50,8 @@
                            :data="{{ $activities }}"
                            value="id"
                            display="name"
-                           placeholder="Select an activity">
+                           placeholder="Select an activity"
+            >
             </search-select>
         </div>
 
@@ -78,6 +79,8 @@
 @section('javascript')
 
 <script type="text/javascript">
+    var activities = JSON.parse('{!! $activities !!}');
+
     $('#create-student-form').validate({
         email: [
             {rule: 'required', message: 'email is required'},
@@ -86,6 +89,29 @@
         customPrice: [
             {rule: 'numeric', message: 'must be a valid number'}
         ]
+    });
+
+    $(function() {
+        if (activities.length == 0) {
+            return;
+        }
+
+        $('#customPrice').val(activities[0].rate);
+    });
+
+    $('select[name="activityId"]').change(function() {
+        var id = $('select[name="activityId"]').val();
+
+        var rate = 0;
+        for (var i = 0; i < activities.length; i++) {
+            if (activities[i].id == id) {
+                rate = activities[i].rate;
+                
+                break;
+            }
+        }
+
+        $('#customPrice').val(rate);
     });
 </script>
 

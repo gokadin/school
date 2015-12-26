@@ -34,7 +34,7 @@ class ActivityController extends ApiController
 
     public function update(UpdateActivityRequest $request, ActivityService $activityService, $activityId)
     {
-        return !$activityService->update($request->all(), $request->activityId)
+        return !$activityService->update($request->all(), $request->get('activityId'))
             ? $this->respondUnauthorized()
             : $this->respondOk();
     }

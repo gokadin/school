@@ -16,7 +16,7 @@ class Activity
     /** @Column(type="string") */
     protected $name;
 
-    /** @Column(type="decimal", size="3", precision="2") */
+    /** @Column(type="decimal", size="5", precision="2") */
     protected $rate;
 
     /** @Column(type="string") */

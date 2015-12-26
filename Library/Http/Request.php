@@ -42,6 +42,11 @@ class Request
         return $this->data;
     }
 
+    public function get($key)
+    {
+        return isset($_GET[$key]) ? $_GET[$key] : null;
+    }
+
     public function isJson()
     {
         if (!strpos($this->header('CONTENT_TYPE'), '/json'))

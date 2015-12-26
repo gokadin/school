@@ -14,6 +14,11 @@ class Transformer
      */
     private $definitions = [];
 
+    /**
+     * @var array
+     */
+    private $only = [];
+
     public function __construct($config)
     {
         $this->registerDefinitions($config);
@@ -56,7 +61,7 @@ class Transformer
 
         $this->clear();
 
-        return json_encode($result);
+        return $result;
     }
 
     /**

@@ -29,8 +29,8 @@ class StudentRegistrationService extends AuthenticatedService
     public function preparePreRegistrationData()
     {
         return [
-            'activities' => $this->transformer->of(Activity::class)
-                ->only(['id', 'name', 'rate'])->transform($this->user->activities()->toArray())
+            'activities' => json_encode($this->transformer->of(Activity::class)
+                ->only(['id', 'name', 'rate'])->transform($this->user->activities()->toArray()))
         ];
     }
 
