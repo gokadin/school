@@ -7,6 +7,9 @@ window.$ = $;
 Vue.use(require('vue-resource'));
 var moment = require('moment');
 Vue.use(moment);
+Vue.use(require('vue-dnd'));
+
+var dr = require('dropzone');
 
 window.Vue = Vue;
 
@@ -18,6 +21,7 @@ Vue.component('modal', require('./components/modal.vue'))
 Vue.component('confirmModal', require('./components/confirmModal.vue'))
 Vue.component('search', require('./components/search.vue'))
 Vue.component('searchSelect', require('./components/searchSelect.vue'))
+Vue.component('datepicker', require('./components/datepicker.vue'))
 
 new Vue({
     el: 'body',
@@ -41,8 +45,12 @@ new Vue({
             this.$refs.flash.flash(type, message, freeze);
         },
 
-        getMoment: function() {
-            return moment();
+        getMoment: function(str = '') {
+            if (str == '') {
+                return moment();
+            }
+
+            return moment(str);
         }
     }
 });

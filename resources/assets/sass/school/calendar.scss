@@ -66,14 +66,15 @@
         }
 
         td {
-          height: 100px;
+          height: 125px;
           position: relative;
 
           .top {
-            height: 20px;
+            height: 25px;
             text-align: right;
             font-size: 12px;
-            padding: 3px;
+            line-height: 20px;
+            margin-right: 3px;
           }
 
           .top.faded {
@@ -81,14 +82,27 @@
           }
 
           .events {
-            height: 80px;
+            height: 100px;
+            display: flex;
+            flex-direction: column;
+
+            .event {
+              flex-basis: 25%;
+              text-align: center;
+              background-color: #26a69a;
+              border-top: 1px solid #cccccc;
+              border-bottom: 1px solid #cccccc;
+              color: #fff;
+              cursor: pointer;
+            }
           }
 
           .add {
+            line-height: 20px;
             position: absolute;
-            font-size: 22px;
-            bottom: 5px;
-            right: 5px;
+            font-size: 20px;
+            top: 0px;
+            left: 3px;
             display: none;
             cursor: pointer;
 
