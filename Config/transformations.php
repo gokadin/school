@@ -17,5 +17,19 @@ return [
         'fullName' => function($o) { return $o->firstName().' '.$o->lastName(); },
         'email' => function($o) { return $o->email(); },
         'activityName' => function($o) { return $o->activity()->name(); }
+    ],
+
+    App\Domain\Events\Event::class => [
+        'id' => function($o) { return $o->getId(); },
+        'title' => function($o) { return $o->title(); },
+        'startDate' => function($o) {
+            $date = \Carbon\Carbon::parse($o->startDate());
+            return $date->toDateString();
+        },
+        'endDate' => function($o) {
+            $date = \Carbon\Carbon::parse($o->endDate());
+            return $date->toDateString();
+        },
+        'color' => function($o) { return $o->color(); }
     ]
 ];

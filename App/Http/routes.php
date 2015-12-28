@@ -58,6 +58,12 @@ Route::group(['namespace' => 'Api', 'prefix' => '/api', 'as' => 'api', 'middlewa
                 Route::post('/', 'StudentController@index');
             });
 
+            Route::group(['prefix' => '/events', 'as' => 'event'], function()
+            {
+                Route::post('/', 'EventController@create');
+                Route::post('/range', 'EventController@range');
+            });
+
             Route::get('/get-registration-form', 'SettingController@getRegistration');
             Route::post('/update-registration-form', 'SettingController@updateRegistrationForm');
         });

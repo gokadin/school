@@ -3,6 +3,7 @@
 namespace App\Domain\Users;
 
 use App\Domain\Activities\Activity;
+use App\Domain\Events\Event;
 use App\Domain\Setting\TeacherSettings;
 use Library\DataMapper\Collection\EntityCollection;
 use App\Domain\Common\Address;
@@ -26,6 +27,9 @@ class Teacher extends User
 
     /** @HasMany(target="App\Domain\Users\Student", mappedBy="teacher") */
     private $students;
+
+    /** @HasMany(target="App\Domain\Events\Event", mappedBy="teacher") */
+    private $events;
 
     public function __construct($firstName, $lastName, $email, $password, $subscription,
                                 Address $address, $school, TeacherSettings $settings)
@@ -103,5 +107,23 @@ class Teacher extends User
     public function removeStudent(Student $student)
     {
         $this->students->remove($student);
+    }
+
+    /**
+     * @return PersistentCollection
+     */
+    public function events()
+    {
+        return $this->events;
+    }
+
+    public function addEvent(Event $event)
+    {
+        $this->events->add($event);
+    }
+
+    public function removeEvent(Event $event)
+    {
+        $this->events->remove($event);
     }
 }

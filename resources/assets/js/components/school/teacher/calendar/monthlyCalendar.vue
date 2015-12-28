@@ -1,5 +1,4 @@
 <template>
-    {{ events | json }}
     <div id="monthly-calendar">
         <div class="header">
             <div class="navigation">
@@ -21,7 +20,10 @@
                             {{ getPositionDate(i, j).date() }}
                         </div>
                         <div class="events">
-                            <div class="event" v-for="event in getEventsForDate(getPositionDate(i, j))">
+                            <div
+                                    v-for="event in getEventsForDate(getPositionDate(i, j))"
+                                    v-bind:class="['event', getColorClass(event)]"
+                            >
                                 {{ event.title }}
                             </div>
                         </div>
@@ -33,7 +35,7 @@
     </div>
 
     <modal v-ref:new-event-modal>
-        <div class="modal-1">
+        <div class="modal-1" id="new-event-modal">
             <div class="header">New event</div>
             <div class="body">
                 <form class="form-1 form-1-not-inline">
@@ -45,11 +47,22 @@
                     <div class="form-row">
                         <div class="form-row-double">
                             <label>Start date</label>
-                            <datepicker :date="newEvent.startDate.format('YYYY-MM-DD')"></datepicker>
+                            <datepicker :date="newEvent.startDate."></datepicker>
                         </div>
                         <div class="form-row-double">
                             <label>End date</label>
-                            <datepicker :date="newEvent.endDate.format('YYYY-MM-DD')"></datepicker>
+                            <datepicker :date="newEvent.endDate"></datepicker>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <label>Color</label>
+                        <div class="color-options">
+                            <div
+                                    :class="['color-' + color, isColorSelected(color) ? 'color-selected' : '']"
+                                    v-for="color in eventColors"
+                                    @click="selectColor(color)"
+                            ></div>
                         </div>
                     </div>
                 </form>
@@ -67,21 +80,9 @@ export default {
     data: function() {
         return {
             currentDate: this.moment(),
-            events: [
-                {
-                    startDate: this.moment(),
-                    endDate: this.moment(),
-                    title: 'Some event',
-                    color: 'blue'
-                },
-                {
-                    startDate: this.moment(),
-                    endDate: this.moment(),
-                    title: 'Some event',
-                    color: 'blue'
-                }
-            ],
-            newEvent: {}
+            events: this.fetchMonthEvents(this.moment()),
+            newEvent: {},
+            eventColors: ['teal', 'green']
         };
     },
 
@@ -130,7 +131,7 @@ export default {
             var events = [];
 
             for (var i = 0; i < this.events.length; i++) {
-                if (this.events[i].startDate.isSame(date, 'day')) {
+                if (this.events[i].startDate == date.format('YYYY-MM-DD')) {
                     events.push(this.events[i]);
                 }
             }
@@ -139,20 +140,42 @@ export default {
         },
 
         nextMonth: function() {
-            this.currentDate = this.moment(this.currentDate.add(1, 'months').format('YYYY-MM-DD'));
+            var nextDate = this.moment(this.currentDate.add(1, 'months').format('YYYY-MM-DD'));
+            this.fetchMonthEvents(nextDate);
+            this.currentDate = nextDate;
         },
 
         previousMonth: function() {
-            this.currentDate = this.moment(this.currentDate.subtract(1, 'months').format('YYYY-MM-DD'));
+            var previousDate = this.moment(this.currentDate.subtract(1, 'months').format('YYYY-MM-DD'));
+            this.fetchMonthEvents(previousDate);
+            this.currentDate = previousDate;
         },
 
         today: function() {
-            this.currentDate = this.moment();
+            var todayDate = this.moment();
+            this.fetchMonthEvents(todayDate);
+            this.currentDate = todayDate;
+        },
+
+        getColorClass: function(event) {
+            switch (event.color) {
+                case 'green':
+                    return 'event-green';
+            }
+        },
+
+        isColorSelected: function(color) {
+            return color == this.newEvent.color;
+        },
+
+        selectColor: function(color) {
+            this.newEvent.color = color;
         },
 
         showAddEvent: function(i, j) {
-            this.newEvent.startDate = this.getPositionDate(i, j);
+            this.newEvent.startDate = this.getPositionDate(i, j).format('YYYY-MM-DD');
             this.newEvent.endDate = this.newEvent.startDate;
+            this.newEvent.color = 'teal';
 
             this.$refs.newEventModal.open();
         },
@@ -163,9 +186,34 @@ export default {
 
         createEvent: function() {
             this.events.push(this.newEvent);
+
+            this.$http.post('/api/school/teacher/events/', {
+                title: this.newEvent.title,
+                startDate: this.newEvent.startDate,
+                endDate: this.newEvent.endDate,
+                color: this.newEvent.color
+            }, function(response, status) {
+                status == 200
+                        ? this.$dispatch('flash', 'success', 'Event created!')
+                        : this.$dispatch('flash', 'error', 'Failed to create event. Please try again.');
+            });
+
             this.newEvent = {};
 
             this.closeAddEvent();
+        },
+
+        fetchMonthEvents: function(date) {
+            this.$http.post('/api/school/teacher/events/range', {
+                from: date.clone().date(0).subtract(1, 'weeks').format('YYYY-MM-DD'),
+                to: date.clone().date(date.daysInMonth()).add(1, 'months').add(1, 'weeks').format('YYYY-MM-DD')
+            }, function(response, status) {
+                if (status != 200) {
+                    return;
+                }
+
+                this.events = response.events;
+            });
         }
     }
 }
