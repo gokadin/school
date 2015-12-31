@@ -89,7 +89,8 @@ i.fa {
       flex-basis: 70%;
       height: 40px; }
     .form-1 .form-row input[type="text"],
-    .form-1 .form-row input[type="password"] {
+    .form-1 .form-row input[type="password"],
+    .form-1 .form-row textarea {
       flex-basis: 70%;
       height: 40px;
       padding: 0 5px;
@@ -97,15 +98,21 @@ i.fa {
       -moz-border-radius: 0px;
       border-radius: 0px;
       border: 1px solid #cccccc; }
+    .form-1 .form-row textarea {
+      padding: 5px;
+      height: 100px; }
     .form-1 .form-row input[type="text"]:focus,
     .form-1 .form-row input[type="password"]:focus,
-    .form-1 .form-row select:focus {
+    .form-1 .form-row select:focus,
+    .form-1 .form-row textarea:focus {
       border-color: #808080; }
     .form-1 .form-row input[type="text"].valid,
-    .form-1 .form-row input[type="password"].valid {
+    .form-1 .form-row input[type="password"].valid,
+    .form-1 .form-row textarea.valid {
       border-color: #67b168; }
     .form-1 .form-row input[type="text"].invalid,
-    .form-1 .form-row input[type="password"].invalid {
+    .form-1 .form-row input[type="password"].invalid,
+    .form-1 .form-row textarea.invalid {
       border-color: #b94a48; }
     .form-1 .form-row select {
       flex-basis: 70%;
@@ -121,7 +128,8 @@ i.fa {
       justify-content: flex-end;
       margin-top: 5px; }
     .form-1 .form-row .form-row-double {
-      flex-basis: 50%; }
+      flex-basis: 50%;
+      display: flex; }
       .form-1 .form-row .form-row-double > label {
         flex-basis: 30%;
         font-size: 17px;
@@ -916,16 +924,34 @@ button:disabled {
           height: 100px;
           display: flex;
           flex-direction: column; }
-          #school #monthly-calendar .body table tr td .events .event {
+          #school #monthly-calendar .body table tr td .events .event, #school #monthly-calendar .body table tr td .events .extra-events {
             flex-basis: 25%;
-            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 12px;
+            margin-bottom: 1px; }
+          #school #monthly-calendar .body table tr td .events .event {
             background-color: #26a69a;
-            border-top: 1px solid #cccccc;
-            border-bottom: 1px solid #cccccc;
-            color: #fff;
-            cursor: pointer; }
+            color: #fff; }
+          #school #monthly-calendar .body table tr td .events .event.event-teal {
+            background-color: #26a69a; }
           #school #monthly-calendar .body table tr td .events .event.event-green {
             background-color: #67b168; }
+          #school #monthly-calendar .body table tr td .events .event.event-orange {
+            background-color: #ff8433; }
+          #school #monthly-calendar .body table tr td .events .event.event-blue {
+            background-color: #5c5cd6; }
+          #school #monthly-calendar .body table tr td .events .event.event-light-blue {
+            background-color: #99ccff; }
+          #school #monthly-calendar .body table tr td .events .event.event-golden {
+            background-color: #e6b700; }
+          #school #monthly-calendar .body table tr td .events .event.event-red {
+            background-color: #ff5050; }
+          #school #monthly-calendar .body table tr td .events .event.event-purple {
+            background-color: #d147a3; }
         #school #monthly-calendar .body table tr td .add {
           line-height: 20px;
           position: absolute;
@@ -938,19 +964,69 @@ button:disabled {
             color: #26a69a; }
       #school #monthly-calendar .body table tr td:hover .add {
         display: block; }
-  #school #new-event-modal .color-options {
-    flex-basis: 100%;
-    display: flex; }
-    #school #new-event-modal .color-options > div {
-      flex-basis: 30px;
-      height: 30px;
-      border-radius: 15px;
-      margin-right: 15px;
-      cursor: pointer; }
-    #school #new-event-modal .color-options > div.color-selected,
-    #school #new-event-modal .color-options > div:hover {
-      border: 2px solid #444; }
-    #school #new-event-modal .color-options .color-teal {
-      background-color: #26a69a; }
-    #school #new-event-modal .color-options .color-green {
-      background-color: #67b168; }
+  #school #new-event-modal {
+    width: 700px; }
+    #school #new-event-modal #description {
+      height: 50px; }
+    #school #new-event-modal .form-1 {
+      padding-top: 0; }
+      #school #new-event-modal .form-1 .form-row-double label {
+        flex-basis: 40%; }
+      #school #new-event-modal .form-1 .form-row-double input {
+        width: 200px; }
+      #school #new-event-modal .form-1 .form-row.date-and-time {
+        display: flex;
+        flex-direction: row; }
+        #school #new-event-modal .form-1 .form-row.date-and-time .datepicker {
+          flex: 1; }
+          #school #new-event-modal .form-1 .form-row.date-and-time .datepicker input {
+            width: 160px; }
+        #school #new-event-modal .form-1 .form-row.date-and-time .to {
+          flex-basis: 50px;
+          text-align: center; }
+        #school #new-event-modal .form-1 .form-row.date-and-time select {
+          flex: 1;
+          width: auto;
+          margin-left: 10px; }
+    #school #new-event-modal .form-row.event-options {
+      display: flex;
+      justify-content: flex-start; }
+      #school #new-event-modal .form-row.event-options .checkbox-1 {
+        flex-basis: 100px; }
+    #school #new-event-modal .color-options {
+      flex-basis: 70%;
+      display: flex; }
+      #school #new-event-modal .color-options > div {
+        flex-basis: 30px;
+        position: relative;
+        height: 30px;
+        border-radius: 15px;
+        margin-right: 15px;
+        cursor: pointer; }
+      #school #new-event-modal .color-options > div:hover {
+        border: 2px solid #444; }
+      #school #new-event-modal .color-options > div.color-selected:after {
+        font-family: FontAwesome;
+        content: "\f00c";
+        font-size: 16px;
+        color: white;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translateX(-50%) translateY(-50%); }
+      #school #new-event-modal .color-options .color-teal {
+        background-color: #26a69a; }
+      #school #new-event-modal .color-options .color-green {
+        background-color: #67b168; }
+      #school #new-event-modal .color-options .color-orange {
+        background-color: #ff8433; }
+      #school #new-event-modal .color-options .color-blue {
+        background-color: #5c5cd6; }
+      #school #new-event-modal .color-options .color-light-blue {
+        background-color: #99ccff; }
+      #school #new-event-modal .color-options .color-golden {
+        background-color: #e6b700; }
+      #school #new-event-modal .color-options .color-red {
+        background-color: #ff5050; }
+      #school #new-event-modal .color-options .color-purple {
+        background-color: #d147a3; }

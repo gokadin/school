@@ -25,4 +25,9 @@ class EventRepository extends AuthenticatedRepository
             ->where('startDate', '<', $to)
             ->toArray();
     }
+
+    public function update(Event $event)
+    {
+        $this->dm->flush();
+    }
 }

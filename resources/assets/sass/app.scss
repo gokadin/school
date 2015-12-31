@@ -125,7 +125,8 @@ i.fa {
     }
 
     input[type="text"],
-    input[type="password"] {
+    input[type="password"],
+    textarea {
       flex-basis: 70%;
       height: 40px;
       padding: 0 5px;
@@ -135,19 +136,27 @@ i.fa {
       border: 1px solid #cccccc;
     }
 
+    textarea {
+      padding: 5px;
+      height: 100px;
+    }
+
     input[type="text"]:focus,
     input[type="password"]:focus ,
-    select:focus {
+    select:focus,
+    textarea:focus {
       border-color: #808080;
     }
 
     input[type="text"].valid,
-    input[type="password"].valid {
+    input[type="password"].valid,
+    textarea.valid {
       border-color: $color-main;
     }
 
     input[type="text"].invalid,
-    input[type="password"].invalid {
+    input[type="password"].invalid,
+    textarea.invalid {
       border-color: $color-error;
     }
 
@@ -170,6 +179,7 @@ i.fa {
 
     .form-row-double {
       flex-basis: 50%;
+      display: flex;
 
       > label {
         flex-basis: 30%;

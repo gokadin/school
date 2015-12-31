@@ -62,6 +62,7 @@ Route::group(['namespace' => 'Api', 'prefix' => '/api', 'as' => 'api', 'middlewa
             {
                 Route::post('/', 'EventController@create');
                 Route::post('/range', 'EventController@range');
+                Route::put('/change-date', 'EventController@changeDate');
             });
 
             Route::get('/get-registration-form', 'SettingController@getRegistration');

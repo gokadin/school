@@ -7,7 +7,7 @@ window.$ = $;
 Vue.use(require('vue-resource'));
 var moment = require('moment');
 Vue.use(moment);
-Vue.use(require('vue-dnd'));
+Vue.use(require('./plugins/dnd'));
 
 var dr = require('dropzone');
 

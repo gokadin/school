@@ -31,12 +31,29 @@ class EventService extends AuthenticatedService
 
         $event = $this->eventRepository->create($data);
 
-        return true;
+        return $event->getId();
     }
 
     public function range(array $data)
     {
         return $this->transformer->of(Event::class)->transform(
             $this->eventRepository->range(Carbon::parse($data['from']), Carbon::parse($data['to'])));
+    }
+
+    public function changeDate(array $data)
+    {
+        $event = $this->user->events()->find($data['id']);
+
+        $startDate = Carbon::parse($event->startDate());
+        $endDate = Carbon::parse($event->endDate());
+        $newStartDate = Carbon::parse($data['newStartDate']);
+        $newEndDate = $endDate->addDays($startDate->diffInDays($newStartDate));
+
+        $event->setStartDate($newStartDate);
+        $event->setEndDate($newEndDate);
+
+        $this->eventRepository->update($event);
+
+        return $newEndDate->toDateString();
     }
 }

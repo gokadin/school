@@ -15,16 +15,20 @@
                     <th>Sun</th><th>Mon</th><th>Tue</th><th>Wed</th><th>Thu</th><th>Fri</th><th>Sat</th>
                 </tr>
                 <tr v-for="i in numRows">
-                    <td v-for="j in numCols">
+                    <td v-for="j in numCols" v-dropzone:event="dropEvent($dropdata, getPositionDate(i, j))">
                         <div v-bind:class="['top', getPositionDate(i, j).month() != currentDate.month() ? 'faded' : '']">
                             {{ getPositionDate(i, j).date() }}
                         </div>
                         <div class="events">
                             <div
-                                    v-for="event in getEventsForDate(getPositionDate(i, j))"
+                                    v-for="event in getEventsForDate(getPositionDate(i, j)) | orderBy startTime"
+                                    v-draggable:event="{id: event.id, startDate: event.startDate}"
                                     v-bind:class="['event', getColorClass(event)]"
                             >
                                 {{ event.title }}
+                            </div>
+                            <div class="extra-events" v-if="getEventCountForDate(getPositionDate(i, j)) > 4">
+                                + {{ getEventCountForDate(getPositionDate(i, j)) - 4 }} more
                             </div>
                         </div>
                         <div class="add"><i class="fa fa-plus-circle" @click="showAddEvent(i, j)"></i></div>
@@ -38,20 +42,41 @@
         <div class="modal-1" id="new-event-modal">
             <div class="header">New event</div>
             <div class="body">
-                <form class="form-1 form-1-not-inline">
+                <form class="form-1" id="new-event-form">
                     <div class="form-row">
-                        <label>Title</label>
-                        <input type="text" v-model="newEvent.title" placeholder="Title">
+                        <label for="title">Title</label>
+                        <input id="title" type="text" v-model="newEvent.title" placeholder="Title" />
                     </div>
 
                     <div class="form-row">
-                        <div class="form-row-double">
-                            <label>Start date</label>
-                            <datepicker :date="newEvent.startDate."></datepicker>
+                        <label for="description">Description</label>
+                        <textarea id="description" v-model="newEvent.description" placeholder="Description"></textarea>
+                    </div>
+
+                    <div class="form-row date-and-time">
+                        <datepicker class="datepicker" :date="newEvent.startDate."></datepicker>
+                        <select v-model="newEvent.startTime" v-show="!newEvent.isAllDay">
+                            <option v-for="time in timeSelect" value="{{ time }}">{{ time }}</option>
+                        </select>
+                        <label class="to">to</label>
+                        <datepicker class="datepicker" :date="newEvent.endDate"></datepicker>
+                        <select v-model="newEvent.endTime" v-show="!newEvent.isAllDay">
+                            <option v-for="time in timeSelect" value="{{ time }}">{{ time }}</option>
+                        </select>
+                    </div>
+
+                    <div class="form-row event-options">
+                        <div class="checkbox-1">
+                            <label>
+                                <input type="checkbox" v-model="newEvent.isAllDay" />
+                                <i></i>All day
+                            </label>
                         </div>
-                        <div class="form-row-double">
-                            <label>End date</label>
-                            <datepicker :date="newEvent.endDate"></datepicker>
+                        <div class="checkbox-1">
+                            <label>
+                                <input type="checkbox" v-model="newEvent.isRecurring" />
+                                <i></i>Recurring
+                            </label>
                         </div>
                     </div>
 
@@ -81,8 +106,35 @@ export default {
         return {
             currentDate: this.moment(),
             events: this.fetchMonthEvents(this.moment()),
-            newEvent: {},
-            eventColors: ['teal', 'green']
+            newEvent: {
+                id: 0,
+                title: '',
+                description: '',
+                startDate: this.moment().format('YYYY-MM-DD'),
+                endDate: this.moment().format('YYYY-MM-DD'),
+                startTime: '12:00pm',
+                endTime: '1:00pm',
+                isAllDay: true,
+                color: 'teal',
+                location: '',
+                isVisible: true,
+                activityId: 0,
+                studentIds: [],
+                isRecurring: false,
+                rEndDate: this.moment().add(1, 'years').format('YYYY-MM-DD'),
+                rEndsNever: false,
+                rRepeat: 'mondays',
+                rEvery: 'week',
+                notifyMeBy: 'email',
+                notifyMeBefore: '15mins',
+            },
+            eventColors: ['teal', 'green', 'orange', 'red', 'blue', 'light-blue', 'purple', 'golden'],
+            timeSelect: ['12:00am', '12:30am', '1:00am', '1:30am', '2:00am', '2:30am', '3:00am',
+                '3:30am', '4:00am', '4:30am', '5:00am', '5:30am', '6:00am', '6:30am', '7:00am', '7:30am',
+                '8:00am', '8:30am', '9:00am', '9:30am', '10:00am', '10:30am', '11:00am', '11:30am',
+                '12:00pm', '12:30pm', '1:00pm', '1:30pm', '2:00pm', '2:30pm', '3:00pm',
+                '3:30pm', '4:00pm', '4:30pm', '5:00pm', '5:30pm', '6:00pm', '6:30pm', '7:00pm', '7:30pm',
+                '8:00pm', '8:30pm', '9:00pm', '9:30pm', '10:00pm', '10:30pm', '11:00pm', '11:30pm', ]
         };
     },
 
@@ -129,14 +181,35 @@ export default {
 
         getEventsForDate: function(date) {
             var events = [];
+            var formattedDate = date.format('YYYY-MM-DD');
+            var count = 0;
 
             for (var i = 0; i < this.events.length; i++) {
-                if (this.events[i].startDate == date.format('YYYY-MM-DD')) {
+                if (this.events[i].startDate == formattedDate) {
                     events.push(this.events[i]);
+                    count++;
+                }
+
+                if (count == 5) {
+                    events.pop();
+                    events.pop();
+                    return events;
                 }
             }
 
             return events;
+        },
+
+        getEventCountForDate: function(date) {
+            var formattedDate = date.format('YYYY-MM-DD')
+            var count = 0;
+            for (var i = 0; i < this.events.length; i++) {
+                if (this.events[i].startDate == formattedDate) {
+                    count++;
+                }
+            }
+
+            return count;
         },
 
         nextMonth: function() {
@@ -160,7 +233,15 @@ export default {
         getColorClass: function(event) {
             switch (event.color) {
                 case 'green':
-                    return 'event-green';
+                case 'blue':
+                case 'light-blue':
+                case 'red':
+                case 'purple':
+                case 'golden':
+                case 'orange':
+                    return 'event-' + event.color;
+                default:
+                    return 'event-teal';
             }
         },
 
@@ -173,9 +254,28 @@ export default {
         },
 
         showAddEvent: function(i, j) {
-            this.newEvent.startDate = this.getPositionDate(i, j).format('YYYY-MM-DD');
-            this.newEvent.endDate = this.newEvent.startDate;
+            var posDate = this.getPositionDate(i, j);
+
+            this.newEvent.id = 0;
+            this.newEvent.title = '';
+            this.newEvent.description = '';
+            this.newEvent.startDate = posDate.format('YYYY-MM-DD');
+            this.newEvent.endDate = posDate.format('YYYY-MM-DD');
+            this.newEvent.startTime = '12:00pm';
+            this.newEvent.endTime = '1:00pm';
+            this.newEvent.isAllDay = true;
             this.newEvent.color = 'teal';
+            this.newEvent.location = '';
+            this.newEvent.isVisible = true;
+            this.newEvent.activityId = 0;
+            this.newEvent.studentIds = [];
+            this.newEvent.isRecurring = false;
+            this.newEvent.rEndDate = posDate.add(1, 'years').format('YYYY-MM-DD');
+            this.newEvent.rEndsNever = false;
+            this.newEvent.rRepeat = 'mondays';
+            this.newEvent.rEvery = 'week';
+            this.newEvent.notifyMeBy = 'email';
+            this.newEvent.notifyMeBefore = '15mins';
 
             this.$refs.newEventModal.open();
         },
@@ -184,21 +284,68 @@ export default {
             this.$refs.newEventModal.close();
         },
 
-        createEvent: function() {
-            this.events.push(this.newEvent);
+        dropEvent: function(data, newDate) {
+            var formattedDate = newDate.format('YYYY-MM-DD');
 
+            if (formattedDate == data.startDate) {
+                return;
+            }
+
+            this.$http.put('/api/school/teacher/events/change-date', {
+                id: data.id,
+                newStartDate: formattedDate
+            }, function(response, status) {
+                if (status != 200) {
+                    this.$dispatch('flash', 'error', 'Failed to update event. Please try again.');
+                } else {
+                    for (var i = 0; i < this.events.length; i++) {
+                        if (this.events[i].id == data.id) {
+                            this.events[i].startDate = formattedDate;
+                            this.events[i].endDate = response.newEndDate;
+                            this.currentDate = this.currentDate.clone();
+                            break;
+                        }
+                    }
+                }
+            });
+        },
+
+        createEvent: function() {
             this.$http.post('/api/school/teacher/events/', {
                 title: this.newEvent.title,
                 startDate: this.newEvent.startDate,
                 endDate: this.newEvent.endDate,
                 color: this.newEvent.color
             }, function(response, status) {
-                status == 200
-                        ? this.$dispatch('flash', 'success', 'Event created!')
-                        : this.$dispatch('flash', 'error', 'Failed to create event. Please try again.');
-            });
+                if (status != 200) {
+                    this.$dispatch('flash', 'error', 'Failed to create event. Please try again.');
+                } else {
+                    this.events.push({
+                        id: response.eventId,
+                        title: this.newEvent.title,
+                        description: this.newEvent.description,
+                        startDate: this.newEvent.startDate,
+                        endDate: this.newEvent.endDate,
+                        startTime: this.newEvent.startTime,
+                        endTime: this.newEvent.endTime,
+                        isAllDay: this.newEvent.isAllDay,
+                        color: this.newEvent.color,
+                        location: this.newEvent.location,
+                        isVisible: this.newEvent.isVisible,
+                        activityId: this.newEvent.activityId,
+                        studentIds: this.newEvent.studentIds,
+                        isRecurring: this.newEvent.isRecurring,
+                        rEndDate: this.newEvent.rEndDate,
+                        rEndsNever: this.newEvent.rEndsNever,
+                        rRepeat: this.newEvent.rRepeat,
+                        rEvery: this.newEvent.rEvery,
+                        notifyMeBy: this.newEvent.notifyMeBy,
+                        notifyMeBefore: this.newEvent.notifyMeBefore
+                    });
 
-            this.newEvent = {};
+                    this.$dispatch('flash', 'success', 'Event created!');
+                }
+            });
 
             this.closeAddEvent();
         },
