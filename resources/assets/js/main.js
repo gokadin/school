@@ -22,6 +22,7 @@ Vue.component('confirmModal', require('./components/confirmModal.vue'))
 Vue.component('search', require('./components/search.vue'))
 Vue.component('searchSelect', require('./components/searchSelect.vue'))
 Vue.component('datepicker', require('./components/datepicker.vue'))
+Vue.component('popover', require('./components/popover.vue'))
 
 new Vue({
     el: 'body',
@@ -37,7 +38,8 @@ new Vue({
         studentList: require('./components/school/teacher/student/studentList.vue'),
         activityList: require('./components/school/teacher/activity/activityList.vue'),
         monthlyCalendar: require('./components/school/teacher/calendar/monthlyCalendar.vue'),
-        customizeRegistrationForm: require('./components/school/teacher/setting/registrationForm.vue')
+        customizeRegistrationForm: require('./components/school/teacher/setting/registrationForm.vue'),
+        upcomingEvents: require('./components/school/teacher/index/upcomingEvents.vue')
     },
 
     methods: {

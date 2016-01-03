@@ -22,6 +22,7 @@ return [
     App\Domain\Events\Event::class => [
         'id' => function($o) { return $o->getId(); },
         'title' => function($o) { return $o->title(); },
+        'description' => function($o) { return $o->description(); },
         'startDate' => function($o) {
             $date = \Carbon\Carbon::parse($o->startDate());
             return $date->toDateString();
@@ -30,6 +31,10 @@ return [
             $date = \Carbon\Carbon::parse($o->endDate());
             return $date->toDateString();
         },
-        'color' => function($o) { return $o->color(); }
+        'startTime' => function($o) { return $o->startTime(); },
+        'endTime' => function($o) { return $o->endTime(); },
+        'isAllDay' => function($o) { return $o->isAllDay(); },
+        'color' => function($o) { return $o->color(); },
+        'activityId' => function($o) { return is_null($o->activity()) ? 0 : $o->activity()->getId(); }
     ]
 ];

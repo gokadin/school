@@ -50,8 +50,7 @@ class AnnotationDriver
             else if (isset($parsedProperty[Metadata::ASSOC_HAS_MANY]))
             {
                 $target = $parsedProperty[Metadata::ASSOC_HAS_MANY]['target'];
-                $nullable = isset($parsedProperty[Metadata::ASSOC_HAS_ONE]['nullable'])
-                    && $parsedProperty[Metadata::ASSOC_HAS_ONE]['nullable'];
+                $nullable = isset($parsedProperty[Metadata::ASSOC_HAS_ONE]['nullable']);
                 $mappedBy = $parsedProperty[Metadata::ASSOC_HAS_MANY]['mappedBy'];
 
                 $cascades = [];
@@ -67,8 +66,7 @@ class AnnotationDriver
             {
                 $target = $parsedProperty[Metadata::ASSOC_HAS_ONE]['target'];
                 $targetShortName = substr($target, strrpos($target, '\\') + 1);
-                $nullable = isset($parsedProperty[Metadata::ASSOC_HAS_ONE]['nullable'])
-                    && $parsedProperty[Metadata::ASSOC_HAS_ONE]['nullable'];
+                $nullable = isset($parsedProperty[Metadata::ASSOC_HAS_ONE]['nullable']);
 
                 $cascades = [];
                 if (isset($parsedProperty[Metadata::ASSOC_HAS_ONE]['cascade']))
@@ -83,8 +81,7 @@ class AnnotationDriver
             {
                 $target = $parsedProperty[Metadata::ASSOC_BELONGS_TO]['target'];
                 $targetShortName = substr($target, strrpos($target, '\\') + 1);
-                $nullable = isset($parsedProperty[Metadata::ASSOC_BELONGS_TO]['nullable'])
-                    && $parsedProperty[Metadata::ASSOC_BELONGS_TO]['nullable'];
+                $nullable = isset($parsedProperty[Metadata::ASSOC_BELONGS_TO]['nullable']);
 
                 $cascades = [];
                 if (isset($parsedProperty[Metadata::ASSOC_BELONGS_TO]['cascade']))

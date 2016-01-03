@@ -28,6 +28,18 @@ class EventService extends AuthenticatedService
     public function create(array $data)
     {
         $data['teacher'] = $this->user;
+        if ($data['activityId'] == 0)
+        {
+            $data['activity'] = null;
+        }
+        else
+        {
+            $data['activity'] = $this->user->activities()->find($data['activityId']);
+            if (is_null($data['activity']))
+            {
+                return false;
+            }
+        }
 
         $event = $this->eventRepository->create($data);
 
@@ -55,5 +67,32 @@ class EventService extends AuthenticatedService
         $this->eventRepository->update($event);
 
         return $newEndDate->toDateString();
+    }
+
+    public function upcomingEvents()
+    {
+        $events = $this->eventRepository->upcomingEvents();
+
+        $grouped = [];
+        foreach ($events as $event)
+        {
+            if (sizeof($grouped) == 4)
+            {
+                array_pop($grouped);
+                break;
+            }
+
+            $grouped[Carbon::parse($event->startDate())->toDateString()][] =
+                $this->transformer->of(Event::class)->transform($event);
+        }
+
+        return $grouped;
+    }
+
+    public function destroy($id)
+    {
+        // MAKE THIS ASYNC?
+
+        $this->eventRepository->delete($this->user->events()->find($id));
     }
 }

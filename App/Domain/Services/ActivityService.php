@@ -2,6 +2,7 @@
 
 namespace App\Domain\Services;
 
+use App\Domain\Activities\Activity;
 use App\Domain\Users\Student;
 use App\Repositories\ActivityRepository;
 use App\Repositories\UserRepository;
@@ -22,6 +23,11 @@ class ActivityService extends AuthenticatedService
         parent::__construct($queue, $eventManager, $transformer, $userRepository);
 
         $this->activityRepository = $activityRepository;
+    }
+
+    public function getActivities()
+    {
+        return $this->transformer->of(Activity::class)->transform($this->user->activities()->toArray());
     }
 
     public function getActivityList(array $data)

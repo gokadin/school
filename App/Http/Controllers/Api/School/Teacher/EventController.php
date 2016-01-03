@@ -6,6 +6,7 @@ use App\Domain\Services\EventService;
 use App\Http\Controllers\Api\ApiController;
 use App\Http\Requests\Api\School\ChangeEventDateRequest;
 use App\Http\Requests\Api\School\CreateEventRequest;
+use App\Http\Requests\Api\School\DestroyEventRequest;
 use App\Http\Requests\Api\School\EventRangeRequest;
 
 class EventController extends ApiController
@@ -29,5 +30,17 @@ class EventController extends ApiController
     public function changeDate(ChangeEventDateRequest $request, EventService $eventService)
     {
         return $this->respondOk(['newEndDate' => $eventService->changeDate($request->all())]);
+    }
+
+    public function upcomingEvents(EventService $eventService)
+    {
+        return ['upcomingEvents' => $eventService->upcomingEvents()];
+    }
+
+    public function destroy(DestroyEventRequest $request, EventService $eventService)
+    {
+        $eventService->destroy($request->get('id'));
+
+        return $this->respondOk();
     }
 }

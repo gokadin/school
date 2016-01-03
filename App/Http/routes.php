@@ -48,6 +48,7 @@ Route::group(['namespace' => 'Api', 'prefix' => '/api', 'as' => 'api', 'middlewa
             Route::get('/search/{search}', 'SearchController@index');
 
             Route::group(['prefix' => '/activities', 'as' => 'activity'], function() {
+                Route::get('/', 'ActivityController@getAll');
                 Route::post('/', 'ActivityController@index');
                 Route::get('/{id}/students', 'ActivityController@students');
                 Route::delete('/{activityId}', 'ActivityController@destroy');
@@ -60,9 +61,11 @@ Route::group(['namespace' => 'Api', 'prefix' => '/api', 'as' => 'api', 'middlewa
 
             Route::group(['prefix' => '/events', 'as' => 'event'], function()
             {
+                Route::get('/upcoming-events', 'EventController@upcomingEvents');
                 Route::post('/', 'EventController@create');
                 Route::post('/range', 'EventController@range');
                 Route::put('/change-date', 'EventController@changeDate');
+                Route::delete('/{id}', 'EventController@destroy');
             });
 
             Route::get('/get-registration-form', 'SettingController@getRegistration');

@@ -22,7 +22,7 @@ class Request
 
         if ($this->isJson())
         {
-            $this->data = $this->getDecodedJson();
+            $this->data = array_merge(is_array($this->getDecodedJson()) ? $this->getDecodedJson() : [], $_GET);
             return $this->data;
         }
 
@@ -35,7 +35,7 @@ class Request
             case 'PUT':
             case 'PATCH':
             case 'DELETE':
-                $this->data = $_POST;
+                $this->data = array_merge($_POST, $_GET);
                 break;
         }
 

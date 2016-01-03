@@ -1,6 +1,6 @@
 <template>
     <div class="search-select" tabindex="0" @focus="handleMainFocused()">
-        <select v-el:select name="{{ name }}" v-model="selected[value]">
+        <select v-el:select name="{{ name }}" v-model="model">
             <option v-for="d in data" value="{{ d[value] }}"></option>
         </select>
         <div class="fake-select" @mousedown.prevent @click="handleFakeClick()">
@@ -41,14 +41,14 @@
 
 <script>
 export default {
-    props: ['data', 'name', 'value', 'display', 'placeholder'],
+    props: ['data', 'name', 'value', 'model', 'display', 'placeholder'],
 
     data: function() {
         return {
-            selected: this.data[0],
+            selected: this.initSelected(),
             search: '',
             showResults: false,
-            chosenIndex: 0
+            chosenIndex: 0,
         };
     },
 
@@ -56,11 +56,21 @@ export default {
         count: function (arr) {
             this.$set('filterLength', arr.length);
 
-            return arr
+            return arr;
         }
     },
 
     methods: {
+        initSelected: function() {
+            for (var i = 0; i < this.data.length; i++) {
+                if (this.data[i][this.value] == this.model) {
+                    return this.data[i];
+                }
+            }
+
+            return this.data[0];
+        },
+
         shouldApplyChosenClass: function(index) {
             return this.chosenIndex == index;
         },
@@ -108,6 +118,7 @@ export default {
         handleEnter: function() {
             this.selected[this.value] = $('.results .chosen:first').data('value');
             this.selected[this.display] = $('.results .chosen:first').data('display');
+            this.model = this.selected[this.value];
             this.search = '';
             this.showResults = false;
             $(this.$els.select).trigger('change');
@@ -139,6 +150,7 @@ export default {
 
         handleResultClick: function(d) {
             this.selected = d;
+            this.model = d[this.value];
             this.search = '';
             this.showResults = false;
             this.chosenIndex = 0;

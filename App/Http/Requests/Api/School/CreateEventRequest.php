@@ -15,9 +15,14 @@ class CreateEventRequest extends AuthenticatedRequest
     {
         return [
             'title' => 'required',
+            'descriotion' => 'required',
             'startDate' => 'required',
             'endDate' => 'required',
-            'color' => 'required'
+            'startTime' => 'required',
+            'endTime' => 'required',
+            'isAllDay' => 'required',
+            'color' => 'required',
+            'activityId' => ['required', 'numeric']
         ];
     }
 }

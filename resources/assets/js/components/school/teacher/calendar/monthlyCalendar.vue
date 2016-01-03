@@ -23,12 +23,38 @@
                             <div
                                     v-for="event in getEventsForDate(getPositionDate(i, j)) | orderBy startTime"
                                     v-draggable:event="{id: event.id, startDate: event.startDate}"
-                                    v-bind:class="['event', getColorClass(event)]"
+                                    class="event-wrapper"
                             >
-                                {{ event.title }}
+                                <div v-bind:class="['event', getColorClass(event)]" @click="showEventId = event.id">
+                                    {{ event.title }}
+                                </div>
+                                <div class="event-popover" v-show="showEventId == event.id">
+                                    <div class="arrow-box">
+                                        <div class="header">
+                                            {{ event.title }}
+                                            <div class="close" @click="showEventId = 0"></div>
+                                        </div>
+                                        <div class="body">
+                                            <div class="body-row">
+                                                <div class="row-left">Description:</div>
+                                                <div class="row-right">
+                                                    {{ typeof event.description == 'string' && event.description != '' ? event.description : 'n/a' }}
+                                                </div>
+                                            </div>
+                                            <div class="body-row">
+                                                <div class="row-left">Activity:</div>
+                                                <div class="row-right">{{ findActivity(event.activityId) ? findActivity(event.activityId).name : 'n/a' }}</div>
+                                            </div>
+                                        </div>
+                                        <div class="footer">
+                                            <button type="button" class="button-red button-short" @click="delete(event)">Delete</button>
+                                            <button type="button" class="button-green button-short">Edit</button>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                             <div class="extra-events" v-if="getEventCountForDate(getPositionDate(i, j)) > 4">
-                                + {{ getEventCountForDate(getPositionDate(i, j)) - 4 }} more
+                                + {{ getEventCountForDate(getPositionDate(i, j)) - 3 }} more
                             </div>
                         </div>
                         <div class="add"><i class="fa fa-plus-circle" @click="showAddEvent(i, j)"></i></div>
@@ -90,6 +116,26 @@
                             ></div>
                         </div>
                     </div>
+
+                    <div :class="['more-options-toggler', showMoreOptions ? 'more-options-open' : '']" @click="showMoreOptions = !showMoreOptions">
+                        More options<i class="fa"></i>
+                    </div>
+
+                    <div class="more-options" v-show="showMoreOptions">
+
+                        <div class="form-row">
+                            <label>Activity</label>
+                            <search-select name="activityId"
+                                           :data="activities"
+                                           value="id"
+                                           display="name"
+                                           :model.sync="newEvent.activityId"
+                                           placeholder="Select an activity"
+                            >
+                            </search-select>
+                        </div>
+
+                    </div>
                 </form>
             </div>
             <div class="footer">
@@ -134,8 +180,19 @@ export default {
                 '8:00am', '8:30am', '9:00am', '9:30am', '10:00am', '10:30am', '11:00am', '11:30am',
                 '12:00pm', '12:30pm', '1:00pm', '1:30pm', '2:00pm', '2:30pm', '3:00pm',
                 '3:30pm', '4:00pm', '4:30pm', '5:00pm', '5:30pm', '6:00pm', '6:30pm', '7:00pm', '7:30pm',
-                '8:00pm', '8:30pm', '9:00pm', '9:30pm', '10:00pm', '10:30pm', '11:00pm', '11:30pm', ]
+                '8:00pm', '8:30pm', '9:00pm', '9:30pm', '10:00pm', '10:30pm', '11:00pm', '11:30pm', ],
+            showEventId: 0,
+            showMoreOptions: false,
+            activities: []
         };
+    },
+
+    ready: function() {
+        window.addEventListener('keyup', this.handleKeyUp);
+    },
+
+    created: function() {
+        this.activities = this.fetchActivities();
     },
 
     computed: {
@@ -153,6 +210,12 @@ export default {
     },
 
     methods: {
+        handleKeyUp: function(e) {
+            if (e.keyCode == 27 && this.showEventId != 0) {
+                this.showEventId = 0;
+            }
+        },
+
         moment: function(str = '') {
             return this.$parent.getMoment(str);
         },
@@ -267,7 +330,7 @@ export default {
             this.newEvent.color = 'teal';
             this.newEvent.location = '';
             this.newEvent.isVisible = true;
-            this.newEvent.activityId = 0;
+            this.newEvent.activityId = this.activities.length > 0 ? this.activities[0].id : 0;
             this.newEvent.studentIds = [];
             this.newEvent.isRecurring = false;
             this.newEvent.rEndDate = posDate.add(1, 'years').format('YYYY-MM-DD');
@@ -276,6 +339,8 @@ export default {
             this.newEvent.rEvery = 'week';
             this.newEvent.notifyMeBy = 'email';
             this.newEvent.notifyMeBefore = '15mins';
+
+            this.showMoreOptions = false;
 
             this.$refs.newEventModal.open();
         },
@@ -313,9 +378,14 @@ export default {
         createEvent: function() {
             this.$http.post('/api/school/teacher/events/', {
                 title: this.newEvent.title,
+                description: this.newEvent.description,
                 startDate: this.newEvent.startDate,
                 endDate: this.newEvent.endDate,
-                color: this.newEvent.color
+                startTime: this.newEvent.startTime,
+                endTime: this.newEvent.endTime,
+                isAllDay: this.newEvent.isAllDay,
+                color: this.newEvent.color,
+                activityId: this.newEvent.activityId
             }, function(response, status) {
                 if (status != 200) {
                     this.$dispatch('flash', 'error', 'Failed to create event. Please try again.');
@@ -360,6 +430,28 @@ export default {
                 }
 
                 this.events = response.events;
+            });
+        },
+
+        fetchActivities: function() {
+            this.$http.get('/api/school/teacher/activities/', function(response, status) {
+                this.activities = response.activities;
+                this.activities.unshift({id: 0, name: 'none'});
+            });
+        },
+
+        findActivity: function(id) {
+            for (var i = 0; i < this.activities.length; i++) {
+                if (this.activities[i].id == id) {
+                    return this.activities[i];
+                }
+            }
+        },
+
+        delete: function(event) {
+            this.$http.delete('/api/school/teacher/events/' + event.id, function(response, status) {
+                this.$dispatch('flash', 'success', 'Event deleted!');
+                this.events.$remove(event);
             });
         }
     }

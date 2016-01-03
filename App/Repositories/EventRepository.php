@@ -9,8 +9,8 @@ class EventRepository extends AuthenticatedRepository
 {
     public function create(array $data)
     {
-        $event = new Event($data['title'], Carbon::parse($data['startDate']), Carbon::parse($data['endDate']),
-            $data['color'], $data['teacher']);
+        $event = new Event($data['title'], $data['description'], Carbon::parse($data['startDate']), Carbon::parse($data['endDate']),
+            $data['startTime'], $data['endTime'], $data['isAllDay'], $data['color'], $data['teacher'], $data['activity']);
 
         $this->dm->persist($event);
 
@@ -26,8 +26,23 @@ class EventRepository extends AuthenticatedRepository
             ->toArray();
     }
 
+    public function upcomingEvents()
+    {
+        return $this->user->events()->where('startDate', '>', Carbon::now())
+            ->where('startDate', '<=', Carbon::now()->addWeek(1))
+            ->sortBy('startDate', true)
+            ->slice(0, 10);
+    }
+
     public function update(Event $event)
     {
+        $this->dm->flush();
+    }
+
+    public function delete(Event $event)
+    {
+        $this->dm->delete($event);
+
         $this->dm->flush();
     }
 }
