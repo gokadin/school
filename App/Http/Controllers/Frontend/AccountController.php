@@ -9,9 +9,9 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Frontend\PreRegistrationRequest;
 use App\Http\Requests\Frontend\LoginRequest;
 use App\Http\Requests\Frontend\RegistrationRequest;
-use App\Jobs\Frontend\PreRegisterTeacher;
 use App\Jobs\Frontend\RegisterTeacher;
 use App\Repositories\UserRepository;
+use Library\Mail\Mail;
 
 class AccountController extends Controller
 {
@@ -78,8 +78,14 @@ class AccountController extends Controller
         $this->response->route('frontend.index.index');
     }
 
-    public function signUpLand()
+    public function signUpLand(Mail $mail)
     {
-        return $this->view->make('frontend.account.signUpLand', ['confn' => $this->session->getFlash()]);
+        $mail->send('test', [], function($m) {
+            $m->to('guivio_147@hotmail.com');
+            $m->from('lala');
+            $m->subject('some subject');
+        });
+
+        return $this->view->make('frontend.account.signUpLand');
     }
 }
