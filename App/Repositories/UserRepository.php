@@ -47,6 +47,11 @@ class UserRepository extends Repository
         return $this->dm->find(Student::class, $id);
     }
 
+    public function findStudentsInIds(array $ids)
+    {
+        return $this->dm->findIn(Student::class, $ids)->toArray();
+    }
+
     public function preRegisterTeacher(array $data)
     {
         $subscription = new Subscription($data['subscriptionType']);
@@ -265,5 +270,11 @@ class UserRepository extends Repository
             'data' => $this->transformer->of(Student::class)->transform($result['data']),
             'pagination' => $result['pagination']
         ];
+    }
+
+    public function search($string)
+    {
+        return $this->user->students()->where('firstName lastName', 'LIKE', '%'.$string.'%')
+                ->sortBy('firstName', true)->toArray();
     }
 }

@@ -43,6 +43,9 @@ class Event
     /** @HasOne(target="\App\Domain\Activities\Activity", nullable) */
     private $activity;
 
+    /** @HasMany(target="\App\Domain\Events\Lesson", mappedBy="event") */
+    private $lessons;
+
     public function __construct($title, $description, $startDate, $endDate, $startTime, $endTime, $isAllDay, $color,
                                 Teacher $teacher, $activity)
     {
@@ -156,5 +159,20 @@ class Event
     public function setActivity($activity)
     {
         $this->activity = $activity;
+    }
+
+    public function lessons()
+    {
+        return $this->lessons;
+    }
+
+    public function addLesson(Lesson $lesson)
+    {
+        $this->lessons->add($lesson);
+    }
+
+    public function removeLesson(Lesson $lesson)
+    {
+        $this->lessons->remove($lesson);
     }
 }

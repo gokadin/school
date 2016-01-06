@@ -45,6 +45,13 @@
                                                 <div class="row-left">Activity:</div>
                                                 <div class="row-right">{{ findActivity(event.activityId) ? findActivity(event.activityId).name : 'n/a' }}</div>
                                             </div>
+                                            <div class="body-row">
+                                                <div class="row-left">Students:</div>
+                                                <div class="row-right" v-show="event.studentIds.length == 0">none</div>
+                                                <div class="row-right" v-show="event.studentIds.length > 0">
+                                                    <div class="view-students" @click="showStudentsFor(event)">view</div>
+                                                </div>
+                                            </div>
                                         </div>
                                         <div class="footer">
                                             <button type="button" class="button-red button-short" @click="delete(event)">Delete</button>
@@ -135,12 +142,59 @@
                             </search-select>
                         </div>
 
+                        <div class="form-row student-row">
+                            <label>Students</label>
+                            <tag-select name="studentIds"
+                                        uri="/api/school/teacher/students/search"
+                                        method="post"
+                                        searchkey="search"
+                                        :model.sync="newEvent.studentIds"
+                                        placeholder="Search students"
+                                        display="fullName"
+                                        value="id"
+                            ></tag-select>
+                        </div>
+
                     </div>
                 </form>
             </div>
             <div class="footer">
                 <button type="button" class="button-red" @click="closeAddEvent()">Cancel</button>
                 <button type="button" class="button-green" @click="createEvent()">Create</button>
+            </div>
+        </div>
+    </modal>
+
+    <modal v-ref:students-modal>
+        <div class="modal-1">
+            <div class="header">
+                Attending students
+            </div>
+            <div class="body">
+                <div class="simple-list" v-if="currentStudents.length > 0">
+                    <ul>
+                        <li v-for="student in currentStudents | orderBy firstName">
+                            <div class="picture">
+                                <img src="/images/defaultProfilePicture.png" width="30" />
+                            </div>
+                            <div class="name">{{ student.fullName }}</div>
+                            <div class="profile-link">
+                                <a href="/school/teacher/students/{{ student.id }}">
+                                    <button type="button" class="button-green">
+                                        Profile
+                                        <i class="fa fa-arrow-circle-right"></i>
+                                    </button>
+                                </a>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+                <div class="no-activity-students" v-if="currentStudents.length == 0">
+                    There are no students for this activity yet.
+                </div>
+            </div>
+            <div class="footer">
+                <button class="button-red button-short" @click="closeStudentsModal()">Close</button>
             </div>
         </div>
     </modal>
@@ -151,6 +205,8 @@ export default {
     data: function() {
         return {
             currentDate: this.moment(),
+            countries: ["Mexico", "USA", "Brazil", "Argentina", "Chile"],
+            selectedCountry: null,
             events: this.fetchMonthEvents(this.moment()),
             newEvent: {
                 id: 0,
@@ -183,7 +239,8 @@ export default {
                 '8:00pm', '8:30pm', '9:00pm', '9:30pm', '10:00pm', '10:30pm', '11:00pm', '11:30pm', ],
             showEventId: 0,
             showMoreOptions: false,
-            activities: []
+            activities: [],
+            currentStudents: []
         };
     },
 
@@ -385,7 +442,8 @@ export default {
                 endTime: this.newEvent.endTime,
                 isAllDay: this.newEvent.isAllDay,
                 color: this.newEvent.color,
-                activityId: this.newEvent.activityId
+                activityId: this.newEvent.activityId,
+                studentIds: this.newEvent.studentIds
             }, function(response, status) {
                 if (status != 200) {
                     this.$dispatch('flash', 'error', 'Failed to create event. Please try again.');
@@ -453,6 +511,19 @@ export default {
                 this.$dispatch('flash', 'success', 'Event deleted!');
                 this.events.$remove(event);
             });
+        },
+
+        showStudentsFor: function(event) {
+            this.$http.post('/api/school/teacher/students/from-ids', {
+                ids: event.studentIds
+            }, function(response, status) {
+                this.currentStudents = response.students;
+                this.$refs.studentsModal.open();
+            });
+        },
+
+        closeStudentsModal: function() {
+            this.$refs.studentsModal.close();
         }
     }
 }

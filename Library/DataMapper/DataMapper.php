@@ -216,6 +216,10 @@ class DataMapper
         }
     }
 
+    /**
+     * @param $object
+     * @throws DataMapperException
+     */
     public function delete($object)
     {
         $this->unitOfWork->addToRemovals($object);

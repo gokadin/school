@@ -8,7 +8,7 @@ class CreateEventRequest extends AuthenticatedRequest
 {
     function authorize()
     {
-        return true;
+        return true; // handle student ids not teacher's!
     }
 
     function rules()

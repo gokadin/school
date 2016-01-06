@@ -197,6 +197,18 @@
 
                       .row-right {
                         flex-basis: 60%;
+
+                        .view-students {
+                          width: 50px;
+                          height: 20px;
+                          line-height: 20px;
+                          border-radius: 3px;
+                          border: 1px solid #cccccc;
+                          background-color: #67b168;
+                          color: #fff;
+                          text-align: center;
+                          cursor: pointer;
+                        }
                       }
                     }
                   }
@@ -317,6 +329,12 @@
     }
   }
 
+  .student-row {
+    .tag-select {
+      flex-basis: 70%;
+    }
+  }
+
   .color-options {
     flex-basis: 70%;
     display: flex;
@@ -353,5 +371,76 @@
     .color-golden { background-color: #e6b700; }
     .color-red { background-color: #ff5050; }
     .color-purple { background-color: #d147a3; }
+  }
+}
+
+.no-activity-students {
+  text-align: center;
+  margin: 20px 0;
+}
+
+.simple-list {
+  .student-filter {
+    height: 40px;
+
+    input {
+      height: 40px;
+      width: 100%;
+      border-radius: 0;
+      border: 1px solid #cccccc;
+      padding: 10px;
+      font-size: 20px;
+    }
+  }
+
+  ul {
+    width: 100%;
+    margin: 20px 0;
+    list-style: none;
+
+    li {
+      display: flex;
+      align-items: center;
+      height: 40px;
+      border-top: 1px solid #f2f2f2;
+      width: 100%;
+
+      .picture {
+        flex-basis: 40px;
+        padding: 5px;
+      }
+
+      .name {
+        flex-basis: 90%;
+        font-size: 18px;
+        padding: 0 5px;
+      }
+
+      .profile-link {
+        flex-basis: 10%;
+
+        button {
+          position: relative;
+
+          i {
+            position: absolute;
+            text-align: right;
+            color: white;
+            right: 8px;
+            height: 30px;
+            line-height: 30px;
+            top: 0;
+          }
+        }
+      }
+    }
+
+    li:last-child {
+      border-bottom: 1px solid #f2f2f2;
+    }
+
+    li:hover {
+      background-color: #f2f2f2;
+    }
   }
 }

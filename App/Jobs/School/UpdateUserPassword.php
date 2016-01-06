@@ -17,16 +17,6 @@ class UpdateUserPassword extends Job implements ShouldQueue
         $this->newPassword = $newPassword;
     }
 
-    public function currentPassword()
-    {
-        return $this->currentPassword;
-    }
-
-    public function newPassword()
-    {
-        return $this->newPassword;
-    }
-
     public function handle(UserRepository $userRepository)
     {
         $userRepository->updatePassword($this->currentPassword, $this->newPassword);

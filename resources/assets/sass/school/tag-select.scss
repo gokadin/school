@@ -1,0 +1,76 @@
+.tag-select {
+  position: relative;
+
+  > ul {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    width: 100%;
+    min-height: 40px;
+    border: 1px solid #cccccc;
+    background-color: white;
+    list-style: none;
+
+    > li.tag {
+      display: flex;
+      align-items: center;
+      height: 30px;
+      padding: 0 5px;
+      margin: 3px;
+      background-color: #e4e4e4;
+      border-radius: 4px;
+      border: 1px solid #aaa;
+
+      i {
+        cursor: pointer;
+        color: #a94442;
+        margin-left: 5px;
+      }
+    }
+
+    > li.search-tag {
+      height: 30px;
+      flex: 1;
+      min-width: 160px;
+
+      > input[type="text"] {
+        border: none;
+        height: 30px;
+        line-height: 30px;
+        padding: 0 5px;
+        width: 100%;
+      }
+    }
+  }
+
+  .dropdown {
+    position: absolute;
+    left: 0;
+    top: 100%;
+    width: 100%;
+    background-color: white;
+    z-index: 10;
+    max-height: 210px;
+    overflow-y: auto;
+    border: 1px solid #cccccc;
+    border-top: none;
+
+    .results {
+      .result {
+        cursor: pointer;
+        height: 30px;
+        line-height: 30px;
+        padding: 0 5px;
+      }
+
+      .result:hover, .result.selected {
+        background-color: #26a69a;
+        color: #fff;
+      }
+
+      .result:not(:last-child) {
+        border-bottom: 1px solid #cccccc;
+      }
+    }
+  }
+}

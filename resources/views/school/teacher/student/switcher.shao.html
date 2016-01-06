@@ -4,10 +4,10 @@
             <a href="/school/teacher/students/{{ $student->getId() }}"><i class="fa fa-user"></i>Profile</a>
         </li>
         <li class="@if (currentRoute() == 'school.teacher.student.test') active @endif ">
-            <a href="/school/teacher/students/{{ $student->getId() }}"><i class="fa fa-cogs"></i>Activity</a>
+            <a href="/school/teacher/students/{{ $student->getId() }}"><i class="fa fa-cogs"></i>Activities</a>
         </li>
         <li class="@if (currentRoute() == 'school.teacher.student.test') active @endif ">
-            <a href="/school/teacher/students/{{ $student->getId() }}"><i class="fa fa-envelope"></i>Messages</a>
+            <a href="/school/teacher/students/{{ $student->getId() }}"><i class="fa fa-book"></i>Lessons</a>
         </li>
     </ul>
 </div>

@@ -18,11 +18,15 @@ class Request
     protected function getDataFromSource()
     {
         if ($this->data != null)
+        {
             return $this->data;
+        }
 
         if ($this->isJson())
         {
-            $this->data = array_merge(is_array($this->getDecodedJson()) ? $this->getDecodedJson() : [], $_GET);
+            $decodedJson = $this->getDecodedJson();
+            $this->data = array_merge(is_array($decodedJson) ? $decodedJson : [], $_GET);
+
             return $this->data;
         }
 

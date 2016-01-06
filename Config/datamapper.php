@@ -23,7 +23,8 @@ return [
         App\Domain\School\School::class,
         App\Domain\Activities\Activity::class,
         App\Domain\Setting\TeacherSettings::class,
-        App\Domain\Events\Event::class
+        App\Domain\Events\Event::class,
+        App\Domain\Events\Lesson::class
     ]
 
 ];

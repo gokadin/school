@@ -35,6 +35,14 @@ return [
         'endTime' => function($o) { return $o->endTime(); },
         'isAllDay' => function($o) { return $o->isAllDay(); },
         'color' => function($o) { return $o->color(); },
-        'activityId' => function($o) { return is_null($o->activity()) ? 0 : $o->activity()->getId(); }
+        'activityId' => function($o) { return is_null($o->activity()) ? 0 : $o->activity()->getId(); },
+        'studentIds' => function($o) {
+            $ids = [];
+            foreach ($o->lessons() as $lesson)
+            {
+                $ids[] = $lesson->student()->getId();
+            }
+            return $ids;
+        }
     ]
 ];

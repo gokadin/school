@@ -49,7 +49,11 @@ export default {
     },
 
     watch: {
-        'search': function(val) {
+        'search': function(val, oldVal) {
+            if (oldVal == val) {
+                return;
+            }
+
             val = val.trim();
 
             if (val == '') {

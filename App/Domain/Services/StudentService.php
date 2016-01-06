@@ -2,6 +2,7 @@
 
 namespace App\Domain\Services;
 
+use App\Domain\Users\Student;
 use App\Events\School\StudentPreRegistered;
 
 class StudentService extends AuthenticatedService
@@ -13,6 +14,17 @@ class StudentService extends AuthenticatedService
 
         return $this->userRepository->paginate(
             $data['page'], $data['max'] > 20 ? 20 : $data['max'], $sortingRules, $searchRules);
+    }
+
+    public function getInIds(array $ids)
+    {
+        return $this->transformer->of(Student::class)->transform($this->userRepository->findStudentsInIds($ids));
+    }
+
+    public function search($data)
+    {
+        return $this->transformer->of(Student::class)->transform(
+            $this->userRepository->search($data['search']));
     }
 
     public function preRegister(array $data)

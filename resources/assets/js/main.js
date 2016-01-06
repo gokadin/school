@@ -23,6 +23,7 @@ Vue.component('search', require('./components/search.vue'))
 Vue.component('searchSelect', require('./components/searchSelect.vue'))
 Vue.component('datepicker', require('./components/datepicker.vue'))
 Vue.component('popover', require('./components/popover.vue'))
+Vue.component('tagSelect', require('./components/tagSelect.vue'))
 
 new Vue({
     el: 'body',

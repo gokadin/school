@@ -513,7 +513,8 @@ button:disabled {
       position: absolute;
       width: 100%;
       background-color: white;
-      border: 1px solid #cccccc; }
+      border: 1px solid #cccccc;
+      z-index: 10; }
       #school .search-select .dropdown input {
         width: 98%;
         margin: 5px 1%;
@@ -1019,6 +1020,16 @@ button:disabled {
                       flex-basis: 40%; }
                     #school #monthly-calendar .body table tr td .events .event-wrapper .event-popover .arrow-box .body .body-row .row-right {
                       flex-basis: 60%; }
+                      #school #monthly-calendar .body table tr td .events .event-wrapper .event-popover .arrow-box .body .body-row .row-right .view-students {
+                        width: 50px;
+                        height: 20px;
+                        line-height: 20px;
+                        border-radius: 3px;
+                        border: 1px solid #cccccc;
+                        background-color: #67b168;
+                        color: #fff;
+                        text-align: center;
+                        cursor: pointer; }
                 #school #monthly-calendar .body table tr td .events .event-wrapper .event-popover .arrow-box .footer {
                   height: 40px;
                   border-top: 1px solid #cccccc;
@@ -1080,6 +1091,8 @@ button:disabled {
       text-decoration: underline; }
     #school #new-event-modal .more-options-toggler.more-options-open i:after {
       content: "\f0d7"; }
+    #school #new-event-modal .student-row .tag-select {
+      flex-basis: 70%; }
     #school #new-event-modal .color-options {
       flex-basis: 70%;
       display: flex; }
@@ -1117,3 +1130,103 @@ button:disabled {
         background-color: #ff5050; }
       #school #new-event-modal .color-options .color-purple {
         background-color: #d147a3; }
+  #school .no-activity-students {
+    text-align: center;
+    margin: 20px 0; }
+  #school .simple-list .student-filter {
+    height: 40px; }
+    #school .simple-list .student-filter input {
+      height: 40px;
+      width: 100%;
+      border-radius: 0;
+      border: 1px solid #cccccc;
+      padding: 10px;
+      font-size: 20px; }
+  #school .simple-list ul {
+    width: 100%;
+    margin: 20px 0;
+    list-style: none; }
+    #school .simple-list ul li {
+      display: flex;
+      align-items: center;
+      height: 40px;
+      border-top: 1px solid #f2f2f2;
+      width: 100%; }
+      #school .simple-list ul li .picture {
+        flex-basis: 40px;
+        padding: 5px; }
+      #school .simple-list ul li .name {
+        flex-basis: 90%;
+        font-size: 18px;
+        padding: 0 5px; }
+      #school .simple-list ul li .profile-link {
+        flex-basis: 10%; }
+        #school .simple-list ul li .profile-link button {
+          position: relative; }
+          #school .simple-list ul li .profile-link button i {
+            position: absolute;
+            text-align: right;
+            color: white;
+            right: 8px;
+            height: 30px;
+            line-height: 30px;
+            top: 0; }
+    #school .simple-list ul li:last-child {
+      border-bottom: 1px solid #f2f2f2; }
+    #school .simple-list ul li:hover {
+      background-color: #f2f2f2; }
+  #school .tag-select {
+    position: relative; }
+    #school .tag-select > ul {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      width: 100%;
+      min-height: 40px;
+      border: 1px solid #cccccc;
+      background-color: white;
+      list-style: none; }
+      #school .tag-select > ul > li.tag {
+        display: flex;
+        align-items: center;
+        height: 30px;
+        padding: 0 5px;
+        margin: 3px;
+        background-color: #e4e4e4;
+        border-radius: 4px;
+        border: 1px solid #aaa; }
+        #school .tag-select > ul > li.tag i {
+          cursor: pointer;
+          color: #a94442;
+          margin-left: 5px; }
+      #school .tag-select > ul > li.search-tag {
+        height: 30px;
+        flex: 1;
+        min-width: 160px; }
+        #school .tag-select > ul > li.search-tag > input[type="text"] {
+          border: none;
+          height: 30px;
+          line-height: 30px;
+          padding: 0 5px;
+          width: 100%; }
+    #school .tag-select .dropdown {
+      position: absolute;
+      left: 0;
+      top: 100%;
+      width: 100%;
+      background-color: white;
+      z-index: 10;
+      max-height: 210px;
+      overflow-y: auto;
+      border: 1px solid #cccccc;
+      border-top: none; }
+      #school .tag-select .dropdown .results .result {
+        cursor: pointer;
+        height: 30px;
+        line-height: 30px;
+        padding: 0 5px; }
+      #school .tag-select .dropdown .results .result:hover, #school .tag-select .dropdown .results .result.selected {
+        background-color: #26a69a;
+        color: #fff; }
+      #school .tag-select .dropdown .results .result:not(:last-child) {
+        border-bottom: 1px solid #cccccc; }

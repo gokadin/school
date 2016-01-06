@@ -506,6 +506,7 @@ button.button-large {
     width: 100%;
     background-color: white;
     border: 1px solid #cccccc;
+    z-index: 10;
 
     input {
       width: 98%;
@@ -548,3 +549,4 @@ button.button-large {
 @import 'profile';
 @import 'students';
 @import 'calendar';
+@import 'tag-select';

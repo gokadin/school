@@ -19,6 +19,16 @@ class EventRepository extends AuthenticatedRepository
         return $event;
     }
 
+    public function createLessons(array $lessons)
+    {
+        foreach ($lessons as $lesson)
+        {
+            $this->dm->persist($lesson);
+        }
+
+        $this->dm->flush();
+    }
+
     public function range(Carbon $from, Carbon $to)
     {
         return $this->user->events()->where('endDate', '>', $from)

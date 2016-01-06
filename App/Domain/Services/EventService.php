@@ -3,6 +3,7 @@
 namespace App\Domain\Services;
 
 use App\Domain\Events\Event;
+use App\Jobs\School\CreateEventLessons;
 use App\Repositories\EventRepository;
 use App\Repositories\UserRepository;
 use Carbon\Carbon;
@@ -42,6 +43,11 @@ class EventService extends AuthenticatedService
         }
 
         $event = $this->eventRepository->create($data);
+
+        if (sizeof($data['studentIds']) > 0)
+        {
+            $this->dispatchJob(new CreateEventLessons($event, $data['studentIds']));
+        }
 
         return $event->getId();
     }

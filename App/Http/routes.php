@@ -57,6 +57,8 @@ Route::group(['namespace' => 'Api', 'prefix' => '/api', 'as' => 'api', 'middlewa
 
             Route::group(['prefix' => '/students', 'as' => 'student'], function() {
                 Route::post('/', 'StudentController@index');
+                Route::post('/from-ids', 'StudentController@fromIds');
+                Route::post('/search', 'StudentController@search');
             });
 
             Route::group(['prefix' => '/events', 'as' => 'event'], function()
