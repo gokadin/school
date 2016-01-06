@@ -9,6 +9,8 @@ return array(
     'phpDocumentor' => array($vendorDir . '/phpdocumentor/reflection-docblock/src'),
     'Prophecy\\' => array($vendorDir . '/phpspec/prophecy/src'),
     'Mockery' => array($vendorDir . '/mockery/mockery/library'),
+    'Mailgun\\Tests' => array($vendorDir . '/mailgun/mailgun-php/tests'),
+    'Mailgun' => array($vendorDir . '/mailgun/mailgun-php/src'),
     'Cron' => array($vendorDir . '/mtdowling/cron-expression/src'),
     '' => array($baseDir . '/'),
 );

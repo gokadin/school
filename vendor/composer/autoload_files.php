@@ -6,9 +6,8 @@ $vendorDir = dirname(dirname(__FILE__));
 $baseDir = dirname($vendorDir);
 
 return array(
-    $vendorDir . '/hamcrest/hamcrest-php/hamcrest/Hamcrest.php',
-    $vendorDir . '/guzzlehttp/promises/src/functions_include.php',
-    $vendorDir . '/guzzlehttp/psr7/src/functions_include.php',
-    $vendorDir . '/swiftmailer/swiftmailer/lib/swift_required.php',
-    $vendorDir . '/guzzlehttp/guzzle/src/functions_include.php',
+    'f5b3ada715b2e75e9a702d70d0eeca62' => $vendorDir . '/symfony/polyfill-mbstring/bootstrap.php',
+    '3ad337fb1e17055256ca59753bdfe795' => $vendorDir . '/react/promise/src/functions_include.php',
+    'ee65fd8033b69a16866fce8167c9aa34' => $vendorDir . '/hamcrest/hamcrest-php/hamcrest/Hamcrest.php',
+    '01b872096dad055849387e42d41a176d' => $vendorDir . '/swiftmailer/swiftmailer/lib/swift_required.php',
 );

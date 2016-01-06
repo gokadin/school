@@ -22,7 +22,8 @@ class View
     public function make($view, array $data = [])
     {
         $this->add($data);
-        $this->content = $this->processView($view);
+        $this->processView($view);
+
         return $this;
     }
 
@@ -51,19 +52,18 @@ class View
         }
 
         ob_start();
-
         require $contentFile;
-
         $content = ob_get_clean();
-
-        ob_start();
 
         if (Factory::hasLayout())
         {
+            ob_start();
             require Factory::getLayoutFile();
+            $this->content = ob_get_clean();
         }
-
-        return ob_get_clean();
+        else {
+            $this->content = $content;
+        }
     }
 
     protected function getContentFile($view)

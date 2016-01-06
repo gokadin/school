@@ -14,8 +14,8 @@
     "mockery/mockery": "^0.9.4",
     "symfony/console": "^2.7",
     "predis/predis": "^1.0",
-    "guzzlehttp/guzzle": "~5.3|~6.0",
-    "mtdowling/cron-expression": "^1.0"
+    "mtdowling/cron-expression": "^1.0",
+    "mailgun/mailgun-php": "^1.8"
   },
   "autoload": {
     "psr-0": {"": ""}

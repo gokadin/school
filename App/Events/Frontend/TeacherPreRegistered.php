@@ -7,7 +7,7 @@ use App\Events\Event;
 
 class TeacherPreRegistered extends Event
 {
-    protected $tempTeacher;
+    private $tempTeacher;
 
     public function __construct(TempTeacher $tempTeacher)
     {

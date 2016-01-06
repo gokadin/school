@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Frontend;
 
 use App\Domain\Services\LoginService;
+use App\Domain\Services\TeacherRegistrationService;
 use App\Domain\Subscriptions\SubscriptionsTypes;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Frontend\PreRegistrationRequest;
@@ -49,9 +50,10 @@ class AccountController extends Controller
         return $this->view->make('frontend.account.resetPassword');
     }
 
-    public function preRegisterTeacher(PreRegistrationRequest $request)
+    public function preRegisterTeacher(PreRegistrationRequest $request,
+                                       TeacherRegistrationService $teacherRegistrationService)
     {
-        $this->dispatchJob(new PreRegisterTeacher($request->all()));
+        $teacherRegistrationService->preRegister($request->all());
 
         $this->response->route('frontend.account.signUpLand');
     }

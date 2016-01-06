@@ -274,6 +274,15 @@ button:disabled {
 #frontend #register-student-form {
   width: 60%;
   margin: 0 auto; }
+#frontend #signup-land {
+  text-align: center;
+  margin-top: 50px; }
+  #frontend #signup-land h4 {
+    margin-top: 30px; }
+  #frontend #signup-land h5 {
+    margin-top: 5px; }
+    #frontend #signup-land h5 a {
+      color: #67b168; }
 
 #school {
   /* MODAL */ }

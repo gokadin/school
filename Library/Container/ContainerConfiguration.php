@@ -11,6 +11,7 @@ use Library\Http\Response;
 use Library\Http\View;
 use Library\Http\ViewFactory;
 use Library\Log\Log;
+use Library\Mail\Mail;
 use Library\Queue\Queue;
 use Library\Routing\Router;
 use Library\Database\Database;
@@ -49,6 +50,8 @@ class ContainerConfiguration
             new EventManager($eventManagerConfig, $this->container, $queue));
         $transformerConfig = require $app->basePath().'Config/transformations.php';
         $this->container->registerInstance('transformer', new Transformer($transformerConfig));
+        $mailConfig = require $app->basePath().'Config/mail.php';
+        $this->container->registerInstance('mail', new Mail($mailConfig));
 
         // ORM
         $datamapperConfig = require $app->basePath().'Config/datamapper.php';

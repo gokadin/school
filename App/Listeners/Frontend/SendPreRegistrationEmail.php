@@ -10,6 +10,7 @@ class SendPreRegistrationEmail extends Listener implements ShouldQueue
 {
     public function handle(TeacherPreRegistered $event)
     {
-
+        $tempTeacher = $event->tempTeacher();
+        $email = $tempTeacher->email();
     }
 }

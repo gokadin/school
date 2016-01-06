@@ -68,7 +68,7 @@ class UserRepository extends Repository
         );
         $this->dm->persist($tempTeacher);
 
-        $this->dm->flush();
+        //$this->dm->flush();
 
         return $tempTeacher;
     }
