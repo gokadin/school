@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    @inject('\Library\Session\Session')
+    @inject('Library\Session\Session')
     <title>School</title>
     <meta http-equiv="Content-type" content="text/html; charset=UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
@@ -9,47 +9,28 @@
     <link rel="stylesheet" href="/css/app.css" />
     <link rel="stylesheet" href="/vendor/font-awesome-4.4.0/css/font-awesome.min.css" />
 </head>
+
 <body id="frontend">
-<div id="container">
-    <nav id="top-nav">
-        <span class="top-nav-brand">School Manager</span>
-        <span class="top-nav-account-links">
-            <a href="@path('frontend.account.login')">Login</a>&nbsp;
-            <a class="sign-up" href="@path('frontend.account.signUp')">Sign up</a>
-        </span>
-    </nav>
-    <nav id="main-nav" role="navigation">
+
+<header>
+    <nav>
         <ul>
-            <li><a href="@path('frontend.index.index')">Home</a></li>
-            <li><a href="@path('frontend.index.features')">Features</a></li>
-            <li><a href="@path('frontend.index.testimonials')">Testimonials</a></li>
-            <li><a href="@path('frontend.index.faq')">FAQ</a></li>
-            <li><a href="@path('frontend.index.about')">About us</a></li>
             <li><a href="@path('frontend.account.signUp')">Sign up</a></li>
+            <li><a href="@path('frontend.account.login')">Login</a></li>
         </ul>
     </nav>
-    <hr class="fade-out-separator" />
+</header>
+
+<div id="container">
     <div id="content">
         @yield('content')
     </div>
 </div>
-<footer>
-    <div class="bottom-links">
-        <a href="/">home</a>&nbsp;|
-        <a href="http://facebook.com">facebook</a>&nbsp;|
-        <a href="@path('frontend.index.about')">about us</a>&nbsp;|
-        <a href="@path('frontend.index.contactUs')">contact us</a>
-    </div>
-    <div class="copyright">
-        Copyright &copy; 2015 TrueLine Designs
-    </div>
-</footer>
 
-<script src="{{ asset('js/jquery.min.js') }}" type="text/javascript"></script>
-<script src="{{ asset('js/jquery-ui.js') }}" type="text/javascript"></script>
-<script src="{{ asset('js/angular.min.js') }}" type="text/javascript"></script>
-<script src="{{ asset('js/validator.js') }}" type="text/javascript"></script>
-<script src="{{ asset('js/main.js') }}" type="text/javascript"></script>
+<script src="/js/main.js"></script>
+<script src="/js/validator.js"></script>
+
+@yield('javascript')
 
 </body>
 </html>

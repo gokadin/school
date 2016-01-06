@@ -1,2 +1,86 @@
+.form-fe-1 {
+  width: 550px;
+  margin: 40px auto;
+  border: 5px solid #ccc;
+  border-radius: 20px;
+
+  .form-title {
+    text-align: center;
+    padding: 20px 0;
+    border-bottom: 1px solid #cccccc;
+    color: #67b168;
+    font-size: 36px;
+    border-top-left-radius: 7px;
+    border-top-right-radius: 7px;
+  }
+
+  .form-row {
+    margin: 20px 0;
+    padding: 0 30px;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+
+    > label {
+      flex-basis: 30%;
+      font-size: 22px;
+    }
+
+    > input[type="text"],
+    > input[type="password"] {
+      flex-basis: 70%;
+      height: 40px;
+      border: 1px solid #cccccc;
+      border-radius: 0;
+      padding: 0 5px;
+      font-size: 22px;
+    }
+
+    > input[type="text"]:focus,
+    > input[type="password"]:focus {
+      border-color: #808080;
+    }
+
+    > input[type="text"].valid,
+    > input[type="password"].valid {
+      border-color: #67b168;
+    }
+
+    > input[type="text"].invalid,
+    > input[type="password"].invalid {
+      border-color: #a94442;
+    }
+
+    .form-error {
+      flex-basis: 100%;
+      padding-left: 30%;
+      color: #a94442;
+      font-size: 14px;
+      margin-top: 5px;
+    }
+  }
+
+  .form-button {
+    button {
+      height: 70px;
+      border: 1px solid #67b168;
+      border-top: 1px solid #cccccc;
+      border-bottom-left-radius: 16px;
+      border-bottom-right-radius: 16px;
+      background-color: #67b168;
+      color: #f5f5f5;
+      font-size: 28px;
+      width: 100%;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #85C186;
+      border: 1px solid #85C186;
+    }
+  }
+}
+
+@import 'frontend-responsive';
 @import 'layout';
 @import 'studentRegistration';

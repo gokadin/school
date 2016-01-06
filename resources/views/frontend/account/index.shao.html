@@ -4,44 +4,28 @@
 
 @inject('\Library\Http\Form')
 
-<div class="login">
+<div id="login">
 
-    {!! $form->open('', 'POST', ['id' => 'login-form', 'class' => 'custom-1']) !!}
+    {!! $form->open('', 'POST', ['id' => 'login-form', 'class' => 'form-fe-1']) !!}
 
-    <div class="g-form-header">
+    <div class="form-title">
         Login
     </div>
 
-    <div class="g-form-body">
-
-        <div class="form-row">
-            {!! $form->label('email', 'Email') !!}
-            {!! $form->text('email', null, ['placeholder' => 'Email']) !!}
-            {!! $form->error('email') !!}
-        </div>
-
-        <div class="form-row">
-            {!! $form->label('password', 'Password') !!}
-            {!! $form->password('password') !!}
-            {!! $form->error('password') !!}
-        </div>
-
-        <div class="forgot-password-row">
-            Forgot your password?
-            <a href="/account/reset-password">Click here</a>
-        </div>
-
-        <div class="create-account-row">
-            Don't have an account yet?<br />
-            <a href="/account/signup">Create an account</a>
-        </div>
-
+    <div class="form-row">
+        {!! $form->label('email', 'Email') !!}
+        {!! $form->text('email', null, ['placeholder' => 'Email']) !!}
+        {!! $form->error('email') !!}
     </div>
 
-    <div class="g-form-footer">
+    <div class="form-row">
+        {!! $form->label('password', 'Password') !!}
+        {!! $form->password('password', null, ['placeholder' => 'Password']) !!}
+        {!! $form->error('password') !!}
+    </div>
 
+    <div class="form-button">
         {!! $form->button('Login', ['type' => 'submit']) !!}
-
     </div>
 
     {!! $form->close() !!}

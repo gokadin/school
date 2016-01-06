@@ -1,0 +1,18 @@
+@media screen and (max-width: 580px) {
+  .form-fe-1 {
+    width: 400px;
+
+    .form-row {
+      padding: 0 10px;
+
+      > label {
+        display: none;
+      }
+
+      > input[type="text"],
+      > input[type="password"] {
+        flex-basis: 100%;
+      }
+    }
+  }
+}

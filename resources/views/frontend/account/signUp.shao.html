@@ -4,77 +4,35 @@
 
 @inject('\Library\Http\Form')
 
-<div class="memberships">
+<div id="signup">
 
-    @for ($i = 0; $i < sizeof($subscriptions); $i++)
-        <div class="membership membership{!! $i + 1 !!} @if ($i == 0) active @endif ">
-            <div class="membership-header">
-                {!! $subscriptions[$i]['name'] !!}
-            </div>
-            <div class="membership-body">
-                <div class="membership-pricing">{!! $subscriptions[$i]['price'] !!}</div>
-                <div class="membership-description">
-                    <table>
-                        <tr>
-                            <td><i class="fa fa-users"></i></td>
-                            <td>Students:</td>
-                            <td>{!! $subscriptions[$i]['numStudents'] !!}</td>
-                        </tr>
-                        <tr>
-                            <td><i class="fa fa-server"></i></td>
-                            <td>Storage space:</td>
-                            <td>{!! $subscriptions[$i]['storageSpace'] !!}</td>
-                        </tr>
-                        <tr>
-                            <td><i class="fa fa-lock"></i></td>
-                            <td>SSL encryption:</td>
-                            <td>Yes</td>
-                        </tr>
-                    </table>
-                </div>
-            </div>
-            <div class="membership-footer">
-                <a href="#" onclick="selectSubscription({!! $i + 1 !!});return false;">
-                    <button type="button">Select</button>
-                </a>
-            </div>
-        </div>
-    @endfor
-</div>
-
-<div class="signup">
-
-    {!! $form->open('', 'POST', ['id' => 'signup-form', 'class' => 'custom-1']) !!}
+    {!! $form->open('', 'POST', ['id' => 'signup-form', 'class' => 'form-fe-1']) !!}
 
     {!! $form->hidden('subscriptionType', '1') !!}
 
-    <div class="g-form-header">
+    <div class="form-title">
         Sign up
     </div>
 
-    <div class="g-form-body">
-
-        <div class="form-row">
-            {!! $form->label('firstName', 'First name', ['class' => 'required']) !!}
-            {!! $form->text('firstName', null, ['placeholder' => 'First name']) !!}
-            {!! $form->error('firstName') !!}
-        </div>
-
-        <div class="form-row">
-            {!! $form->label('lastName', 'Last name', ['class' => 'required']) !!}
-            {!! $form->text('lastName', null, ['placeholder' => 'Last name']) !!}
-            {!! $form->error('lastName') !!}
-        </div>
-
-        <div class="form-row">
-            {!! $form->label('email', 'Email', ['class' => 'required']) !!}
-            {!! $form->text('email', null, ['placeholder' => 'Email']) !!}
-            {!! $form->error('email') !!}
-        </div>
-
+    <div class="form-row">
+        {!! $form->label('firstName', 'First name', ['class' => 'required']) !!}
+        {!! $form->text('firstName', null, ['placeholder' => 'First name']) !!}
+        {!! $form->error('firstName') !!}
     </div>
 
-    <div class="g-form-footer">
+    <div class="form-row">
+        {!! $form->label('lastName', 'Last name', ['class' => 'required']) !!}
+        {!! $form->text('lastName', null, ['placeholder' => 'Last name']) !!}
+        {!! $form->error('lastName') !!}
+    </div>
+
+    <div class="form-row">
+        {!! $form->label('email', 'Email', ['class' => 'required']) !!}
+        {!! $form->text('email', null, ['placeholder' => 'Email']) !!}
+        {!! $form->error('email') !!}
+    </div>
+
+    <div class="form-button">
         {!! $form->button('Sign up', ['type' => 'submit']) !!}
     </div>
 
@@ -82,21 +40,11 @@
 
 </div>
 
+@stop()
+
+@section('javascript')
+
 <script type="text/javascript">
-var currentSubscription = 1;
-
-function selectSubscription(subscriptionNumber) {
-    if (subscriptionNumber < 1 || subscriptionNumber > 4) {
-        subscriptionNumber = 1;
-    }
-
-    $('.membership' + currentSubscription).removeClass('active');
-    currentSubscription = subscriptionNumber;
-    $('.membership' + currentSubscription).addClass('active');
-
-    $('#subscription').val(currentSubscription);
-}
-
 $('#signup-form').validate({
     firstName: [
         {rule: 'required', message: 'first name is required'}
