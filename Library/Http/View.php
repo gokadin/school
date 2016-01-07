@@ -2,8 +2,7 @@
 
 namespace Library\Http;
 
-use Library\Facades\Shao;
-use Library\Facades\ViewFactory as Factory;
+use Library\Shao\Shao;
 use Symfony\Component\Yaml\Exception\RuntimeException;
 
 class View
@@ -13,9 +12,11 @@ class View
     protected $basePath;
     protected $content;
     protected $vars;
+    protected $shao;
 
-    public function __construct()
+    public function __construct(Shao $shao)
     {
+        $this->shao = $shao;
         $this->basePath = __DIR__.'/../../'.self::VIEW_FOLDER;
     }
 
@@ -51,14 +52,16 @@ class View
             extract($this->vars);
         }
 
+        $viewFactory = new ViewFactory();
+
         ob_start();
         require $contentFile;
         $content = ob_get_clean();
 
-        if (Factory::hasLayout())
+        if ($viewFactory->hasLayout())
         {
             ob_start();
-            require Factory::getLayoutFile();
+            require $viewFactory->getLayoutFile();
             $this->content = ob_get_clean();
         }
         else {
@@ -83,7 +86,7 @@ class View
         {
             if (file_exists($view.$validShaoExtension))
             {
-                return Shao::parseFile($view.$validShaoExtension);
+                return $this->shao->parseFile($view.$validShaoExtension);
             }
         }
 

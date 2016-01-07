@@ -2,7 +2,9 @@
 
 namespace Library\Mail;
 
+use Library\Http\View;
 use Library\Mail\Drivers\MailgunDriver;
+use Library\Shao\Shao;
 
 class Mail
 {
@@ -12,23 +14,15 @@ class Mail
     private $driver;
 
     /**
-     * @var string
+     * @var Shao
      */
-    private $to;
+    private $shao;
 
-    /**
-     * @var string
-     */
-    private $from;
-
-    /**
-     * @var string
-     */
-    private $subject;
-
-    public function __construct($config)
+    public function __construct($config, Shao $shao)
     {
         $this->initializeDriver($config);
+
+        $this->shao = $shao;
     }
 
     private function initializeDriver($config)
@@ -43,47 +37,91 @@ class Mail
 
     public function send($route, array $data, Callable $callback)
     {
-        $this->prepareMessage($route, $data, $callback);
+        $this->prepareHtmlMessage($route, $data, $callback);
+
+        $this->executeCallback($callback);
 
         $this->sendMessage();
     }
 
-    public function to($to)
+    public function sendPlainText($text, Callable $callback)
     {
-        $this->to = $to;
+        $this->prepareTextMessage($text);
+
+        $this->executeCallback($callback);
+
+        $this->sendMessage();
     }
 
-    public function from($from)
+    public function to($to, $name = '')
     {
-        $this->from = $from;
+        $this->driver->setTo($to, $name);
+    }
+
+    public function from($from, $name = '')
+    {
+        $this->driver->setFrom($from, $name);
     }
 
     public function subject($subject)
     {
-        $this->subject = $subject;
+        $this->driver->setSubject($subject);
     }
 
-    private function prepareMessage($route, array $data, Callable $callback)
+    private function prepareTextMessage($text)
+    {
+        $this->driver->prepare();
+
+        $this->driver->setTextBody($text);
+    }
+
+    private function prepareHtmlMessage($route, array $data)
+    {
+        $this->driver->prepare();
+
+        $view = $_SERVER['DOCUMENT_ROOT'].'/../'.View::VIEW_FOLDER.'/'.str_replace('.', '/', $route);
+        $file = $this->getFile($view);
+
+        extract($data);
+
+        ob_start();
+        require $file;
+        $content = ob_get_clean();
+
+        $this->driver->setHtmlBody($content);
+    }
+
+    private function executeCallback(Callable $callback)
     {
         $callback($this);
     }
 
-    private function sendMessage()
+    private function getFile($view)
     {
-        $this->driver->sendMessage([
-            'from' => $this->from,
-            'to' => $this->to,
-            'subject' => $this->subject,
-            'text' => 'testing... testing testing'
-        ]);
+        $validExtensions = ['.php', '.html'];
+        $validShaoExtensions = ['.shao.php', '.shao.html'];
 
-        $this->clear();
+        foreach ($validExtensions as $validExtension)
+        {
+            if (file_exists($view.$validExtension))
+            {
+                return $view.$validExtension;
+            }
+        }
+
+        foreach ($validShaoExtensions as $validShaoExtension)
+        {
+            if (file_exists($view.$validShaoExtension))
+            {
+                return $this->shao->parseFile($view.$validShaoExtension);
+            }
+        }
+
+        throw new MailException('File '.$view.' does not exist.');
     }
 
-    private function clear()
+    private function sendMessage()
     {
-        $this->from = '';
-        $this->to = '';
-        $this->subject = '';
+        $this->driver->send();
     }
 }

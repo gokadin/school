@@ -80,11 +80,17 @@ class AccountController extends Controller
 
     public function signUpLand(Mail $mail)
     {
-        $mail->send('test', [], function($m) {
+        $mail->sendPlainText('testing mailing feature...', function($m) {
             $m->to('guivio_147@hotmail.com');
-            $m->from('givi.odikadze@gmail.com');
-            $m->subject('some subject2');
+            $m->from('guivio_147@hotmail.com', 'Givi Odikadze');
+            $m->subject('Welcome to instructioner');
         });
+
+//        $mail->send('frontend.emails.teacherPreRegisteredEmail', [], function($m) {
+//            $m->to('guivio_147@hotmail.com');
+//            $m->from('givi.odikadze@gmail.com', 'Givi Odikadze');
+//            $m->subject('some subject2');
+//        });
 
         return $this->view->make('frontend.account.signUpLand');
     }

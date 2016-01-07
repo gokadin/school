@@ -16,7 +16,7 @@ class Shao
     public function __construct(Container $container)
     {
         $this->shaoLogic = new ShaoLogic();
-        $this->shaoFunctions = new ShaoFunctions($container);
+        $this->shaoFunctions = new ShaoFunctions($container, $this);
     }
 
     public function parseFile($file)

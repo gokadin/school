@@ -3,19 +3,21 @@
 namespace Library\Shao;
 
 use Library\Container\Container;
-use Library\Facades\Router;
-use Library\Facades\Shao as ShaoBase;
-use Library\Facades\ViewFactory;
 use Library\Http\View;
 use Symfony\Component\Yaml\Exception\RuntimeException;
 
 class ShaoFunctions
 {
-    protected $container;
+    private $shao;
+    private $container;
+    private $router;
+    private $view;
 
-    public function __construct(Container $container)
+    public function __construct(Container $container, Shao $shao)
     {
+        $this->shao = $shao;
         $this->container = $container;
+        $this->router = $container->resolveInstance('router');
     }
 
     public function layout($str)
@@ -29,8 +31,7 @@ class ShaoFunctions
         {
             if (file_exists($requestedFile.$validExtension))
             {
-                ViewFactory::setLayoutFile($requestedFile.$validExtension);
-                return;
+                return '<?php $viewFactory->setLayoutFile(\''.$requestedFile.$validExtension.'\'); ?>';
             }
         }
 
@@ -38,8 +39,7 @@ class ShaoFunctions
         {
             if (file_exists($requestedFile.$validShaoExtension))
             {
-                ViewFactory::setLayoutFile(ShaoBase::parseFile($requestedFile.$validShaoExtension));
-                return;
+                return '<?php $viewFactory->setLayoutFile(\''.$this->shao->parseFile($requestedFile.$validShaoExtension).'\'); ?>';
             }
         }
 
@@ -48,17 +48,17 @@ class ShaoFunctions
 
     public function section($str)
     {
-        return '<?php viewFactoryStartSection(\''.$str.'\'); ?>';
+        return '<?php $viewFactory->startSection(\''.$str.'\'); ?>';
     }
 
     public function stop()
     {
-        return '<?php viewFactoryEndSection(); ?>';
+        return '<?php $viewFactory->endSection(); ?>';
     }
 
     public function _yield($str)
     {
-        return '<?php viewFactoryYield(\''.$str.'\'); ?>';
+        return '<?php echo $viewFactory->getSection(\''.$str.'\'); ?>';
     }
 
     public function _include($str)
@@ -80,7 +80,7 @@ class ShaoFunctions
         {
             if (file_exists($requestedFile.$validShaoExtension))
             {
-                return file_get_contents(ShaoBase::parseFile($requestedFile.$validShaoExtension));
+                return file_get_contents($this->shao->parseFile($requestedFile.$validShaoExtension));
             }
         }
 
@@ -95,25 +95,28 @@ class ShaoFunctions
         }
 
         $resolved = $this->container->resolve($class);
-        $view = $this->container->resolveInstance('view');
+        if (is_null($this->view))
+        {
+            $this->view = $this->container->resolveInstance('view');
+        }
 
         is_null($varName)
-            ? $view->add([lcfirst(substr($class, strrpos($class, '\\') + 1)) => $resolved])
-            : $view->add([$varName => $resolved]);
+            ? $this->view->add([lcfirst(substr($class, strrpos($class, '\\') + 1)) => $resolved])
+            : $this->view->add([$varName => $resolved]);
     }
 
     public function path($action, $var = null)
     {
         if (is_null($var))
         {
-            return Router::getUri($action);
+            return $this->router->getUri($action);
         }
 
         if (!is_array($var))
         {
-            return Router::getUri($action, [$var]);
+            return $this->router->getUri($action, [$var]);
         }
 
-        return Router::getUri($action, $var);
+        return $this->router->getUri($action, $var);
     }
 }

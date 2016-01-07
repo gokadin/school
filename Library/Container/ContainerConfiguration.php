@@ -39,9 +39,6 @@ class ContainerConfiguration
         $this->container->registerInstance('request', new Request());
         $session = new Session();
         $this->container->registerInstance('session', $session);
-        $this->container->registerInstance('shao', new Shao($this->container));
-        $this->container->registerInstance('view', new View());
-        $this->container->registerInstance('viewFactory', new ViewFactory());
         $this->container->registerInstance('log', new Log());
         $queue = new Queue();
         $this->container->registerInstance('queue', $queue);
@@ -50,8 +47,6 @@ class ContainerConfiguration
             new EventManager($eventManagerConfig, $this->container, $queue));
         $transformerConfig = require $app->basePath().'Config/transformations.php';
         $this->container->registerInstance('transformer', new Transformer($transformerConfig));
-        $mailConfig = require $app->basePath().'Config/mail.php';
-        $this->container->registerInstance('mail', new Mail($mailConfig));
 
         // ORM
         $datamapperConfig = require $app->basePath().'Config/datamapper.php';
@@ -71,6 +66,11 @@ class ContainerConfiguration
         $this->container->registerInstance('router', $router);
         $this->container->registerInstance('response', new Response($router));
         $this->container->registerInstance('form', new Form($router, $session));
+        $shao = new Shao($this->container);
+        $this->container->registerInstance('shao', $shao);
+        $mailConfig = require $app->basePath().'Config/mail.php';
+        $this->container->registerInstance('mail', new Mail($mailConfig, $shao));
+        $this->container->registerInstance('view', new View($shao));
 
         if (env('APP_DEBUG'))
         {
