@@ -82,8 +82,8 @@ class AccountController extends Controller
     {
         $mail->send('test', [], function($m) {
             $m->to('guivio_147@hotmail.com');
-            $m->from('lala');
-            $m->subject('some subject');
+            $m->from('givi.odikadze@gmail.com');
+            $m->subject('some subject2');
         });
 
         return $this->view->make('frontend.account.signUpLand');

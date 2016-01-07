@@ -74,7 +74,16 @@ class Mail
             'from' => $this->from,
             'to' => $this->to,
             'subject' => $this->subject,
-            'text' => 'testing...'
+            'text' => 'testing... testing testing'
         ]);
+
+        $this->clear();
+    }
+
+    private function clear()
+    {
+        $this->from = '';
+        $this->to = '';
+        $this->subject = '';
     }
 }
