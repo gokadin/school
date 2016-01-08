@@ -4,14 +4,10 @@ namespace App\Http\Controllers\Frontend;
 
 use App\Domain\Services\LoginService;
 use App\Domain\Services\TeacherRegistrationService;
-use App\Domain\Subscriptions\SubscriptionsTypes;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Frontend\PreRegistrationRequest;
 use App\Http\Requests\Frontend\LoginRequest;
 use App\Http\Requests\Frontend\RegistrationRequest;
-use App\Jobs\Frontend\RegisterTeacher;
-use App\Repositories\UserRepository;
-use Library\Mail\Mail;
 
 class AccountController extends Controller
 {
@@ -22,27 +18,25 @@ class AccountController extends Controller
 
     public function signup()
     {
-        return $this->view->make('frontend.account.signUp', [
-            'subscriptions' => SubscriptionsTypes::describeSubscriptions()
-        ]);
+        return $this->view->make('frontend.account.signUp');
     }
 
     public function login(LoginRequest $request, LoginService $loginService)
     {
         if (!$loginService->login($request->all()))
         {
-            $this->session->setFlash('Incorrect login. Please try again.', 'error');
-            $this->response->route('frontend.account.index');
+            return $this->response->route('frontend.account.index')
+                ->withFlash('Incorrect login. Please try again.', 'error');
         }
 
-        $this->response->route('school.teacher.index.index');
+        return $this->response->route('school.teacher.index.index');
     }
 
-    public function logout(UserRepository $userRepository)
+    public function logout(LoginService $loginService)
     {
-        $userRepository->logout();
+        $loginService->logout();
 
-        $this->response->route('frontend.account.index');
+        return $this->response->route('frontend.account.index');
     }
 
     public function resetPassword()
@@ -55,43 +49,35 @@ class AccountController extends Controller
     {
         $teacherRegistrationService->preRegister($request->all());
 
-        $this->response->route('frontend.account.signUpLand');
+        return $this->response->route('frontend.account.signUpLand');
     }
 
-    public function emailConfirmation(UserRepository $userRepository, $id, $code)
+    public function emailConfirmation(TeacherRegistrationService $teacherRegistrationService, $id, $code)
     {
-        $tempTeacher = $userRepository->findTempTeacher($id);
+        $tempTeacher = $teacherRegistrationService->findTempTeacher($id, $code);
 
-        if ($tempTeacher == null || $tempTeacher->confirmationCode() != $code)
+        if (!$tempTeacher)
         {
-            $this->session->setFlash('Your account no longer exists. Please sign up again.');
-            $this->response->route('frontend.account.signUp');
+            return $this->response->route('frontend.account.signUp')
+                ->withFlash('Your account no longer exists. Please sign up again.', 'error');
         }
 
         return $this->view->make('frontend.account.emailConfirmation', compact('tempTeacher'));
     }
 
-    public function registerTeacher(RegistrationRequest $request)
+    public function registerTeacher(RegistrationRequest $request, TeacherRegistrationService $teacherRegistrationService)
     {
-        $this->dispatchJob(new RegisterTeacher($request->all()));
+        if (!$teacherRegistrationService->register($request->all()))
+        {
+            return $this->response->route('frontend.account.signUp')
+                ->withFlash('Your account no longer exists. Please try signing up again.', 'error');
+        }
 
-        $this->response->route('frontend.index.index');
+        return $this->response->route('school.teacher.index.index');
     }
 
-    public function signUpLand(Mail $mail)
+    public function signUpLand()
     {
-        $mail->sendPlainText('testing mailing feature...', function($m) {
-            $m->to('guivio_147@hotmail.com');
-            $m->from('guivio_147@hotmail.com', 'Givi Odikadze');
-            $m->subject('Welcome to instructioner');
-        });
-
-//        $mail->send('frontend.emails.teacherPreRegisteredEmail', [], function($m) {
-//            $m->to('guivio_147@hotmail.com');
-//            $m->from('givi.odikadze@gmail.com', 'Givi Odikadze');
-//            $m->subject('some subject2');
-//        });
-
         return $this->view->make('frontend.account.signUpLand');
     }
 }

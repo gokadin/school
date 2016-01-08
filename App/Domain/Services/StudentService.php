@@ -3,6 +3,7 @@
 namespace App\Domain\Services;
 
 use App\Domain\Users\Student;
+use App\Domain\Users\TempStudent;
 use App\Events\School\StudentPreRegistered;
 
 class StudentService extends AuthenticatedService
@@ -56,5 +57,11 @@ class StudentService extends AuthenticatedService
             'student' => $student,
             'registrationForm' => json_decode($student->teacher()->settings()->registrationForm(), true)
         ];
+    }
+
+    public function newStudents()
+    {
+        return $this->transformer->of(TempStudent::class)
+            ->transform($this->userRepository->getNewStudentsOf($this->user));
     }
 }

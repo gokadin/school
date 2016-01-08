@@ -5,12 +5,13 @@ namespace App\Repositories;
 use App\Domain\Events\Event;
 use Carbon\Carbon;
 
-class EventRepository extends AuthenticatedRepository
+class EventRepository extends RepositoryBase
 {
     public function create(array $data)
     {
-        $event = new Event($data['title'], $data['description'], Carbon::parse($data['startDate']), Carbon::parse($data['endDate']),
-            $data['startTime'], $data['endTime'], $data['isAllDay'], $data['color'], $data['teacher'], $data['activity']);
+        $event = new Event($data['title'], $data['description'], Carbon::parse($data['startDate']),
+            Carbon::parse($data['endDate']), $data['startTime'], $data['endTime'], $data['isAllDay'],
+            $data['color'], $data['teacher'], $data['activity']);
 
         $this->dm->persist($event);
 
@@ -31,8 +32,8 @@ class EventRepository extends AuthenticatedRepository
 
     public function range(Carbon $from, Carbon $to)
     {
-        return $this->user->events()->where('endDate', '>', $from)
-            ->where('startDate', '<', $to)
+        return $this->user->events()->where('endDate', '>', $from->toDateString())
+            ->where('startDate', '<', $to->toDateString())
             ->toArray();
     }
 
@@ -42,17 +43,5 @@ class EventRepository extends AuthenticatedRepository
             ->where('startDate', '<=', Carbon::now()->addWeek(1))
             ->sortBy('startDate', true)
             ->slice(0, 10);
-    }
-
-    public function update(Event $event)
-    {
-        $this->dm->flush();
-    }
-
-    public function delete(Event $event)
-    {
-        $this->dm->delete($event);
-
-        $this->dm->flush();
     }
 }

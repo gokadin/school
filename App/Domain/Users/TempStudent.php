@@ -6,12 +6,11 @@ use App\Domain\Activities\Activity;
 use Carbon\Carbon;
 use Library\DataMapper\DataMapperPrimaryKey;
 use Library\DataMapper\DataMapperTimestamps;
-use JsonSerializable;
 
 /**
  * @Entity(name="temp_students")
  */
-class TempStudent implements JsonSerializable
+class TempStudent
 {
     use DataMapperPrimaryKey, DataMapperTimestamps;
 
@@ -26,6 +25,9 @@ class TempStudent implements JsonSerializable
     /** @Column(type="string") */
     protected $email;
 
+    /** @Column(type="decimal", size="5", precision="2") */
+    private $customPrice;
+
     /** @Column(type="string") */
     protected $confirmationCode;
 
@@ -36,13 +38,14 @@ class TempStudent implements JsonSerializable
     private $activity;
 
     public function __construct(Teacher $teacher, Activity $activity,
-                                $firstName, $lastName, $email, $confirmationCode)
+                                $firstName, $lastName, $email, $customPrice, $confirmationCode)
     {
         $this->teacher = $teacher;
         $this->activity = $activity;
         $this->firstName = $firstName;
         $this->lastName = $lastName;
         $this->email = $email;
+        $this->customPrice = $customPrice;
         $this->confirmationCode = $confirmationCode;
     }
 
@@ -74,6 +77,16 @@ class TempStudent implements JsonSerializable
     public function setEmail($email)
     {
         $this->email = $email;
+    }
+
+    public function customPrice()
+    {
+        return $this->customPrice;
+    }
+
+    public function setCustomPrice($customPrice)
+    {
+        $this->customPrice = $customPrice;
     }
 
     public function confirmationCode()
@@ -109,17 +122,5 @@ class TempStudent implements JsonSerializable
     public function isExpired()
     {
         return $this->createdAt < Carbon::now()->subDays(self::DAYS_BEFORE_EXPIRING);
-    }
-
-    public function jsonSerialize()
-    {
-        return [
-            'firstName' => $this->firstName,
-            'lastName' => $this->lastName,
-            'email' => $this->email,
-            'created_at' => $this->createdAt,
-            'activityName' => $this->activity->name(),
-            'status' => $this->isExpired() ? 'expired' : 'pending'
-        ];
     }
 }

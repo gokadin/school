@@ -25,14 +25,13 @@ class StudentController extends Controller
     {
         if (!$studentService->preRegister($request->all()))
         {
-            $this->session->setFlash('There was an error while registering your student. please try again.', 'error');
-            $this->response->route('school.teacher.student.create');
+            return $this->response->route('school.teacher.student.create')
+                ->withFlash('There was an error while registering your student. please try again.', 'error');
         }
 
-        $this->session->setFlash('Invitation sent!');
-        $request->createAnother == 1
-            ? $this->response->route('school.teacher.student.create')
-            : $this->response->route('school.teacher.student.index');
+        return $request->createAnother == 1
+            ? $this->response->route('school.teacher.student.create')->withFlash('Invitation sent!')
+            : $this->response->route('school.teacher.student.index')->withFlash('Invitation sent!');
     }
 
     public function show(ShowStudentRequest $request, StudentService $studentService)

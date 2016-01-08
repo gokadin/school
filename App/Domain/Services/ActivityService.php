@@ -4,30 +4,13 @@ namespace App\Domain\Services;
 
 use App\Domain\Activities\Activity;
 use App\Domain\Users\Student;
-use App\Repositories\ActivityRepository;
-use App\Repositories\UserRepository;
-use Library\Events\EventManager;
-use Library\Queue\Queue;
-use Library\Transformer\Transformer;
 
 class ActivityService extends AuthenticatedService
 {
-    /**
-     * @var ActivityRepository
-     */
-    private $activityRepository;
-
-    public function __construct(Queue $queue, EventManager $eventManager, Transformer $transformer,
-                                UserRepository $userRepository, ActivityRepository $activityRepository)
-    {
-        parent::__construct($queue, $eventManager, $transformer, $userRepository);
-
-        $this->activityRepository = $activityRepository;
-    }
-
     public function getActivities()
     {
-        return $this->transformer->of(Activity::class)->transform($this->user->activities()->toArray());
+        return $this->transformer->of(Activity::class)
+            ->transform($this->user->activities()->toArray());
     }
 
     public function getActivityList(array $data)
@@ -35,13 +18,13 @@ class ActivityService extends AuthenticatedService
         $sortingRules = isset($data['sortingRules']) ? $data['sortingRules'] : [];
         $searchRules = isset($data['searchRules']) ? $data['searchRules'] : [];
 
-        return $this->activityRepository->paginate(
+        return $this->repository->paginate($this->user->activities(),
             $data['page'], $data['max'] > 20 ? 20 : $data['max'], $sortingRules, $searchRules);
     }
 
     public function getActivityStudentList($id)
     {
-        $activity = $this->activityRepository->find($id);
+        $activity = $this->repository->of(Activity::class)->find($id);
         if (is_null($activity))
         {
             return false;
@@ -53,9 +36,9 @@ class ActivityService extends AuthenticatedService
 
     public function create(array $data)
     {
-        $data['teacher'] = $this->user();
+        $data['teacher'] = $this->user;
 
-        $this->activityRepository->create($data);
+        $this->repository->of(Activity::class)->create($data);
 
         return true;
     }
@@ -68,7 +51,7 @@ class ActivityService extends AuthenticatedService
             return false;
         }
 
-        $this->activityRepository->delete($activity);
+        $this->repository->of(Activity::class)->delete($activity);
 
         return true;
     }
@@ -81,7 +64,11 @@ class ActivityService extends AuthenticatedService
             return false;
         }
 
-        $this->activityRepository->update($activity, $data);
+        $activity->setName($data['name']);
+        $activity->setRate($data['rate']);
+        $activity->setPeriod($data['period']);
+
+        $this->repository->of(Activity::class)->update($activity);
 
         return true;
     }

@@ -8,17 +8,19 @@ use Library\Facades\Session;
 
 class Validator
 {
-    protected $database;
-    protected $errors = [];
+    private $database;
+    private $data = [];
+    private $errors = [];
 
     public function __construct(Database $database)
     {
         $this->database = $database;
     }
 
-    public function make(array $data, array $rules, $withErrors = true)
+    public function make(array $data, array $rules)
     {
         $this->errors = [];
+        $this->data = $data;
 
         if ($rules == null || sizeof($rules) == 0)
             return true;
@@ -45,8 +47,7 @@ class Validator
                 if ($isValid)
                     $isValid = false;
 
-                if ($withErrors)
-                    $errors[$field][] = $this->buildErrorString($field, $functionName, $args, $customError);
+                $this->errors[$field][] = $this->buildErrorString($field, $functionName, $args, $customError);
 
                 continue;
             }
@@ -74,15 +75,8 @@ class Validator
                 if ($isValid)
                     $isValid = false;
 
-                if ($withErrors)
-                    $errors[$field][] = $this->buildErrorString($field, $functionName, $args, $customError);
+                $this->errors[$field][] = $this->buildErrorString($field, $functionName, $args, $customError);
             }
-        }
-
-        if ($withErrors && sizeof($errors) > 0)
-        {
-            Session::setErrors($errors);
-            $this->errors = $errors;
         }
 
         return $isValid;
@@ -224,7 +218,7 @@ class Validator
         try
         {
             $results = $this->database->table($table)
-                ->where($columnName, '=',$value)
+                ->where($columnName, '=', $value)
                 ->select();
 
             return sizeof($results) == 0;
@@ -237,6 +231,6 @@ class Validator
 
     public function equalsField($value, $fieldName)
     {
-        return $value == Request::data($fieldName);
+        return $value == $this->data[$fieldName];
     }
 }

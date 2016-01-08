@@ -9,7 +9,6 @@ use Library\Http\Redirect;
 use Library\Http\Request;
 use Library\Http\Response;
 use Library\Http\View;
-use Library\Http\ViewFactory;
 use Library\Log\Log;
 use Library\Mail\Mail;
 use Library\Queue\Queue;
@@ -64,7 +63,7 @@ class ContainerConfiguration
         //$this->container->registerInstance('sentry', new Sentry($dm));
         $router = new Router($this->container, $validator);
         $this->container->registerInstance('router', $router);
-        $this->container->registerInstance('response', new Response($router));
+        $this->container->registerInstance('response', new Response($router, $session));
         $this->container->registerInstance('form', new Form($router, $session));
         $shao = new Shao($this->container);
         $this->container->registerInstance('shao', $shao);

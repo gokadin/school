@@ -21,11 +21,10 @@ class AccountController extends Controller
 
     public function updatePersonalInfo(UpdatePersonalInfoRequest $request, AccountService $accountService)
     {
-        $accountService->updatePersonalInfo($request->all())
-            ? $this->session->setFlash('Information updated!')
-            : $this->session->setFlash('Could not update your information. Please try again.', 'error');
+        $accountService->updatePersonalInfo($request->all());
 
-        $this->response->route('school.teacher.account.personalInformation');
+        return $this->response->route('school.teacher.account.personalInformation')
+            ->withFlash('Information updated!');
     }
 
     public function password()
@@ -35,10 +34,9 @@ class AccountController extends Controller
 
     public function updatePassword(UpdatePasswordRequest $request, AccountService $accountService)
     {
-        $accountService->updatePassword($request->all())
-            ? $this->session->setFlash('Password updated!')
-            : $this->session->setFlash('Could not update password. Please try again.', 'error');
-
-        $this->response->route('school.teacher.account.password');
+        return $accountService->updatePassword($request->all())
+            ? $this->response->route('school.teacher.account.password')->withFlash('Password updated!')
+            : $this->response->route('school.teacher.account.password')
+                ->withFlash('Could not update password. Please try again.', 'error');
     }
 }

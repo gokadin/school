@@ -4,28 +4,11 @@ namespace App\Domain\Services;
 
 use App\Domain\Events\Event;
 use App\Jobs\School\CreateEventLessons;
-use App\Repositories\EventRepository;
 use App\Repositories\UserRepository;
 use Carbon\Carbon;
-use Library\Events\EventManager;
-use Library\Queue\Queue;
-use Library\Transformer\Transformer;
 
 class EventService extends AuthenticatedService
 {
-    /**
-     * @var EventRepository
-     */
-    private $eventRepository;
-
-    public function __construct(Queue $queue, EventManager $eventManager, Transformer $transformer,
-                                UserRepository $userRepository, EventRepository $eventRepository)
-    {
-        parent::__construct($queue, $eventManager, $transformer, $userRepository);
-
-        $this->eventRepository = $eventRepository;
-    }
-
     public function create(array $data)
     {
         $data['teacher'] = $this->user;
@@ -42,7 +25,7 @@ class EventService extends AuthenticatedService
             }
         }
 
-        $event = $this->eventRepository->create($data);
+        $event = $this->repository->of(Event::class)->create($data);
 
         if (sizeof($data['studentIds']) > 0)
         {
@@ -55,7 +38,7 @@ class EventService extends AuthenticatedService
     public function range(array $data)
     {
         return $this->transformer->of(Event::class)->transform(
-            $this->eventRepository->range(Carbon::parse($data['from']), Carbon::parse($data['to'])));
+            $this->repository->of(Event::class)->range(Carbon::parse($data['from']), Carbon::parse($data['to'])));
     }
 
     public function changeDate(array $data)
@@ -70,14 +53,14 @@ class EventService extends AuthenticatedService
         $event->setStartDate($newStartDate);
         $event->setEndDate($newEndDate);
 
-        $this->eventRepository->update($event);
+        $this->repository->of(Event::class)->update($event);
 
         return $newEndDate->toDateString();
     }
 
     public function upcomingEvents()
     {
-        $events = $this->eventRepository->upcomingEvents();
+        $events = $this->repository->of(Event::class)->upcomingEvents();
 
         $grouped = [];
         foreach ($events as $event)
@@ -99,6 +82,6 @@ class EventService extends AuthenticatedService
     {
         // MAKE THIS ASYNC?
 
-        $this->eventRepository->delete($this->user->events()->find($id));
+        $this->repository->of(Event::class)->delete($this->user->events()->find($id));
     }
 }

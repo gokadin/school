@@ -41,8 +41,6 @@ Route::group(['namespace' => 'Frontend', 'as' => 'frontend', 'middleware' => 'Ve
 Route::group(['namespace' => 'Api', 'prefix' => '/api', 'as' => 'api', 'middleware' => 'VerifyCsrfToken'], function() {
     Route::group(['namespace' => 'School', 'prefix' => '/school', 'as' => 'school', 'middleware' => 'VerifyAuthentication'], function() {
 
-        Route::get('/teacher-new-students', 'StudentController@getNewStudents');
-
         Route::group(['namespace' => 'Teacher', 'prefix' => '/teacher', 'as' =>'teacher'], function()
         {
             Route::get('/search/{search}', 'SearchController@index');
@@ -56,6 +54,7 @@ Route::group(['namespace' => 'Api', 'prefix' => '/api', 'as' => 'api', 'middlewa
             });
 
             Route::group(['prefix' => '/students', 'as' => 'student'], function() {
+                Route::get('/new-students', 'StudentController@newStudents');
                 Route::post('/', 'StudentController@index');
                 Route::post('/from-ids', 'StudentController@fromIds');
                 Route::post('/search', 'StudentController@search');

@@ -6,36 +6,32 @@
 
 <div class="emailConfirmation">
 
-    {!! $form->open('frontend.account.registerTeacher', 'POST', ['id' => 'confirm-form', 'class' => 'custom-1']) !!}
+    {!! $form->open('frontend.account.registerTeacher', 'POST', ['id' => 'confirm-form', 'class' => 'form-fe-1']) !!}
 
     {!! $form->hidden('tempTeacherId', $tempTeacher->getId()) !!}
 
-    <div class="g-form-header">
+    <div class="form-title">
         Complete registration
     </div>
 
-    <div class="g-form-body">
-
-        <div class="form-row">
-            {!! $form->label('name', 'Name') !!}
-            <div class="g-form-input g-form-text">{{ $tempTeacher->name() }}</div>
-        </div>
-
-        <div class="form-row">
-            {!! $form->label('password', 'Create password', ['class' => 'required']) !!}
-            {!! $form->password('password') !!}
-            {!! $form->error('password') !!}
-        </div>
-
-        <div class="form-row">
-            {!! $form->label('confirmPassword', 'Confirm password', ['class' => 'required']) !!}
-            {!! $form->password('confirmPassword') !!}
-            {!! $form->error('confirmPassword') !!}
-        </div>
-
+    <div class="form-row">
+        {!! $form->label('name', 'Name') !!}
+        <div class="g-form-input g-form-text">{{ $tempTeacher->name() }}</div>
     </div>
 
-    <div class="g-form-footer">
+    <div class="form-row">
+        {!! $form->label('password', 'Create password', ['class' => 'required']) !!}
+        {!! $form->password('password') !!}
+        {!! $form->error('password') !!}
+    </div>
+
+    <div class="form-row">
+        {!! $form->label('confirmPassword', 'Confirm password', ['class' => 'required']) !!}
+        {!! $form->password('confirmPassword') !!}
+        {!! $form->error('confirmPassword') !!}
+    </div>
+
+    <div class="form-button">
         {!! $form->button('Finish and login', ['type' => 'submit']) !!}
     </div>
 

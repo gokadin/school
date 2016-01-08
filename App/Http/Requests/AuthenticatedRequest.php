@@ -2,30 +2,16 @@
 
 namespace App\Http\Requests;
 
-use App\Domain\Services\LoginService;
+use App\Domain\Users\Authenticator;
 
 abstract class AuthenticatedRequest extends Request
 {
-    /**
-     * @var \App\Domain\Users\User
-     */
-    private $user;
+    protected $user;
 
-    /**
-     * @param LoginService $loginService
-     */
-    public function __construct(LoginService $loginService)
+    public function __construct(Authenticator $authenticator)
     {
         parent::__construct();
 
-        $this->user = $loginService->user();
-    }
-
-    /**
-     * @return \App\Domain\Users\User
-     */
-    protected function user()
-    {
-        return $this->user;
+        $this->user = $authenticator->user();
     }
 }

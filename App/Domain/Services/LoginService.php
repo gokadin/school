@@ -2,15 +2,33 @@
 
 namespace App\Domain\Services;
 
+use App\Domain\Users\Authenticator;
 use App\Domain\Users\Student;
 use App\Domain\Users\Teacher;
 use App\Events\Frontend\UserLoggedIn;
+use App\Repositories\Repository;
+use Library\Events\EventManager;
+use Library\Queue\Queue;
+use Library\Transformer\Transformer;
 
-class LoginService extends AuthenticatedService
+class LoginService extends Service
 {
+    /**
+     * @var Authenticator
+     */
+    private $authenticator;
+
+    public function __construct(Queue $queue, EventManager $eventManager, Transformer $transformer,
+                                Repository $repository, Authenticator $authenticator)
+    {
+        parent::__construct($queue, $eventManager, $transformer, $repository);
+
+        $this->authenticator = $authenticator;
+    }
+
     public function login(array $data)
     {
-        $teacher = $this->userRepository->attemptLogin(Teacher::class, $data['email'], md5($data['password']));
+        $teacher = $this->authenticator->attemptLogin(Teacher::class, $data['email'], md5($data['password']));
 
         if ($teacher != false)
         {
@@ -19,7 +37,7 @@ class LoginService extends AuthenticatedService
             return true;
         }
 
-        $student = $this->userRepository->attemptLogin(Student::class, $data['email'], md5($data['password']));
+        $student = $this->authenticator->attemptLogin(Student::class, $data['email'], md5($data['password']));
 
         if ($student != false)
         {
@@ -31,11 +49,8 @@ class LoginService extends AuthenticatedService
         return false;
     }
 
-    /**
-     * @return \App\Domain\Users\User
-     */
-    public function user()
+    public function logout()
     {
-        return $this->userRepository->getLoggedInUser();
+        $this->authenticator->logout();
     }
 }

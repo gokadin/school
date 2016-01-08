@@ -4,13 +4,9 @@ namespace App\Domain\Services;
 
 use App\Domain\Activities\Activity;
 use App\Domain\Common\Address;
-use App\Domain\Transformers\ActivityTransformer;
 use App\Domain\Users\Student;
 use App\Domain\Users\TempStudent;
 use App\Events\Frontend\StudentRegistered;
-use App\Repositories\UserRepository;
-use Library\Events\EventManager;
-use Library\Queue\Queue;
 
 class StudentRegistrationService extends AuthenticatedService
 {
@@ -72,10 +68,15 @@ class StudentRegistrationService extends AuthenticatedService
         }
 
         $student = new Student($data['firstName'], $data['lastName'], $tempStudent->email(), md5('admin'),
-            $address, $tempStudent->activity(), $data['customPrice'], $tempStudent->teacher());
+            $address, $tempStudent->activity(), $tempStudent->customPrice(), $tempStudent->teacher());
 
         foreach ($form['fields'] as $field)
         {
+            if ($field['name'] == 'address')
+            {
+                continue;
+            }
+
             $setterName = 'set'.ucfirst($field['name']);
             $student->$setterName($data[$field['name']]);
         }
@@ -88,7 +89,7 @@ class StudentRegistrationService extends AuthenticatedService
 
         $student->setExtraInfo($extraInfo);
 
-        $this->userRepository->registerStudent($student, $tempStudent->teacher());
+        $this->userRepository->registerStudent($student, $tempStudent);
 
         $this->fireEvent(new StudentRegistered($student));
 

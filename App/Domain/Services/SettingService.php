@@ -2,30 +2,34 @@
 
 namespace App\Domain\Services;
 
-use App\Repositories\SettingRepository;
-use Library\Events\EventManager;
-use Library\Queue\Queue;
-use Library\Transformer\Transformer;
+use App\Domain\Users\Teacher;
 
-class SettingService extends Service
+class SettingService extends AuthenticatedService
 {
-    /**
-     * @var SettingRepository
-     */
-    private $settingRepository;
-
-    public function __construct(Queue $queue, EventManager $eventManager, Transformer $transformer,
-                                SettingRepository $settingRepository)
-    {
-        parent::__construct($queue, $eventManager, $transformer);
-
-        $this->settingRepository = $settingRepository;
-    }
-
     public function updatePreferencea(array $data)
     {
-        $this->settingRepository->updatePreferences($data);
-
+        $settings = $this->repository->of(Teacher::class)->settingsOf($this->user);
+/// stopped here...
         return true;
+    }
+
+    public function getRegistrationForm()
+    {
+        return $userRepository->getLoggedInUser()->settings()->registrationForm();
+    }
+
+    public function updateRegistrationForm(array $data)
+    {
+        $form = new StudentRegistrationForm($request->form);
+
+        if ($form->hasErrors())
+        {
+            return $this->respondBadRequest(['errors' => [
+                $form->getErrors()
+            ]]);;
+        }
+
+        $userRepository->getLoggedInUser()->settings()->setRegistrationForm(json_encode($form));
+        $dm->flush();
     }
 }

@@ -6,20 +6,21 @@ use Config\EventRegistration;
 use Library\Container\Container;
 use Library\Container\ContainerConfiguration;
 use Library\Facades\Facade;
+use Library\Http\Response;
 use Library\Http\View;
 
 class Application
 {
     protected $basePath;
     protected $container;
-    protected $viewToSend;
+    protected $controllerResponse;
 
     public function __construct()
     {
         Facade::setFacadeApplication($this);
 
         $this->container = new Container();
-        $this->viewToSend = null;
+        $this->controllerResponse = null;
         $this->basePath = __DIR__.'/../';
 
         $this->configureContainer();
@@ -60,26 +61,34 @@ class Application
         $result = $this->container()->resolveInstance('router')->dispatch(
             $this->container()->resolveInstance('request'));
 
-        $this->viewToSend = $result;
+        $this->controllerResponse = $result;
     }
 
     public function sendView()
     {
-        if (!is_object($this->viewToSend) && !is_array($this->viewToSend))
+        if (!is_object($this->controllerResponse) && !is_array($this->controllerResponse))
         {
-            echo $this->viewToSend;
+            echo $this->controllerResponse;
             exit();
             return;
         }
 
-        if (is_array($this->viewToSend) || !($this->viewToSend instanceof View))
+        if (is_array($this->controllerResponse))
         {
-            echo json_encode($this->viewToSend);
+            echo json_encode($this->controllerResponse);
             exit();
             return;
         }
 
-        $this->viewToSend->send();
+        if ($this->controllerResponse instanceof View)
+        {
+            $this->controllerResponse->send();
+        }
+
+        if ($this->controllerResponse instanceof Response)
+        {
+            $this->controllerResponse->executeResponse();
+        }
     }
 
     public function basePath()

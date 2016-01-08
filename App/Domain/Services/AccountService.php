@@ -2,13 +2,19 @@
 
 namespace App\Domain\Services;
 
+use App\Domain\Users\Teacher;
+
 class AccountService extends AuthenticatedService
 {
     public function updatePersonalInfo(array $data)
     {
-        $this->userRepository->updatePersonalInfo($data);
+        $teacher = $this->user;
 
-        return true;
+        $teacher->setFirstName($data['firstName']);
+        $teacher->setLastName($data['lastName']);
+        $teacher->setEmail($data['email']);
+
+        $this->repository->of(Teacher::class)->update($teacher);
     }
 
     public function updatePassword(array $data)

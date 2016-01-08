@@ -25,10 +25,9 @@ class SettingController extends Controller
 
     public function updatePreferences(UpdatePreferencesRequest $request, SettingService $settingService)
     {
-        $settingService->updatePreferencea($request->all())
-            ? $this->session->setFlash('Preferences updated!')
-            : $this->session->setFlash('Could not update preferences. Please try again.', 'error');
-
-        $this->response->route('school.teacher.setting.preferences');
+        return $settingService->updatePreferencea($request->all())
+            ? $this->response->route('school.teacher.setting.preferences')->withFlash('Preferences updated!')
+            : $this->response->route('school.teacher.setting.preferences')
+                ->withFlash('Could not update preferences. Please try again.', 'error');
     }
 }

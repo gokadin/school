@@ -14,12 +14,13 @@ class PreRegisterStudentRequest extends Request
     public function rules()
     {
         return [
-            'email' => [
-                'email',
-                'unique:teachers,email',
-                'unique:students,email',
-                'unique:temp_teachers,email'
-            ],
+//            'email' => [
+//                'email',
+//                'unique:teachers,email',
+//                'unique:students,email',
+//                'unique:temp_teachers,email',
+//                'unique:temp_students,email'
+//            ],
             'activityId' => ['required', 'numeric']
         ];
     }

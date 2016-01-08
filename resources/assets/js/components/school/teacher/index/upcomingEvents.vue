@@ -9,6 +9,10 @@
                 </div>
             </div>
         </div>
+        <div class="no-data" v-if="events.length == 0">
+            You have no calendar events.
+            <a href="/school/teacher/calendar/"><button type="button" class="button-green">Go to calendar</button></a>
+        </div>
     </div>
 </template>
 

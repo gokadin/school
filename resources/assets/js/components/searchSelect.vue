@@ -60,6 +60,12 @@ export default {
         }
     },
 
+    created: function() {
+        if (!this.model) {
+            this.model = this.selected[this.value];
+        }
+    },
+
     methods: {
         initSelected: function() {
             for (var i = 0; i < this.data.length; i++) {
@@ -68,6 +74,7 @@ export default {
                 }
             }
 
+            this.model = this.data[0][this.value];
             return this.data[0];
         },
 
@@ -121,7 +128,10 @@ export default {
             this.model = this.selected[this.value];
             this.search = '';
             this.showResults = false;
-            $(this.$els.select).trigger('change');
+
+            window.Vue.nextTick(function() {
+                $(this.$els.select).trigger('change');
+            }.bind(this));
         },
 
         handleUp: function() {
@@ -154,7 +164,10 @@ export default {
             this.search = '';
             this.showResults = false;
             this.chosenIndex = 0;
-            $(this.$els.select).trigger('change');
+
+            window.Vue.nextTick(function() {
+                $(this.$els.select).trigger('change');
+            }.bind(this));
         },
 
         handleResultMouseover: function(index) {

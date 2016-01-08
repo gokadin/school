@@ -541,6 +541,16 @@ button.button-large {
   }
 }
 
+.no-data {
+  font-size: 17px;
+  margin: 30px;
+  text-align: center;
+
+  button {
+    margin: 0 10px;
+  }
+}
+
 @import 'school-responsive';
 @import 'layout';
 @import 'activities';

@@ -23,10 +23,8 @@ class ActivityController extends Controller
     {
         $activityService->create($request->all());
 
-        $this->session->setFlash('Activity created!');
-
-        $request->createAnother == 1
-            ? $this->response->route('teacher.account.activity.create')
-            : $this->response->route('teacher.account.activity.index');
+        return $request->createAnother == 1
+            ? $this->response->route('school.teacher.activity.create')->withFlash('Activity created!')
+            : $this->response->route('school.teacher.activity.index')->withFlash('Activity created!');
     }
 }

@@ -632,6 +632,12 @@ button:disabled {
           color: #fff; }
         #school .search-select .dropdown .results > div:not(:last-child) {
           border-bottom: 1px solid #e2e2e2; }
+  #school .no-data {
+    font-size: 17px;
+    margin: 30px;
+    text-align: center; }
+    #school .no-data button {
+      margin: 0 10px; }
   @media screen and (max-width: 850px) {
     #school .switcher-1 {
       width: 100%;

@@ -10,6 +10,16 @@ return [
         'studentCount' => function($o) { return $o->students()->count(); }
     ],
 
+    App\Domain\Users\TempStudent::class => [
+        'id' => function($o) { return $o->getId(); },
+        'firstName' => function($o) { return $o->firstName(); },
+        'lastName' => function($o) { return $o->lastName(); },
+        'fullName' => function($o) { return $o->firstName().' '.$o->lastName(); },
+        'email' => function($o) { return $o->email(); },
+        'activityName' => function($o) { return $o->activity()->name(); },
+        'status' => function($o) { return $o->isExpired() ? 'expired' : 'pending'; }
+    ],
+
     App\Domain\Users\Student::class => [
         'id' => function($o) { return $o->getId(); },
         'firstName' => function($o) { return $o->firstName(); },

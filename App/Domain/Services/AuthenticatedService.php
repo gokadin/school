@@ -2,7 +2,9 @@
 
 namespace App\Domain\Services;
 
-use App\Repositories\UserRepository;
+use App\Domain\Users\Authenticator;
+use App\Domain\Users\User;
+use App\Repositories\Repository;
 use Library\Events\EventManager;
 use Library\Queue\Queue;
 use Library\Transformer\Transformer;
@@ -10,21 +12,15 @@ use Library\Transformer\Transformer;
 class AuthenticatedService extends Service
 {
     /**
-     * @var \App\Domain\Users\User
+     * @var User
      */
     protected $user;
 
-    /**
-     * @var UserRepository
-     */
-    protected $userRepository;
-
     public function __construct(Queue $queue, EventManager $eventManager, Transformer $transformer,
-                                UserRepository $userRepository)
+                                Repository $repository, Authenticator $authenticator)
     {
-        parent::__construct($queue, $eventManager, $transformer);
+        parent::__construct($queue, $eventManager, $transformer, $repository);
 
-        $this->user = $userRepository->getLoggedInUser();
-        $this->userRepository = $userRepository;
+        $this->user = $authenticator->user();
     }
 }

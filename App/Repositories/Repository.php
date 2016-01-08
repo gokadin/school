@@ -8,8 +8,20 @@ use Library\Log\Log;
 
 class Repository
 {
-    protected $dm;
-    protected $log;
+    /**
+     * @var DataMapper
+     */
+    private $dm;
+
+    /**
+     * @var Log
+     */
+    private $log;
+
+    /**
+     * @var array
+     */
+    private $repositories = [];
 
     public function __construct(DataMapper $dm, Log $log)
     {
@@ -17,7 +29,22 @@ class Repository
         $this->log = $log;
     }
 
-    protected function paginateCollection(PersistentCollection $collection, $pageNumber, $pageCount, array $sortingRules, array $searchRules)
+    public function of($class)
+    {
+        $shortName = substr($class, strrpos($class, '\\'));
+        $repositoryClass = $shortName.'Repository';
+
+        return isset($this->repositories[$class])
+            ? $this->repositories[$class]
+            : $this->initializeRepository($repositoryClass, $class);
+    }
+
+    private function initializeRepository($repositoryClass, $class)
+    {
+        return $this->repositories[$class] = new $repositoryClass($this->dm, $this->log, $class);
+    }
+
+    public function paginate(PersistentCollection $collection, $pageNumber, $pageCount, array $sortingRules, array $searchRules)
     {
         foreach ($sortingRules as $property => $ascending)
         {

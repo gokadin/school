@@ -29,7 +29,9 @@ class VerifyCsrfToken
             {
                 if ($request->isJson())
                 {
-                    return $this->response->json([print_r($_SERVER)], 401);
+                    $this->response->json([print_r($_SERVER)], 401);
+                    $this->response->executeResponse();
+                    return;
                 }
 
                 throw new RuntimeException('CSRF token mismatch.');

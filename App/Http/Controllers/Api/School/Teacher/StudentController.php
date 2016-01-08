@@ -24,4 +24,9 @@ class StudentController extends ApiController
     {
         return $this->respondOk(['results' => $studentService->search($request->all())]);
     }
+
+    public function newStudents(StudentService $studentService)
+    {
+        return $this->respondOk(['newStudents' => $studentService->newStudents()]);
+    }
 }

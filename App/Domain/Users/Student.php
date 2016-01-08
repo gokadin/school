@@ -31,7 +31,7 @@ class Student extends User
     /** @Column(type="string", nullable) */
     private $occupation;
 
-    /** @Column(type="decimal") */
+    /** @Column(type="decimal", size="5", precision="2") */
     private $customPrice;
 
     public function __construct($firstName, $lastName, $email, $password, Address $address,

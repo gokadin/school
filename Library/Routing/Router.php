@@ -227,7 +227,9 @@ class Router
         }
         catch (RouteNotFoundException $e)
         {
-            redirect404();
+            $response = $this->container->resolveInstance('response');
+            $response->redirect404();
+            $response->executeResponse();
         }
     }
 
@@ -346,14 +348,13 @@ class Router
         {
             if (!$this->processRequest($instance))
             {
-                if ($instance->isJson())
-                {
-                    $response = $this->container->resolveInstance('response');
-                    echo $response->json($this->validator->errors(), 401);
-                    exit();
-                }
+                $response = $this->container->resolveInstance('response');
 
-                back();
+                $instance->isJson()
+                    ? $response->json($this->validator->errors(), 401)
+                    : $response->back()->withErrors($this->validator->errors());
+
+                $response->executeResponse();
             }
         }
 

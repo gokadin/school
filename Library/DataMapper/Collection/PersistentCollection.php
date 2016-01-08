@@ -410,6 +410,12 @@ final class PersistentCollection extends AbstractEntityCollection implements Obs
 
         $this->useSubset = true;
 
+        if ($this->count == 0)
+        {
+            $this->subset = [];
+            return;
+        }
+
         if (!$this->stateChanged)
         {
             return;

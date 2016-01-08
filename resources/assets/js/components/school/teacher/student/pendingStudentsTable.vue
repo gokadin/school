@@ -50,8 +50,8 @@ export default {
     },
 
     created: function() {
-        this.$http.get('/api/school/teacher-new-students', function(data) {
-            this.newStudents = data;
+        this.$http.get('/api/school/teacher/students/new-students', function(response) {
+            this.newStudents = response.newStudents;
         });
     }
 };

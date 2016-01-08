@@ -7,7 +7,7 @@ use App\Listeners\Listener;
 use Library\Mail\Mail;
 use Library\Queue\ShouldQueue;
 
-class SendPreRegistrationEmail extends Listener implements ShouldQueue
+class SendTeacherPreRegistrationEmail extends Listener implements ShouldQueue
 {
     /**
      * @var Mail
@@ -25,7 +25,7 @@ class SendPreRegistrationEmail extends Listener implements ShouldQueue
 
         $this->mail->send('frontend.emails.teacherPreRegisteredEmail', compact('tempTeacher'), function($m) use ($tempTeacher) {
             $m->to($tempTeacher->email());
-            $m->from('guivio_147@hotmail.com');
+            $m->from('mailgun@mg.instructioner.com', 'Givi Odikadze');
             $m->subject('Instructioner account confirmation');
         });
     }

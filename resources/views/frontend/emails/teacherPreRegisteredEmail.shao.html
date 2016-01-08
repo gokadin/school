@@ -1,2 +1,7 @@
-<h1>hello</h1>
-test
+<h2>Welcome to Instructioner</h2>
+<br /><br />
+<p>Follow the link below to complete your registration:</p>
+<br />
+<a href="http://instructioner.com/account/confirm/{{ $tempTeacher->getId() }}-{{ $tempTeacher->confirmationCode() }}">
+    http://instructioner.com/account/confirm/{{ $tempTeacher->getId() }}-{{ $tempTeacher->confirmationCode() }}
+</a>
