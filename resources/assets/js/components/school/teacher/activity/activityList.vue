@@ -317,7 +317,7 @@ export default {
                 sortingRules: this.sortingRules,
                 searchRules: this.searchData
             }, function(response) {
-                this.activities = response.data;
+                this.activities = response.activities;
                 this.total = response.pagination.totalCount;
             });
         }

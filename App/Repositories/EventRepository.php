@@ -3,6 +3,7 @@
 namespace App\Repositories;
 
 use App\Domain\Events\Event;
+use App\Domain\Users\Teacher;
 use Carbon\Carbon;
 
 class EventRepository extends RepositoryBase
@@ -30,16 +31,16 @@ class EventRepository extends RepositoryBase
         $this->dm->flush();
     }
 
-    public function range(Carbon $from, Carbon $to)
+    public function rangeOf(Teacher $teacher, Carbon $from, Carbon $to)
     {
-        return $this->user->events()->where('endDate', '>', $from->toDateString())
+        return $teacher->events()->where('endDate', '>', $from->toDateString())
             ->where('startDate', '<', $to->toDateString())
             ->toArray();
     }
 
-    public function upcomingEvents()
+    public function upcomingEventsOf(Teacher $teacher)
     {
-        return $this->user->events()->where('startDate', '>', Carbon::now())
+        return $teacher->events()->where('startDate', '>', Carbon::now())
             ->where('startDate', '<=', Carbon::now()->addWeek(1))
             ->sortBy('startDate', true)
             ->slice(0, 10);

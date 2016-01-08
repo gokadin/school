@@ -197,7 +197,7 @@
                     sortingRules: this.sortingRules,
                     searchRules: this.searchData
                 }, function(response) {
-                    this.students = response.data;
+                    this.students = response.students;
                     this.total = response.pagination.totalCount;
                 });
             }

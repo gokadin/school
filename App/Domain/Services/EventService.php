@@ -37,8 +37,8 @@ class EventService extends AuthenticatedService
 
     public function range(array $data)
     {
-        return $this->transformer->of(Event::class)->transform(
-            $this->repository->of(Event::class)->range(Carbon::parse($data['from']), Carbon::parse($data['to'])));
+        return $this->transformer->of(Event::class)->transform($this->repository->of(Event::class)
+            ->rangeOf($this->user, Carbon::parse($data['from']), Carbon::parse($data['to'])));
     }
 
     public function changeDate(array $data)
@@ -60,7 +60,7 @@ class EventService extends AuthenticatedService
 
     public function upcomingEvents()
     {
-        $events = $this->repository->of(Event::class)->upcomingEvents();
+        $events = $this->repository->of(Event::class)->upcomingEventsOf($this->user);
 
         $grouped = [];
         foreach ($events as $event)

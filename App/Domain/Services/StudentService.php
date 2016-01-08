@@ -13,19 +13,25 @@ class StudentService extends AuthenticatedService
         $sortingRules = isset($data['sortingRules']) ? $data['sortingRules'] : [];
         $searchRules = isset($data['searchRules']) ? $data['searchRules'] : [];
 
-        return $this->userRepository->paginate(
+        $data = $this->repository->paginate($this->user->students(),
             $data['page'], $data['max'] > 20 ? 20 : $data['max'], $sortingRules, $searchRules);
+
+        return [
+            'students' => $this->transformer->of(Student::class)->transform($data['data']),
+            'pagination' => $data['pagination']
+        ];
     }
 
     public function getInIds(array $ids)
     {
-        return $this->transformer->of(Student::class)->transform($this->userRepository->findStudentsInIds($ids));
+        return $this->transformer->of(Student::class)->transform(
+            $this->repository->of(Student::class)->findIn($ids)->toArray());
     }
 
     public function search($data)
     {
         return $this->transformer->of(Student::class)->transform(
-            $this->userRepository->search($data['search']));
+            $this->repository->of(Student::class)->search($data['search'], $this->user->students()));
     }
 
     public function preRegister(array $data)
@@ -37,7 +43,10 @@ class StudentService extends AuthenticatedService
             return false;
         }
 
-        $tempStudent = $this->userRepository->preRegisterStudent($this->user, $activity, $data);
+        $data['teacher'] = $this->user;
+        $data['activity'] = $activity;
+
+        $tempStudent = $this->repository->of(Student::class)->preRegister($data);
 
         if (is_null($tempStudent))
         {
@@ -51,7 +60,7 @@ class StudentService extends AuthenticatedService
 
     public function getProfile($id)
     {
-        $student = $this->userRepository->findStudent($id);
+        $student = $this->repository->of(Student::class)->find($id);
 
         return [
             'student' => $student,
@@ -62,6 +71,6 @@ class StudentService extends AuthenticatedService
     public function newStudents()
     {
         return $this->transformer->of(TempStudent::class)
-            ->transform($this->userRepository->getNewStudentsOf($this->user));
+            ->transform($this->repository->of(Student::class)->newStudentsOf($this->user)->toArray());
     }
 }

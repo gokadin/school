@@ -8,13 +8,11 @@ class AccountService extends AuthenticatedService
 {
     public function updatePersonalInfo(array $data)
     {
-        $teacher = $this->user;
+        $this->user->setFirstName($data['firstName']);
+        $this->user->setLastName($data['lastName']);
+        $this->user->setEmail($data['email']);
 
-        $teacher->setFirstName($data['firstName']);
-        $teacher->setLastName($data['lastName']);
-        $teacher->setEmail($data['email']);
-
-        $this->repository->of(Teacher::class)->update($teacher);
+        $this->repository->of(Teacher::class)->update($this->user);
     }
 
     public function updatePassword(array $data)
@@ -24,7 +22,9 @@ class AccountService extends AuthenticatedService
             return false;
         }
 
-        $this->userRepository->updatePassword(md5($data['newPassword']));
+        $this->user->setPassword(md5($data['newPassword']));
+
+        $this->repository->of(Teacher::class)->update($this->user);
 
         return true;
     }

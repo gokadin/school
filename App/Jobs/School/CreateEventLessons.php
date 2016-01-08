@@ -4,9 +4,9 @@ namespace App\Jobs\School;
 
 use App\Domain\Events\Event;
 use App\Domain\Events\Lesson;
+use App\Domain\Users\Student;
 use App\Jobs\Job;
-use App\Repositories\EventRepository;
-use App\Repositories\UserRepository;
+use App\Repositories\Repository;;
 use Library\Queue\JobFailedException;
 
 class CreateEventLessons extends Job
@@ -27,12 +27,12 @@ class CreateEventLessons extends Job
         $this->studentIds = $studentIds;
     }
 
-    public function handle(EventRepository $eventRepository, UserRepository $userRepository)
+    public function handle(Repository $repository)
     {
         $lessons = [];
         foreach ($this->studentIds as $id)
         {
-            $student = $userRepository->findStudent($id);
+            $student = $repository->of(Student::class)->find($id);
             if (is_null($student))
             {
                 throw new JobFailedException('CreateEventLessons.handle : Could not find student with id '.$id.'.');
@@ -41,6 +41,6 @@ class CreateEventLessons extends Job
             $lessons[] = new Lesson($this->event, $student);
         }
 
-        $eventRepository->createLessons($lessons);
+        $repository->of(Event::class)->createLessons($lessons);
     }
 }

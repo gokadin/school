@@ -31,8 +31,8 @@ class Repository
 
     public function of($class)
     {
-        $shortName = substr($class, strrpos($class, '\\'));
-        $repositoryClass = $shortName.'Repository';
+        $shortName = substr($class, strrpos($class, '\\') + 1);
+        $repositoryClass = '\\App\\Repositories\\'.$shortName.'Repository';
 
         return isset($this->repositories[$class])
             ? $this->repositories[$class]

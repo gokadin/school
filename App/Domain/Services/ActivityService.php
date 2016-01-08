@@ -18,8 +18,13 @@ class ActivityService extends AuthenticatedService
         $sortingRules = isset($data['sortingRules']) ? $data['sortingRules'] : [];
         $searchRules = isset($data['searchRules']) ? $data['searchRules'] : [];
 
-        return $this->repository->paginate($this->user->activities(),
+        $data = $this->repository->paginate($this->user->activities(),
             $data['page'], $data['max'] > 20 ? 20 : $data['max'], $sortingRules, $searchRules);
+
+        return [
+            'activities' => $this->transformer->of(Activity::class)->transform($data['data']),
+            'pagination' => $data['pagination']
+        ];
     }
 
     public function getActivityStudentList($id)

@@ -2,11 +2,13 @@
 
 namespace App\Domain\Services;
 
+use App\Domain\Users\Authenticator;
+use App\Domain\Users\Teacher;
 use App\Events\Frontend\TeacherRegistered;
 use App\Events\Frontend\UserLoggedIn;
 use App\Jobs\Frontend\PreRegisterTeacher;
 use App\Jobs\Frontend\RegisterTeacher;
-use App\Repositories\UserRepository;
+use App\Repositories\Repository;
 use Library\Events\EventManager;
 use Library\Queue\Queue;
 use Library\Transformer\Transformer;
@@ -14,16 +16,16 @@ use Library\Transformer\Transformer;
 class TeacherRegistrationService extends Service
 {
     /**
-     * @var UserRepository
+     * @var Authenticator
      */
-    private $userRepository;
+    private $authenticator;
 
-    public function __construct(Queue $queue, EventManager $eventManager, Transformer $transformer,
-                                UserRepository $userRepository)
+    public function __construct(Queue $queue, EventManager $eventManager, Transformer $transformer, Repository $repository,
+                                Authenticator $authenticator)
     {
-        parent::__construct($queue, $eventManager, $transformer);
+        parent::__construct($queue, $eventManager, $transformer, $repository);
 
-        $this->userRepository = $userRepository;
+        $this->authenticator = $authenticator;
     }
 
     public function preRegister(array $data)
@@ -33,7 +35,7 @@ class TeacherRegistrationService extends Service
 
     public function findTempTeacher($id, $code)
     {
-        $tempTeacher = $this->userRepository->findTempTeacher($id);
+        $tempTeacher = $this->repository->of(Teacher::class)->findTempTeacher($id);
 
         if (is_null($tempTeacher) || $tempTeacher->confirmationCode() != $code)
         {
@@ -45,13 +47,13 @@ class TeacherRegistrationService extends Service
 
     public function register(array $data)
     {
-        $teacher = $this->userRepository->registerTeacher($data);
+        $teacher = $this->repository->of(Teacher::class)->create($data);
         if (is_null($teacher))
         {
             return false;
         }
 
-        $this->userRepository->loginTeacher($teacher);
+        $this->authenticator->loginTeacher($teacher);
 
         $this->fireEvent(new TeacherRegistered($teacher));
         $this->fireEvent(new UserLoggedIn($teacher, 'teacher'));

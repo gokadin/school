@@ -8,7 +8,7 @@ class DestroyEventRequest extends AuthenticatedRequest
 {
     function authorize()
     {
-        return $this->user()->events()->containsId($this->get('id'));
+        return $this->user->events()->containsId($this->get('id'));
     }
 
     function rules()

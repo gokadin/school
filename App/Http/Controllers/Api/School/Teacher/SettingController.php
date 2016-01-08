@@ -16,6 +16,8 @@ class SettingController extends ApiController
 
     public function updateRegistrationForm(UpdateRegistrationFormRequest $request, SettingService $settingService)
     {
-        return $this->respondOk(['extraFields' => $settingService->updateRegistrationForm($request->all())]);
+        $extraFields = $settingService->updateRegistrationForm($request->all());
+
+        return $this->respondOk(['extraFields' => $extraFields]);
     }
 }

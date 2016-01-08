@@ -2,7 +2,9 @@
 
 namespace App\Jobs\School;
 
+use App\Domain\Users\Teacher;
 use App\Jobs\Job;
+use App\Repositories\Repository;
 use App\Repositories\UserRepository;
 use Library\Queue\ShouldQueue;
 
@@ -17,8 +19,8 @@ class UpdateUserPassword extends Job implements ShouldQueue
         $this->newPassword = $newPassword;
     }
 
-    public function handle(UserRepository $userRepository)
+    public function handle(Repository $repository)
     {
-        $userRepository->updatePassword($this->currentPassword, $this->newPassword);
+        $repository->of(Teacher::class)->updatePassword($this->currentPassword, $this->newPassword);
     }
 }

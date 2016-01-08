@@ -71,15 +71,6 @@ class TeacherRepository extends RepositoryBase
         return $teacher;
     }
 
-    public function settingsOf(Teacher $teacher)
-    {
-        $id = $this->dm->queryBuilder()->table('teacher_settings')
-            ->where('teacher_id', '=', $teacher->getId())
-            ->select(['id']);
-
-        return $this->dm->find(TeacherSettings::class, $id);
-    }
-
     public function removeExpiredTempTeachers()
     {
         $this->dm->queryBuilder()->table('temp_teachers')

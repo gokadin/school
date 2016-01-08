@@ -2,34 +2,40 @@
 
 namespace App\Domain\Services;
 
+use App\Domain\Setting\StudentRegistrationForm;
 use App\Domain\Users\Teacher;
 
 class SettingService extends AuthenticatedService
 {
     public function updatePreferencea(array $data)
     {
-        $settings = $this->repository->of(Teacher::class)->settingsOf($this->user);
-/// stopped here...
+        $settings = $this->user->settings();
+
+        $settings->setShowTips(isset($data['showTips']));
+
+        $this->repository->of(Teacher::class)->update($this->user);
+
         return true;
     }
 
     public function getRegistrationForm()
     {
-        return $userRepository->getLoggedInUser()->settings()->registrationForm();
+        return $this->user->settings()->registrationForm();
     }
 
     public function updateRegistrationForm(array $data)
     {
-        $form = new StudentRegistrationForm($request->form);
+        $form = new StudentRegistrationForm($data['form']);
 
         if ($form->hasErrors())
         {
-            return $this->respondBadRequest(['errors' => [
-                $form->getErrors()
-            ]]);;
+            return false;
         }
 
-        $userRepository->getLoggedInUser()->settings()->setRegistrationForm(json_encode($form));
-        $dm->flush();
+        $this->user->settings()->setRegistrationForm(json_encode($form));
+
+        $this->repository->of(Teacher::class)->update($this->user);
+
+        return $form->extraFields();
     }
 }

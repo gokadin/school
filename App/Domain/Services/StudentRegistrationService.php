@@ -12,7 +12,7 @@ class StudentRegistrationService extends AuthenticatedService
 {
     public function validateTempStudent($id, $code)
     {
-        $tempStudent = $this->userRepository->findTempStudent($id);
+        $tempStudent = $this->repository->of(Student::class)->findTempStudent($id);
 
         if (is_null($tempStudent) || $tempStudent->confirmationCode() != $code || $tempStudent->isExpired())
         {
@@ -43,7 +43,7 @@ class StudentRegistrationService extends AuthenticatedService
 
     public function register(array $data)
     {
-        $tempStudent = $this->userRepository->findTempStudent($data['tempStudentId']);
+        $tempStudent = $this->repository->of(Student::class)->findTempStudent($data['tempStudentId']);
         if (is_null($tempStudent))
         {
             return false;
@@ -89,7 +89,7 @@ class StudentRegistrationService extends AuthenticatedService
 
         $student->setExtraInfo($extraInfo);
 
-        $this->userRepository->registerStudent($student, $tempStudent);
+        $this->repository->of(Student::class)->register($student, $tempStudent);
 
         $this->fireEvent(new StudentRegistered($student));
 

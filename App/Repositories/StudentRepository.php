@@ -4,6 +4,7 @@ namespace App\Repositories;
 
 use App\Domain\Users\Teacher;
 use App\Domain\Users\TempStudent;
+use Library\DataMapper\Collection\PersistentCollection;
 
 class StudentRepository extends RepositoryBase
 {
@@ -46,12 +47,17 @@ class StudentRepository extends RepositoryBase
             ->where('teacher_id', '=', $teacher->getId())
             ->select(['id']);
 
-        return $this->dm->findIn(TempStudent::class, $ids)->toArray();
+        if (sizeof($ids) == 0)
+        {
+            return [];
+        }
+
+        return $this->dm->findIn(TempStudent::class, $ids);
     }
 
-    public function search($string)
+    public function search($string, PersistentCollection $students)
     {
-        return $this->user->students()->where('firstName lastName', 'LIKE', '%'.$string.'%')
+        return $students->where('firstName lastName', 'LIKE', '%'.$string.'%')
             ->sortBy('firstName', true)->toArray();
     }
 

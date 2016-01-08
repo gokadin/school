@@ -8,7 +8,7 @@ class ShowStudentRequest extends AuthenticatedRequest
 {
     public function authorize()
     {
-        return $this->user()->students()->containsId($this->data('id'));
+        return $this->user->students()->containsId($this->data('id'));
     }
 
     public function rules()
