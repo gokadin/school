@@ -12,7 +12,9 @@ class EventRepository extends RepositoryBase
     {
         $event = new Event($data['title'], $data['description'], Carbon::parse($data['startDate']),
             Carbon::parse($data['endDate']), $data['startTime'], $data['endTime'], $data['isAllDay'],
-            $data['color'], $data['teacher'], $data['activity']);
+            $data['color'], $data['teacher'], $data['activity'], $data['isRecurring'], $data['rRepeat'],
+            $data['rEvery'], $data['rEndDate'], $data['rEndsNever'], $data['location'], $data['visibility'],
+            $data['notifyMeBy'], $data['notifyMeBefore']);
 
         $this->dm->persist($event);
 

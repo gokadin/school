@@ -46,8 +46,36 @@ class Event
     /** @HasMany(target="\App\Domain\Events\Lesson", mappedBy="event") */
     private $lessons;
 
+    /** @Column(type="boolean") */
+    private $isRecurring;
+
+    /** @Column(type="string") */
+    private $rRepeat;
+
+    /** @Column(type="string") */
+    private $rEvery;
+
+    /** @Column(type="datetime") */
+    private $rEndDate;
+
+    /** @Column(type="boolean") */
+    private $rEndsNever;
+
+    /** @Column(type="string") */
+    private $location;
+
+    /** @Column(type="string") */
+    private $visibility;
+
+    /** @Column(type="string") */
+    private $notifyMeBy;
+
+    /** @Column(type="string") */
+    private $notifyMeBefore;
+
     public function __construct($title, $description, $startDate, $endDate, $startTime, $endTime, $isAllDay, $color,
-                                Teacher $teacher, $activity)
+                                Teacher $teacher, $activity, $isRecurring, $rRepeat, $rEvery, $rEndDate, $rEndsNever,
+                                $location, $visibility, $notifyMeBy, $notifyMeBefore)
     {
         $this->teacher = $teacher;
         $this->title = $title;
@@ -59,6 +87,15 @@ class Event
         $this->isAllDay = $isAllDay;
         $this->color = $color;
         $this->activity = $activity;
+        $this->isRecurring = $isRecurring;
+        $this->rRepeat = $rRepeat;
+        $this->rEvery = $rEvery;
+        $this->rEndDate = $rEndDate;
+        $this->rEndsNever = $rEndsNever;
+        $this->location = $location;
+        $this->visibility = $visibility;
+        $this->notifyMeBy = $notifyMeBy;
+        $this->notifyMeBefore = $notifyMeBefore;
     }
 
     public function teacher()
@@ -174,5 +211,95 @@ class Event
     public function removeLesson(Lesson $lesson)
     {
         $this->lessons->remove($lesson);
+    }
+
+    public function isRecurring()
+    {
+        return $this->isRecurring;
+    }
+
+    public function setIsRecurring($isRecurring)
+    {
+        $this->isRecurring = $isRecurring;
+    }
+
+    public function rRepeat()
+    {
+        return $this->rRepeat;
+    }
+
+    public function setRRepeat($rRepeat)
+    {
+        $this->rRepeat = $rRepeat;
+    }
+
+    public function rEvery()
+    {
+        return $this->rEvery;
+    }
+
+    public function setREvery($rEvery)
+    {
+        $this->rEvery = $rEvery;
+    }
+
+    public function rEndDate()
+    {
+        return $this->rEndDate;
+    }
+
+    public function setREndDate($rEndDate)
+    {
+        $this->rEndDate = $rEndDate;
+    }
+
+    public function rEndsNever()
+    {
+        return $this->rEndsNever;
+    }
+
+    public function setREndsNever($rEndsNever)
+    {
+        $this->rEndsNever = $rEndsNever;
+    }
+
+    public function location()
+    {
+        return $this->location;
+    }
+
+    public function setLocation($location)
+    {
+        $this->location = $location;
+    }
+
+    public function visibility()
+    {
+        return $this->visibility;
+    }
+
+    public function setVisibility($visibility)
+    {
+        $this->visibility = $visibility;
+    }
+
+    public function notifyMeBy()
+    {
+        return $this->notifyMeBy;
+    }
+
+    public function setNotifyMeBy($notifyMeBy)
+    {
+        $this->notifyMeBy = $notifyMeBy;
+    }
+
+    public function notifyMeBefore()
+    {
+        return $this->notifyMeBefore;
+    }
+
+    public function setNotifyMeBefore($notifyMeBefore)
+    {
+        $this->notifyMeBefore = $notifyMeBefore;
     }
 }

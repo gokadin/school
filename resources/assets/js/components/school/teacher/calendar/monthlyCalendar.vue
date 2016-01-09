@@ -87,7 +87,7 @@
                     </div>
 
                     <div class="form-row date-and-time">
-                        <datepicker class="datepicker" :date="newEvent.startDate."></datepicker>
+                        <datepicker class="datepicker" :date="newEvent.startDate"></datepicker>
                         <select v-model="newEvent.startTime" v-show="!newEvent.isAllDay">
                             <option v-for="time in timeSelect" value="{{ time }}">{{ time }}</option>
                         </select>
@@ -96,6 +96,28 @@
                         <select v-model="newEvent.endTime" v-show="!newEvent.isAllDay">
                             <option v-for="time in timeSelect" value="{{ time }}">{{ time }}</option>
                         </select>
+                    </div>
+
+                    <div class="form-row recurring-row-1" v-show="newEvent.isRecurring">
+                        <label for="rRepeat">Repeat</label>
+                        <select name="rRepeat" id="rRepeat" v-model="newEvent.rRepeat">
+                            <option value="daily">Daily</option>
+                            <option value="weekly">Weekly</option>
+                            <option value="weekdays">Weekdays (Monday to Friday)</option>
+                            <option value="monthly">Monthly</option>
+                            <option value="yearly">Yearly</option>
+                        </select>
+                    </div>
+
+                    <div class="form-row recurring-row-2" v-show="newEvent.isRecurring">
+                        <label>Ends</label>
+                        <div class="checkbox-1">
+                            <label>
+                                <input type="checkbox" v-model="newEvent.rEndsNever" />
+                                <i></i>Never
+                            </label>
+                        </div>
+                        <datepicker class="datepicker" :date="newEvent.rEndDate" v-show="!newEvent.rEndsNever"></datepicker>
                     </div>
 
                     <div class="form-row event-options">
@@ -219,14 +241,14 @@ export default {
                 isAllDay: true,
                 color: 'teal',
                 location: '',
-                isVisible: true,
+                visibility: true,
                 activityId: 0,
                 studentIds: [],
                 isRecurring: false,
                 rEndDate: this.moment().add(1, 'years').format('YYYY-MM-DD'),
-                rEndsNever: false,
-                rRepeat: 'mondays',
-                rEvery: 'week',
+                rEndsNever: true,
+                rRepeat: 'weekly',
+                rEvery: 'na',
                 notifyMeBy: 'email',
                 notifyMeBefore: '15mins',
             },
@@ -386,14 +408,14 @@ export default {
             this.newEvent.isAllDay = true;
             this.newEvent.color = 'teal';
             this.newEvent.location = '';
-            this.newEvent.isVisible = true;
+            this.newEvent.visibility = true;
             this.newEvent.activityId = this.activities.length > 0 ? this.activities[0].id : 0;
             this.newEvent.studentIds = [];
             this.newEvent.isRecurring = false;
             this.newEvent.rEndDate = posDate.add(1, 'years').format('YYYY-MM-DD');
-            this.newEvent.rEndsNever = false;
-            this.newEvent.rRepeat = 'mondays';
-            this.newEvent.rEvery = 'week';
+            this.newEvent.rEndsNever = true;
+            this.newEvent.rRepeat = 'weekly';
+            this.newEvent.rEvery = 'na';
             this.newEvent.notifyMeBy = 'email';
             this.newEvent.notifyMeBefore = '15mins';
 
@@ -443,7 +465,16 @@ export default {
                 isAllDay: this.newEvent.isAllDay,
                 color: this.newEvent.color,
                 activityId: this.newEvent.activityId,
-                studentIds: this.newEvent.studentIds
+                studentIds: this.newEvent.studentIds,
+                isRecurring: this.newEvent.isRecurring,
+                rRepeat: this.newEvent.rRepeat,
+                rEvery: this.newEvent.rEvery,
+                rEndDate: this.newEvent.rEndDate,
+                rEndsNever: this.newEvent.rEndsNever,
+                location: this.newEvent.location,
+                visibility: this.newEvent.visibility,
+                notifyMeBy: this.newEvent.notifyMeBy,
+                notifyMeBefore: this.newEvent.notifyMeBefore
             }, function(response, status) {
                 if (status != 200) {
                     this.$dispatch('flash', 'error', 'Failed to create event. Please try again.');
@@ -459,7 +490,7 @@ export default {
                         isAllDay: this.newEvent.isAllDay,
                         color: this.newEvent.color,
                         location: this.newEvent.location,
-                        isVisible: this.newEvent.isVisible,
+                        visibility: this.newEvent.visibility,
                         activityId: this.newEvent.activityId,
                         studentIds: this.newEvent.studentIds,
                         isRecurring: this.newEvent.isRecurring,

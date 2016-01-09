@@ -1181,6 +1181,16 @@ button:disabled {
       justify-content: flex-start; }
       #school #new-event-modal .form-row.event-options .checkbox-1 {
         flex-basis: 100px; }
+    #school #new-event-modal .form-row.recurring-row-2 label {
+      flex-basis: 30%; }
+    #school #new-event-modal .form-row.recurring-row-2 .checkbox-1 {
+      flex: 1;
+      height: 40px;
+      line-height: 40px; }
+    #school #new-event-modal .form-row.recurring-row-2 .datepicker {
+      flex: 2; }
+      #school #new-event-modal .form-row.recurring-row-2 .datepicker input {
+        width: 100%; }
     #school #new-event-modal .more-options-toggler {
       height: 20px;
       cursor: pointer; }
