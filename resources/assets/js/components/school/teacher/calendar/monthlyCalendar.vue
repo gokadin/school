@@ -25,14 +25,14 @@
                                     v-draggable:event="{id: event.id, startDate: event.startDate}"
                                     class="event-wrapper"
                             >
-                                <div v-bind:class="['event', getColorClass(event)]" @click="showEventId = event.id">
+                                <div v-bind:class="['event', getColorClass(event)]" @click="showPopover = i + '.' + j + '.' + event.id">
                                     {{ event.title }}
                                 </div>
-                                <div class="event-popover" v-show="showEventId == event.id">
+                                <div class="event-popover" v-show="showPopover == i + '.' + j + '.' + event.id">
                                     <div class="arrow-box">
                                         <div class="header">
                                             {{ event.title }}
-                                            <div class="close" @click="showEventId = 0"></div>
+                                            <div class="close" @click="showPopover = 0"></div>
                                         </div>
                                         <div class="body">
                                             <div class="body-row">
@@ -87,12 +87,12 @@
                     </div>
 
                     <div class="form-row date-and-time">
-                        <datepicker class="datepicker" :date="newEvent.startDate"></datepicker>
+                        <datepicker class="datepicker" :model.sync="newEvent.startDate"></datepicker>
                         <select v-model="newEvent.startTime" v-show="!newEvent.isAllDay">
                             <option v-for="time in timeSelect" value="{{ time }}">{{ time }}</option>
                         </select>
                         <label class="to">to</label>
-                        <datepicker class="datepicker" :date="newEvent.endDate"></datepicker>
+                        <datepicker class="datepicker" :model.sync="newEvent.endDate"></datepicker>
                         <select v-model="newEvent.endTime" v-show="!newEvent.isAllDay">
                             <option v-for="time in timeSelect" value="{{ time }}">{{ time }}</option>
                         </select>
@@ -117,7 +117,7 @@
                                 <i></i>Never
                             </label>
                         </div>
-                        <datepicker class="datepicker" :date="newEvent.rEndDate" v-show="!newEvent.rEndsNever"></datepicker>
+                        <datepicker class="datepicker" :model.sync="newEvent.rEndDate" v-show="!newEvent.rEndsNever"></datepicker>
                     </div>
 
                     <div class="form-row event-options">
@@ -227,8 +227,6 @@ export default {
     data: function() {
         return {
             currentDate: this.moment(),
-            countries: ["Mexico", "USA", "Brazil", "Argentina", "Chile"],
-            selectedCountry: null,
             events: this.fetchMonthEvents(this.moment()),
             newEvent: {
                 id: 0,
@@ -245,7 +243,7 @@ export default {
                 activityId: 0,
                 studentIds: [],
                 isRecurring: false,
-                rEndDate: this.moment().add(1, 'years').format('YYYY-MM-DD'),
+                rEndDate: this.moment().add(1, 'months').format('YYYY-MM-DD'),
                 rEndsNever: true,
                 rRepeat: 'weekly',
                 rEvery: 'na',
@@ -259,7 +257,7 @@ export default {
                 '12:00pm', '12:30pm', '1:00pm', '1:30pm', '2:00pm', '2:30pm', '3:00pm',
                 '3:30pm', '4:00pm', '4:30pm', '5:00pm', '5:30pm', '6:00pm', '6:30pm', '7:00pm', '7:30pm',
                 '8:00pm', '8:30pm', '9:00pm', '9:30pm', '10:00pm', '10:30pm', '11:00pm', '11:30pm', ],
-            showEventId: 0,
+            showPopover: 0,
             showMoreOptions: false,
             activities: [],
             currentStudents: []
@@ -290,8 +288,8 @@ export default {
 
     methods: {
         handleKeyUp: function(e) {
-            if (e.keyCode == 27 && this.showEventId != 0) {
-                this.showEventId = 0;
+            if (e.keyCode == 27 && this.showPopover != 0) {
+                this.showPopover = 0;
             }
         },
 
@@ -313,7 +311,7 @@ export default {
 
             if (i == 0 && j < this.offset) {
                 date.subtract(1, 'months');
-                date.date(date.daysInMonth() - (this.offset - j));
+                date.date(date.daysInMonth() - (this.offset - j - 1));
             } else {
                 date.date(i * 7 + j - this.offset + 1);
             }
@@ -327,7 +325,36 @@ export default {
             var count = 0;
 
             for (var i = 0; i < this.events.length; i++) {
+                var passed = false;
+
                 if (this.events[i].startDate == formattedDate) {
+                    passed = true;
+                }
+
+                if (!passed && this.events[i].isRecurring && date.isSameOrAfter(this.events[i].startDate)
+                        && (this.events[i].rEndsNever || date.isSameOrBefore(this.events[i].rEndDate, 'day'))) {
+
+                    switch (this.events[i].rRepeat) {
+                        case 'daily':
+                            passed = true;
+                            break;
+                        case 'weekly':
+                            if (this.moment(this.events[i].startDate).day() == date.day()) { passed = true;}
+                            break;
+                        case 'weekdays':
+                            if (date.day() > 0 && date.day() < 6) { passed = true; }
+                            break;
+                        case 'monthly':
+                            var momentStartDate = this.moment(this.events[i].startDate);
+                            if (momentStartDate.date() == date.date()
+                                    || (date.date() == date.daysInMonth() && momentStartDate.date() > date.daysInMonth())) {
+                                passed = true;
+                            }
+                            break;
+                    }
+                }
+
+                if (passed) {
                     events.push(this.events[i]);
                     count++;
                 }
@@ -412,7 +439,7 @@ export default {
             this.newEvent.activityId = this.activities.length > 0 ? this.activities[0].id : 0;
             this.newEvent.studentIds = [];
             this.newEvent.isRecurring = false;
-            this.newEvent.rEndDate = posDate.add(1, 'years').format('YYYY-MM-DD');
+            this.newEvent.rEndDate = posDate.add(1, 'months').format('YYYY-MM-DD');
             this.newEvent.rEndsNever = true;
             this.newEvent.rRepeat = 'weekly';
             this.newEvent.rEvery = 'na';

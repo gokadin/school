@@ -53,6 +53,15 @@ return [
                 $ids[] = $lesson->student()->getId();
             }
             return $ids;
-        }
+        },
+        'isRecurring' => function($o) { return $o->isRecurring(); },
+        'rRepeat' => function($o) { return $o->rRepeat(); },
+        'rEvery' => function($o) { return $o->rEvery(); },
+        'rEndDate' => function($o) { return $o->rEndDate(); },
+        'rEndsNever' => function($o) { return $o->rEndsNever(); },
+        'location' => function($o) { return $o->location(); },
+        'visibility' => function($o) { return $o->visibility(); },
+        'notifyMeBy' => function($o) { return $o->notifyMeBy(); },
+        'notifyMeBefore' => function($o) { return $o->notifyMeBefore(); },
     ]
 ];

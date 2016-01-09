@@ -24,6 +24,16 @@ class EventService extends AuthenticatedService
                 return false;
             }
         }
+        $data['startDate'] = Carbon::parse($data['startDate'])->toDateString();
+        $data['endDate'] = Carbon::parse($data['endDate'])->toDateString();
+        $data['rEndDate'] = Carbon::parse($data['rEndDate'])->toDateString();
+
+        $data['absoluteStart'] = $data['startDate'];
+        $data['absoluteEnd'] = $data['endDate'];
+        if ($data['isRecurring'])
+        {
+            $data['rEndsNever'] ? $data['absoluteEnd'] = Carbon::now()->addYears(100) : $data['rEndDate'];
+        }
 
         $event = $this->repository->of(Event::class)->create($data);
 
@@ -37,8 +47,14 @@ class EventService extends AuthenticatedService
 
     public function range(array $data)
     {
-        return $this->transformer->of(Event::class)->transform($this->repository->of(Event::class)
-            ->rangeOf($this->user, Carbon::parse($data['from']), Carbon::parse($data['to'])));
+        $from = Carbon::parse($data['from'])->toDateString();
+        $to = Carbon::parse($data['to'])->toDateString();
+
+        $events = $this->user->events()->where('absoluteEnd', '>', $from)
+            ->where('absoluteStart', '<', $to)
+            ->toArray();
+
+        return $this->transformer->of(Event::class)->transform($events);
     }
 
     public function changeDate(array $data)

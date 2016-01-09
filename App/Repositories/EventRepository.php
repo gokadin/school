@@ -10,11 +10,11 @@ class EventRepository extends RepositoryBase
 {
     public function create(array $data)
     {
-        $event = new Event($data['title'], $data['description'], Carbon::parse($data['startDate']),
-            Carbon::parse($data['endDate']), $data['startTime'], $data['endTime'], $data['isAllDay'],
+        $event = new Event($data['title'], $data['description'], $data['startDate'],
+            $data['endDate'], $data['startTime'], $data['endTime'], $data['isAllDay'],
             $data['color'], $data['teacher'], $data['activity'], $data['isRecurring'], $data['rRepeat'],
             $data['rEvery'], $data['rEndDate'], $data['rEndsNever'], $data['location'], $data['visibility'],
-            $data['notifyMeBy'], $data['notifyMeBefore']);
+            $data['notifyMeBy'], $data['notifyMeBefore'], $data['absoluteStart'], $data['absoluteEnd']);
 
         $this->dm->persist($event);
 
@@ -31,13 +31,6 @@ class EventRepository extends RepositoryBase
         }
 
         $this->dm->flush();
-    }
-
-    public function rangeOf(Teacher $teacher, Carbon $from, Carbon $to)
-    {
-        return $teacher->events()->where('endDate', '>', $from->toDateString())
-            ->where('startDate', '<', $to->toDateString())
-            ->toArray();
     }
 
     public function upcomingEventsOf(Teacher $teacher)

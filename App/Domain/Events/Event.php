@@ -73,9 +73,15 @@ class Event
     /** @Column(type="string") */
     private $notifyMeBefore;
 
+    /** @Column(type="datetime") */
+    private $absoluteStart;
+
+    /** @Column(type="datetime") */
+    private $absoluteEnd;
+
     public function __construct($title, $description, $startDate, $endDate, $startTime, $endTime, $isAllDay, $color,
                                 Teacher $teacher, $activity, $isRecurring, $rRepeat, $rEvery, $rEndDate, $rEndsNever,
-                                $location, $visibility, $notifyMeBy, $notifyMeBefore)
+                                $location, $visibility, $notifyMeBy, $notifyMeBefore, $absoluteStart, $absoluteEnd)
     {
         $this->teacher = $teacher;
         $this->title = $title;
@@ -96,6 +102,8 @@ class Event
         $this->visibility = $visibility;
         $this->notifyMeBy = $notifyMeBy;
         $this->notifyMeBefore = $notifyMeBefore;
+        $this->absoluteStart = $absoluteStart;
+        $this->absoluteEnd = $absoluteEnd;
     }
 
     public function teacher()
@@ -301,5 +309,25 @@ class Event
     public function setNotifyMeBefore($notifyMeBefore)
     {
         $this->notifyMeBefore = $notifyMeBefore;
+    }
+
+    public function absoluteStart()
+    {
+        return $this->absoluteStart;
+    }
+
+    public function setAbsoluteStart($absoluteStart)
+    {
+        $this->absoluteStart = $absoluteStart;
+    }
+
+    public function absoluteEnd()
+    {
+        return $this->absoluteEnd;
+    }
+
+    public function setAbsoluteEnd($absoluteEnd)
+    {
+        $this->absoluteEnd = $absoluteEnd;
     }
 }

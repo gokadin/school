@@ -5,7 +5,7 @@
                 @click="handleInputClick()"
                 @blur="handleBlur()"
                 @keyUp.esc="handleEscape()"
-                v-model="selectedDate"
+                v-model="model"
         />
         <div class="box" v-show="show" @mousedown.prevent>
             <div class="header">
@@ -38,15 +38,12 @@
 
 <script>
 export default {
-    props: ['date'],
+    props: ['model'],
 
     data: function() {
         return {
             show: false,
-            currentDate: this.moment(),
-            selectedDate: this.moment(this.date).isValid()
-                    ? this.moment(this.date).format('YYYY-MM-DD')
-                    : this.moment().format('YYYY-MM-DD')
+            currentDate: this.moment()
         };
     },
 
@@ -104,7 +101,7 @@ export default {
         },
 
         handleDateClick: function(i, j) {
-            this.selectedDate = this.getPositionDate(i, j).format('YYYY-MM-DD');
+            this.model = this.getPositionDate(i, j).format('YYYY-MM-DD');
 
             this.show = false;
         },
@@ -118,8 +115,8 @@ export default {
         },
 
         showCalendar: function() {
-            this.currentDate = this.moment(this.selectedDate).isValid()
-                    ? this.moment(this.selectedDate)
+            this.currentDate = this.moment(this.model).isValid()
+                    ? this.moment(this.model)
                     : this.moment();
 
             this.show = true;
