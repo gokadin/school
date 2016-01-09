@@ -5,6 +5,7 @@ namespace App\Repositories;
 use App\Domain\Events\Event;
 use App\Domain\Users\Teacher;
 use Carbon\Carbon;
+use Library\DataMapper\Collection\PersistentCollection;
 
 class EventRepository extends RepositoryBase
 {
@@ -33,10 +34,9 @@ class EventRepository extends RepositoryBase
         $this->dm->flush();
     }
 
-    public function upcomingEventsOf(Teacher $teacher)
+    public function upcomingEventsOf(PersistentCollection $events)
     {
-        return $teacher->events()->where('startDate', '>', Carbon::now())
-            ->where('startDate', '<=', Carbon::now()->addWeek(1))
+        return $events->where('startDate', '>', Carbon::now())
             ->sortBy('startDate', true)
             ->slice(0, 10);
     }

@@ -20,12 +20,12 @@
                     </label>
                 </div>
 
-                <div class="form-row" v-for="field in extraFields">
+                <div class="form-row form-extra-field" v-for="field in extraFields">
                     <input type="text" name="extra[]" placeholder="Field name" v-model="field['displayName']" />
                     <i class="fa fa-close" @click="removeExtra($index)"></i>
                 </div>
 
-                <div class="form-row">
+                <div class="form-row form-extra-button">
                     <button type="button" class="button-gray" @click="addExtra()">Add extra field</button>
                 </div>
 
@@ -122,6 +122,15 @@ export default {
     #form-options {
         padding: 20px;
 
+        .form-extra-field {
+            display: flex;
+            justify-content: flex-start;
+
+            input {
+                flex-basis: 50%;
+            }
+        }
+
         i.fa-close {
             font-size: 30px;
             color: #ac2925;
@@ -132,7 +141,8 @@ export default {
             margin-left: 8px;
         }
 
-        .form-buttons button:first-child {
+        .form-extra-button {
+            justify-content: flex-start;
             margin-right: 20px;
             font-size: 16px;
             font-weight: 400;

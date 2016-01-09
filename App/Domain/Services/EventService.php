@@ -76,7 +76,7 @@ class EventService extends AuthenticatedService
 
     public function upcomingEvents()
     {
-        $events = $this->repository->of(Event::class)->upcomingEventsOf($this->user);
+        $events = $this->repository->of(Event::class)->upcomingEventsOf($this->user->events());
 
         $grouped = [];
         foreach ($events as $event)
