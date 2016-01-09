@@ -11,7 +11,6 @@ class ShaoFunctions
     private $shao;
     private $container;
     private $router;
-    private $view;
 
     public function __construct(Container $container, Shao $shao)
     {
@@ -89,20 +88,12 @@ class ShaoFunctions
 
     public function inject($class, $varName = null)
     {
-        if (substr($class, 0, 1) == '\\')
+        if (is_null($varName))
         {
-            $class = substr($class, 1);
+            $varName = lcfirst(substr($class, strrpos($class, '\\') + 1));
         }
 
-        $resolved = $this->container->resolve($class);
-        if (is_null($this->view))
-        {
-            $this->view = $this->container->resolveInstance('view');
-        }
-
-        is_null($varName)
-            ? $this->view->add([lcfirst(substr($class, strrpos($class, '\\') + 1)) => $resolved])
-            : $this->view->add([$varName => $resolved]);
+        return '<?php $'.$varName.' = $viewFactory->inject(\''.$class.'\'); ?>';
     }
 
     public function path($action, $var = null)

@@ -24,10 +24,9 @@ class Shao
         $content = file_get_contents($file);
         $cachedFileName = $this->generateCachedFileName($file, $content);
 
-        if (env('APP_ENV') == 'production')
+        if (env('APP_ENV') == 'production' && !$this->isFileChanged($cachedFileName))
         {
-            if (!$this->isFileChanged($cachedFileName))
-                return $cachedFileName;
+            return $cachedFileName;
         }
 
         $this->parseRawPhp($content);

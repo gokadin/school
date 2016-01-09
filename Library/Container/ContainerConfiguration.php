@@ -69,7 +69,7 @@ class ContainerConfiguration
         $this->container->registerInstance('shao', $shao);
         $mailConfig = require $app->basePath().'Config/mail.php';
         $this->container->registerInstance('mail', new Mail($mailConfig, $shao));
-        $this->container->registerInstance('view', new View($shao));
+        $this->container->registerInstance('view', new View($this->container, $shao));
 
         if (env('APP_DEBUG'))
         {

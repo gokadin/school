@@ -2,14 +2,18 @@
 
 namespace Library\Http;
 
+use Library\Container\Container;
+
 class ViewFactory
 {
+    private $container;
     protected $layoutFile;
     protected $sections;
     protected $currentSectionName;
 
-    public function __construct()
+    public function __construct(Container $container)
     {
+        $this->container = $container;
         $this->layoutFile = null;
         $this->sections = array();
         $this->currentSectionName = null;
@@ -55,5 +59,16 @@ class ViewFactory
         {
             return $this->sections[$name];
         }
+    }
+
+    public function inject($class)
+    {
+        if (substr($class, 0, 1) == '\\')
+        {
+            $class = substr($class, 1);
+        }
+
+        return $this->container->resolve($class);
+
     }
 }

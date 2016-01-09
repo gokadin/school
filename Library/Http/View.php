@@ -2,6 +2,7 @@
 
 namespace Library\Http;
 
+use Library\Container\Container;
 use Library\Shao\Shao;
 use Symfony\Component\Yaml\Exception\RuntimeException;
 
@@ -9,13 +10,15 @@ class View
 {
     const VIEW_FOLDER = 'resources/views';
 
+    private $container;
     protected $basePath;
     protected $content;
     protected $vars;
     protected $shao;
 
-    public function __construct(Shao $shao)
+    public function __construct(Container $container, Shao $shao)
     {
+        $this->container = $container;
         $this->shao = $shao;
         $this->basePath = __DIR__.'/../../'.self::VIEW_FOLDER;
     }
@@ -52,7 +55,7 @@ class View
             extract($this->vars);
         }
 
-        $viewFactory = new ViewFactory();
+        $viewFactory = new ViewFactory($this->container);
 
         ob_start();
         require $contentFile;
