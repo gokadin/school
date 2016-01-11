@@ -32,11 +32,16 @@
 
 </div>
 
+@stop()
+
+@section('javascript')
+
 <script type="text/javascript">
 $('#login-form').validate({
     email: [
         {rule: 'required'},
-        {rule: 'email'}
+        {rule: 'email'},
+        {rule: 'max:32'}
     ],
     password: [
         {rule: 'required'}

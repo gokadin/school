@@ -106,6 +106,11 @@ class Event
         $this->absoluteEnd = $absoluteEnd;
     }
 
+    public function setId($id)
+    {
+        $this->id = $id;
+    }
+
     public function teacher()
     {
         return $this->teacher;

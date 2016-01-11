@@ -83,6 +83,8 @@
                 return unique(input.val(), args[0], args[1]);
             case 'equalsField':
                 return equalsField(input.val(), args[0]);
+            case 'max':
+                return max(input.val(), args[0]);
         }
     }
 
@@ -126,6 +128,8 @@
                 return key + ' is already taken';
             case 'equalsField':
                 return key + ' does not equal to ' + args[0];
+            case 'max':
+                return key + ' must be at most ' + args[0] + ' characters';
         }
     }
 
@@ -166,5 +170,9 @@
 
     function equalsField(value, fieldName) {
         return value == $('#' + fieldName).val();
+    }
+
+    function max(value, max) {
+        return value.length <= max;
     }
 }());

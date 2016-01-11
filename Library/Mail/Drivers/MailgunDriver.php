@@ -35,6 +35,7 @@ class MailgunDriver
 
     public function send()
     {
+        $this->builder->setDkim(true);
         $this->mailgun->post($this->domain.'/messages', $this->builder->getMessage(), $this->builder->getFiles());
     }
 

@@ -25,7 +25,7 @@ class SendTeacherPreRegistrationEmail extends Listener implements ShouldQueue
 
         $this->mail->send('frontend.emails.teacherPreRegisteredEmail', compact('tempTeacher'), function($m) use ($tempTeacher) {
             $m->to($tempTeacher->email());
-            $m->from('mailgun@mg.instructioner.com', 'Givi Odikadze');
+            $m->from('postmaster@instructioner.com');
             $m->subject('Instructioner account confirmation');
         });
     }

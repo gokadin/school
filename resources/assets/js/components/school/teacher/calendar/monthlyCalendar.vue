@@ -1,5 +1,6 @@
 <template>
     <div id="monthly-calendar">
+
         <div class="header">
             <div class="navigation">
                 <button type="button" @click="previousMonth()"><i class="fa fa-chevron-left"></i></button>
@@ -325,36 +326,7 @@ export default {
             var count = 0;
 
             for (var i = 0; i < this.events.length; i++) {
-                var passed = false;
-
                 if (this.events[i].startDate == formattedDate) {
-                    passed = true;
-                }
-
-                if (!passed && this.events[i].isRecurring && date.isSameOrAfter(this.events[i].startDate)
-                        && (this.events[i].rEndsNever || date.isSameOrBefore(this.events[i].rEndDate, 'day'))) {
-
-                    switch (this.events[i].rRepeat) {
-                        case 'daily':
-                            passed = true;
-                            break;
-                        case 'weekly':
-                            if (this.moment(this.events[i].startDate).day() == date.day()) { passed = true;}
-                            break;
-                        case 'weekdays':
-                            if (date.day() > 0 && date.day() < 6) { passed = true; }
-                            break;
-                        case 'monthly':
-                            var momentStartDate = this.moment(this.events[i].startDate);
-                            if (momentStartDate.date() == date.date()
-                                    || (date.date() == date.daysInMonth() && momentStartDate.date() > date.daysInMonth())) {
-                                passed = true;
-                            }
-                            break;
-                    }
-                }
-
-                if (passed) {
                     events.push(this.events[i]);
                     count++;
                 }
@@ -362,6 +334,7 @@ export default {
                 if (count == 5) {
                     events.pop();
                     events.pop();
+
                     return events;
                 }
             }
@@ -539,7 +512,7 @@ export default {
         fetchMonthEvents: function(date) {
             this.$http.post('/api/school/teacher/events/range', {
                 from: date.clone().date(0).subtract(1, 'weeks').format('YYYY-MM-DD'),
-                to: date.clone().date(date.daysInMonth()).add(1, 'months').add(1, 'weeks').format('YYYY-MM-DD')
+                to: date.clone().date(date.daysInMonth()).add(1, 'weeks').format('YYYY-MM-DD')
             }, function(response, status) {
                 if (status != 200) {
                     return;

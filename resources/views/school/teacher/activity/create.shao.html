@@ -75,7 +75,8 @@
 <script type="text/javascript">
     $('#create-activity-form').validate({
         name: [
-            {rule: 'required'}
+            {rule: 'required'},
+            {rule: 'max:32'}
         ],
         rate: [
             {rule: 'required', message: 'rate is required'},

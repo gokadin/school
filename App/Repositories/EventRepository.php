@@ -3,7 +3,6 @@
 namespace App\Repositories;
 
 use App\Domain\Events\Event;
-use App\Domain\Users\Teacher;
 use Carbon\Carbon;
 use Library\DataMapper\Collection\PersistentCollection;
 
@@ -36,8 +35,8 @@ class EventRepository extends RepositoryBase
 
     public function upcomingEventsOf(PersistentCollection $events)
     {
-        return $events->where('startDate', '>', Carbon::now())
-            ->sortBy('startDate', true)
+        return $events->where('absoluteEnd', '>', Carbon::now())
+            ->sortBy('absoluteEnd', true)
             ->slice(0, 10);
     }
 }

@@ -47,10 +47,12 @@
 <script type="text/javascript">
 $('#signup-form').validate({
     firstName: [
-        {rule: 'required', message: 'first name is required'}
+        {rule: 'required', message: 'first name is required'},
+        {rule: 'max:20', message: 'first name must be at most 20 characters'}
     ],
     lastName: [
-        {rule: 'required', message: 'last name is required'}
+        {rule: 'required', message: 'last name is required'},
+        {rule: 'max:20', message: 'last name must be at most 20 characters'}
     ],
     email: [
         {rule: 'required'},
