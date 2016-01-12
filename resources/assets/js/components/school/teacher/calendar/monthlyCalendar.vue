@@ -227,14 +227,14 @@
 export default {
     data: function() {
         return {
-            currentDate: this.moment(),
-            events: this.fetchMonthEvents(this.moment()),
+            currentDate: this.moment(''),
+            events: this.fetchMonthEvents(this.moment('')),
             newEvent: {
                 id: 0,
                 title: '',
                 description: '',
-                startDate: this.moment().format('YYYY-MM-DD'),
-                endDate: this.moment().format('YYYY-MM-DD'),
+                startDate: this.moment('').format('YYYY-MM-DD'),
+                endDate: this.moment('').format('YYYY-MM-DD'),
                 startTime: '12:00pm',
                 endTime: '1:00pm',
                 isAllDay: true,
@@ -244,7 +244,7 @@ export default {
                 activityId: 0,
                 studentIds: [],
                 isRecurring: false,
-                rEndDate: this.moment().add(1, 'months').format('YYYY-MM-DD'),
+                rEndDate: this.moment('').add(1, 'months').format('YYYY-MM-DD'),
                 rEndsNever: true,
                 rRepeat: 'weekly',
                 rEvery: 'na',
@@ -294,12 +294,12 @@ export default {
             }
         },
 
-        moment: function(str = '') {
+        moment: function(str) {
             return this.$parent.getMoment(str);
         },
 
         getCurrentDateCopy: function() {
-            var date = this.moment();
+            var date = this.moment('');
             date.year(this.currentDate.year());
             date.month(this.currentDate.month());
             date.date(this.currentDate.date());
@@ -367,7 +367,7 @@ export default {
         },
 
         today: function() {
-            var todayDate = this.moment();
+            var todayDate = this.moment('');
             this.fetchMonthEvents(todayDate);
             this.currentDate = todayDate;
         },

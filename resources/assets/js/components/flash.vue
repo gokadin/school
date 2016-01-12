@@ -34,14 +34,10 @@
         },
 
         methods: {
-            flash: function(type, message, freeze = false) {
+            flash: function(type, message) {
                 this.type = type;
                 this.message = message;
                 this.show = true;
-
-                if (freeze) {
-                    return;
-                }
 
                 switch (type)
                 {

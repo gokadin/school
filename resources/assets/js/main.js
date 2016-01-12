@@ -29,8 +29,8 @@ new Vue({
     el: 'body',
 
     created: function() {
-        this.$on('flash', function(type, message, freeze = false) {
-            this.flash(type, message, freeze);
+        this.$on('flash', function(type, message) {
+            this.flash(type, message);
         });
     },
 
@@ -44,11 +44,11 @@ new Vue({
     },
 
     methods: {
-        flash: function(type, message, freeze) {
-            this.$refs.flash.flash(type, message, freeze);
+        flash: function(type, message) {
+            this.$refs.flash.flash(type, message);
         },
 
-        getMoment: function(str = '') {
+        getMoment: function(str) {
             if (str == '') {
                 return moment();
             }
