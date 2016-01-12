@@ -271,9 +271,23 @@ button:disabled {
         font-size: 18px; }
       #frontend header nav ul li a:hover {
         color: #67b168; }
-#frontend #register-student-form {
+#frontend #student-registration > h2, #frontend #student-registration h3 {
+  text-align: center; }
+#frontend #student-registration > h3 {
+  margin: 20px 0;
+  color: #67b168; }
+#frontend #student-registration #register-student-form {
   width: 60%;
   margin: 0 auto; }
+  #frontend #student-registration #register-student-form .row-gender {
+    display: flex;
+    justify-content: flex-start; }
+    #frontend #student-registration #register-student-form .row-gender label:first-child {
+      flex-basis: 30%; }
+  #frontend #student-registration #register-student-form .row-date-of-birth {
+    justify-content: flex-start; }
+    #frontend #student-registration #register-student-form .row-date-of-birth input {
+      flex-basis: 30%; }
 #frontend #signup-land {
   text-align: center;
   margin-top: 50px; }

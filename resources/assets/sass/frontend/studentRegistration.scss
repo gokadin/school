@@ -1,4 +1,32 @@
-#register-student-form {
-  width: 60%;
-  margin: 0 auto;
+#student-registration {
+  > h2, h3 {
+    text-align: center;
+  }
+
+  > h3 {
+    margin: 20px 0;
+    color: #67b168;
+  }
+
+  #register-student-form {
+    width: 60%;
+    margin: 0 auto;
+
+    .row-gender {
+      display: flex;
+      justify-content: flex-start;
+
+      label:first-child {
+        flex-basis: 30%;
+      }
+    }
+
+    .row-date-of-birth {
+      justify-content: flex-start;
+
+      input {
+        flex-basis: 30%;
+      }
+    }
+  }
 }

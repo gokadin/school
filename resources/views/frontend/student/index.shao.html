@@ -4,9 +4,13 @@
 
 @section('content')
 
-<h1>Welcome to instructioner bla bla bla</h1>
+<div id="student-registration" class="default-center">
+    <h2>Welcome to instructioner</h2>
+    <h3>
+        You have been invited by {{ $teacherName }} <br />
+        to register as a student for {{ $activityName }}
+    </h3>
 
-<div class="default-center">
     {!! $form->open('frontend.student.register', 'POST', ['id' => 'register-student-form', 'class' => 'form-1']) !!}
 
     {!! $form->hidden('tempStudentId', $tempStudentId) !!}
@@ -42,7 +46,7 @@
                     {!! $form->text('country', null, ['placeholder' => 'Country']) !!}
                 </div>
             @elseif ($field['name'] == 'gender')
-                <div class="form-row">
+                <div class="form-row row-gender">
                     <label>Gender</label>
                     <label class="radio-label">Male
                         <input type="radio" name="gender" value="male" />
@@ -53,7 +57,12 @@
                         <i class="radio-icon"></i>
                     </label>
                 </div>
-            @else
+                @elseif ($field['name'] == 'dateOfBirth')
+                <div class="form-row row-date-of-birth">
+                    <label>Date of birth</label>
+                    <datepicker name="dateOfBirth" placeholder="yyyy-mm-dd"></datepicker>
+                </div>
+                @else
                 <div class="form-row">
                     {!! $form->label($field['name'], $field['displayName']) !!}
                     {!! $form->text($field['name'], null, ['placeholder' => $field['displayName']]) !!}

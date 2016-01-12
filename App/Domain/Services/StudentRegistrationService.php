@@ -7,6 +7,7 @@ use App\Domain\Common\Address;
 use App\Domain\Users\Student;
 use App\Domain\Users\TempStudent;
 use App\Events\Frontend\StudentRegistered;
+use Carbon\Carbon;
 
 class StudentRegistrationService extends AuthenticatedService
 {
@@ -35,6 +36,8 @@ class StudentRegistrationService extends AuthenticatedService
         return [
             'registrationForm' => json_decode($tempStudent->teacher()->settings()->registrationForm(), true),
             'schoolName' => $tempStudent->teacher()->school()->name(),
+            'teacherName' => $tempStudent->teacher()->name(),
+            'activityName' => $tempStudent->activity()->name(),
             'firstName' => $tempStudent->firstName(),
             'lastName' => $tempStudent->lastName(),
             'tempStudentId' => $tempStudent->getId()
@@ -64,6 +67,8 @@ class StudentRegistrationService extends AuthenticatedService
                 $address->setCountry($data['country']);
                 $address->setCity($data['city']);
                 $address->setStreet($data['address']);
+
+                break;
             }
         }
 
@@ -75,6 +80,11 @@ class StudentRegistrationService extends AuthenticatedService
             if ($field['name'] == 'address')
             {
                 continue;
+            }
+
+            if ($field['name'] == 'dateOfBirth')
+            {
+                $data[$field['name']] = Carbon::parse($data[$field['name']])->toDateString();
             }
 
             $setterName = 'set'.ucfirst($field['name']);

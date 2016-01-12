@@ -6,12 +6,17 @@
                 @blur="handleBlur()"
                 @keyUp.esc="handleEscape()"
                 v-model="model"
+                :placeholder="placeholder"
+                :name="name"
         />
         <div class="box" v-show="show" @mousedown.prevent>
             <div class="header">
-                <div class="left-arrow" @click="previousMonth()"><i class="fa fa-arrow-left"></i></div>
-                <div class="date-text">{{ currentDate.format('MMMM YYYY') }}</div>
-                <div class="right-arrow" @click="nextMonth()"><i class="fa fa-arrow-right"></i></div>
+                <div class="left-arrow" @click="previousMonth()"><i class="fa fa-chevron-left"></i></div>
+                <div class="date-text">{{ currentDate.format('MMMM') }}</div>
+                <div class="right-arrow" @click="nextMonth()"><i class="fa fa-chevron-right"></i></div>
+                <div class="left-arrow" @click="previousYear()"><i class="fa fa-chevron-left"></i></div>
+                <div class="date-text">{{ currentDate.format('YYYY') }}</div>
+                <div class="right-arrow" @click="nextYear()"><i class="fa fa-chevron-right"></i></div>
             </div>
             <div class="body">
                 <div class="calendar">
@@ -38,7 +43,7 @@
 
 <script>
 export default {
-    props: ['model'],
+    props: ['model', 'placeholder', 'name'],
 
     data: function() {
         return {
@@ -114,6 +119,14 @@ export default {
             this.currentDate = this.moment(this.currentDate.subtract(1, 'months').format('YYYY-MM-DD'));
         },
 
+        nextYear: function() {
+            this.currentDate = this.moment(this.currentDate.add(1, 'years').format('YYYY-MM-DD'));
+        },
+
+        previousYear: function() {
+            this.currentDate = this.moment(this.currentDate.subtract(1, 'years').format('YYYY-MM-DD'));
+        },
+
         showCalendar: function() {
             this.currentDate = this.moment(this.model).isValid()
                     ? this.moment(this.model)
@@ -133,38 +146,33 @@ export default {
         position: absolute;
         z-index: 10;
         margin-top: 2px;
-        width: 300px;
+        width: 260px;
         background-color: white;
         border: 1px solid #cccccc;
 
         .header {
             display: flex;
-            padding: 10px;
-
-            .left-arrow {
-                flex: 1;
-            }
+            padding: 3px 10px;
+            height: 30px;
+            align-content: center;
 
             .date-text {
                 flex-basis: 100%;
                 text-align: center;
                 font-size: 14px;
-                line-height: 40px;
-            }
-
-            .right-arrow {
-                flex: 1;
-                text-align: right;
+                line-height: 25px;
             }
 
             .left-arrow, .right-arrow {
+                flex-basis: 25px;
+                text-align: center;
+
                 i {
                     border-radius: 3px;
                     cursor: pointer;
-                    height: 40px;
-                    line-height: 40px;
-                    width: 40px;
-                    text-align: center;
+                    height: 25px;
+                    line-height: 25px;
+                    width: 25px;
                 }
 
                 i:hover {
@@ -175,7 +183,7 @@ export default {
         }
 
         .body {
-            padding: 10px;
+            padding: 3px 10px;
 
             .calendar {
                 table {
@@ -186,12 +194,12 @@ export default {
                         th {
                             font-weight: 400;
                             text-align: center;
-                            padding: 5px;
+                            padding: 3px;
                         }
 
                         td {
-                            height: 40px;
-                            line-height: 40px;
+                            height: 30px;
+                            line-height: 30px;
 
                             div {
                                 cursor: pointer;

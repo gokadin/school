@@ -128,7 +128,7 @@ class StudentRegistrationForm implements JsonSerializable
 
             if ($field['name'] == '')
             {
-                $field['name'] = preg_replace('\'/\s+/\'', '', $field['displayName']);
+                $field['name'] = preg_replace('/\s+/', '', $field['displayName']);
             }
 
             $this->addExtraField(new FormField($field['name'], $field['displayName'], $field['active']));

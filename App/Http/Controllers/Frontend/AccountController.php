@@ -8,7 +8,6 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Frontend\PreRegistrationRequest;
 use App\Http\Requests\Frontend\LoginRequest;
 use App\Http\Requests\Frontend\RegistrationRequest;
-use Library\Mail\Mail;
 
 class AccountController extends Controller
 {
@@ -77,14 +76,8 @@ class AccountController extends Controller
         return $this->response->route('school.teacher.index.index');
     }
 
-    public function signUpLand(Mail $mail)
+    public function signUpLand()
     {
-            $mail->sendPlainText('Hello, I am testing my email service don\'t discard me. ', function($m) {
-                $m->to('guivio_147@hotmail.com');
-                $m->from('postmaster@instructioner.com');
-                $m->subject('Instructioner account confirmation');
-            });
-
         return $this->view->make('frontend.account.signUpLand');
     }
 }
