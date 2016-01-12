@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html>
+<head>
+    @inject('Library\Session\Session')
+    <title>Instructioner</title>
+    <meta http-equiv="Content-type" content="text/html; charset=UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta id="csrf-token" content="{{ $session->generateToken() }}">
+    <link rel="stylesheet" href="/css/app.css" />
+    <link rel="stylesheet" href="/vendor/font-awesome-4.4.0/css/font-awesome.min.css" />
+</head>
+
+<body id="school">
+
+<header>
+    <div class="school-name"><a href="@path('school.student.index.index')">{{ $user->teacher()->school()->name() }}</a></div>
+    <div class="account">
+        <div class="dropdown-1">
+            <img src="/images/defaultProfilePicture.png" width="30" height="30" />
+            {{ $user->name() }} <i class="fa fa-angle-down"></i>
+            <div class="dropdown-box">
+                <div class="arrow-box">
+                    <ul>
+                        <li>
+                            <a href="@path('school.student.account.index')">
+                                <i class="fa fa-user"></i>Account
+                            </a>
+                        </li>
+                        <li>
+                            <a href="@path('school.student.setting.schoolInformation')">
+                                <i class="fa fa-gear"></i>Settings
+                            </a>
+                        </li>
+                        <li class="divider"></li>
+                        <li>
+                            <a href="@path('frontend.account.logout')">
+                                <i class="fa fa-sign-out"></i>Log out
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="responsive-menu-button">
+        <i class="fa fa-bars"></i>
+    </div>
+</header>
+
+<div id="container">
+    <div id="menu">
+        <div class="responsive-user-menu">
+            <div class="account">
+                <div class="dropdown-1">
+                    <img src="/images/defaultProfilePicture.png" width="30" height="30" />
+                    {{ $user->name() }} <i class="fa fa-angle-down"></i>
+                    <div class="dropdown-box">
+                        <div class="arrow-box">
+                            <ul>
+                                <li>
+                                    <a href="#">
+                                        <i class="fa fa-user"></i>Account
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="@path('school.student.setting.index')">
+                                        <i class="fa fa-cog"></i>Settings
+                                    </a>
+                                </li>
+                                <li class="divider"></li>
+                                <li>
+                                    <a href="@path('frontend.account.logout')">
+                                        <i class="fa fa-sign-out"></i>Log out
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <search></search>
+        <div class="menu-only">
+            <ul>
+                <li class="@if (currentRoute() == 'school.student.index.index') active @endif ">
+                    <a href="@path('school.student.index.index')">
+                        <i class="fa fa-home"></i>Home
+                    </a>
+                </li>
+                <!--<li class="multi-level @if (currentNameContains('school.teacher.activity.')) open active @endif ">-->
+                    <!--<a href="javascript:;">-->
+                        <!--<i class="fa fa-cogs"></i>Activities-->
+                    <!--</a>-->
+                    <!--<ul>-->
+                        <!--<li class="@if (currentRoute() == 'school.teacher.activity.index') active @endif ">-->
+                            <!--<a href="@path('school.teacher.activity.index')">-->
+                                <!--View-->
+                            <!--</a>-->
+                        <!--</li>-->
+                        <!--<li class="@if (currentRoute() == 'school.teacher.activity.create') active @endif ">-->
+                            <!--<a href="@path('school.teacher.activity.create')">-->
+                                <!--Create-->
+                            <!--</a>-->
+                        <!--</li>-->
+                    <!--</ul>-->
+                <!--</li>-->
+                <!--<li class="multi-level @if (currentNameContains('school.teacher.student.')) open active @endif ">-->
+                    <!--<a href="javascript:;">-->
+                        <!--<i class="fa fa-group"></i>Students-->
+                    <!--</a>-->
+                    <!--<ul>-->
+                        <!--<li>-->
+                            <!--<a href="@path('school.teacher.student.index')">-->
+                                <!--View-->
+                            <!--</a>-->
+                        <!--</li>-->
+                        <!--<li>-->
+                            <!--<a href="@path('school.teacher.student.create')">-->
+                                <!--Create-->
+                            <!--</a>-->
+                        <!--</li>-->
+                    <!--</ul>-->
+                <!--</li>-->
+                <!--<li class="@if (currentNameContains('school.teacher.calendar.')) active @endif ">-->
+                    <!--<a href="@path('school.teacher.calendar.index')">-->
+                        <!--<i class="fa fa-calendar"></i>Calendar-->
+                    <!--</a>-->
+                <!--</li>-->
+                <!--<li class="multi-level @if (currentNameContains('school.teacher.setting.')) open active @endif ">-->
+                    <!--<a href="javascript:;">-->
+                        <!--<i class="fa fa-cog"></i>Settings-->
+                    <!--</a>-->
+                    <!--<ul>-->
+                        <!--<li>-->
+                            <!--<a href="@path('school.teacher.setting.schoolInformation')">-->
+                                <!--School information-->
+                            <!--</a>-->
+                        <!--</li>-->
+                        <!--<li>-->
+                            <!--<a href="@path('school.teacher.setting.registrationForm')">-->
+                                <!--Registration form-->
+                            <!--</a>-->
+                        <!--</li>-->
+                        <!--<li>-->
+                            <!--<a href="@path('school.teacher.setting.preferences')">-->
+                                <!--Preferences-->
+                            <!--</a>-->
+                        <!--</li>-->
+                    <!--</ul>-->
+                <!--</li>-->
+                <!--<li class="@if (currentNameContains('school.teacher.account.')) active @endif ">-->
+                    <!--<a href="@path('school.teacher.account.index')">-->
+                        <!--<i class="fa fa-user"></i>Account-->
+                    <!--</a>-->
+                <!--</li>-->
+            </ul>
+        </div>
+    </div>
+
+    <div id="content">
+        <flash v-ref:flash></flash>
+        @yield('content')
+    </div>
+</div>
+
+<script src="/js/main.js"></script>
+<script src="/js/validator.js"></script>
+
+<script type="text/javascript">
+    $(function() {
+        $('#menu li.multi-level').each(function() {
+            if ($(this).hasClass('open')) {
+                $(this).children('ul').css('display', 'block');
+            } else {
+                $(this).children('ul').css('display', 'none');
+            }
+        });
+
+        $('#menu li.multi-level').click(function() {
+            $(this).toggleClass('open');
+
+            if ($(this).hasClass('open')) {
+                $(this).children('ul').slideDown();
+            } else {
+                $(this).children('ul').slideUp();
+            }
+        });
+
+        $('#responsive-menu-button').click(function() {
+            $('#menu').slideToggle();
+        });
+    });
+</script>
+
+@yield('javascript')
+
+</body>
+</html>

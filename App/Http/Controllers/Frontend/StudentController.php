@@ -27,8 +27,15 @@ class StudentController extends Controller
 
     public function register(RegisterStudentRequest $request, StudentRegistrationService $studentRegistrationService)
     {
-        $studentRegistrationService->register($request->all());
+        $student = $studentRegistrationService->register($request->all());
 
-        return $this->response->route('frontend.account.login');
+        return $student->hasAccount()
+            ? $this->response->route('frontend.account.login')
+            : $this->response->route('frontend.student.noAccountLandx');
+    }
+
+    public function noAccountLand()
+    {
+        return $this->view->make('frontend.student.noAccountLand');
     }
 }

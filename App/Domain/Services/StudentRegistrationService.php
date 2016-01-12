@@ -40,6 +40,7 @@ class StudentRegistrationService extends AuthenticatedService
             'activityName' => $tempStudent->activity()->name(),
             'firstName' => $tempStudent->firstName(),
             'lastName' => $tempStudent->lastName(),
+            'hasAccount' => $tempStudent->hasAccount(),
             'tempStudentId' => $tempStudent->getId()
         ];
     }
@@ -72,8 +73,13 @@ class StudentRegistrationService extends AuthenticatedService
             }
         }
 
-        $student = new Student($data['firstName'], $data['lastName'], $tempStudent->email(), md5('admin'),
-            $address, $tempStudent->activity(), $tempStudent->customPrice(), $tempStudent->teacher());
+        $password = $tempStudent->hasAccount()
+            ? md5($data['password'])
+            : md5('Password123');
+
+        $student = new Student($data['firstName'], $data['lastName'], $tempStudent->email(), $password,
+            $address, $tempStudent->activity(), $tempStudent->customPrice(), $tempStudent->hasAccount(),
+            $tempStudent->teacher());
 
         foreach ($form['fields'] as $field)
         {
@@ -103,7 +109,7 @@ class StudentRegistrationService extends AuthenticatedService
 
         $this->fireEvent(new StudentRegistered($student));
 
-        return true;
+        return $student;
     }
 
     private function validateFormData(array $data, $form)

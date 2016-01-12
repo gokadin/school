@@ -279,6 +279,8 @@ button:disabled {
 #frontend #student-registration #register-student-form {
   width: 60%;
   margin: 0 auto; }
+  #frontend #student-registration #register-student-form .form-title {
+    margin-top: 40px; }
   #frontend #student-registration #register-student-form .row-gender {
     display: flex;
     justify-content: flex-start; }
@@ -983,6 +985,11 @@ button:disabled {
         margin-bottom: 20px; }
       #school .profile .information {
         flex-basis: 100%; } }
+  #school #create-student-form .create-student-account {
+    display: flex; }
+    #school #create-student-form .create-student-account .checkbox-1 {
+      flex-basis: 100%;
+      margin-left: 30%; }
   #school #monthly-calendar .header {
     display: flex;
     align-items: center;

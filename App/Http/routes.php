@@ -31,6 +31,7 @@ Route::group(['namespace' => 'Frontend', 'as' => 'frontend', 'middleware' => 'Ve
         Route::get('/register/{id}-{code}', 'StudentController@index');
         Route::get('/not-found', 'StudentController@notFound');
         Route::post('/register', 'StudentController@register');
+        Route::get('/registration-land', 'StudentController@noAccountLand');
     });
 });
 
@@ -130,6 +131,14 @@ Route::group([
             Route::post('/personal-info', 'AccountController@updatePersonalInfo');
             Route::get('/password', 'AccountController@password');
             Route::post('/password', 'AccountController@updatePassword');
+        });
+    });
+
+    Route::group(['namespace' => 'Student', 'prefix' => '/student', 'as' => 'student'], function()
+    {
+        Route::group(['as' => 'index'], function ()
+        {
+            Route::get('/', 'IndexController@index');
         });
     });
 });

@@ -13,7 +13,7 @@ class StudentRepository extends RepositoryBase
         $confirmationCode = md5(rand(999, 999999));
 
         $tempStudent = new TempStudent($data['teacher'], $data['activity'], $data['firstName'], $data['lastName'],
-            $data['email'], $data['customPrice'], $confirmationCode);
+            $data['email'], $data['customPrice'], isset($data['hasAccount']) && $data['hasAccount'] == 1, $confirmationCode);
         $this->dm->persist($tempStudent);
 
         $this->dm->flush();

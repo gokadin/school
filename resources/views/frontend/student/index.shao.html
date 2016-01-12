@@ -16,7 +16,7 @@
     {!! $form->hidden('tempStudentId', $tempStudentId) !!}
 
     <div class="form-title">
-        Register
+        Personal information
     </div>
 
     @foreach ($registrationForm['requiredFields'] as $field)
@@ -33,9 +33,12 @@
     @foreach ($registrationForm['fields'] as $field)
         @if ($field['active'] == true)
             @if ($field['name'] == 'address')
+                <div class="form-title">
+                    Address
+                </div>
                 <div class="form-row">
-                    {!! $form->label('address', 'Address') !!}
-                    {!! $form->text('address', null, ['placeholder' => 'Address']) !!}
+                    {!! $form->label('address', 'Street') !!}
+                    {!! $form->text('address', null, ['placeholder' => 'Street']) !!}
                 </div>
                 <div class="form-row">
                     {!! $form->label('city', 'City') !!}
@@ -71,12 +74,32 @@
         @endif
     @endforeach
 
+    @if (sizeof($registrationForm['extraFields']) > 0)
+        <div class="form-title">
+            Other
+        </div>
+    @endif
     @foreach ($registrationForm['extraFields'] as $field)
         <div class="form-row">
             {!! $form->label($field['name'], $field['displayName']) !!}
             {!! $form->text($field['name'], null, ['placeholder' => $field['displayName']]) !!}
         </div>
     @endforeach
+
+    @if ($hasAccount)
+        <div class="form-title">
+            Account password
+        </div>
+
+        <div class="form-row">
+            {!! $form->label('password', 'Password') !!}
+            {!! $form->password('password', null, ['placeholder' => 'Password']) !!}
+        </div>
+        <div class="form-row">
+            {!! $form->label('confirmPassword', 'Confirm') !!}
+            {!! $form->password('confirmPassword', null, ['placeholder' => 'Confirm password']) !!}
+        </div>
+    @endif
 
     <div class="form-buttons">
         <button type="submit" class="button-green">Register</button>

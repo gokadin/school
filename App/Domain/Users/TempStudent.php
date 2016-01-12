@@ -28,6 +28,9 @@ class TempStudent
     /** @Column(type="decimal", size="5", precision="2") */
     private $customPrice;
 
+    /** @Column(type="boolean") */
+    private $hasAccount;
+
     /** @Column(type="string") */
     protected $confirmationCode;
 
@@ -38,7 +41,7 @@ class TempStudent
     private $activity;
 
     public function __construct(Teacher $teacher, Activity $activity,
-                                $firstName, $lastName, $email, $customPrice, $confirmationCode)
+                                $firstName, $lastName, $email, $customPrice, $hasAccount, $confirmationCode)
     {
         $this->teacher = $teacher;
         $this->activity = $activity;
@@ -46,6 +49,7 @@ class TempStudent
         $this->lastName = $lastName;
         $this->email = $email;
         $this->customPrice = $customPrice;
+        $this->hasAccount = $hasAccount;
         $this->confirmationCode = $confirmationCode;
     }
 
@@ -87,6 +91,16 @@ class TempStudent
     public function setCustomPrice($customPrice)
     {
         $this->customPrice = $customPrice;
+    }
+
+    public function hasAccount()
+    {
+        return $this->hasAccount;
+    }
+
+    public function setHasAccount($hasAccount)
+    {
+        $this->hasAccount = $hasAccount;
     }
 
     public function confirmationCode()

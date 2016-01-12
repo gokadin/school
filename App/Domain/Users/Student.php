@@ -34,13 +34,17 @@ class Student extends User
     /** @Column(type="decimal", size="5", precision="2") */
     private $customPrice;
 
+    /** @Column(type="boolean") */
+    private $hasAccount;
+
     public function __construct($firstName, $lastName, $email, $password, Address $address,
-                                Activity $activity, $customPrice, Teacher $teacher)
+                                Activity $activity, $customPrice, $hasAccount, Teacher $teacher)
     {
         parent::__construct($firstName, $lastName, $email, $password, $address);
 
         $this->activity = $activity;
         $this->customPrice = $customPrice;
+        $this->hasAccount = $hasAccount;
         $this->teacher = $teacher;
     }
 
@@ -122,5 +126,15 @@ class Student extends User
     public function setCustomPrice($customPrice)
     {
         $this->customPrice = $customPrice;
+    }
+
+    public function hasAccount()
+    {
+        return $this->hasAccount;
+    }
+
+    public function setHasAccount($hasAccount)
+    {
+        $this->hasAccount = $hasAccount;
     }
 }

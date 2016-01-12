@@ -34,7 +34,7 @@ class LoginService extends Service
         {
             $this->fireEvent(new UserLoggedIn($teacher, 'teacher'));
 
-            return true;
+            return 'teacher';
         }
 
         $student = $this->authenticator->attemptLogin(Student::class, $data['email'], md5($data['password']));
@@ -43,7 +43,7 @@ class LoginService extends Service
         {
             $this->fireEvent(new UserLoggedIn($student, 'student'));
 
-            return true;
+            return 'student';
         }
 
         return false;

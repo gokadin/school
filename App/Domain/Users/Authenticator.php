@@ -70,6 +70,11 @@ class Authenticator
         }
         else if ($user instanceof Student)
         {
+            if (!$user->hasAccount())
+            {
+                return false;
+            }
+
             $this->loginStudent($user);
         }
 

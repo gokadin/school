@@ -23,13 +23,16 @@ class AccountController extends Controller
 
     public function login(LoginRequest $request, LoginService $loginService)
     {
-        if (!$loginService->login($request->all()))
+        switch ($loginService->login($request->all()))
         {
-            return $this->response->route('frontend.account.index')
-                ->withFlash('Incorrect login. Please try again.', 'error');
+            case 'teacher':
+                return $this->response->route('school.teacher.index.index');
+            case 'student':
+                return $this->response->route('school.student.index.index');
+            default:
+                return $this->response->route('frontend.account.index')
+                    ->withFlash('Incorrect login. Please try again.', 'error');
         }
-
-        return $this->response->route('school.teacher.index.index');
     }
 
     public function logout(LoginService $loginService)
