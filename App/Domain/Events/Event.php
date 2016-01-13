@@ -3,6 +3,8 @@
 namespace App\Domain\Events;
 
 use App\Domain\Users\Teacher;
+use Carbon\Carbon;
+use Library\DataMapper\Collection\EntityCollection;
 use Library\DataMapper\DataMapperPrimaryKey;
 use Library\DataMapper\DataMapperTimestamps;
 
@@ -12,6 +14,8 @@ use Library\DataMapper\DataMapperTimestamps;
 class Event
 {
     use DataMapperPrimaryKey, DataMapperTimestamps;
+
+    private $decodedSkipDates;
 
     /** @BelongsTo(target="\App\Domain\Users\Teacher") */
     private $teacher;
@@ -43,7 +47,7 @@ class Event
     /** @HasOne(target="\App\Domain\Activities\Activity", nullable) */
     private $activity;
 
-    /** @HasMany(target="\App\Domain\Events\Lesson", mappedBy="event") */
+    /** @HasMany(target="\App\Domain\Events\Lesson", mappedBy="event", cascade="delete") */
     private $lessons;
 
     /** @Column(type="boolean") */
@@ -79,6 +83,9 @@ class Event
     /** @Column(type="datetime") */
     private $absoluteEnd;
 
+    /** @Column(type="text", nullable) */
+    private $skipDates;
+
     public function __construct($title, $description, $startDate, $endDate, $startTime, $endTime, $isAllDay, $color,
                                 Teacher $teacher, $activity, $isRecurring, $rRepeat, $rEvery, $rEndDate, $rEndsNever,
                                 $location, $visibility, $notifyMeBy, $notifyMeBefore, $absoluteStart, $absoluteEnd)
@@ -104,6 +111,8 @@ class Event
         $this->notifyMeBefore = $notifyMeBefore;
         $this->absoluteStart = $absoluteStart;
         $this->absoluteEnd = $absoluteEnd;
+
+        $this->lessons = new EntityCollection();
     }
 
     public function setId($id)
@@ -334,5 +343,25 @@ class Event
     public function setAbsoluteEnd($absoluteEnd)
     {
         $this->absoluteEnd = $absoluteEnd;
+    }
+
+    public function skip(Carbon $date)
+    {
+        $skipDates = $this->skipDates();
+        $skipDates[] = $date->toDateString();
+        $this->decodedSkipDates = $skipDates;
+
+        $this->skipDates = json_encode($skipDates);
+    }
+
+    public function skipDates()
+    {
+        if (is_null($this->decodedSkipDates))
+        {
+            $decoded = json_decode($this->skipDates, true);
+            $this->decodedSkipDates = is_null($decoded) ? [] : $decoded;
+        }
+
+        return $this->decodedSkipDates;
     }
 }

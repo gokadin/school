@@ -1186,4 +1186,33 @@ class DataMapperTest extends DataMapperBaseTest
         $this->assertEquals($teacher->getId(), $student0Data['teacher_id']);
         $this->assertEquals($teacher->getId(), $extraS1Data['teacher_id']);
     }
+
+    /*
+     * HAS MANY DELETES
+     */
+
+    public function testHasManyDeletingWithCascadeOnStudents()
+    {
+        // Arrange
+        $this->setUpAssociations();
+        $teacher = new Teacher('Tom');
+        $this->dm->persist($teacher);
+        for ($i = 1; $i < 10; $i++)
+        {
+            $student = new Student('student'.$i, $teacher);
+            $this->dm->persist($student);
+            $teacher->addStudent($student);
+        }
+        $this->dm->flush();
+
+        // Act
+        $this->dm->delete($teacher);
+        $this->dm->flush();
+        $studentData = $this->dm->queryBuilder()->table('Student')->where('teacher_id', '=', $teacher->getId())->select();
+        $teacherData = $this->dm->queryBuilder()->table('Teacher')->where('id', '=', $teacher->getId())->select();
+
+        // Assert
+        $this->assertEquals(0, sizeof($studentData));
+        $this->assertEquals(0, sizeof($teacherData));
+    }
 }

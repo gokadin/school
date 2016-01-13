@@ -54,10 +54,10 @@ class AnnotationDriver
                 $mappedBy = $parsedProperty[Metadata::ASSOC_HAS_MANY]['mappedBy'];
 
                 $cascades = [];
-                if (isset($parsedProperty[Metadata::ASSOC_HAS_ONE]['cascade']))
+                if (isset($parsedProperty[Metadata::ASSOC_HAS_MANY]['cascade']))
                 {
-                    $cascaeString = $parsedProperty[Metadata::ASSOC_HAS_ONE]['cascade'];
-                    $cascades =  array_map('trim', explode(',', $cascaeString));
+                    $cascadeString = $parsedProperty[Metadata::ASSOC_HAS_MANY]['cascade'];
+                    $cascades =  array_map('trim', explode(',', $cascadeString));
                 }
 
                 $metadata->addHasManyAssociation($property->getName(), $target, $cascades, $nullable, $mappedBy);
@@ -71,8 +71,8 @@ class AnnotationDriver
                 $cascades = [];
                 if (isset($parsedProperty[Metadata::ASSOC_HAS_ONE]['cascade']))
                 {
-                    $cascaeString = $parsedProperty[Metadata::ASSOC_HAS_ONE]['cascade'];
-                    $cascades =  array_map('trim', explode(',', $cascaeString));
+                    $cascadeString = $parsedProperty[Metadata::ASSOC_HAS_ONE]['cascade'];
+                    $cascades =  array_map('trim', explode(',', $cascadeString));
                 }
 
                 $metadata->addHasOneAssociation($targetShortName, $property->getName(), $target, $cascades, $nullable);
@@ -86,8 +86,8 @@ class AnnotationDriver
                 $cascades = [];
                 if (isset($parsedProperty[Metadata::ASSOC_BELONGS_TO]['cascade']))
                 {
-                    $cascaeString = $parsedProperty[Metadata::ASSOC_BELONGS_TO]['cascade'];
-                    $cascades =  array_map('trim', explode(',', $cascaeString));
+                    $cascadeString = $parsedProperty[Metadata::ASSOC_BELONGS_TO]['cascade'];
+                    $cascades =  array_map('trim', explode(',', $cascadeString));
                 }
 
                 $metadata->addBelongsToAssociation($targetShortName, $property->getName(), $target, $cascades, $nullable);

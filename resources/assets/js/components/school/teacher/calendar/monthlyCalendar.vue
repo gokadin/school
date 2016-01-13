@@ -23,7 +23,7 @@
                         <div class="events">
                             <div
                                     v-for="event in getEventsForDate(getPositionDate(i, j)) | orderBy startTime"
-                                    v-draggable:event="{id: event.id, startDate: event.startDate}"
+                                    v-draggable:event="{eventObj: event, oldDate: getPositionDate(i, j)}"
                                     class="event-wrapper"
                             >
                                 <div v-bind:class="['event', getColorClass(event)]" @click="showPopover = i + '.' + j + '.' + event.id">
@@ -429,25 +429,37 @@ export default {
         },
 
         dropEvent: function(data, newDate) {
-            var formattedDate = newDate.format('YYYY-MM-DD');
+            var formattedNewDate = newDate.format('YYYY-MM-DD');
+            var formattedOldDate = this.moment(data.oldDate).format('YYYY-MM-DD');
 
-            if (formattedDate == data.startDate) {
+            if (formattedNewDate == formattedOldDate) {
                 return;
             }
 
             this.$http.put('/api/school/teacher/events/change-date', {
-                id: data.id,
-                newStartDate: formattedDate
+                id: data.eventObj.id,
+                oldDate: formattedOldDate,
+                newDate: formattedNewDate
             }, function(response, status) {
                 if (status != 200) {
                     this.$dispatch('flash', 'error', 'Failed to update event. Please try again.');
                 } else {
-                    for (var i = 0; i < this.events.length; i++) {
-                        if (this.events[i].id == data.id) {
-                            this.events[i].startDate = formattedDate;
-                            this.events[i].endDate = response.newEndDate;
-                            this.currentDate = this.currentDate.clone();
-                            break;
+                    if (data.eventObj.isRecurring) {
+                        for (var i = 0; i < this.events.length; i++) {
+                            if (this.events[i].id == data.eventObj.id && this.events[i].startDate == data.eventObj.startDate) {
+                                this.events.splice(i, 1);
+                            }
+                        }
+                        this.events.push(response.newEvent);
+                    } else {
+                        for (var i = 0; i < this.events.length; i++) {
+                            if (this.events[i].id == data.eventObj.id) {
+                                this.events[i].startDate = formattedNewDate;
+                                this.events[i].endDate = response.newEndDate;
+                                this.currentDate = this.currentDate.clone();
+
+                                break;
+                            }
                         }
                     }
                 }

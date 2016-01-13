@@ -6,7 +6,6 @@ use App\Domain\Events\Event;
 use App\Jobs\School\CreateEventLessons;
 use App\Repositories\UserRepository;
 use Carbon\Carbon;
-use Library\Transformer\Transformer;
 
 class EventService extends AuthenticatedService
 {
@@ -62,22 +61,64 @@ class EventService extends AuthenticatedService
     {
         $event = $this->user->events()->find($data['id']);
 
+        return $event->isRecurring()
+            ? $this->changeRecurringEventDate($event, Carbon::parse($data['oldDate']), Carbon::parse($data['newDate']))
+            : $this->changeNonRecurringEventDate($event, Carbon::parse($data['newDate']));
+    }
+
+    private function changeNonRecurringEventDate(Event $event, Carbon $newDate)
+    {
         $startDate = Carbon::parse($event->startDate());
         $endDate = Carbon::parse($event->endDate());
-        $newStartDate = Carbon::parse($data['newStartDate']);
-        $dayDiff = $startDate->diffInDays($newStartDate);
+        $dayDiff = $startDate->diffInDays($newDate);
         $newEndDate = $endDate->addDays($dayDiff);
         $absoluteEnd = Carbon::parse($event->absoluteEnd());
         $newAbsoluteEnd = $absoluteEnd->addDays($dayDiff);
 
-        $event->setStartDate($newStartDate);
+        $event->setStartDate($newDate);
         $event->setEndDate($newEndDate);
-        $event->setAbsoluteStart($newStartDate);
+        $event->setAbsoluteStart($newDate);
         $event->setAbsoluteEnd($newAbsoluteEnd);
 
         $this->repository->of(Event::class)->update($event);
 
-        return $newEndDate->toDateString();
+        return [
+            'newStartDate' => $newDate->toDateString(),
+            'newEndDate' => $newEndDate->toDateString()
+        ];
+    }
+
+    private function changeRecurringEventDate(Event $event, Carbon $oldDate, Carbon $newDate)
+    {
+        $event->skip($oldDate);
+
+        $this->repository->of(Event::class)->update($event);
+
+        $diffInDays = Carbon::parse($event->startDate())->diffInDays(Carbon::parse($event->endDate()));
+        $newEvent = $this->repository->of(Event::class)->create([
+            'title' => $event->title(), 'description' => $event->description(), 'startDate' => $newDate,
+            'endDate' => $newDate->addDays($diffInDays), 'startTime' => $event->startTime(), 'endTime' => $event->endTime(),
+            'isAllDay' => $event->isAllDay(), 'color' => $event->color(), 'teacher' => $event->teacher(), 'activity' => $event->activity(),
+            'isRecurring' => false, 'rRepeat' => $event->rRepeat(), 'rEvery' => $event->rEvery(), 'rEndDate' => $event->rEndDate(),
+            'rEndsNever' => $event->rEndsNever(), 'location' => $event->location(), 'visibility' => $event->visibility(),
+            'notifyMeBy' => $event->notifyMeBy(), 'notifyMeBefore' => $event->notifyMeBefore(),
+            'absoluteStart' => $event->absoluteStart(), 'absoluteEnd' => $event->absoluteEnd()
+        ]);
+
+        if ($event->lessons()->count() > 0)
+        {
+            $studentIds = [];
+            foreach ($event->lessons() as $lesson)
+            {
+                $studentIds[] = $lesson->student()->getId();
+            }
+
+            $this->dispatchJob(new CreateEventLessons($newEvent, $studentIds));
+        }
+
+        return [
+            'newEvent' => $this->transformer->of(Event::class)->transform($newEvent)
+        ];
     }
 
     public function upcomingEvents()
@@ -121,13 +162,13 @@ class EventService extends AuthenticatedService
                 continue;
             }
 
-            $result = array_merge($result, $this->readRecurring($transformed, $minDate, $maxDate, $maxPerRecurrence));
+            $result = array_merge($result, $this->readRecurring($transformed, $minDate, $maxDate, $maxPerRecurrence, $event->skipDates()));
         }
 
         return $result;
     }
 
-    private function readRecurring(array $transformed, Carbon $minDate, Carbon $maxDate, $maxPerRecurrence)
+    private function readRecurring(array $transformed, Carbon $minDate, Carbon $maxDate, $maxPerRecurrence, array $skipDates)
     {
         list($startDate, $endDate) = $this->initialRecurringDates($transformed, $minDate);
 
@@ -135,11 +176,20 @@ class EventService extends AuthenticatedService
         $recurrence['startDate'] = $startDate->toDateString();
         $recurrence['endDate'] = $endDate->toDateString();
 
-        $result = [$recurrence];
+        $result = [];
+        if (!in_array($startDate->toDateString(), $skipDates))
+        {
+            $result[] = $recurrence;
+        }
 
         for ($i = 0; $i < $maxPerRecurrence; $i++)
         {
             list($startDate, $endDate) = $this->nextRecurringDates($transformed['rRepeat'], $startDate, $endDate);
+
+            if (in_array($startDate->toDateString(), $skipDates))
+            {
+                continue;
+            }
 
             if ($startDate->gt($maxDate))
             {

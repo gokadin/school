@@ -14,7 +14,7 @@ class Teacher
     /** @Column(type="string", size="50") */
     protected $name;
 
-    /** @HasMany(target="Tests\FrameworkTest\TestData\DataMapper\Student", mappedBy="teacher") */
+    /** @HasMany(target="Tests\FrameworkTest\TestData\DataMapper\Student", cascade="delete", mappedBy="teacher") */
     protected $students;
 
     /** @HasOne(target="Tests\FrameworkTest\TestData\DataMapper\Address", cascade="delete, touch", nullable="true") */

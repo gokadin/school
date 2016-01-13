@@ -909,6 +909,28 @@ final class UnitOfWork implements Observable
 
             $assocValue = $metadata->reflProp($association->propName())->getValue($this->entities[$oid]);
 
+            if ($assocValue instanceof PersistentCollection)
+            {
+                foreach ($assocValue as $entity)
+                {
+                    $entityOid = spl_object_hash($entity);
+
+                    if (isset($this->scheduledRemovals[$association->target()]) &&
+                        isset($this->scheduledRemovals[$association->target()][$entityOid]))
+                    {
+                        continue;
+                    }
+
+                    $entityMetadata = $this->dm->getMetadata($association->target());
+
+                    $this->scheduleRemoval($entityMetadata->className(), $entityOid);
+
+                    $this->processSingleEntityCascadeRemovals($entityMetadata, $entityOid);
+                }
+
+                continue;
+            }
+
             if (is_null($assocValue))
             {
                 continue;

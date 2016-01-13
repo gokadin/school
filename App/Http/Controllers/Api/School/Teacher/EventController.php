@@ -29,7 +29,7 @@ class EventController extends ApiController
 
     public function changeDate(ChangeEventDateRequest $request, EventService $eventService)
     {
-        return $this->respondOk(['newEndDate' => $eventService->changeDate($request->all())]);
+        return $this->respondOk($eventService->changeDate($request->all()));
     }
 
     public function upcomingEvents(EventService $eventService)

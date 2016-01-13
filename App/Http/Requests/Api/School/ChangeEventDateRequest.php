@@ -15,7 +15,8 @@ class ChangeEventDateRequest extends AuthenticatedRequest
     {
         return [
             'id' => ['required', 'numeric'],
-            'newStartDate' => 'required'
+            'newDate' => 'required',
+            'oldDate' => 'required'
         ];
     }
 }
