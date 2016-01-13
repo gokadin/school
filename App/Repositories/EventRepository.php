@@ -3,6 +3,7 @@
 namespace App\Repositories;
 
 use App\Domain\Events\Event;
+use App\Domain\Events\Lesson;
 use Carbon\Carbon;
 use Library\DataMapper\Collection\PersistentCollection;
 
@@ -38,5 +39,10 @@ class EventRepository extends RepositoryBase
         return $events->where('absoluteEnd', '>', Carbon::now())
             ->sortBy('absoluteEnd', true)
             ->slice(0, 10);
+    }
+
+    public function updateLesson(Lesson $lesson)
+    {
+        $this->dm->flush();
     }
 }

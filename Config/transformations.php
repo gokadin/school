@@ -66,9 +66,23 @@ return [
     ],
 
     App\Domain\Events\Lesson::class => [
+        'id' => function($o) { return $o->getId(); },
+        'eventId' => function($o) { return $o->event()->getId(); },
+        'title' => function($o) { return $o->event()->title(); },
         'startDate' => function($o) { return $o->event()->startDate(); },
         'endDate' => function($o) { return $o->event()->endDate(); },
         'startTime' => function($o) { return $o->event()->startTime(); },
         'endTime' => function($o) { return $o->event()->endTime(); },
+        'attended' => function($o) {
+            foreach ($o->missedDates() as $date)
+            {
+                if ($date == Carbon\Carbon::parse($o->event()->startDate())->toDateString())
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
     ]
 ];

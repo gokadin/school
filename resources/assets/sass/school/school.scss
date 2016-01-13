@@ -79,6 +79,13 @@ button.button-large {
   -webkit-box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05);
   -moz-box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05);
   box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05);
+
+  .panel-title {
+    font-size: 22px;
+    margin: 15px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #26a69a;
+  }
 }
 
 .data-table-1 {
@@ -548,6 +555,47 @@ button.button-large {
 
   button {
     margin: 0 10px;
+  }
+}
+
+.tabs-1 {
+  .header {
+    height: 40px;
+    display: flex;
+    border-bottom: 1px solid #26a69a;
+    margin: 10px 0 20px 0;
+
+    .tab {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-basis: 100px;
+      padding: 0 5px;
+      height: 40px;
+      font-size: 18px;
+      cursor: pointer;
+      color: #808080;
+      border-bottom: 1px solid #26a69a;
+      margin: 0 5px;
+    }
+
+    .tab:hover {
+      background-color: #f8f8f8;
+      color: #444;
+    }
+
+    .tab.active {
+      color: #444;
+      background-color: white;
+      border: 1px solid #26a69a;
+      border-bottom-color: white;
+      border-top-left-radius: 3px;
+      border-top-right-radius: 3px;
+    }
+  }
+
+  .body {
+    min-height: 20px;
   }
 }
 

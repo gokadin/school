@@ -80,6 +80,25 @@ class Lesson
     {
         $missedDates = $this->missedDates();
         $missedDates[] = $date->toDateString();
+
+        $this->decodedMissedDates = $missedDates;
+
+        $this->missedDates = json_encode($missedDates);
+    }
+
+    public function attend(Carbon $date)
+    {
+        $missedDates = $this->missedDates();
+        $date = $date->toDateString();
+        foreach ($missedDates as $key => $missedDate)
+        {
+            if ($missedDate == $date)
+            {
+                unset($missedDates[$key]);
+                break;
+            }
+        }
+
         $this->decodedMissedDates = $missedDates;
 
         $this->missedDates = json_encode($missedDates);

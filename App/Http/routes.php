@@ -69,6 +69,7 @@ Route::group(['namespace' => 'Api', 'prefix' => '/api', 'as' => 'api', 'middlewa
                 Route::post('/range', 'EventController@range');
                 Route::put('/change-date', 'EventController@changeDate');
                 Route::delete('/{id}', 'EventController@destroy');
+                Route::put('/{eventId}/lessons/{lessonId}/attendance', 'EventController@updateLessonAttendance');
             });
 
             Route::get('/get-registration-form', 'SettingController@getRegistration');

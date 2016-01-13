@@ -9,4 +9,59 @@
   }
 }
 
+#lessons {
+  .lessons {
+    padding: 0 20px 20px 20px;
+
+    .date-group {
+      .date {
+        font-size: 20px;
+        margin: 10px 0;
+      }
+
+      .lesson {
+        display: flex;
+        height: 40px;
+
+        .title {
+          flex: 1;
+        }
+
+        .attendance {
+          flex-basis: 200px;
+
+          button {
+            width: 80px;
+            height: 25px;
+            border-radius: 3px;
+            cursor: pointer;
+            background-color: white;
+            border: 1px solid #a6a6a6;
+          }
+
+          button.attended:hover {
+            border-color: #67b168;
+            color: #67b168;
+          }
+
+          button.missed:hover {
+            border-color: #a94442;
+            color: #a94442;
+          }
+
+          button.attended.active {
+            background-color: #67b168;
+            color: #fff;
+          }
+
+          button.missed.active {
+            background-color: #a94442;
+            color: #fff;
+          }
+        }
+      }
+    }
+  }
+}
+
 @import 'students-responsive';

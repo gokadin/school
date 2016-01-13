@@ -88,15 +88,20 @@ class StudentService extends AuthenticatedService
 
         $from = Carbon::parse($data['from']);
         $to = Carbon::parse($data['to']);
-//        $events = $this->user->events()->where('absoluteEnd', '>', $from->toDateString())
-//            ->where('absoluteStart', '<', $to->toDateString())
-//            ->toArray();
         $lessons = $student->lessons()->where('absoluteEnd', '>', $from->toDateString())
             ->where('absoluteStart', '<', $to->toDateString())
             ->toArray();;
 
+        $lessons = $this->readLessons($lessons, $from, $to);
+
+        $grouped = [];
+        foreach ($lessons as $lesson)
+        {
+            $grouped[$lesson['startDate']][] = $lesson;
+        }
+
         return [
-            'lessons' => $this->readLessons($lessons, $from, $to)
+            'lessons' => $grouped
         ];
     }
 
@@ -115,13 +120,13 @@ class StudentService extends AuthenticatedService
                 continue;
             }
 
-            $result = array_merge($result, $this->readRecurringLesson($transformed, $event, $minDate, $maxDate, $maxPerRecurrence));
+            $result = array_merge($result, $this->readRecurringLesson($transformed, $event, $lesson->missedDates(), $minDate, $maxDate, $maxPerRecurrence));
         }
 
         return $result;
     }
 
-    private function readRecurringLesson(array $transformed, Event $event, Carbon $minDate, Carbon $maxDate, $maxPerRecurrence)
+    private function readRecurringLesson(array $transformed, Event $event, array $missedDates, Carbon $minDate, Carbon $maxDate, $maxPerRecurrence)
     {
         list($startDate, $endDate) = $this->initialRecurringDates($transformed['startDate'], $transformed['endDate'], $event->rRepeat(), $minDate);
 
@@ -152,6 +157,20 @@ class StudentService extends AuthenticatedService
             $recurrence = $transformed;
             $recurrence['startDate'] = $startDate->toDateString();
             $recurrence['endDate'] = $endDate->toDateString();
+            $found = false;
+            foreach ($missedDates as $missedDate)
+            {
+                if ($missedDate == $recurrence['startDate'])
+                {
+                    $recurrence['attended'] = false;
+                    $found = true;
+                    break;
+                }
+            }
+            if (!$found)
+            {
+                $recurrence['attended'] = true;
+            }
 
             $result[] = $recurrence;
         }

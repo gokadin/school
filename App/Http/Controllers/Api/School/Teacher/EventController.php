@@ -3,11 +3,13 @@
 namespace App\Http\Controllers\Api\School\Teacher;
 
 use App\Domain\Services\EventService;
+use App\Domain\Services\LessonService;
 use App\Http\Controllers\Api\ApiController;
 use App\Http\Requests\Api\School\ChangeEventDateRequest;
 use App\Http\Requests\Api\School\CreateEventRequest;
 use App\Http\Requests\Api\School\DestroyEventRequest;
 use App\Http\Requests\Api\School\EventRangeRequest;
+use App\Http\Requests\Api\School\UpdateLessonAttendanceRequest;
 
 class EventController extends ApiController
 {
@@ -40,6 +42,13 @@ class EventController extends ApiController
     public function destroy(DestroyEventRequest $request, EventService $eventService)
     {
         $eventService->destroy($request->get('id'));
+
+        return $this->respondOk();
+    }
+
+    public function updateLessonAttendance(UpdateLessonAttendanceRequest $request, LessonService $lessonService)
+    {
+        $lessonService->updateAttendance($request->all());
 
         return $this->respondOk();
     }

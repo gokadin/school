@@ -24,6 +24,7 @@ Vue.component('searchSelect', require('./components/searchSelect.vue'))
 Vue.component('datepicker', require('./components/datepicker.vue'))
 Vue.component('popover', require('./components/popover.vue'))
 Vue.component('tagSelect', require('./components/tagSelect.vue'))
+Vue.component('tabs', require('./components/tabs.vue'))
 
 new Vue({
     el: 'body',
