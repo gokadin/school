@@ -13,13 +13,13 @@ class EventController extends ApiController
 {
     public function create(CreateEventRequest $request, EventService $eventService)
     {
-        $eventId = $eventService->create($request->all());
-        if (!$eventId)
+        $events = $eventService->create($request->all());
+        if (!$events)
         {
             return $this->respondBadRequest();
         }
 
-        return $this->respondOk(['eventId' => $eventId]);
+        return $this->respondOk(['events' => $events]);
     }
 
     public function range(EventRangeRequest $request, EventService $eventService)

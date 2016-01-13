@@ -22,7 +22,9 @@ class CreateEventRequest extends AuthenticatedRequest
             'endTime' => 'required',
             'isAllDay' => 'required',
             'color' => 'required',
-            'activityId' => ['required', 'numeric']
+            'activityId' => ['required', 'numeric'],
+            'from' => 'required',
+            'to' => 'required'
         ];
     }
 }

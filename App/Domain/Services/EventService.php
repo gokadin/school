@@ -42,7 +42,7 @@ class EventService extends AuthenticatedService
             $this->dispatchJob(new CreateEventLessons($event, $data['studentIds']));
         }
 
-        return $event->getId();
+        return $this->readAndTransform([$event], Carbon::parse($data['from']), Carbon::parse($data['to']));
     }
 
     public function range(array $data)
@@ -218,9 +218,18 @@ class EventService extends AuthenticatedService
 
         switch ($transformed['rRepeat'])
         {
+            case 'daily':
+                $diffInDays = $startDate->diffInDays($minDate);
+                return [$startDate->addDays($diffInDays), $endDate->addDays($diffInDays)];
             case 'weekly':
                 $diffInWeeks = $startDate->diffInWeeks($minDate);
                 return [$startDate->addWeeks($diffInWeeks), $endDate->addWeeks($diffInWeeks)];
+            case 'monthly':
+                $diffInMonths = $startDate->diffInMonths($minDate);
+                return [$startDate->addMonths($diffInMonths), $endDate->addMonths($diffInMonths)];
+            case 'yearly':
+                $diffInYears = $startDate->diffInYears($minDate);
+                return [$startDate->addYears($diffInYears), $endDate->addYears($diffInYears)];
         }
     }
 
@@ -228,8 +237,14 @@ class EventService extends AuthenticatedService
     {
         switch ($repeat)
         {
+            case 'daily':
+                return [$startDate->addDay(), $endDate->addDay()];
             case 'weekly':
                 return [$startDate->addWeek(), $endDate->addWeek()];
+            case 'monthly':
+                return [$startDate->addMonth(), $endDate->addMonth()];
+            case 'yearly':
+                return [$startDate->addYear(), $endDate->addYear()];
         }
     }
 }

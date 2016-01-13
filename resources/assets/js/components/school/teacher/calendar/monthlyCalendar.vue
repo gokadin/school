@@ -486,33 +486,14 @@ export default {
                 location: this.newEvent.location,
                 visibility: this.newEvent.visibility,
                 notifyMeBy: this.newEvent.notifyMeBy,
-                notifyMeBefore: this.newEvent.notifyMeBefore
+                notifyMeBefore: this.newEvent.notifyMeBefore,
+                from: this.currentDate.clone().date(0).subtract(1, 'weeks').format('YYYY-MM-DD'),
+                to: this.currentDate.clone().date(this.currentDate.daysInMonth()).add(1, 'weeks').format('YYYY-MM-DD')
             }, function(response, status) {
                 if (status != 200) {
                     this.$dispatch('flash', 'error', 'Failed to create event. Please try again.');
                 } else {
-                    this.events.push({
-                        id: response.eventId,
-                        title: this.newEvent.title,
-                        description: this.newEvent.description,
-                        startDate: this.newEvent.startDate,
-                        endDate: this.newEvent.endDate,
-                        startTime: this.newEvent.startTime,
-                        endTime: this.newEvent.endTime,
-                        isAllDay: this.newEvent.isAllDay,
-                        color: this.newEvent.color,
-                        location: this.newEvent.location,
-                        visibility: this.newEvent.visibility,
-                        activityId: this.newEvent.activityId,
-                        studentIds: this.newEvent.studentIds,
-                        isRecurring: this.newEvent.isRecurring,
-                        rEndDate: this.newEvent.rEndDate,
-                        rEndsNever: this.newEvent.rEndsNever,
-                        rRepeat: this.newEvent.rRepeat,
-                        rEvery: this.newEvent.rEvery,
-                        notifyMeBy: this.newEvent.notifyMeBy,
-                        notifyMeBefore: this.newEvent.notifyMeBefore
-                    });
+                    this.events.push.apply(this.events, response.events);
 
                     this.$dispatch('flash', 'success', 'Event created!');
                 }
