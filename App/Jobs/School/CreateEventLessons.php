@@ -38,7 +38,7 @@ class CreateEventLessons extends Job
                 throw new JobFailedException('CreateEventLessons.handle : Could not find student with id '.$id.'.');
             }
 
-            $lessons[] = new Lesson($this->event, $student);
+            $lessons[] = new Lesson($this->event, $student, $this->event->absoluteStart(), $this->event->absoluteEnd());
         }
 
         $repository->of(Event::class)->createLessons($lessons);

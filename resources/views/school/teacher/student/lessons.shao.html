@@ -1,0 +1,17 @@
+@layout('school.layout')
+
+@section('content')
+
+<div class="main-title">
+    Students
+</div>
+
+@include('school.teacher.student.switcher')
+
+<div id="lessons" class="content-padding">
+    <div class="panel-1">
+        <student-lessons student-id="{{ $student->getId() }}"></student-lessons>
+    </div>
+</div>
+
+@stop()

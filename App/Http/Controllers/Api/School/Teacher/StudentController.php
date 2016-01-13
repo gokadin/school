@@ -7,6 +7,7 @@ use App\Http\Controllers\Api\ApiController;
 use App\Http\Requests\Api\School\FromStudentIdsRequest;
 use App\Http\Requests\Api\School\GetTeacherStudentsRequest;
 use App\Http\Requests\Api\School\SearchStudentRequest;
+use App\Http\Requests\Api\School\StudentLessonsRequest;
 
 class StudentController extends ApiController
 {
@@ -28,5 +29,10 @@ class StudentController extends ApiController
     public function newStudents(StudentService $studentService)
     {
         return $this->respondOk(['newStudents' => $studentService->newStudents()]);
+    }
+
+    public function lessons(StudentLessonsRequest $request, StudentService $studentService)
+    {
+        return $studentService->getLessons($request->get('id'), $request->all());
     }
 }

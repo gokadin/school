@@ -40,7 +40,8 @@ new Vue({
         activityList: require('./components/school/teacher/activity/activityList.vue'),
         monthlyCalendar: require('./components/school/teacher/calendar/monthlyCalendar.vue'),
         customizeRegistrationForm: require('./components/school/teacher/setting/registrationForm.vue'),
-        upcomingEvents: require('./components/school/teacher/index/upcomingEvents.vue')
+        upcomingEvents: require('./components/school/teacher/index/upcomingEvents.vue'),
+        studentLessons: require('./components/school/teacher/student/studentLessons.vue')
     },
 
     methods: {

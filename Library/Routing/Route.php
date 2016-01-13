@@ -61,7 +61,7 @@ class Route
         }
 
         $pattern = '({[a-zA-Z0-9]+})';
-        $substituteUrl = preg_replace($pattern, '(.+)', $this->uri);
+        $substituteUrl = preg_replace($pattern, '([^\/]*)', $this->uri);
 
         if (preg_match('`^'.strtolower($substituteUrl).'$`', strtolower($request->uri()), $valueMatches) != 1)
         {

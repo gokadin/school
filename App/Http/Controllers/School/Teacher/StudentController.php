@@ -39,4 +39,11 @@ class StudentController extends Controller
         return $this->view->make('school.teacher.student.show',
             $studentService->getProfile($request->id));
     }
+
+    public function lessons(ShowStudentRequest $request, StudentService $studentService)
+    {
+        return $this->view->make('school.teacher.student.lessons', [
+            'student' => $studentService->findStudent($request->id)
+        ]);
+    }
 }

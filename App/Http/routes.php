@@ -59,6 +59,7 @@ Route::group(['namespace' => 'Api', 'prefix' => '/api', 'as' => 'api', 'middlewa
                 Route::post('/', 'StudentController@index');
                 Route::post('/from-ids', 'StudentController@fromIds');
                 Route::post('/search', 'StudentController@search');
+                Route::post('/{id}/lessons', 'StudentController@lessons');
             });
 
             Route::group(['prefix' => '/events', 'as' => 'event'], function()
@@ -109,6 +110,7 @@ Route::group([
             Route::post('/pre-register', 'StudentController@preRegister');
             Route::get('/create', 'StudentController@create');
             Route::get('/{id}', 'StudentController@show');
+            Route::get('/{id}/lessons', 'StudentController@lessons');
         });
 
         Route::group(['prefix' => '/calendar', 'as' => 'calendar'], function()

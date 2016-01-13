@@ -63,5 +63,12 @@ return [
         'visibility' => function($o) { return $o->visibility(); },
         'notifyMeBy' => function($o) { return $o->notifyMeBy(); },
         'notifyMeBefore' => function($o) { return $o->notifyMeBefore(); },
+    ],
+
+    App\Domain\Events\Lesson::class => [
+        'startDate' => function($o) { return $o->event()->startDate(); },
+        'endDate' => function($o) { return $o->event()->endDate(); },
+        'startTime' => function($o) { return $o->event()->startTime(); },
+        'endTime' => function($o) { return $o->event()->endTime(); },
     ]
 ];

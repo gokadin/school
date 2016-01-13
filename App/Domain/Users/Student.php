@@ -4,6 +4,8 @@ namespace App\Domain\Users;
 
 use App\Domain\Activities\Activity;
 use App\Domain\Common\Address;
+use App\Domain\Events\Lesson;
+use Library\DataMapper\Collection\EntityCollection;
 
 /**
  * @Entity(name="students")
@@ -37,6 +39,9 @@ class Student extends User
     /** @Column(type="boolean") */
     private $hasAccount;
 
+    /** @HasMany(target="App\Domain\Events\Lesson", mappedBy="student") */
+    private $lessons;
+
     public function __construct($firstName, $lastName, $email, $password, Address $address,
                                 Activity $activity, $customPrice, $hasAccount, Teacher $teacher)
     {
@@ -46,6 +51,8 @@ class Student extends User
         $this->customPrice = $customPrice;
         $this->hasAccount = $hasAccount;
         $this->teacher = $teacher;
+
+        $this->lessons = new EntityCollection();
     }
 
     public function activity()
@@ -136,5 +143,20 @@ class Student extends User
     public function setHasAccount($hasAccount)
     {
         $this->hasAccount = $hasAccount;
+    }
+
+    public function lessons()
+    {
+        return $this->lessons;
+    }
+
+    public function addLesson(Lesson $lesson)
+    {
+        $this->lessons->add($lesson);
+    }
+
+    public function removeLesson(Lesson $lesson)
+    {
+        $this->lessons->remove($lesson);
     }
 }

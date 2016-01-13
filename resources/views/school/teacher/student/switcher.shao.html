@@ -6,8 +6,8 @@
         <li class="@if (currentRoute() == 'school.teacher.student.test') active @endif ">
             <a href="/school/teacher/students/{{ $student->getId() }}"><i class="fa fa-cogs"></i>Activities</a>
         </li>
-        <li class="@if (currentRoute() == 'school.teacher.student.test') active @endif ">
-            <a href="/school/teacher/students/{{ $student->getId() }}"><i class="fa fa-book"></i>Lessons</a>
+        <li class="@if (currentRoute() == 'school.teacher.student.lessons') active @endif ">
+            <a href="/school/teacher/students/{{ $student->getId() }}/lessons"><i class="fa fa-book"></i>Lessons</a>
         </li>
     </ul>
 </div>
