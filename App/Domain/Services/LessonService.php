@@ -9,11 +9,11 @@ use Carbon\Carbon;
 
 class LessonService extends AuthenticatedService
 {
-    public function upcoming($id, $data)
+    public function range($id, $data)
     {
         $student = $this->repository->of(Student::class)->find($id);
 
-        $from = Carbon::now();
+        $from = Carbon::parse($data['from']);
         $to = Carbon::parse($data['to']);
         $lessons = $student->lessons()->where('absoluteEnd', '>', $from->toDateString())
             ->where('absoluteStart', '<', $to->toDateString())
@@ -27,8 +27,17 @@ class LessonService extends AuthenticatedService
             $grouped[$lesson['startDate']][] = $lesson;
         }
 
+        $groupedArray = [];
+        foreach ($grouped as $key => $group)
+        {
+            $groupedArray[] = [
+                'date' => $key,
+                'lessons' => $group
+            ];
+        }
+
         return [
-            'lessons' => $grouped
+            'lessons' => $groupedArray
         ];
     }
 

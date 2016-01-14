@@ -32,8 +32,8 @@ class StudentController extends ApiController
         return $this->respondOk(['newStudents' => $studentService->newStudents()]);
     }
 
-    public function upcomingLessons(StudentLessonsRequest $request, LessonService $lessonService)
+    public function lessonRange(StudentLessonsRequest $request, LessonService $lessonService)
     {
-        return $lessonService->upcoming($request->get('id'), $request->all());
+        return $lessonService->range($request->get('id'), $request->all());
     }
 }

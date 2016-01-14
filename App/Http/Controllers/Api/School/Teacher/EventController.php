@@ -36,7 +36,7 @@ class EventController extends ApiController
 
     public function upcomingEvents(EventService $eventService)
     {
-        return ['upcomingEvents' => $eventService->upcomingEvents()];
+        return $eventService->upcomingEvents();
     }
 
     public function destroy(DestroyEventRequest $request, EventService $eventService)

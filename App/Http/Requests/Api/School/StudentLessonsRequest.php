@@ -13,6 +13,9 @@ class StudentLessonsRequest extends AuthenticatedRequest
 
     function rules()
     {
-        return true;
+        return [
+            'from' => 'required',
+            'to' => 'required'
+        ];
     }
 }

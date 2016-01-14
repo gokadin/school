@@ -5,13 +5,13 @@
                 selected="upcoming"
         >
             <div slot="upcoming">
-                <div class="no-data" v-if="groupedLessons.length == 0">
+                <div class="no-data" v-if="groupedUpcomingLessons.length == 0">
                     There are no upcoming lessons
                     <a href="/school/teacher/calendar/"><button type="button" class="button-green">Go to calendar</button></a>
                 </div>
-                <div class="date-group" v-for="lessons in groupedLessons" v-else>
-                    <div class="date">{{ $key | formatDate }}</div>
-                    <div class="lesson" v-for="lesson in lessons | sortBy 'startTime'">
+                <div class="date-group" v-for="group in groupedUpcomingLessons | orderByDate true" v-else>
+                    <div class="date">{{ group.date | formatDate }}</div>
+                    <div class="lesson" v-for="lesson in group.lessons">
                         <div class="title">{{ lesson.title }}</div>
                         <div class="attendance">
                             <button
@@ -31,7 +31,30 @@
                 </div>
             </div>
             <div slot="recent">
-                recent
+                <div class="no-data" v-if="groupedRecentLessons.length == 0">
+                    There are no recent lessons
+                    <a href="/school/teacher/calendar/"><button type="button" class="button-green">Go to calendar</button></a>
+                </div>
+                <div class="date-group" v-for="group in groupedRecentLessons | orderByDate false" v-else>
+                    <div class="date">{{ group.date | formatDate }}</div>
+                    <div class="lesson" v-for="lesson in group.lessons">
+                        <div class="title">{{ lesson.title }}</div>
+                        <div class="attendance">
+                            <button
+                                    :class="{ missed: true, active: !lesson.attended }"
+                                    @click="miss(lesson)"
+                            >
+                                missed
+                            </button>
+                            <button
+                                    :class="{ attended: true, active: lesson.attended }"
+                                    @click="attend(lesson)"
+                            >
+                                attended
+                            </button>
+                        </div>
+                    </div>
+                </div>
             </div>
             <div slot="all">
                 all
@@ -46,7 +69,8 @@ export default {
 
     data: function() {
         return {
-            groupedLessons: this.fetchLessons(),
+            groupedUpcomingLessons: [],
+            groupedRecentLessons: [],
             tabs: [
                 {name: 'upcoming', display: 'Upcoming'},
                 {name: 'recent', display: 'Recent'},
@@ -55,9 +79,40 @@ export default {
         };
     },
 
+    ready: function() {
+        this.fetchUpcomingLessons();
+    },
+
+    created: function() {
+        this.fetchRecentLessons();
+    },
+
     filters: {
         'formatDate': function(string) {
             return this.moment(string).format('dddd MMMM Do');
+        },
+
+        'orderByDate': function(value, asc) {
+            return value.slice().sort(function(a, b) {
+                var dateA = this.moment(a.date);
+                var dateB = this.moment(b.date);
+
+                if (dateA.isBefore(dateB)) {
+                    if (asc) {
+                        return -1;
+                    } else {
+                        return 1;
+                    }
+                } else if (dateB.isBefore(dateA)) {
+                    if (asc) {
+                        return 1;
+                    } else {
+                        return -1;
+                    }
+                }
+
+                return 0;
+            }.bind(this));
         }
     },
 
@@ -66,11 +121,21 @@ export default {
             return this.$parent.getMoment(str);
         },
 
-        fetchLessons: function() {
-            this.$http.post('/api/school/teacher/students/' + this.studentId + '/lessons/upcoming', {
+        fetchUpcomingLessons: function() {
+            this.$http.post('/api/school/teacher/students/' + this.studentId + '/lessons/range', {
+                from: this.moment('').format('YYYY-MM-DD'),
                 to: this.moment('').add(1, 'months').format('YYYY-MM-DD')
             }, function(response) {
-                this.groupedLessons = response.lessons;
+                this.$set('groupedUpcomingLessons', response.lessons);
+            });
+        },
+
+        fetchRecentLessons: function() {
+            this.$http.post('/api/school/teacher/students/' + this.studentId + '/lessons/range', {
+                from: this.moment('').subtract(1, 'months').format('YYYY-MM-DD'),
+                to: this.moment('').format('YYYY-MM-DD')
+            }, function(response) {
+                this.$set('groupedRecentLessons', response.lessons);
             });
         },
 

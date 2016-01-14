@@ -138,7 +138,16 @@ class EventService extends AuthenticatedService
             $grouped[$event['startDate']][] = $event;
         }
 
-        return $grouped;
+        $groupedArray = [];
+        foreach ($grouped as $key => $group)
+        {
+            $groupedArray[] = [
+                'date' => $key,
+                'events' => $group
+            ];
+        }
+
+        return ['events' => $groupedArray];
     }
 
     public function destroy($id)
