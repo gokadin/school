@@ -46,4 +46,11 @@ class StudentController extends Controller
             'student' => $studentService->findStudent($request->id)
         ]);
     }
+
+    public function activities(ShowStudentRequest $request, StudentService $studentService)
+    {
+        return $this->view->make('school.teacher.student.activities', [
+            'student' => $studentService->findStudent($request->id)
+        ]);
+    }
 }

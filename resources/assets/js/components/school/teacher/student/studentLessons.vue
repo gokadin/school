@@ -5,7 +5,11 @@
                 selected="upcoming"
         >
             <div slot="upcoming">
-                <div class="date-group" v-for="lessons in groupedLessons">
+                <div class="no-data" v-if="groupedLessons.length == 0">
+                    There are no upcoming lessons
+                    <a href="/school/teacher/calendar/"><button type="button" class="button-green">Go to calendar</button></a>
+                </div>
+                <div class="date-group" v-for="lessons in groupedLessons" v-else>
                     <div class="date">{{ $key | formatDate }}</div>
                     <div class="lesson" v-for="lesson in lessons | sortBy 'startTime'">
                         <div class="title">{{ lesson.title }}</div>

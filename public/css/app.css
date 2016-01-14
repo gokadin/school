@@ -346,6 +346,14 @@ button:disabled {
     background-color: #e6e6e6;
     padding: 0 20px;
     border-bottom: 1px solid #cccccc; }
+    #school #content .main-title i.fa {
+      color: #808080;
+      font-size: 14px;
+      margin: 0 7px; }
+    #school #content .main-title span {
+      color: #808080;
+      text-transform: none;
+      font-size: 17px; }
   #school .panel-1 {
     background-color: #fff;
     border: 1px solid #ddd;

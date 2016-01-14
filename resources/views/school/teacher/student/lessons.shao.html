@@ -3,7 +3,7 @@
 @section('content')
 
 <div class="main-title">
-    Students
+    Students<i class="fa fa-chevron-right"></i><span>{{ $student->name() }}</span>
 </div>
 
 @include('school.teacher.student.switcher')

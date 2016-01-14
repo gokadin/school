@@ -112,6 +112,7 @@ Route::group([
             Route::get('/create', 'StudentController@create');
             Route::get('/{id}', 'StudentController@show');
             Route::get('/{id}/lessons', 'StudentController@lessons');
+            Route::get('/{id}/activities', 'StudentController@activities');
         });
 
         Route::group(['prefix' => '/calendar', 'as' => 'calendar'], function()

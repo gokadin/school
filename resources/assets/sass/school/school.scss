@@ -67,6 +67,18 @@ button.button-large {
     background-color: #e6e6e6;
     padding: 0 20px;
     border-bottom: 1px solid #cccccc;
+
+    i.fa {
+      color: #808080;
+      font-size: 14px;
+      margin: 0 7px;
+    }
+
+    span {
+      color: #808080;
+      text-transform: none;
+      font-size: 17px;
+    }
   }
 }
 
