@@ -73,16 +73,6 @@ return [
         'endDate' => function($o) { return $o->event()->endDate(); },
         'startTime' => function($o) { return $o->event()->startTime(); },
         'endTime' => function($o) { return $o->event()->endTime(); },
-        'attended' => function($o) {
-            foreach ($o->missedDates() as $date)
-            {
-                if ($date == Carbon\Carbon::parse($o->event()->startDate())->toDateString())
-                {
-                    return false;
-                }
-            }
-
-            return true;
-        }
+        'attended' => function($o) { return !isset($o->missedDates()[Carbon\Carbon::parse($o->event()->startDate())->toDateString()]); }
     ]
 ];

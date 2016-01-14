@@ -63,8 +63,7 @@ export default {
         },
 
         fetchLessons: function() {
-            this.$http.post('/api/school/teacher/students/' + this.studentId + '/lessons', {
-                from: this.moment('').subtract(2, 'weeks').format('YYYY-MM-DD'),
+            this.$http.post('/api/school/teacher/students/' + this.studentId + '/lessons/upcoming', {
                 to: this.moment('').add(1, 'months').format('YYYY-MM-DD')
             }, function(response) {
                 this.groupedLessons = response.lessons;

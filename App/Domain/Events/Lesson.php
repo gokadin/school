@@ -79,7 +79,7 @@ class Lesson
     public function miss(Carbon $date)
     {
         $missedDates = $this->missedDates();
-        $missedDates[] = $date->toDateString();
+        $missedDates[$date->toDateString()] = true;
 
         $this->decodedMissedDates = $missedDates;
 
@@ -90,13 +90,10 @@ class Lesson
     {
         $missedDates = $this->missedDates();
         $date = $date->toDateString();
-        foreach ($missedDates as $key => $missedDate)
+
+        if (isset($missedDates[$date]))
         {
-            if ($missedDate == $date)
-            {
-                unset($missedDates[$key]);
-                break;
-            }
+            unset($missedDates[$date]);
         }
 
         $this->decodedMissedDates = $missedDates;

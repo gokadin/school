@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api\School\Teacher;
 
+use App\Domain\Services\LessonService;
 use App\Domain\Services\StudentService;
 use App\Http\Controllers\Api\ApiController;
 use App\Http\Requests\Api\School\FromStudentIdsRequest;
@@ -31,8 +32,8 @@ class StudentController extends ApiController
         return $this->respondOk(['newStudents' => $studentService->newStudents()]);
     }
 
-    public function lessons(StudentLessonsRequest $request, StudentService $studentService)
+    public function upcomingLessons(StudentLessonsRequest $request, LessonService $lessonService)
     {
-        return $studentService->getLessons($request->get('id'), $request->all());
+        return $lessonService->upcoming($request->get('id'), $request->all());
     }
 }
