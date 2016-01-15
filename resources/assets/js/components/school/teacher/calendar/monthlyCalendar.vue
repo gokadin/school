@@ -25,6 +25,7 @@
                                     v-for="event in getEventsForDate(getPositionDate(i, j)) | orderBy startTime"
                                     v-draggable:event="{eventObj: event, oldDate: getPositionDate(i, j)}"
                                     class="event-wrapper"
+                                    @click.stop
                             >
                                 <div v-bind:class="['event', getColorClass(event)]" @click="showPopover = i + '.' + j + '.' + event.id">
                                     {{ event.title }}
@@ -189,7 +190,7 @@
     </modal>
 
     <modal v-ref:students-modal>
-        <div class="modal-1">
+        <div class="modal-1" @click.stop>
             <div class="header">
                 Attending students
             </div>
@@ -217,7 +218,7 @@
                 </div>
             </div>
             <div class="footer">
-                <button class="button-red button-short" @click="closeStudentsModal()">Close</button>
+                <button class="button-red button-short" @click.stop="closeStudentsModal()">Close</button>
             </div>
         </div>
     </modal>
@@ -267,6 +268,7 @@ export default {
 
     ready: function() {
         window.addEventListener('keyup', this.handleKeyUp);
+        window.addEventListener('click', this.handleClick);
     },
 
     created: function() {
@@ -292,6 +294,10 @@ export default {
             if (e.keyCode == 27 && this.showPopover != 0) {
                 this.showPopover = 0;
             }
+        },
+
+        handleClick: function() {
+            this.showPopover = 0;
         },
 
         moment: function(str) {

@@ -74,6 +74,9 @@ class Router
                 case 'store':
                     $this->addRoute(['POST'], '/', $controller.'@store');
                     break;
+                case 'edit':
+                    $this->addRoute(['GET'], '/{id}/edit', $controller.'@edit');
+                    break;
                 case 'update':
                     $this->addRoute(['PUT'], '/update/{id}', $controller.'@update');
                     break;
