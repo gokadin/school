@@ -75,10 +75,10 @@ class Router
                     $this->addRoute(['POST'], '/', $controller.'@store');
                     break;
                 case 'update':
-                    $this->addRoute(['PUT'], '/{id}', $controller.'@update');
+                    $this->addRoute(['PUT'], '/update/{id}', $controller.'@update');
                     break;
                 case 'destroy':
-                    $this->addRoute(['DELETE'], '/{id}', $controller.'@destroy');
+                    $this->addRoute(['DELETE'], '/destroy/{id}', $controller.'@destroy');
                     break;
             }
         }

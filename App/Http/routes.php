@@ -64,11 +64,11 @@ Route::group(['namespace' => 'Api', 'prefix' => '/api', 'as' => 'api', 'middlewa
 
             Route::group(['prefix' => '/events', 'as' => 'event'], function()
             {
-                Route::resource('EventController', ['destroy']);
                 Route::get('/upcoming-events', 'EventController@upcomingEvents');
                 Route::post('/', 'EventController@create');
                 Route::post('/range', 'EventController@range');
                 Route::put('/change-date', 'EventController@changeDate');
+                Route::delete('/{id}', 'EventController@destroy');
                 Route::put('/{eventId}/lessons/{lessonId}/attendance', 'EventController@updateLessonAttendance');
             });
 
@@ -98,7 +98,8 @@ Route::group([
 
         Route::group(['prefix' => '/activities', 'as' => 'activity'], function ()
         {
-            Route::resource('ActivityController', ['index', 'create']);
+            Route::get('/', 'ActivityController@index');
+            Route::get('/create', 'ActivityController@create');
             Route::post('/create', 'ActivityController@store');
             Route::put('/edit', 'ActivityController@update');
             Route::delete('/delete', 'ActivityController@destroy');
@@ -106,7 +107,7 @@ Route::group([
 
         Route::group(['prefix' => '/students', 'as' => 'student'], function ()
         {
-            Route::resource('StudentController', ['index', 'show', 'create']);
+            Route::resource('StudentController', ['index', 'create', 'show']);
             Route::post('/pre-register', 'StudentController@preRegister');
             Route::get('/{id}/lessons', 'StudentController@lessons');
             Route::get('/{id}/activities', 'StudentController@activities');
