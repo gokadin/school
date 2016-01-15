@@ -10,7 +10,6 @@ abstract class Controller extends BackController
 {
     protected $view;
     protected $response;
-    protected $queue;
 
     public function __construct(View $view, Response $response)
     {

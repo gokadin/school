@@ -2,7 +2,9 @@
 
 namespace Library\Console;
 
+use Library\Console\Modules\Generator\RequestGenerator;
 use Library\Console\Modules\Queue\QueueListener;
+use Library\Console\Modules\Scheduler\ScheduleRunner;
 use Symfony\Component\Console\Application;
 
 class ConsoleApplication
@@ -35,6 +37,7 @@ class ConsoleApplication
         $database = $this->framework->container()->resolveInstance('database');
         $this->app->add(new QueueListener($database));
         $this->app->add(new ScheduleRunner());
+        $this->app->add(new RequestGenerator());
     }
 
     protected function framework()
