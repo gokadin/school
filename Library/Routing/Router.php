@@ -56,6 +56,34 @@ class Router
         $this->addRoute($methods, $uri, $action);
     }
 
+    public function resource($controller, $actions)
+    {
+        foreach ($actions as $action)
+        {
+            switch ($action)
+            {
+                case 'index':
+                    $this->addRoute(['GET'], '/', $controller.'@index');
+                    break;
+                case 'show':
+                    $this->addRoute(['GET'], '/{id}', $controller.'@show');
+                    break;
+                case 'create':
+                    $this->addRoute(['GET'], '/create', $controller.'@create');
+                    break;
+                case 'store':
+                    $this->addRoute(['POST'], '/', $controller.'@store');
+                    break;
+                case 'update':
+                    $this->addRoute(['PUT'], '/{id}', $controller.'@update');
+                    break;
+                case 'destroy':
+                    $this->addRoute(['DELETE'], '/{id}', $controller.'@destroy');
+                    break;
+            }
+        }
+    }
+
     public function group($params, $action)
     {
         if (isset($params['namespace'])) { array_push($this->namespaces, $params['namespace']); }
