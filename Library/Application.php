@@ -8,6 +8,7 @@ use Library\Container\ContainerConfiguration;
 use Library\Facades\Facade;
 use Library\Http\Response;
 use Library\Http\View;
+use Library\Http\ViewFactory;
 
 class Application
 {
@@ -51,7 +52,9 @@ class Application
 
     private function loadRoutes()
     {
-        $this->container()->resolveInstance('router')->group(['namespace' => 'App\\Http\\Controllers'], function() {
+        $route = $this->container()->resolveInstance('router');
+
+        $route->group(['namespace' => 'App\\Http\\Controllers'], function() use ($route) {
             require __DIR__ . '/../App/Http/routes.php';
         });
     }
@@ -82,7 +85,12 @@ class Application
 
         if ($this->controllerResponse instanceof View)
         {
-            $this->controllerResponse->send();
+            $content = $this->controllerResponse->processView(new ViewFactory($this->container),
+                $this->container->resolveInstance('shao'));
+
+            echo $content;
+            exit();
+            return;
         }
 
         if ($this->controllerResponse instanceof Response)

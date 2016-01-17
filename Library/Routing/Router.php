@@ -18,6 +18,7 @@ class Router
     protected $prefixes = [];
     protected $middlewares = [];
     protected $names = [];
+    private $catchAll;
 
     public function __construct(Container $container, Validator $validator)
     {
@@ -85,6 +86,11 @@ class Router
                     break;
             }
         }
+    }
+
+    public function catchAll($uri, $action)
+    {
+        $this->catchAll = $this->addRoute(['GET'], $uri, $action);
     }
 
     public function group($params, $action)
@@ -258,6 +264,11 @@ class Router
         }
         catch (RouteNotFoundException $e)
         {
+            if (!is_null($this->catchAll))
+            {
+                return $this->catchAll;
+            }
+
             $response = $this->container->resolveInstance('response');
             $response->redirect404();
             $response->executeResponse();

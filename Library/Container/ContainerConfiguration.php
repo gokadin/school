@@ -36,6 +36,7 @@ class ContainerConfiguration
 
         $this->container->registerInstance('config', new Config());
         $this->container->registerInstance('request', new Request());
+        $this->container->registerInstance('view', new View());
         $session = new Session();
         $this->container->registerInstance('session', $session);
         $this->container->registerInstance('log', new Log());
@@ -69,7 +70,6 @@ class ContainerConfiguration
         $this->container->registerInstance('shao', $shao);
         $mailConfig = require $app->basePath().'Config/mail.php';
         $this->container->registerInstance('mail', new Mail($mailConfig, $shao));
-        $this->container->registerInstance('view', new View($this->container, $shao));
 
         if (env('APP_DEBUG'))
         {

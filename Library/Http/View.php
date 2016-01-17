@@ -2,7 +2,6 @@
 
 namespace Library\Http;
 
-use Library\Container\Container;
 use Library\Shao\Shao;
 use Symfony\Component\Yaml\Exception\RuntimeException;
 
@@ -10,23 +9,20 @@ class View
 {
     const VIEW_FOLDER = 'resources/views';
 
-    private $container;
     protected $basePath;
     protected $content;
     protected $vars;
-    protected $shao;
+    private $viewAction;
 
-    public function __construct(Container $container, Shao $shao)
+    public function __construct()
     {
-        $this->container = $container;
-        $this->shao = $shao;
         $this->basePath = __DIR__.'/../../'.self::VIEW_FOLDER;
     }
 
-    public function make($view, array $data = [])
+    public function make($viewAction, array $data = [])
     {
         $this->add($data);
-        $this->processView($view);
+        $this->viewAction = $viewAction;
 
         return $this;
     }
@@ -39,23 +35,16 @@ class View
         }
     }
 
-    public function send()
+    public function processView(ViewFactory $viewFactory, Shao $shao)
     {
-        echo $this->content;
-    }
+        $view = $this->basePath.'/'.str_replace('.', '/', $this->viewAction);
 
-    protected function processView($view)
-    {
-        $view = $this->basePath.'/'.str_replace('.', '/', $view);
-
-        $contentFile = $this->getContentFile($view);
+        $contentFile = $this->getContentFile($view, $shao);
 
         if (!is_null($this->vars))
         {
             extract($this->vars);
         }
-
-        $viewFactory = new ViewFactory($this->container);
 
         ob_start();
         require $contentFile;
@@ -65,14 +54,13 @@ class View
         {
             ob_start();
             require $viewFactory->getLayoutFile();
-            $this->content = ob_get_clean();
+            return ob_get_clean();
         }
-        else {
-            $this->content = $content;
-        }
+
+        return $content;
     }
 
-    protected function getContentFile($view)
+    protected function getContentFile($view, Shao $shao)
     {
         $validExtensions = ['.php', '.html'];
         $validShaoExtensions = ['.shao.php', '.shao.html'];
@@ -89,7 +77,7 @@ class View
         {
             if (file_exists($view.$validShaoExtension))
             {
-                return $this->shao->parseFile($view.$validShaoExtension);
+                return $shao->parseFile($view.$validShaoExtension);
             }
         }
 
