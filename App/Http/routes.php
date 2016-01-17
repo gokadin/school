@@ -39,6 +39,20 @@ Route::group(['namespace' => 'Frontend', 'as' => 'frontend', 'middleware' => 'Ve
  * API
  */
 
+$route->group(['namespace' => 'Api', 'prefix' => '/api', 'as' => 'api'], function() use ($route)
+{
+    $route->group(['namespace' => 'School', 'prefix' => '/school', 'as' => 'school'], function() use ($route)
+    {
+        $route->group(['namespace' => 'Integration', 'prefix' => '/integration', 'as' => 'integration'], function() use ($route)
+        {
+            $route->group(['prefix' => '/messaging', 'as' => 'messaging'], function() use ($route)
+            {
+                $route->get('/students', 'MessagingController@students');
+            });
+        });
+    });
+});
+
 Route::group(['namespace' => 'Api', 'prefix' => '/api', 'as' => 'api', 'middleware' => 'VerifyCsrfToken'], function() {
     Route::group(['namespace' => 'School', 'prefix' => '/school', 'as' => 'school', 'middleware' => 'VerifyAuthentication'], function() {
 
@@ -143,4 +157,8 @@ Route::group([
             Route::get('/', 'IndexController@index');
         });
     });
+});
+
+$route->catchAll('/school/integration/', function() use ($view) {
+    return $view->make('school.index');
 });

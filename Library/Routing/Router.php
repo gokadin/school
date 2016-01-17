@@ -205,7 +205,10 @@ class Router
             }
         }
 
-        $this->routes->add(new Route($methods, $uri, $action, $name, $middlewares));
+        $route = new Route($methods, $uri, $action, $name, $middlewares);
+        $this->routes->add($route);
+
+        return $route;
     }
 
     protected function generateRouteNameFromController($controllerAndAction, $prefix)

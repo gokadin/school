@@ -53,8 +53,9 @@ class Application
     private function loadRoutes()
     {
         $route = $this->container()->resolveInstance('router');
+        $view = $this->container()->resolveInstance('view');
 
-        $route->group(['namespace' => 'App\\Http\\Controllers'], function() use ($route) {
+        $route->group(['namespace' => 'App\\Http\\Controllers'], function() use ($route, $view) {
             require __DIR__ . '/../App/Http/routes.php';
         });
     }
