@@ -1381,6 +1381,10 @@ button:disabled {
       border-bottom: 1px solid #f2f2f2; }
     #school .simple-list ul li:hover {
       background-color: #f2f2f2; }
+  #school .recurring-delete-modal button:first-child {
+    width: 200px; }
+  #school .recurring-delete-modal button:nth-child(2) {
+    width: 250px; }
   #school .tag-select {
     position: relative; }
     #school .tag-select > ul {

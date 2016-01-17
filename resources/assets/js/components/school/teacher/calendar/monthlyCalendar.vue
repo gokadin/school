@@ -222,6 +222,23 @@
             </div>
         </div>
     </modal>
+
+    <modal v-ref:recurring-delete-modal>
+        <div class="modal-1 recurring-delete-modal" @click.stop>
+            <div class="header">
+                Confirm delete
+            </div>
+            <div class="body">
+                Are you sure?<br />
+                This will delete all assiciated lessons.
+            </div>
+            <div class="footer">
+                <button class="button-red" @click.stop="deleteSingle()">Delete this event</button>
+                <button class="button-red" @click.stop="deleteSingle()">Delete this and future events</button>
+                <button class="button-gray" @click.stop="closeRecurringDelete()">Cancel</button>
+            </div>
+        </div>
+    </modal>
 </template>
 
 <script>
@@ -262,7 +279,8 @@ export default {
             showPopover: 0,
             showMoreOptions: false,
             activities: [],
-            currentStudents: []
+            currentStudents: [],
+            currentDelete: null
         };
     },
 
@@ -537,10 +555,31 @@ export default {
         },
 
         delete: function(event) {
-            this.$http.delete('/api/school/teacher/events/' + event.id, function(response, status) {
-                this.$dispatch('flash', 'success', 'Event deleted!');
-                this.events.$remove(event);
+            this.currentDlelete = event;
+
+            if (event.isRecurring) {
+                this.showRecurringDeleteModal();
+
+                return;
+            }
+
+            this.deleteSingle();
+        },
+
+        deleteSingle: function() {
+            var event = this.currentDlelete;
+            this.$http.delete('/api/school/teacher/events/' + event.id, {
+                mode: 'single',
+                date: event.startDate,
+                time: event.startTime
             });
+
+            this.$dispatch('flash', 'success', 'Event deleted!');
+            this.events.$remove(event);
+        },
+
+        deleteFuture: function(event) {
+            // ...
         },
 
         showStudentsFor: function(event) {
@@ -554,6 +593,14 @@ export default {
 
         closeStudentsModal: function() {
             this.$refs.studentsModal.close();
+        },
+
+        showRecurringDeleteModal: function() {
+            this.$refs.recurringDeleteModal.open();
+        },
+
+        closeRecurringDelete: function() {
+            this.$refs.recurringDeleteModal.close();
         }
     }
 }
