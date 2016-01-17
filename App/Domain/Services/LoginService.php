@@ -26,24 +26,26 @@ class LoginService extends Service
         $this->authenticator = $authenticator;
     }
 
-    public function login(array $data)
+    public function login($email, $password)
     {
-        $teacher = $this->authenticator->attemptLogin(Teacher::class, $data['email'], md5($data['password']));
+        $password = md5($password);
 
-        if ($teacher != false)
+        $data = $this->authenticator->attemptLogin(Teacher::class, $email, $password);
+
+        if ($data != false)
         {
-            $this->fireEvent(new UserLoggedIn($teacher, 'teacher'));
+            $this->fireEvent(new UserLoggedIn($data['user'], 'teacher'));
 
-            return 'teacher';
+            return $data['authToken'];
         }
 
-        $student = $this->authenticator->attemptLogin(Student::class, $data['email'], md5($data['password']));
+        $data = $this->authenticator->attemptLogin(Student::class, $email, $password);
 
-        if ($student != false)
+        if ($data != false)
         {
-            $this->fireEvent(new UserLoggedIn($student, 'student'));
+            $this->fireEvent(new UserLoggedIn($data['user'], 'student'));
 
-            return 'student';
+            return $data['authToken'];
         }
 
         return false;

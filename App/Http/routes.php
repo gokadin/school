@@ -6,7 +6,10 @@ $router->group(['namespace' => 'Test', 'prefix' => '/test', 'as' => 'test'], fun
     {
         $router->group(['namespace' => 'Frontend', 'prefix' => '/frontend', 'as' => 'frontend'], function($router)
         {
-            $router->post('/login', 'AccountController@login');
+            $router->group(['prefix' => '/account', 'as' => 'account'], function($router)
+            {
+                $router->post('/login', 'AccountController@login');
+            });
         });
 
         $router->group(['namespace' => 'School', 'prefix' => '/school', 'as' => 'school'], function($router)
@@ -61,73 +64,7 @@ $router->group(['namespace' => 'Api', 'prefix' => '/api', 'as' => 'api', 'middle
     });
 });
 
-/*
- * SCHOOL
- */
 
-$router->group([
-    'namespace' => 'School',
-    'prefix' => '/school',
-    'as' => 'school',
-    'middleware' => ['VerifyCsrfToken', 'VerifyAuthentication']
-], function($router) {
-
-    $router->group(['namespace' => 'Teacher', 'prefix' => '/teacher', 'as' => 'teacher'], function($router)
-    {
-        $router->group(['as' => 'index'], function ($router)
-        {
-            $router->get('/', 'IndexController@index');
-        });
-
-        $router->group(['prefix' => '/activities', 'as' => 'activity'], function ($router)
-        {
-            $router->get('/', 'ActivityController@index');
-            $router->get('/create', 'ActivityController@create');
-            $router->post('/create', 'ActivityController@store');
-            $router->put('/edit', 'ActivityController@update');
-            $router->delete('/delete', 'ActivityController@destroy');
-        });
-
-        $router->group(['prefix' => '/students', 'as' => 'student'], function ($router)
-        {
-            $router->resource('StudentController', ['index', 'create', 'show']);
-            $router->post('/pre-register', 'StudentController@preRegister');
-            $router->get('/{id}/lessons', 'StudentController@lessons');
-            $router->get('/{id}/activities', 'StudentController@activities');
-        });
-
-        $router->group(['prefix' => '/calendar', 'as' => 'calendar'], function($router)
-        {
-            $router->get('/', 'CalendarController@index');
-        });
-
-        $router->group(['prefix' => '/settings', 'as' => 'setting'], function($router)
-        {
-            $router->get('/school-information', 'SettingController@schoolInformation');
-            $router->get('/registrationForm', 'SettingController@registrationForm');
-            $router->get('/preferences', 'SettingController@preferences');
-            $router->put('/preferences', 'SettingController@updatePreferences');
-        });
-
-        $router->group(['prefix' => '/account', 'as' => 'account'], function($router)
-        {
-            $router->get('/', 'AccountController@index');
-            $router->get('/personal-info', 'AccountController@personalInfo');
-            $router->post('/personal-info', 'AccountController@updatePersonalInfo');
-            $router->get('/password', 'AccountController@password');
-            $router->post('/password', 'AccountController@updatePassword');
-        });
-    });
-
-    $router->group(['namespace' => 'Student', 'prefix' => '/student', 'as' => 'student'], function($router)
-    {
-        $router->group(['as' => 'index'], function ($router)
-        {
-            $router->get('/', 'IndexController@index');
-        });
-    });
-});
-
-$router->catchAll(function($router) use ($view) {
-    return new \Library\Http\View('index');
+$router->catchAll(function() {
+    return new \Library\Http\View('school.index');
 });

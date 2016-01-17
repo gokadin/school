@@ -2,6 +2,7 @@
 
 namespace App\Domain\Users;
 
+use Firebase\JWT\JWT;
 use Library\DataMapper\DataMapper;
 
 class Authenticator
@@ -21,37 +22,6 @@ class Authenticator
         $this->dm = $dm;
     }
 
-    public function logout()
-    {
-        session_destroy();
-    }
-
-    public function loggedIn()
-    {
-        return isset($_SESSION['id']) &&
-            isset($_SESSION['type']) &&
-            isset($_SESSION['authenticated']) &&
-            $_SESSION['authenticated'];
-    }
-
-    public function loginTeacher(Teacher $teacher)
-    {
-        $_SESSION['id'] = $teacher->getId();
-        $_SESSION['type'] = 'teacher';
-        $_SESSION['authenticated'] = true;
-
-        $this->user = $teacher;
-    }
-
-    public function loginStudent(Student $student)
-    {
-        $_SESSION['id'] = $student->getId();
-        $_SESSION['type'] = 'student';
-        $_SESSION['authenticated'] = true;
-
-        $this->user = $student;
-    }
-
     public function attemptLogin($class, $email, $password)
     {
         $user = $this->dm->findOneBy($class, [
@@ -66,7 +36,7 @@ class Authenticator
 
         if ($user instanceof Teacher)
         {
-            $this->loginTeacher($user);
+            return ['authToken' => $this->loginTeacher($user), 'user' => $user];
         }
         else if ($user instanceof Student)
         {
@@ -75,10 +45,40 @@ class Authenticator
                 return false;
             }
 
-            $this->loginStudent($user);
+            return ['authToken' => $this->loginStudent($user), 'user' => $user];
         }
 
-        return $user;
+        return false;
+    }
+
+    private function loginTeacher($user)
+    {
+        return $this->createJwt([
+            'id' => $user->getId(),
+            'type' => 'teacher'
+        ]);
+    }
+
+    private function loginStudent($user)
+    {
+        return $this->createJwt([
+            'id' => $user->getId(),
+            'type' => 'student'
+        ]);
+    }
+
+    private function createJwt(array $data)
+    {
+        $currentTime = time();
+
+        $data = [
+            'iat' => $currentTime,
+            'iss' => 'instructioner',
+            'nbf' => $currentTime,
+            'data' => $data
+        ];
+
+        return JWT::encode($data, $this->getJwtSecret(), 'HS512');
     }
 
     public function user()
@@ -102,5 +102,10 @@ class Authenticator
     public function type()
     {
         return $_SESSION['type'];
+    }
+
+    private function getJwtSecret()
+    {
+        return base64_encode('*ei3%a9200-h');
     }
 }

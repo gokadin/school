@@ -15,7 +15,8 @@
     "symfony/console": "^2.7",
     "predis/predis": "^1.0",
     "mtdowling/cron-expression": "^1.0",
-    "mailgun/mailgun-php": "^1.8"
+    "mailgun/mailgun-php": "^1.8",
+    "firebase/php-jwt": "^3.0"
   },
   "autoload": {
     "psr-0": {"": ""}

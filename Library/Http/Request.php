@@ -54,7 +54,9 @@ class Request
     public function isJson()
     {
         if (!strpos($this->header('CONTENT_TYPE'), '/json'))
+        {
             return false;
+        }
 
         return true;
     }

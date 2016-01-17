@@ -4,33 +4,7 @@
 
 @inject('\Library\Http\Form')
 
-<div id="login">
 
-    {!! $form->open('', 'POST', ['id' => 'login-form', 'class' => 'form-fe-1']) !!}
-
-    <div class="form-title">
-        Login
-    </div>
-
-    <div class="form-row">
-        {!! $form->label('email', 'Email') !!}
-        {!! $form->text('email', null, ['placeholder' => 'Email']) !!}
-        {!! $form->error('email') !!}
-    </div>
-
-    <div class="form-row">
-        {!! $form->label('password', 'Password') !!}
-        {!! $form->password('password', null, ['placeholder' => 'Password']) !!}
-        {!! $form->error('password') !!}
-    </div>
-
-    <div class="form-button">
-        {!! $form->button('Login', ['type' => 'submit']) !!}
-    </div>
-
-    {!! $form->close() !!}
-
-</div>
 
 @stop()
 

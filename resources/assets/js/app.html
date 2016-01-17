@@ -1,9 +1,17 @@
-<div>
-    <nav>
-        <ul>
-            <li><a [routerLink]="['/Home']">Home</a></li>
-            <li><a [routerLink]="['/StudentList']">Stlist</a></li>
-        </ul>
-    </nav>
-    <router-outlet></router-outlet>
+<div id="frontend">
+    <header>
+        <nav>
+            <ul>
+                <li><a [routerLink]="['/Home']">Home</a></li>
+                <li><a [routerLink]="['/Login']">Login</a></li>
+                <li><a [routerLink]="['/StudentList']">Stlist</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <div id="container">
+        <div id="content">
+            <router-outlet></router-outlet>
+        </div>
+    </div>
 </div>
