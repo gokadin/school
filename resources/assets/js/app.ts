@@ -15,8 +15,8 @@ import {StudentList} from './components/school/messaging/studentList/studentList
     template: require('./app.html')
 })
 @RouteConfig([
-    { path: '/school/integration/', name: 'Home', component: Home },
-    { path: '/school/integration/messaging/', name: 'StudentList', component: StudentList}
+    { path: '/test/school/teacher/', name: 'Home', component: Home },
+    { path: '/test/school/teacher/messaging/', name: 'StudentList', component: StudentList}
 ])
 class App {
 

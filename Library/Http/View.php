@@ -14,9 +14,15 @@ class View
     protected $vars;
     private $viewAction;
 
-    public function __construct()
+    public function __construct($viewAction = null, array $data = [])
     {
         $this->basePath = __DIR__.'/../../'.self::VIEW_FOLDER;
+
+        if (!is_null($viewAction))
+        {
+            $this->add($data);
+            $this->viewAction = $viewAction;
+        }
     }
 
     public function make($viewAction, array $data = [])

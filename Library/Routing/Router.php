@@ -88,9 +88,9 @@ class Router
         }
     }
 
-    public function catchAll($uri, $action)
+    public function catchAll($action)
     {
-        $this->catchAll = $this->addRoute(['GET'], $uri, $action);
+        $this->catchAll = $this->addRoute(['GET'], '/', $action);
     }
 
     public function group($params, $action)
@@ -100,7 +100,7 @@ class Router
         if (isset($params['middleware'])) { array_push($this->middlewares, $params['middleware']); }
         if (isset($params['as'])) { array_push($this->names, $params['as']); }
 
-        $action();
+        $action($this);
 
         if (isset($params['namespace'])) { array_pop($this->namespaces); }
         if (isset($params['prefix'])) { array_pop($this->prefixes); }
@@ -267,7 +267,7 @@ class Router
         }
         catch (RouteNotFoundException $e)
         {
-            if (!is_null($this->catchAll))
+            if (!is_null($this->catchAll) && $this->catchAll->hasMethod($request->method()))
             {
                 return $this->catchAll;
             }

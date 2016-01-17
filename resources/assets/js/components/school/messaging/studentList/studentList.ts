@@ -15,7 +15,7 @@ export class StudentList {
 
     makeRequest(): void {
         this.loading = true;
-        this.http.get('/api/school/integration/messaging/students')
+        this.http.get('/test/api/school/teacher/messaging/students')
             .subscribe((res: Response) => {
                 this.students = res.json().students;
                 this.loading = false;

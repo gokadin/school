@@ -28,6 +28,11 @@ class Route
         return $this->methods;
     }
 
+    public function hasMethod($method)
+    {
+        return in_array($method, $this->methods);
+    }
+
     public function uri()
     {
         return $this->uri;

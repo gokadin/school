@@ -1,93 +1,62 @@
 <?php
 
-use Library\Facades\Router as Route;
-
-/* FRONTEND */
-
-Route::group(['namespace' => 'Frontend', 'as' => 'frontend', 'middleware' => 'VerifyCsrfToken'], function() {
-    Route::group(['as' => 'index'], function() {
-        Route::get('/', 'IndexController@index');
-        Route::get('/features', 'IndexController@features');
-        Route::get('/testimonials', 'IndexController@testimonials');
-        Route::get('/faq', 'IndexController@faq');
-        Route::get('/contact-us', 'IndexController@contactUs');
-        Route::get('/about', 'IndexController@about');
-    });
-
-    Route::group(['prefix' => '/account', 'as' => 'account'], function() {
-        Route::get('/login', 'AccountController@index');
-        Route::post('/login', 'AccountController@login');
-        Route::get('/logout', 'AccountController@logout');
-        Route::get('/reset-password', 'AccountController@resetPassword');
-        Route::get('/signup', 'AccountController@signUp');
-        Route::post('/signup', 'AccountController@preRegisterTeacher');
-        Route::get('/signup-land', 'AccountController@signUpLand');
-        Route::get('/confirm/{id}-{code}', 'AccountController@emailConfirmation');
-        Route::post('/confirm', 'AccountController@registerTeacher');
-    });
-
-    Route::group(['prefix' => '/student', 'as' => 'student'], function()
-    {
-        Route::get('/register/{id}-{code}', 'StudentController@index');
-        Route::get('/not-found', 'StudentController@notFound');
-        Route::post('/register', 'StudentController@register');
-        Route::get('/registration-land', 'StudentController@noAccountLand');
-    });
-});
-
-/*
- * API
- */
-
-$route->group(['namespace' => 'Api', 'prefix' => '/api', 'as' => 'api'], function() use ($route)
+$router->group(['namespace' => 'Test', 'prefix' => '/test', 'as' => 'test'], function($router)
 {
-    $route->group(['namespace' => 'School', 'prefix' => '/school', 'as' => 'school'], function() use ($route)
+    $router->group(['namespace' => 'Api', 'prefix' => '/api', 'as' => 'api'], function($router)
     {
-        $route->group(['namespace' => 'Integration', 'prefix' => '/integration', 'as' => 'integration'], function() use ($route)
+        $router->group(['namespace' => 'Frontend', 'prefix' => '/frontend', 'as' => 'frontend'], function($router)
         {
-            $route->group(['prefix' => '/messaging', 'as' => 'messaging'], function() use ($route)
+            $router->post('/login', 'AccountController@login');
+        });
+
+        $router->group(['namespace' => 'School', 'prefix' => '/school', 'as' => 'school'], function($router)
+        {
+            $router->group(['namespace' => 'Teacher', 'prefix' => '/teacher', 'as' => 'teacher'], function($router)
             {
-                $route->get('/students', 'MessagingController@students');
+                $router->group(['prefix' => '/messaging', 'as' => 'messaging'], function($router)
+                {
+                    $router->get('/students', 'MessagingController@students');
+                });
             });
         });
     });
 });
 
-Route::group(['namespace' => 'Api', 'prefix' => '/api', 'as' => 'api', 'middleware' => 'VerifyCsrfToken'], function() {
-    Route::group(['namespace' => 'School', 'prefix' => '/school', 'as' => 'school', 'middleware' => 'VerifyAuthentication'], function() {
+$router->group(['namespace' => 'Api', 'prefix' => '/api', 'as' => 'api', 'middleware' => 'VerifyCsrfToken'], function($router) {
+    $router->group(['namespace' => 'School', 'prefix' => '/school', 'as' => 'school', 'middleware' => 'VerifyAuthentication'], function($router) {
 
-        Route::group(['namespace' => 'Teacher', 'prefix' => '/teacher', 'as' =>'teacher'], function()
+        $router->group(['namespace' => 'Teacher', 'prefix' => '/teacher', 'as' =>'teacher'], function($router)
         {
-            Route::get('/search/{search}', 'SearchController@index');
+            $router->get('/search/{search}', 'SearchController@index');
 
-            Route::group(['prefix' => '/activities', 'as' => 'activity'], function() {
-                Route::get('/', 'ActivityController@getAll');
-                Route::post('/', 'ActivityController@index');
-                Route::get('/{id}/students', 'ActivityController@students');
-                Route::delete('/{activityId}', 'ActivityController@destroy');
-                Route::put('/{activityId}', 'ActivityController@update');
+            $router->group(['prefix' => '/activities', 'as' => 'activity'], function($router) {
+                $router->get('/', 'ActivityController@getAll');
+                $router->post('/', 'ActivityController@index');
+                $router->get('/{id}/students', 'ActivityController@students');
+                $router->delete('/{activityId}', 'ActivityController@destroy');
+                $router->put('/{activityId}', 'ActivityController@update');
             });
 
-            Route::group(['prefix' => '/students', 'as' => 'student'], function() {
-                Route::get('/new-students', 'StudentController@newStudents');
-                Route::post('/', 'StudentController@index');
-                Route::post('/from-ids', 'StudentController@fromIds');
-                Route::post('/search', 'StudentController@search');
-                Route::post('/{id}/lessons/range', 'StudentController@lessonRange');
+            $router->group(['prefix' => '/students', 'as' => 'student'], function($router) {
+                $router->get('/new-students', 'StudentController@newStudents');
+                $router->post('/', 'StudentController@index');
+                $router->post('/from-ids', 'StudentController@fromIds');
+                $router->post('/search', 'StudentController@search');
+                $router->post('/{id}/lessons/range', 'StudentController@lessonRange');
             });
 
-            Route::group(['prefix' => '/events', 'as' => 'event'], function()
+            $router->group(['prefix' => '/events', 'as' => 'event'], function($router)
             {
-                Route::get('/upcoming-events', 'EventController@upcomingEvents');
-                Route::post('/', 'EventController@create');
-                Route::post('/range', 'EventController@range');
-                Route::put('/change-date', 'EventController@changeDate');
-                Route::delete('/{id}', 'EventController@destroy');
-                Route::put('/{eventId}/lessons/{lessonId}/attendance', 'EventController@updateLessonAttendance');
+                $router->get('/upcoming-events', 'EventController@upcomingEvents');
+                $router->post('/', 'EventController@create');
+                $router->post('/range', 'EventController@range');
+                $router->put('/change-date', 'EventController@changeDate');
+                $router->delete('/{id}', 'EventController@destroy');
+                $router->put('/{eventId}/lessons/{lessonId}/attendance', 'EventController@updateLessonAttendance');
             });
 
-            Route::get('/get-registration-form', 'SettingController@getRegistration');
-            Route::post('/update-registration-form', 'SettingController@updateRegistrationForm');
+            $router->get('/get-registration-form', 'SettingController@getRegistration');
+            $router->post('/update-registration-form', 'SettingController@updateRegistrationForm');
         });
     });
 });
@@ -96,69 +65,69 @@ Route::group(['namespace' => 'Api', 'prefix' => '/api', 'as' => 'api', 'middlewa
  * SCHOOL
  */
 
-Route::group([
+$router->group([
     'namespace' => 'School',
     'prefix' => '/school',
     'as' => 'school',
     'middleware' => ['VerifyCsrfToken', 'VerifyAuthentication']
-], function() {
+], function($router) {
 
-    Route::group(['namespace' => 'Teacher', 'prefix' => '/teacher', 'as' => 'teacher'], function()
+    $router->group(['namespace' => 'Teacher', 'prefix' => '/teacher', 'as' => 'teacher'], function($router)
     {
-        Route::group(['as' => 'index'], function ()
+        $router->group(['as' => 'index'], function ($router)
         {
-            Route::get('/', 'IndexController@index');
+            $router->get('/', 'IndexController@index');
         });
 
-        Route::group(['prefix' => '/activities', 'as' => 'activity'], function ()
+        $router->group(['prefix' => '/activities', 'as' => 'activity'], function ($router)
         {
-            Route::get('/', 'ActivityController@index');
-            Route::get('/create', 'ActivityController@create');
-            Route::post('/create', 'ActivityController@store');
-            Route::put('/edit', 'ActivityController@update');
-            Route::delete('/delete', 'ActivityController@destroy');
+            $router->get('/', 'ActivityController@index');
+            $router->get('/create', 'ActivityController@create');
+            $router->post('/create', 'ActivityController@store');
+            $router->put('/edit', 'ActivityController@update');
+            $router->delete('/delete', 'ActivityController@destroy');
         });
 
-        Route::group(['prefix' => '/students', 'as' => 'student'], function ()
+        $router->group(['prefix' => '/students', 'as' => 'student'], function ($router)
         {
-            Route::resource('StudentController', ['index', 'create', 'show']);
-            Route::post('/pre-register', 'StudentController@preRegister');
-            Route::get('/{id}/lessons', 'StudentController@lessons');
-            Route::get('/{id}/activities', 'StudentController@activities');
+            $router->resource('StudentController', ['index', 'create', 'show']);
+            $router->post('/pre-register', 'StudentController@preRegister');
+            $router->get('/{id}/lessons', 'StudentController@lessons');
+            $router->get('/{id}/activities', 'StudentController@activities');
         });
 
-        Route::group(['prefix' => '/calendar', 'as' => 'calendar'], function()
+        $router->group(['prefix' => '/calendar', 'as' => 'calendar'], function($router)
         {
-            Route::get('/', 'CalendarController@index');
+            $router->get('/', 'CalendarController@index');
         });
 
-        Route::group(['prefix' => '/settings', 'as' => 'setting'], function()
+        $router->group(['prefix' => '/settings', 'as' => 'setting'], function($router)
         {
-            Route::get('/school-information', 'SettingController@schoolInformation');
-            Route::get('/registrationForm', 'SettingController@registrationForm');
-            Route::get('/preferences', 'SettingController@preferences');
-            Route::put('/preferences', 'SettingController@updatePreferences');
+            $router->get('/school-information', 'SettingController@schoolInformation');
+            $router->get('/registrationForm', 'SettingController@registrationForm');
+            $router->get('/preferences', 'SettingController@preferences');
+            $router->put('/preferences', 'SettingController@updatePreferences');
         });
 
-        Route::group(['prefix' => '/account', 'as' => 'account'], function()
+        $router->group(['prefix' => '/account', 'as' => 'account'], function($router)
         {
-            Route::get('/', 'AccountController@index');
-            Route::get('/personal-info', 'AccountController@personalInfo');
-            Route::post('/personal-info', 'AccountController@updatePersonalInfo');
-            Route::get('/password', 'AccountController@password');
-            Route::post('/password', 'AccountController@updatePassword');
+            $router->get('/', 'AccountController@index');
+            $router->get('/personal-info', 'AccountController@personalInfo');
+            $router->post('/personal-info', 'AccountController@updatePersonalInfo');
+            $router->get('/password', 'AccountController@password');
+            $router->post('/password', 'AccountController@updatePassword');
         });
     });
 
-    Route::group(['namespace' => 'Student', 'prefix' => '/student', 'as' => 'student'], function()
+    $router->group(['namespace' => 'Student', 'prefix' => '/student', 'as' => 'student'], function($router)
     {
-        Route::group(['as' => 'index'], function ()
+        $router->group(['as' => 'index'], function ($router)
         {
-            Route::get('/', 'IndexController@index');
+            $router->get('/', 'IndexController@index');
         });
     });
 });
 
-$route->catchAll('/school/integration/', function() use ($view) {
-    return $view->make('school.index');
+$router->catchAll(function($router) use ($view) {
+    return new \Library\Http\View('index');
 });
