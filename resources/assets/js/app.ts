@@ -34,7 +34,7 @@ class MyOptions extends RequestOptions {
             super({
                 headers: new Headers({
                     'Content-Type': 'text/json; charset=UTF-8',
-                    'HTTP_CSRFTOKEN': document.getElementsByTagName()
+                    'CSRFTOKEN': document.getElementById('csrf-token').getAttribute('content')
                 })
             });
         }
