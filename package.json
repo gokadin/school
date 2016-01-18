@@ -30,12 +30,18 @@
   "devDependencies": {
     "css-loader": "^0.23.1",
     "dropzone": "^4.2.0",
+    "file-loader": "^0.8.5",
+    "font-awesome": "^4.5.0",
+    "font-awesome-webpack": "0.0.4",
+    "less": "^2.5.3",
+    "less-loader": "^2.2.2",
     "node-sass": "^3.4.2",
     "raw-loader": "^0.5.1",
     "sass": "^0.5.0",
     "sass-loader": "^3.1.2",
     "style-loader": "^0.13.0",
     "typescript": "1.7.3",
+    "url-loader": "^0.5.7",
     "webpack": "^1.12.11"
   }
 }

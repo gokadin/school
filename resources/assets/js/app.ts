@@ -1,9 +1,9 @@
 import {Component, provide} from 'angular2/core';
 import {bootstrap} from 'angular2/platform/browser';
-import {ROUTER_DIRECTIVES, ROUTER_PROVIDERS,
-    HashLocationStrategy, LocationStrategy, RouteConfig} from 'angular2/router';
+import {ROUTER_DIRECTIVES, ROUTER_PROVIDERS, LocationStrategy, RouteConfig} from 'angular2/router';
 import {HTTP_PROVIDERS, BaseRequestOptions, RequestOptions, Headers} from 'angular2/http';
 
+require('font-awesome-webpack');
 require('./../sass/app.scss');
 
 import {AppRequestOptions} from './requests/appRequestOptions';
