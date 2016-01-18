@@ -1,6 +1,6 @@
 <?php
 
-$router->group(['namespace' => 'Test', 'prefix' => '/test', 'as' => 'test'], function($router)
+$router->group(['namespace' => 'Test', 'prefix' => '/test', 'as' => 'test', 'middleware' => 'VerifyCsrfToken'], function($router)
 {
     $router->group(['namespace' => 'Api', 'prefix' => '/api', 'as' => 'api'], function($router)
     {

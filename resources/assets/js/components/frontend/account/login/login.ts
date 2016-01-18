@@ -19,15 +19,10 @@ export class Login {
     }
 
     login(value) {
-        let headers: Headers = new Headers();
-        headers.set('Content-Type', 'text/json; charset=UTF-8');
-        let opts: RequestOptions = new RequestOptions();
-        opts.headers = headers;
-
         this.http.post('/test/api/frontend/account/login', JSON.stringify({
             email: value.email,
             password: value.password
-        }), opts)
+        }))
         .map(res => res.json())
         .subscribe(
             data => this.authService.login(data.authToken),

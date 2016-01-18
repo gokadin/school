@@ -2,7 +2,7 @@ import {Component, provide} from 'angular2/core';
 import {bootstrap} from 'angular2/platform/browser';
 import {ROUTER_DIRECTIVES, ROUTER_PROVIDERS,
     HashLocationStrategy, LocationStrategy, RouteConfig} from 'angular2/router';
-import {HTTP_PROVIDERS, BaseRequestOptions} from 'angular2/http';
+import {HTTP_PROVIDERS, BaseRequestOptions, RequestOptions, Headers} from 'angular2/http';
 
 require('./../sass/app.scss');
 
@@ -29,8 +29,20 @@ class App {
     }
 }
 
+class MyOptions extends RequestOptions {
+        constructor() {
+            super({
+                headers: new Headers({
+                    'Content-Type': 'text/json; charset=UTF-8',
+                    'HTTP_CSRFTOKEN': document.getElementsByTagName()
+                })
+            });
+        }
+}
+
 bootstrap(App, [
     ROUTER_PROVIDERS,
     HTTP_PROVIDERS,
-    AUTH_PROVIDERS
+    AUTH_PROVIDERS,
+    provide(RequestOptions, {useClass: MyOptions})
 ]);

@@ -10,7 +10,7 @@ use Symfony\Component\Yaml\Exception\RuntimeException;
 
 class VerifyCsrfToken
 {
-    protected $methodsToVerify = ['POST', 'PUT', 'PATCH', 'DELETE'];
+    protected $methodsToVerify = ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'];
     protected $session;
     protected $response;
 
@@ -29,7 +29,7 @@ class VerifyCsrfToken
             {
                 if ($request->isJson())
                 {
-                    $this->response->json([print_r($_SERVER)], 401);
+                    $this->response->json([], 401);
                     $this->response->executeResponse();
                     return;
                 }
