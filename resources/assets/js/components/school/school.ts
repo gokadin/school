@@ -1,5 +1,7 @@
-import {Component, Injector} from 'angular2/core';
+import {Component, Injector, provide} from 'angular2/core';
+import {bootstrap} from 'angular2/platform/browser';
 import {ROUTER_DIRECTIVES, RouteConfig, CanActivate} from 'angular2/router';
+import {RequestOptions, Headers} from 'angular2/http';
 
 import {AuthService} from '../../services/authService';
 

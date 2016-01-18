@@ -27,35 +27,18 @@ class VerifyAuthentication
 
     public function handle(Request $request, Closure $next)
     {
-        if (!$this->authenticator->loggedIn())
+        if (!$request->isJson() || is_null($request->header('Authorization')) ||
+            !$this->authenticator->processAuthorization($request->header('Authorization')))
         {
-            if ($request->isJson())
-            {
-                return $this->response->json([], 401);
-            }
-
-            $this->response->route('frontend.account.login');
+            $this->response->json([], 401);
             $this->response->executeResponse();
             return;
         }
 
-        $this->view->add(['user' => $this->authenticator->user()]);
-
-        if ($this->router->currentNameContains('api.'))
+        if ($this->router->currentNameContains('school.teacher') && $this->authenticator->type() != 'teacher' ||
+            $this->router->currentNameContains('school.student') && $this->authenticator->type() != 'student')
         {
-            return $next($request);
-        }
-
-        if ($this->router->currentNameContains('school.teacher.') && $this->authenticator->type() != 'teacher')
-        {
-            $this->response->route('frontend.account.login');
-            $this->response->executeResponse();
-            return;
-        }
-
-        if ($this->router->currentNameContains('school.student.') && $this->authenticator->type() != 'student')
-        {
-            $this->response->route('frontend.account.login');
+            $this->response->json([], 401);
             $this->response->executeResponse();
             return;
         }

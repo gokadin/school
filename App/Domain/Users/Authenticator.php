@@ -17,9 +17,53 @@ class Authenticator
      */
     private $user;
 
+    /**
+     * @var string
+     */
+    private $type;
+
     public function __construct(DataMapper $dm)
     {
         $this->dm = $dm;
+    }
+
+    public function user()
+    {
+        return $this->user;
+    }
+
+    public function type()
+    {
+        return $this->type;
+    }
+
+    public function processAuthorization($jwt)
+    {
+        $jwt = explode('Bearer ', $jwt)[1];
+        $jwt = (array) JWT::decode($jwt, $this->getJwtSecret(), array('HS512'));
+        $data = (array) $jwt['data'];
+
+        $user = null;
+        switch ($data['type'])
+        {
+            case 'teacher':
+                $user = $this->dm->find(Teacher::class, $data['id']);
+                break;
+            case 'student':
+                $user = $this->dm->find(Student::class, $data['id']);
+                break;
+            default:
+                return false;
+        }
+
+        if (is_null($user))
+        {
+            return false;
+        }
+
+        $this->user = $user;
+        $this->type = $data['type'];
+        return true;
     }
 
     public function attemptLogin($class, $email, $password)
@@ -79,29 +123,6 @@ class Authenticator
         ];
 
         return JWT::encode($data, $this->getJwtSecret(), 'HS512');
-    }
-
-    public function user()
-    {
-        if (!is_null($this->user))
-        {
-            return $this->user;
-        }
-
-        switch ($_SESSION['type'])
-        {
-            case 'teacher':
-                return $this->user = $this->dm->find(Teacher::class, $_SESSION['id']);
-            case 'student':
-                return $this->user = $this->dm->find(Student::class, $_SESSION['id']);
-            default:
-                return null;
-        }
-    }
-
-    public function type()
-    {
-        return $_SESSION['type'];
     }
 
     private function getJwtSecret()

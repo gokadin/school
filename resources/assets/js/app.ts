@@ -6,6 +6,8 @@ import {HTTP_PROVIDERS, BaseRequestOptions, RequestOptions, Headers} from 'angul
 
 require('./../sass/app.scss');
 
+import {AppRequestOptions} from './requests/appRequestOptions';
+
 import {AUTH_PROVIDERS} from './services/authService';
 
 import {School} from './components/school/school';
@@ -29,20 +31,9 @@ class App {
     }
 }
 
-class MyOptions extends RequestOptions {
-        constructor() {
-            super({
-                headers: new Headers({
-                    'Content-Type': 'text/json; charset=UTF-8',
-                    'CSRFTOKEN': document.getElementById('csrf-token').getAttribute('content')
-                })
-            });
-        }
-}
-
 bootstrap(App, [
     ROUTER_PROVIDERS,
     HTTP_PROVIDERS,
     AUTH_PROVIDERS,
-    provide(RequestOptions, {useClass: MyOptions})
+    provide(RequestOptions, {useClass: AppRequestOptions})
 ]);

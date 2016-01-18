@@ -53,7 +53,7 @@ class Request
 
     public function isJson()
     {
-        if (!strpos($this->header('CONTENT_TYPE'), '/json'))
+        if (!strpos($this->header('Content-Type'), '/json'))
         {
             return false;
         }
@@ -151,6 +151,12 @@ class Request
 
     public function header($key)
     {
-        return isset($_SERVER[$key]) ? $_SERVER[$key] : null;
+        $headers = apache_request_headers();
+
+        if (isset($headers[$key]))
+        {
+            return $headers[$key];
+        }
+        return isset($headers[$key]) ? $headers[$key] : null;
     }
 }

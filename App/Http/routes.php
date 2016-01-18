@@ -12,7 +12,7 @@ $router->group(['namespace' => 'Test', 'prefix' => '/test', 'as' => 'test', 'mid
             });
         });
 
-        $router->group(['namespace' => 'School', 'prefix' => '/school', 'as' => 'school'], function($router)
+        $router->group(['namespace' => 'School', 'prefix' => '/school', 'as' => 'school', 'middleware' => 'VerifyAuthentication'], function($router)
         {
             $router->group(['namespace' => 'Teacher', 'prefix' => '/teacher', 'as' => 'teacher'], function($router)
             {
