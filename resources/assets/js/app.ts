@@ -8,8 +8,9 @@ require('./../sass/app.scss');
 
 import {AUTH_PROVIDERS} from './services/authService';
 
-import {Home} from './components/school/home/home';
-import {Login} from "./components/frontend/account/login/login";
+import {School} from './components/school/school';
+import {Home} from './components/frontend/home/home';
+import {Login} from './components/frontend/account/login/login';
 import {StudentList} from './components/school/messaging/studentList/studentList';
 
 @Component({
@@ -18,12 +19,14 @@ import {StudentList} from './components/school/messaging/studentList/studentList
     template: require('./app.html')
 })
 @RouteConfig([
-    { path: '/', name: 'Home', component: Home },
+    { path: '/', name: 'Home', component: Home, useAsDefault: true },
     { path: '/login', name: 'Login', component: Login},
-    { path: '/test/school/teacher/messaging/', name: 'StudentList', component: StudentList}
+    { path: '/school/...', name: 'School', component: School}
 ])
 class App {
-
+    logout() {
+        localStorage.removeItem('authToken');
+    }
 }
 
 bootstrap(App, [

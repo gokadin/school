@@ -28,9 +28,10 @@ export class Login {
             email: value.email,
             password: value.password
         }), opts)
-        .subscribe((res: Response) => {
-            console.log(res.json().authToken);
-            this.authService.login(res.json().authToken);
-        });
+        .map(res => res.json())
+        .subscribe(
+            data => this.authService.login(data.authToken),
+            err => console.log(err)
+        );
     }
 }
