@@ -893,7 +893,6 @@ button:disabled {
         margin-right: 8px;
         font-size: 14px; }
     #school #menu .menu-only > ul > li > ul {
-      display: none;
       background-color: #202b30;
       border-top: 1px solid #4b5a61;
       border-bottom: 1px solid #4b5a61; }

@@ -67,23 +67,23 @@
         </div>
         <div class="menu-only">
             <ul>
-                <li class="active">
+                <li [class.active]="router.isRouteActive(router.generate(['./Index']))">
                     <a [routerLink]="['./Index']">
                         <i class="fa fa-home"></i>Home
                     </a>
                 </li>
-                <li class="multi-level open active">
-                    <a href="javascript:;">
+                <li class="multi-level" [class.open]="subMenus.activities">
+                    <a href="javascript:;" (click)="toggleSubMenu('activities')">
                         <i class="fa fa-cogs"></i>Activities
                     </a>
-                    <ul>
-                        <li class="active">
-                            <a href="#">
+                    <ul *ngIf="subMenus.activities">
+                        <li [class.active]="router.isRouteActive(router.generate(['./ActivityList']))">
+                            <a [routerLink]="['./ActivityList']">
                                 View
                             </a>
                         </li>
-                        <li>
-                            <a href="#">
+                        <li [class.active]="router.isRouteActive(router.generate(['./CreateActivity']))">
+                            <a [routerLink]="['./CreateActivity']">
                                 Create
                             </a>
                         </li>
