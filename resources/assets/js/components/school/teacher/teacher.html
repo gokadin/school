@@ -1,0 +1,171 @@
+<header>
+    <div class="school-name"><a [routerLink]="['./Index']">[school name]</a></div>
+    <div class="account">
+        <div class="dropdown-1">
+            <!--<img src="/images/defaultProfilePicture.png" width="30" height="30" />-->
+            [user name] <i class="fa fa-angle-down"></i>
+            <div class="dropdown-box">
+                <div class="arrow-box">
+                    <ul>
+                        <li>
+                            <a href="#">
+                                <i class="fa fa-user"></i>Account
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#">
+                                <i class="fa fa-gear"></i>Settings
+                            </a>
+                        </li>
+                        <li class="divider"></li>
+                        <li>
+                            <a href="#">
+                                <i class="fa fa-sign-out"></i>Log out
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="responsive-menu-button">
+        <i class="fa fa-bars"></i>
+    </div>
+</header>
+
+<div id="container">
+    <div id="menu">
+        <div class="responsive-user-menu">
+            <div class="account">
+                <div class="dropdown-1">
+                    <!--<img src="/images/defaultProfilePicture.png" width="30" height="30" />-->
+                    [user name] <i class="fa fa-angle-down"></i>
+                    <div class="dropdown-box">
+                        <div class="arrow-box">
+                            <ul>
+                                <li>
+                                    <a href="#">
+                                        <i class="fa fa-user"></i>Account
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="#">
+                                        <i class="fa fa-cog"></i>Settings
+                                    </a>
+                                </li>
+                                <li class="divider"></li>
+                                <li>
+                                    <a href="#">
+                                        <i class="fa fa-sign-out"></i>Log out
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <search></search>
+        <div class="menu-only">
+            <ul>
+                <li class="active">
+                    <a [routerLink]="['./Index']">
+                        <i class="fa fa-home"></i>Home
+                    </a>
+                </li>
+                <li class="multi-level open active">
+                    <a href="javascript:;">
+                        <i class="fa fa-cogs"></i>Activities
+                    </a>
+                    <ul>
+                        <li class="active">
+                            <a href="#">
+                                View
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#">
+                                Create
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+                <li class="multi-level">
+                    <a href="javascript:;">
+                        <i class="fa fa-group"></i>Students
+                    </a>
+                    <ul>
+                        <li>
+                            <a href="#">
+                                View
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#)">
+                                Create
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="#">
+                        <i class="fa fa-calendar"></i>Calendar
+                    </a>
+                </li>
+                <li class="multi-level">
+                    <a href="javascript:;">
+                        <i class="fa fa-cog"></i>Settings
+                    </a>
+                    <ul>
+                        <li>
+                            <a href="#">
+                                School information
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#">
+                                Registration form
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#">
+                                Preferences
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="#">
+                        <i class="fa fa-user"></i>Account
+                    </a>
+                </li>
+                <li class="multi-level">
+                    <a href="javascript:;">
+                        <i class="fa fa-cog"></i>INTEGRATION
+                    </a>
+                    <ul>
+                        <li>
+                            <a href="#">
+                                School information
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#">
+                                Registration form
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#">
+                                Preferences
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <div id="content">
+        <router-outlet></router-outlet>
+    </div>
+</div>

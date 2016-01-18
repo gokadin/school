@@ -11,9 +11,7 @@ import {AppRequestOptions} from './requests/appRequestOptions';
 import {AUTH_PROVIDERS} from './services/authService';
 
 import {School} from './components/school/school';
-import {Home} from './components/frontend/home/home';
-import {Login} from './components/frontend/account/login/login';
-import {StudentList} from './components/school/messaging/studentList/studentList';
+import {Frontend} from './components/frontend/frontend';
 
 @Component({
     selector: 'app',
@@ -21,14 +19,11 @@ import {StudentList} from './components/school/messaging/studentList/studentList
     template: require('./app.html')
 })
 @RouteConfig([
-    { path: '/', name: 'Home', component: Home, useAsDefault: true },
-    { path: '/login', name: 'Login', component: Login},
+    { path: '/home/...', name: 'Frontend', component: Frontend, useAsDefault: true},
     { path: '/school/...', name: 'School', component: School}
 ])
 class App {
-    logout() {
-        localStorage.removeItem('authToken');
-    }
+
 }
 
 bootstrap(App, [

@@ -1,7 +1,6 @@
 import {Component} from 'angular2/core';
 import {FORM_DIRECTIVES, ControlGroup, FormBuilder, Validators} from 'angular2/common'
 import {Http, Response, Headers, RequestOptions} from 'angular2/http';
-import {Router} from 'angular2/router';
 
 import {AuthService} from "../../../../services/authService";
 
@@ -12,7 +11,7 @@ import {AuthService} from "../../../../services/authService";
 export class Login {
     form: ControlGroup;
 
-    constructor(public http: Http, private router: Router, public authService: AuthService, fb: FormBuilder) {
+    constructor(public http: Http, public authService: AuthService, fb: FormBuilder) {
         this.form = fb.group({
             'email': ['', Validators.required],
             'password': ['', Validators.required]
@@ -28,7 +27,7 @@ export class Login {
         .subscribe(
             data => {
                 this.authService.login(data.authToken);
-                this.router.navigate(['/School']);
+                window.location.replace('/school/');
             },
             err => console.log(err)
         );
