@@ -10,6 +10,14 @@ return [
         'studentCount' => function($o) { return $o->students()->count(); }
     ],
 
+    App\Domain\Users\User::class => [
+        'id' => function($o) { return $o->getId(); },
+        'firstName' => function($o) { return $o->firstName(); },
+        'lastName' => function($o) { return $o->lastName(); },
+        'email' => function($o) { return $o->email(); },
+        'schoolName' => function($o) { return $o->school()->name(); }
+    ],
+
     App\Domain\Users\TempStudent::class => [
         'id' => function($o) { return $o->getId(); },
         'firstName' => function($o) { return $o->firstName(); },

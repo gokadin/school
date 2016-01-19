@@ -3,6 +3,7 @@
 namespace App\Domain\Users;
 
 use App\Domain\Common\Address;
+use App\Domain\School\School;
 use Library\DataMapper\DataMapperPrimaryKey;
 use Library\DataMapper\DataMapperTimestamps;
 
@@ -25,13 +26,17 @@ class User
     /** @HasOne(target="App\Domain\Common\Address") */
     protected $address;
 
-    public function __construct($firstName, $lastName, $email, $password, Address $address)
+    /** @HasOne(target="App\Domain\School\School") */
+    protected $school;
+
+    public function __construct($firstName, $lastName, $email, $password, Address $address, School $school)
     {
         $this->firstName = $firstName;
         $this->lastName = $lastName;
         $this->email = $email;
         $this->password = $password;
         $this->address = $address;
+        $this->school = $school;
     }
 
     public function firstName()
@@ -87,5 +92,15 @@ class User
     public function setAddress(Address $address)
     {
         $this->address = $address;
+    }
+
+    public function school()
+    {
+        return $this->school;
+    }
+
+    public function setSchool($school)
+    {
+        $this->school = $school;
     }
 }

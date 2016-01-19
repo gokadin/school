@@ -1,9 +1,11 @@
 <header>
-    <div class="school-name"><a [routerLink]="['./Index']">[school name]</a></div>
+    <div class="school-name" *ngIf="currentUser">
+        <a [routerLink]="['./Index']">{{ currentUser.schoolName }}</a>
+    </div>
     <div class="account">
-        <div class="dropdown-1">
+        <div class="dropdown-1" *ngIf="currentUser">
             <img src="/images/defaultProfilePicture.png" width="30" height="30" />
-            [user name] <i class="fa fa-angle-down"></i>
+            {{ currentUser.fullName() }} <i class="fa fa-angle-down"></i>
             <div class="dropdown-box">
                 <div class="arrow-box">
                     <ul>
@@ -72,7 +74,8 @@
                         <i class="fa fa-home"></i>Home
                     </a>
                 </li>
-                <li class="multi-level" [class.open]="subMenus.activities">
+                <li class="multi-level" [class.open]="subMenus.activities" [class.active]="router.isRouteActive(router.generate(['./ActivityList'])) ||
+                        router.isRouteActive(router.generate(['./CreateActivity']))">
                     <a href="javascript:;" (click)="toggleSubMenu('activities')">
                         <i class="fa fa-cogs"></i>Activities
                     </a>
@@ -89,11 +92,11 @@
                         </li>
                     </ul>
                 </li>
-                <li class="multi-level">
-                    <a href="javascript:;">
+                <li class="multi-level" [class.open]="subMenus.students">
+                    <a href="javascript:;" (click)="toggleSubMenu('students')">
                         <i class="fa fa-group"></i>Students
                     </a>
-                    <ul>
+                    <ul *ngIf="subMenus.students">
                         <li>
                             <a href="#">
                                 View
@@ -111,11 +114,11 @@
                         <i class="fa fa-calendar"></i>Calendar
                     </a>
                 </li>
-                <li class="multi-level">
-                    <a href="javascript:;">
+                <li class="multi-level" [class.open]="subMenus.settings">
+                    <a href="javascript:;" (click)="toggleSubMenu('settings')">
                         <i class="fa fa-cog"></i>Settings
                     </a>
-                    <ul>
+                    <ul *ngIf="subMenus.settings">
                         <li>
                             <a href="#">
                                 School information

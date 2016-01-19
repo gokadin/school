@@ -343,11 +343,9 @@ class Router
 
     protected function getControllerClosure($action)
     {
-        list($controllerName, $methodName) = explode('@', $action);
-
-        $parameters = $this->getResolvedParameters($controllerName, $methodName, $this->currentRoute->parameters());
-
-        return function() use ($controllerName, $methodName, $parameters) {
+        return function() use ($action) {
+            list($controllerName, $methodName) = explode('@', $action);
+            $parameters = $this->getResolvedParameters($controllerName, $methodName, $this->currentRoute->parameters());
             $controller = $this->resolve($controllerName);
             return call_user_func_array([$controller, $methodName], $parameters);
         };

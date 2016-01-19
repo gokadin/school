@@ -1,6 +1,7 @@
 import {Component, Injector} from 'angular2/core';
 import {bootstrap} from 'angular2/platform/browser';
 import {ROUTER_DIRECTIVES, RouteConfig, CanActivate} from 'angular2/router';
+import {HTTP_PROVIDERS} from 'angular2/http';
 
 import {AuthService} from '../../services/authService';
 
@@ -13,10 +14,7 @@ import {Teacher} from "./teacher/teacher";
 })
 @CanActivate(
     () => {
-        let injector: any = Injector.resolveAndCreate([AuthService]);
-        let authService: AuthService = injector.get(AuthService);
-
-        return authService.isLoggedIn();
+        return localStorage.getItem('authToken') ? true : false;
     }
 )
 @RouteConfig([

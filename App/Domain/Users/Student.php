@@ -45,7 +45,7 @@ class Student extends User
     public function __construct($firstName, $lastName, $email, $password, Address $address,
                                 Activity $activity, $customPrice, $hasAccount, Teacher $teacher)
     {
-        parent::__construct($firstName, $lastName, $email, $password, $address);
+        parent::__construct($firstName, $lastName, $email, $password, $address, $teacher->school());
 
         $this->activity = $activity;
         $this->customPrice = $customPrice;

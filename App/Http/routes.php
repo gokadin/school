@@ -1,25 +1,24 @@
 <?php
 
-$router->group(['namespace' => 'Test', 'prefix' => '/test', 'as' => 'test', 'middleware' => 'VerifyCsrfToken'], function($router)
+$router->group(['namespace' => 'Api', 'prefix' => '/api', 'as' => 'api', 'middleware' => 'VerifyCsrfToken'], function($router)
 {
-    $router->group(['namespace' => 'Api', 'prefix' => '/api', 'as' => 'api'], function($router)
+    $router->group(['namespace' => 'Frontend', 'prefix' => '/frontend', 'as' => 'frontend'], function($router)
     {
-        $router->group(['namespace' => 'Frontend', 'prefix' => '/frontend', 'as' => 'frontend'], function($router)
+        $router->group(['prefix' => '/account', 'as' => 'account'], function($router)
         {
-            $router->group(['prefix' => '/account', 'as' => 'account'], function($router)
-            {
-                $router->post('/login', 'AccountController@login');
-            });
+            $router->post('/login', 'AccountController@login');
         });
+    });
 
-        $router->group(['namespace' => 'School', 'prefix' => '/school', 'as' => 'school', 'middleware' => 'VerifyAuthentication'], function($router)
+    $router->group(['namespace' => 'School', 'prefix' => '/school', 'as' => 'school', 'middleware' => 'VerifyAuthentication'], function($router)
+    {
+        $router->get('/currentUser', 'SchoolController@currentUser');
+
+        $router->group(['namespace' => 'Teacher', 'prefix' => '/teacher', 'as' => 'teacher'], function($router)
         {
-            $router->group(['namespace' => 'Teacher', 'prefix' => '/teacher', 'as' => 'teacher'], function($router)
+            $router->group(['prefix' => '/messaging', 'as' => 'messaging'], function($router)
             {
-                $router->group(['prefix' => '/messaging', 'as' => 'messaging'], function($router)
-                {
-                    $router->get('/students', 'MessagingController@students');
-                });
+                $router->get('/students', 'MessagingController@students');
             });
         });
     });

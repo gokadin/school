@@ -16,9 +16,6 @@ class Teacher extends User
     /** @HasOne(target="App\Domain\Subscriptions\Subscription") */
     protected $subscription;
 
-    /** @HasOne(target="App\Domain\School\School") */
-    protected $school;
-
     /** @HasOne(target="App\Domain\Setting\TeacherSettings") */
     private $settings;
 
@@ -34,10 +31,9 @@ class Teacher extends User
     public function __construct($firstName, $lastName, $email, $password, $subscription,
                                 Address $address, $school, TeacherSettings $settings)
     {
-        parent::__construct($firstName, $lastName, $email, $password, $address);
+        parent::__construct($firstName, $lastName, $email, $password, $address, $school);
 
         $this->subscription = $subscription;
-        $this->school = $school;
         $this->settings = $settings;
         $this->activities = new EntityCollection();
         $this->students = new EntityCollection();
@@ -51,16 +47,6 @@ class Teacher extends User
     public function setSubscription($subscription)
     {
         $this->subscription = $subscription;
-    }
-
-    public function school()
-    {
-        return $this->school;
-    }
-
-    public function setSchool($school)
-    {
-        $this->school = $school;
     }
 
     public function settings()
