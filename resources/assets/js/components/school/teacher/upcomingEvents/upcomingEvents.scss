@@ -1,0 +1,24 @@
+.upcoming-events {
+  .title {
+    font-size: 22px;
+    margin: 15px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #26a69a;
+  }
+
+  .date-group {
+    padding: 20px 20px 0 20px;
+
+    .date-title {
+      font-size: 18px;
+    }
+
+    .events {
+      padding: 15px 0;
+
+      .event:not(:last-child) {
+        margin-bottom: 10px;
+      }
+    }
+  }
+}

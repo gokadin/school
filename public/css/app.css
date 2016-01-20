@@ -301,7 +301,21 @@ button:disabled {
       color: #67b168; }
 
 #school {
-  /* MODAL */ }
+  /* MODAL */
+  @-moz-keyframes spin {
+    0% {
+      -moz-transform: rotate(0deg); }
+
+    100% {
+      -moz-transform: rotate(360deg); } }
+
+  @-webkit-keyframes spin {
+    0% {
+      -webkit-transform: rotate(0deg); }
+
+    100% {
+      -webkit-transform: rotate(360deg); } }
+ }
   #school #container, #school #content {
     min-height: 100%; }
   #school #content {
@@ -667,6 +681,19 @@ button:disabled {
     text-align: center; }
     #school .no-data button {
       margin: 0 10px; }
+  #school .loading-component {
+    background-color: rgba(0, 0, 0, 0);
+    border: 4px solid #444;
+    opacity: .9;
+    border-top: 5px solid rgba(0, 0, 0, 0);
+    border-left: 5px solid rgba(0, 0, 0, 0);
+    border-radius: 50px;
+    box-shadow: 0 0 5px #444;
+    width: 35px;
+    height: 35px;
+    margin: 30px auto;
+    -moz-animation: spin 1s infinite linear;
+    -webkit-animation: spin 1s infinite linear; }
   #school .tabs-1 .header {
     height: 40px;
     display: flex;
@@ -849,65 +876,68 @@ button:disabled {
         float: right; }
       #school #menu .responsive-user-menu .dropdown-1:hover {
         background-color: #202b30; }
-    #school #menu .menu-only a, #school #menu .menu-only i {
-      color: #c7cacb;
-      font-weight: 500; }
-    #school #menu .menu-only a {
-      display: block;
-      font-size: 13px;
-      padding-left: 20px;
-      -webkit-transition: background-color 0.2s;
-      -moz-transition: background-color 0.2s;
-      -ms-transition: background-color 0.2s;
-      -o-transition: background-color 0.2s;
-      transition: background-color 0.2s; }
-    #school #menu .menu-only a:hover {
-      background-color: #202b30;
-      color: #fff;
-      -webkit-transition: background-color 0.2s;
-      -moz-transition: background-color 0.2s;
-      -ms-transition: background-color 0.2s;
-      -o-transition: background-color 0.2s;
-      transition: background-color 0.2s; }
-      #school #menu .menu-only a:hover i {
-        color: #fff; }
-    #school #menu .menu-only i {
-      font-size: 16px;
-      margin-right: 10px; }
-    #school #menu .menu-only ul {
-      list-style: outside none none; }
-      #school #menu .menu-only ul li {
-        line-height: 45px; }
-      #school #menu .menu-only ul li.active a {
-        color: #fff; }
-        #school #menu .menu-only ul li.active a i {
-          color: #fff; }
-    #school #menu .menu-only > ul > li.multi-level {
-      position: relative; }
-      #school #menu .menu-only > ul > li.multi-level > a:after {
-        position: absolute;
-        font-family: FontAwesome;
-        content: "\f0da";
+    #school #menu .menu-only {
+      margin-top: 60px;
+      border-top: 1px solid #444; }
+      #school #menu .menu-only a, #school #menu .menu-only i {
         color: #c7cacb;
-        right: 0;
-        margin-right: 8px;
-        font-size: 14px; }
-    #school #menu .menu-only > ul > li > ul {
-      background-color: #202b30;
-      border-top: 1px solid #4b5a61;
-      border-bottom: 1px solid #4b5a61; }
-      #school #menu .menu-only > ul > li > ul > li > a {
-        padding-left: 45px; }
-      #school #menu .menu-only > ul > li > ul > li:hover > a {
-        background-color: #202729; }
-      #school #menu .menu-only > ul > li > ul > li.active > a {
-        background-color: #202729; }
-    #school #menu .menu-only > ul > li.open > a {
-      background-color: #202b30; }
-    #school #menu .menu-only > ul > li.open > a:after {
-      content: "\f0d7"; }
-    #school #menu .menu-only > ul > li.active > a {
-      background-color: #26a69a; }
+        font-weight: 500; }
+      #school #menu .menu-only a {
+        display: block;
+        font-size: 13px;
+        padding-left: 20px;
+        -webkit-transition: background-color 0.2s;
+        -moz-transition: background-color 0.2s;
+        -ms-transition: background-color 0.2s;
+        -o-transition: background-color 0.2s;
+        transition: background-color 0.2s; }
+      #school #menu .menu-only a:hover {
+        background-color: #202b30;
+        color: #fff;
+        -webkit-transition: background-color 0.2s;
+        -moz-transition: background-color 0.2s;
+        -ms-transition: background-color 0.2s;
+        -o-transition: background-color 0.2s;
+        transition: background-color 0.2s; }
+        #school #menu .menu-only a:hover i {
+          color: #fff; }
+      #school #menu .menu-only i {
+        font-size: 16px;
+        margin-right: 10px; }
+      #school #menu .menu-only ul {
+        list-style: outside none none; }
+        #school #menu .menu-only ul li {
+          line-height: 45px; }
+        #school #menu .menu-only ul li.active a {
+          color: #fff; }
+          #school #menu .menu-only ul li.active a i {
+            color: #fff; }
+      #school #menu .menu-only > ul > li.multi-level {
+        position: relative; }
+        #school #menu .menu-only > ul > li.multi-level > a:after {
+          position: absolute;
+          font-family: FontAwesome;
+          content: "\f0da";
+          color: #c7cacb;
+          right: 0;
+          margin-right: 8px;
+          font-size: 14px; }
+      #school #menu .menu-only > ul > li > ul {
+        background-color: #202b30;
+        border-top: 1px solid #4b5a61;
+        border-bottom: 1px solid #4b5a61; }
+        #school #menu .menu-only > ul > li > ul > li > a {
+          padding-left: 45px; }
+        #school #menu .menu-only > ul > li > ul > li:hover > a {
+          background-color: #202729; }
+        #school #menu .menu-only > ul > li > ul > li.active > a {
+          background-color: #202729; }
+      #school #menu .menu-only > ul > li.open > a {
+        background-color: #202b30; }
+      #school #menu .menu-only > ul > li.open > a:after {
+        content: "\f0d7"; }
+      #school #menu .menu-only > ul > li.active > a {
+        background-color: #26a69a; }
   #school #content {
     margin-left: 260px;
     padding-bottom: 30px; }

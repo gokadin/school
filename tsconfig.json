@@ -15,6 +15,7 @@
         "!./node_modules/**/*.ts"
     ],
     "files": [
+        "typings/tsd.d.ts",
         "resources/assets/js/app.ts"
     ]
 }

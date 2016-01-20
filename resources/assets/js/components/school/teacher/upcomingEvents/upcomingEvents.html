@@ -1,0 +1,13 @@
+<div class="panel-1">
+    <div class="panel-title">
+        Upcoming events
+    </div>
+    <div class="loading-component" *ngIf="!upcomingEventsLoaded"></div>
+    <div class="no-data" *ngIf="upcomingEventsLoaded && groupedUpcomingEvents.length == 0">
+        You have no calendar events.
+        <a href="/school/teacher/calendar/"><button type="button" class="button-green">Go to calendar</button></a>
+    </div>
+    <div *ngFor="#event of groupedUpcomingEvents">
+        here
+    </div>
+</div>

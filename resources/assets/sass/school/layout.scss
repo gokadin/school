@@ -178,6 +178,9 @@ header {
   }
 
   .menu-only {
+    margin-top: 60px;
+    border-top: 1px solid #444;
+
     a, i {
       color: $color-menu-text;
       font-weight: 500;

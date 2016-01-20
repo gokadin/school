@@ -126,6 +126,11 @@ class EventService extends AuthenticatedService
         $events = $this->readAndTransform($this->repository->of(Event::class)
             ->upcomingEventsOf($this->user->events()), Carbon::now(), Carbon::now()->addYears(10), 10);
 
+        usort($events, function($a, $b) {
+            return Carbon::parse($a['startDate'])->lt(Carbon::parse($b['startDate'])) ? -1 : 1;
+        });
+
+        $count = 0;
         $grouped = [];
         foreach ($events as $event)
         {
@@ -147,7 +152,7 @@ class EventService extends AuthenticatedService
             ];
         }
 
-        return ['events' => $groupedArray];
+        return $groupedArray;
     }
 
     public function destroy($id)

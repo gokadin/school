@@ -16,9 +16,10 @@ $router->group(['namespace' => 'Api', 'prefix' => '/api', 'as' => 'api', 'middle
 
         $router->group(['namespace' => 'Teacher', 'prefix' => '/teacher', 'as' => 'teacher'], function($router)
         {
-            $router->group(['prefix' => '/messaging', 'as' => 'messaging'], function($router)
+            $router->group(['prefix' => '/events', 'as' => 'event'], function($router)
             {
-                $router->get('/students', 'MessagingController@students');
+                $router->get('/upcoming', 'EventController@upcomingEvents');
+                $router->post('/range', 'EventController@range');
             });
         });
     });
@@ -49,9 +50,9 @@ $router->group(['namespace' => 'Api', 'prefix' => '/api', 'as' => 'api', 'middle
 
             $router->group(['prefix' => '/events', 'as' => 'event'], function($router)
             {
-                $router->get('/upcoming-events', 'EventController@upcomingEvents');
+                //$router->get('/upcoming-events', 'EventController@upcomingEvents');
                 $router->post('/', 'EventController@create');
-                $router->post('/range', 'EventController@range');
+                //$router->post('/range', 'EventController@range');
                 $router->put('/change-date', 'EventController@changeDate');
                 $router->delete('/{id}', 'EventController@destroy');
                 $router->put('/{eventId}/lessons/{lessonId}/attendance', 'EventController@updateLessonAttendance');
