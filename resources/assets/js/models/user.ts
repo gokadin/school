@@ -4,13 +4,15 @@ export class User {
     lastName: string;
     email: string;
     schoolName: string;
+    settings: Object[];
 
     constructor(obj?: any) {
         this.id = obj && obj.id || 0;
-        this.firstName = obj.firstName || '';
-        this.lastName = obj.lastName || '';
-        this.email = obj.email || '';
-        this.schoolName = obj.schoolName || '';
+        this.firstName = obj && obj.firstName || '';
+        this.lastName = obj && obj.lastName || '';
+        this.email = obj && obj.email || '';
+        this.schoolName = obj && obj.schoolName || '';
+        this.settings = obj && obj.settings || null;
     }
 
     fullName() {

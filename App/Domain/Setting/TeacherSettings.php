@@ -2,24 +2,18 @@
 
 namespace App\Domain\Setting;
 
-use Library\DataMapper\DataMapperPrimaryKey;
-use Library\DataMapper\DataMapperTimestamps;
-
 /**
  * @Entity(name="teacher_settings")
  */
-class TeacherSettings
+class TeacherSettings extends UserSettings
 {
-    use DataMapperPrimaryKey, DataMapperTimestamps;
-
     /** @Column(type="text") */
     private $registrationForm;
 
-    /** @Column(type="boolean", default="true") */
-    private $showTips;
-
     public function __construct($registrationForm)
     {
+        parent::__construct();
+
         $this->registrationForm = $registrationForm;
     }
 
@@ -31,15 +25,5 @@ class TeacherSettings
     public function setRegistrationForm($registrationForm)
     {
         $this->registrationForm = $registrationForm;
-    }
-
-    public function showTips()
-    {
-        return $this->showTips;
-    }
-
-    public function setShowTips($showTips)
-    {
-        $this->showTips = $showTips;
     }
 }

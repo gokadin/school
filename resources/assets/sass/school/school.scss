@@ -53,6 +53,10 @@ button.button-large {
   font-weight: 600;
 }
 
+button.disabled {
+  cursor: not-allowed;
+}
+
 #content {
   .content-padding {
     padding: 30px 20px;

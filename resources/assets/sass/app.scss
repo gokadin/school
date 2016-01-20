@@ -198,9 +198,10 @@ i.fa {
   }
 
   .form-buttons {
-    text-align: right;
     height: 60px;
-    line-height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
 
     label {
       margin-right: 50px;
@@ -208,7 +209,6 @@ i.fa {
 
     input[type="checkbox"] {
       margin-right: 5px;
-      vertical-align: middle;
     }
 
     button[type="submit"] {
