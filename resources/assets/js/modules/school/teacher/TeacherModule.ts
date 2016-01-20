@@ -19,18 +19,32 @@ import {ActivityModule} from "./activity/ActivityModule";
 ])
 export class TeacherModule {
     subMenus: Object;
+    showResponsiveMenu: boolean = false;
     currentUser: User;
 
     constructor(private router: Router, authService: AuthService) {
-        this.subMenus = {activities: false, students: false, settings: false};
+        this.initializeSubMenuStates();
 
         authService.user.subscribe(
             (user: User) => this.currentUser = user
         );
     }
 
+    initializeSubMenuStates() {
+        this.subMenus = {
+            activities: false,
+            students: false,
+            settings: false
+        };
+    }
+
     toggleSubMenu(subMenu: string) {
         this.subMenus[subMenu] = !this.subMenus[subMenu];
+    }
+
+    toggleResponsiveMenu() {
+        this.showResponsiveMenu = !this.showResponsiveMenu;
+        console.log(this.showResponsiveMenu);
     }
 
     logout() {

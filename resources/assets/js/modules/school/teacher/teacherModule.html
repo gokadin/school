@@ -30,7 +30,7 @@
             </div>
         </div>
     </div>
-    <div id="responsive-menu-button">
+    <div id="responsive-menu-button" (click)="toggleResponsiveMenu()">
         <i class="fa fa-bars"></i>
     </div>
 </header>
@@ -39,9 +39,9 @@
     <div id="menu">
         <div class="responsive-user-menu">
             <div class="account">
-                <div class="dropdown-1">
+                <div class="dropdown-1" *ngIf="currentUser">
                     <img src="/images/defaultProfilePicture.png" width="30" height="30" />
-                    [user name] <i class="fa fa-angle-down"></i>
+                    {{ currentUser.fullName() }} <i class="fa fa-angle-down"></i>
                     <div class="dropdown-box">
                         <div class="arrow-box">
                             <ul>
@@ -74,19 +74,18 @@
                         <i class="fa fa-home"></i>Home
                     </a>
                 </li>
-                <li class="multi-level" [class.open]="subMenus.activities" [class.active]="router.isRouteActive(router.generate(['./Activity'])) ||
-                        router.isRouteActive(router.generate(['./Activity']))">
+                <li class="multi-level" [class.open]="subMenus.activities" [class.active]="router.isRouteActive(router.generate(['./Activity']))">
                     <a href="javascript:;" (click)="toggleSubMenu('activities')">
                         <i class="fa fa-cogs"></i>Activities
                     </a>
                     <ul *ngIf="subMenus.activities">
-                        <li [class.active]="router.isRouteActive(router.generate(['./Activity']))">
-                            <a [routerLink]="['./Activity']">
+                        <li [class.active]="router.isRouteActive(router.generate(['./Activity/Index']))">
+                            <a [routerLink]="['./Activity/Index']">
                                 View
                             </a>
                         </li>
-                        <li [class.active]="router.isRouteActive(router.generate(['./Activity']))">
-                            <a [routerLink]="['./Activity']">
+                        <li [class.active]="router.isRouteActive(router.generate(['./Activity/Create']))">
+                            <a [routerLink]="['./Activity/Create']">
                                 Create
                             </a>
                         </li>

@@ -1,1 +1,52 @@
-THE CREATE ACT FORM
+<div class="panel-1">
+    <div class="panel-title">Create an activity</div>
+
+    <form action="" class="form-1" [ngFormModel]="form" (ngSubmit)="onSubmit(form.value)">
+
+        <div class="form-row">
+            <label for="name">Name</label>
+            <input type="text" id="name" name="name" placeholder="Name"
+                   #name="ngForm" [ngFormControl]="form.controls['name']"
+                   [class.invalid]="!form.find('name').valid && form.find('name').touched"
+                   [class.valid]="form.find('name').valid && form.find('name').touched" />
+            <div *ngIf="name.control.hasError('required') && name.control.touched" class="form-error">name is required</div>
+        </div>
+
+        <div class="form-row">
+            <label for="rate">Rate</label>
+            <input type="text" id="rate" name="rate" placeholder="Rate"
+                   #rate="ngForm" [ngFormControl]="form.controls['rate']"
+                   [class.invalid]="!form.find('rate').valid && form.find('rate').touched"
+                   [class.valid]="form.find('rate').valid && form.find('rate').touched" />
+            <div *ngIf="rate.control.hasError('required') && rate.control.touched" class="form-error">rate is required</div>
+        </div>
+
+        <div class="form-row">
+            <label for="period">Period</label>
+            <select id="period" name="period">
+                <option value="lesson">per lesson</option>
+                <option value="30 mins">per 30 mins</option>
+                <option value="45 mins">per 45 mins</option>
+                <option value="hour">per hour</option>
+                <option value="1 hour 30 mins">per 1 hour 30 mins</option>
+                <option value="month">per month</option>
+                <option value="year">per year</option>
+            </select>
+        </div>
+
+        <div class="form-row">
+            <label for="location">Location</label>
+            <input type="text" id="location" name="location" placeholder="Location" />
+        </div>
+
+        <div class="form-buttons">
+            <label for="create-another">
+                <input type="checkbox" id="create-another" name="createAnother" value="1" />
+                Create another
+            </label>
+
+            <button type="submit" class="button-green button-large">Create</button>
+        </div>
+
+    </form>
+</div>>
