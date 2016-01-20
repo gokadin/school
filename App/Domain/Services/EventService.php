@@ -130,7 +130,6 @@ class EventService extends AuthenticatedService
             return Carbon::parse($a['startDate'])->lt(Carbon::parse($b['startDate'])) ? -1 : 1;
         });
 
-        $count = 0;
         $grouped = [];
         foreach ($events as $event)
         {
@@ -152,7 +151,7 @@ class EventService extends AuthenticatedService
             ];
         }
 
-        return $groupedArray;
+        return $events;
     }
 
     public function destroy($id)

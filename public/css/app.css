@@ -681,7 +681,7 @@ button:disabled {
     text-align: center; }
     #school .no-data button {
       margin: 0 10px; }
-  #school .loading-component {
+  #school .component-loading {
     background-color: rgba(0, 0, 0, 0);
     border: 4px solid #444;
     opacity: .9;
@@ -694,6 +694,15 @@ button:disabled {
     margin: 30px auto;
     -moz-animation: spin 1s infinite linear;
     -webkit-animation: spin 1s infinite linear; }
+  #school .component-error {
+    text-align: center;
+    height: 35px;
+    line-height: 35px;
+    margin: 30px auto;
+    color: #a94442; }
+  #school .component-error:after {
+    font-family: FontAwesome;
+    content: "\f071 An error occured. Please try refreshing the page"; }
   #school .tabs-1 .header {
     height: 40px;
     display: flex;

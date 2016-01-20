@@ -1,13 +1,21 @@
-<div class="panel-1">
+<div class="panel-1 upcoming-events">
     <div class="panel-title">
         Upcoming events
     </div>
-    <div class="loading-component" *ngIf="!upcomingEventsLoaded"></div>
-    <div class="no-data" *ngIf="upcomingEventsLoaded && groupedUpcomingEvents.length == 0">
+    <div class="component-loading" *ngIf="isLoading"></div>
+    <div class="component-error" *ngIf="hasError"></div>
+    <div class="no-data" *ngIf="!isLoading && data.length == 0">
         You have no calendar events.
         <a href="/school/teacher/calendar/"><button type="button" class="button-green">Go to calendar</button></a>
     </div>
-    <div *ngFor="#event of groupedUpcomingEvents">
-        here
+    <div *ngFor="#dateGroup of data">
+        <div class="date-group">
+            <div class="date-title">{{ dateGroup.date.format('dddd, MMMM Do') }}</div>
+            <div class="events">
+                <div class="event" *ngFor="#event of dateGroup.events">
+                    {{ event.title }}
+                </div>
+            </div>
+        </div>
     </div>
 </div>

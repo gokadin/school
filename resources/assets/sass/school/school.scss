@@ -570,7 +570,7 @@ button.button-large {
   }
 }
 
-.loading-component {
+.component-loading {
   background-color: rgba(0,0,0,0);
   border: 4px solid #444;
   opacity: .9;
@@ -593,6 +593,25 @@ button.button-large {
 @-webkit-keyframes spin {
   0% { -webkit-transform: rotate(0deg); }
   100% { -webkit-transform: rotate(360deg); }
+}
+
+.component-error {
+  text-align: center;
+  min-height: 35px;
+  line-height: 35px;
+  margin: 30px auto;
+  color: #a94442;
+}
+
+.component-error:before {
+  font-family: FontAwesome;
+  font-size: 20px;
+  margin-right: 10px;
+  content: "\f071";
+}
+
+.component-error:after {
+  content: "An error occured. Please try refreshing the page";
 }
 
 .tabs-1 {

@@ -19,7 +19,7 @@ export class LoginPage {
     }
 
     login(value) {
-        this.http.post('/test/api/frontend/account/login', JSON.stringify({
+        this.http.post('/api/frontend/account/login', JSON.stringify({
             email: value.email,
             password: value.password
         }))
