@@ -16,11 +16,7 @@ return [
         'lastName' => function($o) { return $o->lastName(); },
         'email' => function($o) { return $o->email(); },
         'schoolName' => function($o) { return $o->school()->name(); },
-        'settings' => function($o) {
-            return [
-                'showTips' => $o->settings()->showTips()
-            ];
-        }
+        'showTips' => function($o) { return $o->settings()->showTips(); }
     ],
 
     App\Domain\Users\TempStudent::class => [

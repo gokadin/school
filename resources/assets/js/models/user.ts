@@ -4,7 +4,7 @@ export class User {
     lastName: string;
     email: string;
     schoolName: string;
-    settings: Object[];
+    showTips: boolean;
 
     constructor(obj?: any) {
         this.id = obj && obj.id || 0;
@@ -12,7 +12,7 @@ export class User {
         this.lastName = obj && obj.lastName || '';
         this.email = obj && obj.email || '';
         this.schoolName = obj && obj.schoolName || '';
-        this.settings = obj && obj.settings || null;
+        this.showTips = obj && obj.showTips;
     }
 
     fullName() {

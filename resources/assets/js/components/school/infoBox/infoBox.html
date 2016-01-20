@@ -1,3 +1,9 @@
-<div class="info-box">
-    
+<div class="info-box" *ngIf="show">
+    <ng-content></ng-content>
+    <div class="info-box-icon">
+        <i class="fa fa-question-circle"></i>
+    </div>
+    <div class="info-box-close" (click)="close()">
+        <i class="fa fa-times"></i>
+    </div>
 </div>

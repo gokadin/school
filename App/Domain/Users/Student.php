@@ -43,7 +43,7 @@ class Student extends User
     /** @HasMany(target="App\Domain\Events\Lesson", mappedBy="student") */
     private $lessons;
 
-    /** @HasOne(target="App\Domain\Settings\StudentSetting") */
+    /** @HasOne(target="App\Domain\Setting\StudentSettings") */
     private $settings;
 
     public function __construct($firstName, $lastName, $email, $password, Address $address,
