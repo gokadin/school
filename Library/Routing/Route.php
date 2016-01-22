@@ -66,9 +66,9 @@ class Route
         }
 
         $pattern = '({[a-zA-Z0-9]+})';
-        $substituteUrl = preg_replace($pattern, '([^\/]*)', $this->uri);
+        $substituteUrl = preg_replace($pattern, '([^\/]*)', $this->uri, -1, $parameterCount);
 
-        if (preg_match('`^'.strtolower($substituteUrl).'$`', strtolower($request->uri()), $valueMatches) != 1)
+        if (preg_match('`^'.strtolower($substituteUrl).'(\?.*)?$`', strtolower($request->uri()), $valueMatches) != 1)
         {
             return false;
         }
@@ -76,7 +76,7 @@ class Route
         $pattern = '/{([a-zA-Z0-9]+)}/';
         preg_match_all($pattern, $this->uri, $varMatches);
 
-        for ($i = 0; $i < sizeof($valueMatches) - 1; $i++)
+        for ($i = 0; $i < $parameterCount; $i++)
         {
             if (isset($varMatches[$i]))
             {

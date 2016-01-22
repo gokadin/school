@@ -6,10 +6,11 @@ import {HTTP_PROVIDERS} from 'angular2/http';
 import {AuthService} from '../../services/authService';
 
 import {TeacherModule} from "./teacher/TeacherModule";
+import {Flash} from "../../components/flash/Flash";
 
 @Component({
     selector: 'school-module',
-    directives: [ROUTER_DIRECTIVES],
+    directives: [ROUTER_DIRECTIVES, Flash],
     template: require('./schoolModule.html')
 })
 @CanActivate(

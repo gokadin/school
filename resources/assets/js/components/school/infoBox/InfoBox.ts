@@ -12,7 +12,7 @@ export class InfoBox {
     show: boolean;
 
     constructor(authService: AuthService) {
-        authService.user.subscribe(x => {this.show = x.showTips;console.log(x);});
+        authService.user.subscribe(x => this.show = x.showTips);
     }
 
     close() {

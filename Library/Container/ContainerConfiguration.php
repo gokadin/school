@@ -62,7 +62,7 @@ class ContainerConfiguration
         $validator = new Validator($database);
         $this->container->registerInstance('validator', $validator);
         //$this->container->registerInstance('sentry', new Sentry($dm));
-        $router = new Router($this->container, $validator);
+        $router = new Router($this->container);
         $this->container->registerInstance('router', $router);
         $this->container->registerInstance('response', new Response($router, $session));
         $this->container->registerInstance('form', new Form($router, $session));

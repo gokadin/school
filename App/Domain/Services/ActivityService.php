@@ -4,6 +4,7 @@ namespace App\Domain\Services;
 
 use App\Domain\Activities\Activity;
 use App\Domain\Users\Student;
+use App\Domain\Users\Teacher;
 
 class ActivityService extends AuthenticatedService
 {
@@ -13,18 +14,10 @@ class ActivityService extends AuthenticatedService
             ->transform($this->user->activities()->toArray());
     }
 
-    public function getActivityList(array $data)
+    public function paginate(Teacher $teacher, int $page, int $max, array $sortingRules, array $searchRules): array
     {
-        $sortingRules = isset($data['sortingRules']) ? $data['sortingRules'] : [];
-        $searchRules = isset($data['searchRules']) ? $data['searchRules'] : [];
-
-        $data = $this->repository->paginate($this->user->activities(),
-            $data['page'], $data['max'] > 20 ? 20 : $data['max'], $sortingRules, $searchRules);
-
-        return [
-            'activities' => $this->transformer->of(Activity::class)->transform($data['data']),
-            'pagination' => $data['pagination']
-        ];
+        return $this->repository->paginate(
+            $teacher->activities(), $page, $max > 20 ? 20 : $max, $sortingRules, $searchRules);
     }
 
     public function getActivityStudentList($id)
@@ -43,9 +36,7 @@ class ActivityService extends AuthenticatedService
     {
         $data['teacher'] = $this->user;
 
-        $this->repository->of(Activity::class)->create($data);
-
-        return true;
+        return !is_null($this->repository->of(Activity::class)->create($data));
     }
 
     public function delete($id)

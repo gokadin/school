@@ -4,7 +4,6 @@ namespace Library\Validation;
 
 use Library\Database\Database;
 use Library\Facades\Request;
-use Library\Facades\Session;
 
 class Validator
 {
@@ -178,12 +177,30 @@ class Validator
 
     public function min($value, $min)
     {
-        return $this->numeric($value) && $value >= $min;
+        if (is_string($value))
+        {
+            return strlen($value) >= $min;
+        }
+
+        if (is_numeric($value)) {
+            return $value >= $min;
+        }
+
+        return false;
     }
 
     public function max($value, $max)
     {
-        return $this->numeric($value) && $value <= $max;
+        if (is_string($value))
+        {
+            return strlen($value) <= $max;
+        }
+
+        if (is_numeric($value)) {
+            return $value <= $max;
+        }
+
+        return false;
     }
 
     public function between($value, $min, $max)

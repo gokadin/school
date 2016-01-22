@@ -18,6 +18,8 @@ class Application
 
     public function __construct()
     {
+        $this->configureErrorHandling();
+
         Facade::setFacadeApplication($this);
 
         $this->container = new Container();
@@ -27,6 +29,19 @@ class Application
         $this->configureContainer();
 
         $this->loadRoutes();
+    }
+
+    private function configureErrorHandling()
+    {
+        switch (env('APP_DEBUG'))
+        {
+            case 'true':
+                error_reporting(E_ALL);
+                break;
+            default:
+                error_reporting(0);
+                break;
+        }
     }
 
     protected function configureContainer()

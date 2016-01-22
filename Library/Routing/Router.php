@@ -4,7 +4,6 @@ namespace Library\Routing;
 
 use Library\Container\Container;
 use Library\Http\Request;
-use Library\Validation\Validator;
 use Symfony\Component\Yaml\Exception\RuntimeException;
 use ReflectionMethod;
 
@@ -20,10 +19,10 @@ class Router
     protected $names = [];
     private $catchAll;
 
-    public function __construct(Container $container, Validator $validator)
+    public function __construct(Container $container)
     {
         $this->container = $container;
-        $this->validator = $validator;
+        $this->validator = $container->resolveInstance('validator');
         $this->routes = new RouteCollection();
     }
 

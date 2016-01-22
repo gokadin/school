@@ -25,7 +25,7 @@ class Request
         if ($this->isJson())
         {
             $decodedJson = $this->getDecodedJson();
-            $this->data = array_merge(is_array($decodedJson) ? $decodedJson : [], $_GET);
+            $this->data = array_merge(is_array($decodedJson) ? $decodedJson : [], $this->retrieveGetData());
 
             return $this->data;
         }
@@ -33,17 +33,35 @@ class Request
         switch ($this->method())
         {
             case 'GET':
-                $this->data = $_GET;
+                $this->data = $this->retrieveGetData();
                 break;
             case 'POST':
             case 'PUT':
             case 'PATCH':
             case 'DELETE':
-                $this->data = array_merge($_POST, $_GET);
+                $this->data = array_merge($_POST, $this->retrieveGetData());
                 break;
         }
 
         return $this->data;
+    }
+
+    private function retrieveGetData()
+    {
+        $result = [];
+        foreach ($_GET as $key => $value)
+        {
+            if ($key == 'json')
+            {
+                $result[$key] = json_decode($value);
+
+                continue;
+            }
+
+            $result[$key] = $value;
+        }
+
+        return $result;
     }
 
     public function get($key)

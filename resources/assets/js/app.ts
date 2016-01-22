@@ -10,6 +10,8 @@ import {AppRequestOptions} from './requests/appRequestOptions';
 
 import {AUTH_PROVIDERS} from './services/authService';
 import {EVENT_PROVIDERS} from './services/eventService';
+import {ACTIVITY_PROVIDERS} from './services/ActivityService';
+import {FLASH_PROVIDERS} from './components/flash/Flash';
 
 import {SchoolModule} from './modules/school/SchoolModule';
 import {FrontendModule} from './modules/frontend/FrontendModule';
@@ -32,5 +34,7 @@ bootstrap(App, [
     HTTP_PROVIDERS,
     AUTH_PROVIDERS,
     EVENT_PROVIDERS,
+    ACTIVITY_PROVIDERS,
+    FLASH_PROVIDERS,
     provide(RequestOptions, {useClass: AppRequestOptions})
 ]);

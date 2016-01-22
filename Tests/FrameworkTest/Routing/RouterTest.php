@@ -10,7 +10,7 @@ class RouterTest extends BaseTest
     public function testThatGetRouteIsCorrectlyRegistered()
     {
         // Arrange
-        $router = new Router();
+        $router = new Router($this->app->container());
 
         // Act
         $router->get('/test', ['as' => 'test', 'uses' => 'controller@index']);
@@ -22,7 +22,7 @@ class RouterTest extends BaseTest
     public function testThatPostRouteIsCorrectlyRegistered()
     {
         // Arrange
-        $router = new Router();
+        $router = new Router($this->app->container());
 
         // Act
         $router->post('/test', ['as' => 'test', 'uses' => 'controller@index']);
@@ -34,7 +34,7 @@ class RouterTest extends BaseTest
     public function testThatPutRouteIsCorrectlyRegistered()
     {
         // Arrange
-        $router = new Router();
+        $router = new Router($this->app->container());
 
         // Act
         $router->put('/test', ['as' => 'test', 'uses' => 'controller@index']);
@@ -46,7 +46,7 @@ class RouterTest extends BaseTest
     public function testThatPatchRouteIsCorrectlyRegistered()
     {
         // Arrange
-        $router = new Router();
+        $router = new Router($this->app->container());
 
         // Act
         $router->patch('/test', ['as' => 'test', 'uses' => 'controller@index']);
@@ -58,7 +58,7 @@ class RouterTest extends BaseTest
     public function testThatDeleteRouteIsCorrectlyRegistered()
     {
         // Arrange
-        $router = new Router();
+        $router = new Router($this->app->container());
 
         // Act
         $router->delete('/test', ['as' => 'test', 'uses' => 'controller@index']);
@@ -70,7 +70,7 @@ class RouterTest extends BaseTest
     public function testThatManyRouteIsCorrectlyRegistered()
     {
         // Arrange
-        $router = new Router();
+        $router = new Router($this->app->container());
 
         // Act
         $router->many(['GET', 'POST'], '/test', ['as' => 'test', 'uses' => 'controller@index']);
