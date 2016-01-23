@@ -28,6 +28,7 @@
   "homepage": "https://bitbucket.org/guiviko/school#readme",
   "description": "",
   "devDependencies": {
+    "angular2-modal": "0.0.3",
     "css-loader": "^0.23.1",
     "dropzone": "^4.2.0",
     "file-loader": "^0.8.5",

@@ -108,8 +108,8 @@
                         </li>
                     </ul>
                 </li>
-                <li>
-                    <a href="#">
+                <li [class.active]="router.isRouteActive(router.generate(['./Calendar']))">
+                    <a [routerLink]="['./Calendar/Index']">
                         <i class="fa fa-calendar"></i>Calendar
                     </a>
                 </li>

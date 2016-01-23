@@ -1,4 +1,4 @@
-import {Component, Injectable, provide} from 'angular2/core';
+ import {Component, Injectable, provide} from 'angular2/core';
 
 require('./flash.scss');
 

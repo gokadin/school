@@ -1,15 +1,15 @@
 import {Injectable, provide} from 'angular2/core';
 import {Http, Response} from 'angular2/http';
-import {Observable, Subject} from 'rxjs';
+import {Observable, ReplaySubject} from 'rxjs';
 
 import {User} from '../models/user';
 
 @Injectable()
 export class AuthService {
-    user: Subject<User>;
+    user: ReplaySubject<User>;
 
     constructor(public http: Http) {
-        this.user = new Subject<User>();
+        this.user = new ReplaySubject<User>();
 
         this.loadUser();
     }

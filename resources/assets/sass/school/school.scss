@@ -105,6 +105,15 @@ button.disabled {
 }
 
 .data-table-1 {
+  .data-table-no-results {
+    text-align: center;
+
+    > td {
+      font-size: 17px !important;
+      height: 60px !important;
+    }
+  }
+
   .header {
     height: 60px;
     border-bottom: 1px solid #ddd;
@@ -230,7 +239,7 @@ button.disabled {
           border-color: #bbb;
 
           input {
-            width: 130px;
+            width: 160px;
             height: 30px;
             -webkit-border-radius: 0;
             -moz-border-radius: 0;
@@ -246,6 +255,8 @@ button.disabled {
       }
 
       .actions {
+        min-width: 60px;
+
         ul {
           display: none;
           list-style: outside none none;
@@ -666,5 +677,4 @@ button.disabled {
 @import 'account';
 @import 'profile';
 @import 'students';
-@import 'calendar';
 @import 'tag-select';

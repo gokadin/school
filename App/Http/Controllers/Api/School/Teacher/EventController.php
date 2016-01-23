@@ -9,7 +9,10 @@ use App\Http\Requests\Api\School\ChangeEventDateRequest;
 use App\Http\Requests\Api\School\CreateEventRequest;
 use App\Http\Requests\Api\School\DestroyEventRequest;
 use App\Http\Requests\Api\School\EventRangeRequest;
+use App\Http\Requests\Api\School\Teacher\Event\RangeRequest;
 use App\Http\Requests\Api\School\UpdateLessonAttendanceRequest;
+use App\Http\Translators\School\Teacher\Event\RangeTranslator;
+use Library\Http\Response;
 
 class EventController extends ApiController
 {
@@ -24,9 +27,11 @@ class EventController extends ApiController
         return $this->respondOk(['events' => $events]);
     }
 
-    public function range(EventRangeRequest $request, EventService $eventService)
+    public function range(RangeRequest $request, RangeTranslator $translator): Response
     {
-        return $this->respondOk(['events' => $eventService->range($request->all())]);
+        $data = $translator->translateRequest($request);
+
+        return $data ? $this->respondOk($data) : $this->respondBadRequest();
     }
 
     public function changeDate(ChangeEventDateRequest $request, EventService $eventService)

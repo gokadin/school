@@ -1,14 +1,16 @@
 import {Injectable, provide} from 'angular2/core';
 import {Http, Response} from 'angular2/http';
-import {Observable} from 'rxjs';
+import {Observable, Subject} from 'rxjs';
 import moment = require('moment');
 
 import {Event} from "../models/event";
+import Moment = moment.Moment;
 
 @Injectable()
 export class EventService {
     upcomingEvents: Observable<Event[]>;
     groupedUpcomingEvents: Observable<Object[]>;
+    calendarEvents: Subject<Event[]>;
 
     constructor(private http: Http) {
         this.upcomingEvents = this.http.get('/api/school/teacher/events/upcoming')
@@ -34,8 +36,20 @@ export class EventService {
                     }
                     return grouped;
                 }, [])
-            })
-            ;
+            });
+
+        this.calendarEvents = new Subject<Event[]>();
+    }
+
+    fetchCalendarEvents(from: Moment, to: Moment): void {
+        this.http.get('/api/school/teacher/events/range?from=' +
+            from.format('YYYY-MM-DD') + '&to=' + to.format('YYYY-MM-DD'))
+            .map((data: Response) => data.json())
+            .map((events: Object[]) => events
+                .map((event: Object) => new Event(event)))
+            .subscribe(
+                (events: Event[]) => this.calendarEvents.next(events)
+            );
     }
 }
 

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Translators;
+namespace App\Http\Translators;
 
 use Library\Http\Request;
 use Library\Transformer\Transformer;

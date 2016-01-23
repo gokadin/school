@@ -3,6 +3,7 @@
 namespace App\Domain\Services;
 
 use App\Domain\Events\Event;
+use App\Domain\Users\User;
 use App\Jobs\School\CreateEventLessons;
 use App\Repositories\UserRepository;
 use Carbon\Carbon;
@@ -45,12 +46,9 @@ class EventService extends AuthenticatedService
         return $this->readAndTransform([$event], Carbon::parse($data['from']), Carbon::parse($data['to']));
     }
 
-    public function range(array $data)
+    public function range(User $user, Carbon $from, Carbon $to)
     {
-        $from = Carbon::parse($data['from']);
-        $to = Carbon::parse($data['to']);
-
-        $events = $this->user->events()->where('absoluteEnd', '>', $from->toDateString())
+        $events = $user->events()->where('absoluteEnd', '>', $from->toDateString())
             ->where('absoluteStart', '<', $to->toDateString())
             ->toArray();
 

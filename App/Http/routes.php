@@ -25,7 +25,7 @@ $router->group(['namespace' => 'Api', 'prefix' => '/api', 'as' => 'api', 'middle
             $router->group(['prefix' => '/events', 'as' => 'event'], function($router)
             {
                 $router->get('/upcoming', 'EventController@upcomingEvents');
-                $router->post('/range', 'EventController@range');
+                $router->get('/range', 'EventController@range');
             });
         });
     });

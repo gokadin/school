@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Translators\School\Teacher\Activity;
+namespace App\Http\Translators\School\Teacher\Activity;
 
 use App\Domain\Activities\Activity;
 use App\Domain\Services\ActivityService;
 use App\Domain\Users\Authenticator;
-use App\Translators\School\AuthenticatedTranslator;
+use App\Http\Translators\School\AuthenticatedTranslator;
 use Library\Http\Request;
 use Library\Transformer\Transformer;
 

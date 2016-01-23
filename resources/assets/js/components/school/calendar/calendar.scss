@@ -57,28 +57,41 @@
       tr {
         th, td {
           border: 1px solid #ddd;
+          background-color: white;
         }
 
         th {
           height: 50px;
           font-size: 13px;
-          border-bottom: 1px solid #bbb;
+          border-bottom: 1px solid #26a69a;
+        }
+
+        td:hover {
+          .top .add { opacity: 1; }
         }
 
         td {
           height: 125px;
-          position: relative;
 
           .top {
             height: 25px;
-            text-align: right;
             font-size: 12px;
-            line-height: 20px;
-            margin-right: 3px;
-          }
+            margin: 0 3px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
 
-          .top.faded {
-            color: #808080;
+            .date-number.faded {
+              color: #808080;
+            }
+
+            .add {
+              font-size: 20px;
+              opacity: 0;
+              cursor: pointer;
+
+              i { color: #26a69a; }
+            }
           }
 
           .events {
@@ -228,22 +241,6 @@
               }
             }
           }
-
-          .add {
-            line-height: 20px;
-            position: absolute;
-            font-size: 20px;
-            top: 0px;
-            left: 3px;
-            display: none;
-            cursor: pointer;
-
-            i { color: #26a69a; }
-          }
-        }
-
-        td:hover {
-          .add { display: block; }
         }
       }
     }

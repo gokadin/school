@@ -1,9 +1,10 @@
 import moment = require('moment');
+import Moment = moment.Moment;
 
 export class Event {
     id: number;
     title: string;
-    startDate: Object;
+    startDate: Moment;
 
     constructor(obj?: any) {
         this.id = obj && obj.id || 0;

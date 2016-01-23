@@ -6,7 +6,7 @@ use App\Domain\Services\ActivityService;
 use App\Http\Controllers\Api\ApiController;
 use App\Http\Requests\Api\School\Teacher\Activity\PaginateRequest;
 use App\Http\Requests\Api\School\Teacher\Activity\StoreRequest;
-use App\Translators\School\Teacher\Activity\PaginateTranslator;
+use App\Http\Translators\School\Teacher\Activity\PaginateTranslator;
 use Library\Http\Response;
 
 class ActivityController extends ApiController

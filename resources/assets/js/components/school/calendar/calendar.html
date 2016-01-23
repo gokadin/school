@@ -1,0 +1,69 @@
+<div id="monthly-calendar">
+    <div class="header">
+        <div class="navigation">
+            <button type="button" (click)="previousMonth()"><i class="fa fa-chevron-left"></i></button>
+            <button type="button" (click)="nextMonth()"><i class="fa fa-chevron-right"></i></button>
+        </div>
+        <div class="today" (click)="today()"><button type="button">today</button></div>
+        <div class="display">{{ currentDate.format('MMMM YYYY') }}</div>
+        <div class="mode"></div>
+    </div>
+    <div class="body">
+        <table cellspacing="0">
+            <tr>
+                <th>Sun</th><th>Mon</th><th>Tue</th><th>Wed</th><th>Thu</th><th>Fri</th><th>Sat</th>
+            </tr>
+            <tr *ngFor="#row of rows">
+                <td *ngFor="#col of cols">
+                    <div class="top">
+                        <div class="add"><i class="fa fa-plus-circle"></i></div>
+                        <div class="date-number" [class.faded]="dates[row * 7 + col].date.month() != currentDate.month()">
+                            {{ dates[row * 7 + col].date.format('D') }}
+                        </div>
+                    </div>
+                    <div class="events">
+                        <div class="event-wrapper" *ngFor="#event of dates[row * 7 + col].events">
+                            <div class="event event-green">
+                                {{ event.title }}
+                            </div>
+                            <!--<div class="event-popover" v-show="showPopover == i + '.' + j + '.' + event.id">-->
+                                <!--<div class="arrow-box">-->
+                                    <!--<div class="header">-->
+                                        <!--{{ event.title }}-->
+                                        <!--<div class="close" @click="showPopover = 0"></div>-->
+                                    <!--</div>-->
+                                    <!--<div class="body">-->
+                                        <!--<div class="body-row">-->
+                                            <!--<div class="row-left">Description:</div>-->
+                                            <!--<div class="row-right">-->
+                                                <!--{{ typeof event.description == 'string' && event.description != '' ? event.description : 'n/a' }}-->
+                                            <!--</div>-->
+                                        <!--</div>-->
+                                        <!--<div class="body-row">-->
+                                            <!--<div class="row-left">Activity:</div>-->
+                                            <!--<div class="row-right">{{ findActivity(event.activityId) ? findActivity(event.activityId).name : 'n/a' }}</div>-->
+                                        <!--</div>-->
+                                        <!--<div class="body-row">-->
+                                            <!--<div class="row-left">Students:</div>-->
+                                            <!--<div class="row-right" v-show="event.studentIds.length == 0">none</div>-->
+                                            <!--<div class="row-right" v-show="event.studentIds.length > 0">-->
+                                                <!--<div class="view-students" @click="showStudentsFor(event)">view</div>-->
+                                            <!--</div>-->
+                                        <!--</div>-->
+                                    <!--</div>-->
+                                    <!--<div class="footer">-->
+                                        <!--<button type="button" class="button-red button-short" @click="delete(event)">Delete</button>-->
+                                        <!--<button type="button" class="button-green button-short">Edit</button>-->
+                                    <!--</div>-->
+                                <!--</div>-->
+                            <!--</div>-->
+                        </div>
+                        <!--<div class="extra-events" v-if="getEventCountForDate(getPositionDate(i, j)) > 4">-->
+                            <!--+ {{ getEventCountForDate(getPositionDate(i, j)) - 3 }} more-->
+                        <!--</div>-->
+                    </div>
+                </td>
+            </tr>
+        </table>
+    </div>
+</div>

@@ -11,12 +11,12 @@ import {Flash} from "../../../flash/Flash";
     template: require('./createActivityForm.html')
 })
 export class CreateActivityForm {
-    form: ControlGroup;
-    submitEnabled: boolean = true;
-    periods: Object[];
-    createAnother: boolean;
+    form:ControlGroup;
+    submitEnabled:boolean = true;
+    periods:Object[];
+    createAnother:boolean;
 
-    constructor(fb: FormBuilder, private http: Http, private router: Router, private flash: Flash) {
+    constructor(fb:FormBuilder, private http:Http, private router:Router, private flash:Flash) {
         flash.show(); // NOT WORKING!!!!!!!!!!!!!!!!!!!!!!!!!
         this.initializePeriods();
 
@@ -28,7 +28,7 @@ export class CreateActivityForm {
         });
     }
 
-    initializePeriods (): void {
+    initializePeriods():void {
         this.periods = [
             {value: 'lesson', display: 'per lesson'},
             {value: '30mins', display: 'per 30 mins'},
@@ -40,7 +40,7 @@ export class CreateActivityForm {
         ];
     }
 
-    onSubmit(value: Object): void {
+    onSubmit(value:Object):void {
         if (!this.form.valid || !this.submitEnabled) {
             this.form.find('name').markAsTouched();
             this.form.find('rate').markAsTouched();
@@ -53,7 +53,7 @@ export class CreateActivityForm {
         this.afterSubmit();
     }
 
-    submit(value: Object): void {
+    submit(value:Object):void {
         this.http.post('/api/school/teacher/activities/', JSON.stringify(value))
             .subscribe(
                 () => {
@@ -65,7 +65,7 @@ export class CreateActivityForm {
             );
     }
 
-    afterSubmit(): void {
+    afterSubmit():void {
         if (!this.createAnother) {
             this.router.navigate(['/School/Teacher/Activity/Index']);
 
