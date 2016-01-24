@@ -14,16 +14,16 @@
                 <th>Sun</th><th>Mon</th><th>Tue</th><th>Wed</th><th>Thu</th><th>Fri</th><th>Sat</th>
             </tr>
             <tr *ngFor="#row of rows">
-                <td *ngFor="#col of cols">
+                <td [id]="'event-td-' + (row * 7 + col)" *ngFor="#col of cols" (drop)="handleDrop($event, row * 7 + col)" (dragover)="handleDragOver($event)">
                     <div class="top">
-                        <div class="add"><i class="fa fa-plus-circle"></i></div>
+                        <div class="add" (click)="openNewEventModal(dates[row * 7 + col].date)"><i class="fa fa-plus-circle"></i></div>
                         <div class="date-number" [class.faded]="dates[row * 7 + col].date.month() != currentDate.month()">
                             {{ dates[row * 7 + col].date.format('D') }}
                         </div>
                     </div>
                     <div class="events">
                         <div class="event-wrapper" *ngFor="#event of dates[row * 7 + col].events">
-                            <div class="event event-green">
+                            <div class="event event-green" draggable="true" (dragstart)="handleDragStart($event, event, row * 7 + col)">
                                 {{ event.title }}
                             </div>
                             <!--<div class="event-popover" v-show="showPopover == i + '.' + j + '.' + event.id">-->
@@ -67,3 +67,5 @@
         </table>
     </div>
 </div>
+
+<new-event-modal></new-event-modal>

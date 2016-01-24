@@ -6,9 +6,12 @@ require('./calendar.scss');
 import {EventService} from "../../../services/eventService";
 import {Event} from "../../../models/event";
 import Moment = moment.Moment;
+import {Modal} from "../../modal/Modal";
+import {NewEventModal} from "./newEventModal/NewEventModal";
 
 @Component({
     selector: 'calendar',
+    directives: [NewEventModal],
     template: require('./calendar.html')
 })
 export class Calendar {
@@ -16,6 +19,7 @@ export class Calendar {
     dates: any;
     rows: number[];
     cols: number[];
+    newEventModal: Modal;
 
     constructor(eventService: EventService) {
         this.currentDate = moment();
@@ -31,6 +35,8 @@ export class Calendar {
         );
 
         this.today();
+
+        this.newEventModal = new NewEventModal();
     }
 
     previousMonth(): void { this.currentDate.substract(1, 'months'); this.buildDateArray(); }
@@ -89,5 +95,42 @@ export class Calendar {
         events.forEach((event: Event) => {
             this.dates[this.getIndexFromDate(event.startDate)].events.push(event);
         });
+    }
+
+    handleDragStart(e, event: Event, index: number): void {
+        e.dataTransfer.setData('lastIndex', index.toString());
+        e.dataTransfer.setData('event', JSON.stringify(event));
+
+        e.dataTransfer.effectAllowed = 'move';
+    }
+
+    handleDragOver(e): void {
+        e.preventDefault();
+    }
+
+    handleDrop(e, index: number): void {
+        e.preventDefault();
+        e.dataTransfer.dropEffect = 'move';
+
+        let lastIndex = e.dataTransfer.getData('lastIndex');
+        if (lastIndex == index) {
+            return;
+        }
+
+        let event: Event = new Event(JSON.parse(e.dataTransfer.getData('event')));
+
+        for (let i = 0; i < this.dates[lastIndex].events.length; i++) {
+            if (this.dates[lastIndex].events[i].id == event.id &&
+                this.dates[lastIndex].events[i].startDate.isSame(event.startDate, 'day')) {
+                this.dates[lastIndex].events.splice(i, 1);
+                this.dates[index].events.push(event);
+
+                break;
+            }
+        }
+    }
+
+    openNewEventModal(date: Moment): void {
+        this.newEventModal.open();
     }
 }
