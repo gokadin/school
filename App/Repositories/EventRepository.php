@@ -9,7 +9,7 @@ use Library\DataMapper\Collection\PersistentCollection;
 
 class EventRepository extends RepositoryBase
 {
-    public function create(array $data)
+    public function createFromData(array $data)
     {
         $event = new Event($data['title'], $data['description'], $data['startDate'],
             $data['endDate'], $data['startTime'], $data['endTime'], $data['isAllDay'],
@@ -22,6 +22,13 @@ class EventRepository extends RepositoryBase
         $this->dm->flush();
 
         return $event;
+    }
+
+    public function create(Event $event)
+    {
+        $this->dm->persist($event);
+
+        $this->dm->flush();
     }
 
     public function createLessons(array $lessons)

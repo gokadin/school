@@ -1,11 +1,11 @@
 import {Component} from 'angular2/core';
 import moment = require('moment');
+import Moment = moment.Moment;
 
 require('./calendar.scss');
 
 import {EventService} from "../../../services/eventService";
 import {Event} from "../../../models/event";
-import Moment = moment.Moment;
 import {Modal} from "../../modal/Modal";
 import {NewEventModal} from "./newEventModal/NewEventModal";
 
@@ -21,7 +21,7 @@ export class Calendar {
     cols: number[];
     newEventModal: Modal;
 
-    constructor(eventService: EventService) {
+    constructor(private eventService: EventService) {
         this.currentDate = moment();
 
         eventService.calendarEvents
@@ -124,6 +124,13 @@ export class Calendar {
                 this.dates[lastIndex].events[i].startDate.isSame(event.startDate, 'day')) {
                 this.dates[lastIndex].events.splice(i, 1);
                 this.dates[index].events.push(event);
+                this.eventService.updateDate(event.id, this.dates[lastIndex].date, this.dates[index].date)
+                    .subscribe(
+                        ((event: Event) => {
+                            this.dates[index].events.pop();
+                            this.dates[index].events.push(event);
+                        })
+                    );
 
                 break;
             }

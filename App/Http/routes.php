@@ -26,6 +26,7 @@ $router->group(['namespace' => 'Api', 'prefix' => '/api', 'as' => 'api', 'middle
             {
                 $router->get('/upcoming', 'EventController@upcomingEvents');
                 $router->get('/range', 'EventController@range');
+                $router->patch('/{id}/{oldDate}/date', 'EventController@updateDate');
             });
         });
     });

@@ -4,14 +4,14 @@ namespace App\Http\Controllers\Api\School\Teacher;
 
 use App\Domain\Services\EventService;
 use App\Domain\Services\LessonService;
-use App\Http\Controllers\Api\ApiController;
-use App\Http\Requests\Api\School\ChangeEventDateRequest;
+use App\Http\Controllers\ApiController;
 use App\Http\Requests\Api\School\CreateEventRequest;
 use App\Http\Requests\Api\School\DestroyEventRequest;
-use App\Http\Requests\Api\School\EventRangeRequest;
 use App\Http\Requests\Api\School\Teacher\Event\RangeRequest;
+use App\Http\Requests\Api\School\Teacher\Event\UpdateDateRequest;
 use App\Http\Requests\Api\School\UpdateLessonAttendanceRequest;
-use App\Http\Translators\School\Teacher\Event\RangeTranslator;
+use App\Http\Translators\Api\School\Teacher\Event\RangeTranslator;
+use App\Http\Translators\Api\School\Teacher\Event\UpdateDateTranslator;
 use Library\Http\Response;
 
 class EventController extends ApiController
@@ -34,9 +34,11 @@ class EventController extends ApiController
         return $data ? $this->respondOk($data) : $this->respondBadRequest();
     }
 
-    public function changeDate(ChangeEventDateRequest $request, EventService $eventService)
+    public function updateDate(UpdateDateRequest $request, UpdateDateTranslator $translator)
     {
-        return $this->respondOk($eventService->changeDate($request->all()));
+        $data = $translator->translateRequest($request);
+
+        return $data ? $this->respondOk($data) : $this->respondBadRequest();
     }
 
     public function upcomingEvents(EventService $eventService)

@@ -1,0 +1,8 @@
+<p (click)="open()">BLA</p>
+<div class="modal-container" [hidden]="!show" transition="modal">
+    <div class="modal-veil" (click)="cancelWithClick($event)">
+        <div class="modal-content">
+            <ng-content></ng-content>
+        </div>
+    </div>
+</div>

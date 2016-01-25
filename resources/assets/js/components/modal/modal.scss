@@ -1,0 +1,40 @@
+.modal-container {
+  .modal-veil {
+    z-index: 1050;
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    max-height: 100%;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.5);
+    transition: all .4s ease;
+
+    .modal-content {
+      -webkit-border-radius: 3px;
+      -moz-border-radius: 3px;
+      border-radius: 3px;
+      display: table;
+      margin: 30px auto;
+      z-index: 1150;
+      border: 1px solid rgba(0, 0, 0, .33);
+      -webkit-box-shadow: 0 2px 8px rgba(0, 0, 0, .33);
+      -moz-box-shadow: 0 2px 8px rgba(0, 0, 0, .33);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, .33);
+      background-color: white;
+    }
+  }
+}
+
+
+.modal-enter .modal-veil, .modal-leave .modal-veil {
+  background-color: rgba(0, 0, 0, 0.0);
+}
+
+.modal-enter ~ .modal-box,
+.modal-leave ~ .modal-box {
+
+}

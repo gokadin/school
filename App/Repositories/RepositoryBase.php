@@ -29,8 +29,6 @@ abstract class RepositoryBase
         $this->class = $class;
     }
 
-    abstract public function create(array $data);
-
     public function find($id)
     {
         return $this->dm->find($this->class, $id);

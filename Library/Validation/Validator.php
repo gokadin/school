@@ -2,6 +2,7 @@
 
 namespace Library\Validation;
 
+use Carbon\Carbon;
 use Library\Database\Database;
 use Library\Facades\Request;
 
@@ -132,6 +133,8 @@ class Validator
                 return $field.' is already taken';
             case 'equalsField':
                 return $field.' does not equal '.$args[0];
+            case 'date':
+                return $field.' is not a valid date';
             default:
                 return '';
         }
@@ -249,5 +252,10 @@ class Validator
     public function equalsField($value, $fieldName)
     {
         return $value == $this->data[$fieldName];
+    }
+
+    public function date($value)
+    {
+        return Carbon::parse($value);
     }
 }

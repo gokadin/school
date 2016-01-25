@@ -51,6 +51,15 @@ export class EventService {
                 (events: Event[]) => this.calendarEvents.next(events)
             );
     }
+
+    updateDate(id: number, oldDate: Moment, date: Moment): Observable<Event> {
+        return this.http.patch('/api/school/teacher/events/' + id + '/' +
+            oldDate.format('YYYY-MM-DD') + '/date', JSON.stringify({
+            date: date.format('YYYY-MM-DD')
+        }))
+            .map((data: Response) => data.json())
+            .map((event: Object) => new Event(event));
+    }
 }
 
 export var EVENT_PROVIDERS = [

@@ -3,13 +3,29 @@
 namespace App\Domain\Services;
 
 use App\Domain\Events\Event;
+use App\Domain\Processors\EventProcessor;
 use App\Domain\Users\User;
 use App\Jobs\School\CreateEventLessons;
+use App\Repositories\Repository;
 use App\Repositories\UserRepository;
 use Carbon\Carbon;
+use Library\Events\EventManager;
+use Library\Queue\Queue;
 
-class EventService extends AuthenticatedService
+class EventService extends Service
 {
+    /**
+     * @var EventProcessor
+     */
+    private $eventProcessor;
+
+    public function __construct(Queue $queue, EventManager $eventManager, Repository $repository)
+    {
+        parent::__construct($queue, $eventManager, $repository);
+
+        $this->eventProcessor = new EventProcessor();
+    }
+
     public function create(array $data)
     {
         $data['teacher'] = $this->user;
@@ -55,53 +71,37 @@ class EventService extends AuthenticatedService
         return $this->readAndTransform($events, $from, $to);
     }
 
-    public function changeDate(array $data)
+    public function updateDate(int $id, Carbon $oldDate, Carbon $newDate): Event
     {
-        $event = $this->user->events()->find($data['id']);
+        $event = $this->user->events()->find($id);
 
         return $event->isRecurring()
-            ? $this->changeRecurringEventDate($event, Carbon::parse($data['oldDate']), Carbon::parse($data['newDate']))
-            : $this->changeNonRecurringEventDate($event, Carbon::parse($data['newDate']));
+            ? $this->updateRecurringDate($event, $oldDate, $newDate)
+            : $this->updateNonRecurringDate($event, $newDate);
     }
 
-    private function changeNonRecurringEventDate(Event $event, Carbon $newDate)
+    private function updateNonRecurringDate(Event $event, Carbon $newDate)
     {
-        $startDate = Carbon::parse($event->startDate());
-        $endDate = Carbon::parse($event->endDate());
-        $dayDiff = $startDate->diffInDays($newDate);
-        $newEndDate = $endDate->addDays($dayDiff);
-        $absoluteEnd = Carbon::parse($event->absoluteEnd());
-        $newAbsoluteEnd = $absoluteEnd->addDays($dayDiff);
-
-        $event->setStartDate($newDate);
-        $event->setEndDate($newEndDate);
-        $event->setAbsoluteStart($newDate);
-        $event->setAbsoluteEnd($newAbsoluteEnd);
+        $event = $this->eventProcessor->displaceDates($event, $newDate);
 
         $this->repository->of(Event::class)->update($event);
 
-        return [
-            'newStartDate' => $newDate->toDateString(),
-            'newEndDate' => $newEndDate->toDateString()
-        ];
+        return $event;
     }
 
-    private function changeRecurringEventDate(Event $event, Carbon $oldDate, Carbon $newDate)
+    private function updateRecurringDate(Event $event, Carbon $oldDate, Carbon $newDate)
     {
         $event->skip($oldDate);
 
         $this->repository->of(Event::class)->update($event);
 
-        $diffInDays = Carbon::parse($event->startDate())->diffInDays(Carbon::parse($event->endDate()));
-        $newEvent = $this->repository->of(Event::class)->create([
-            'title' => $event->title(), 'description' => $event->description(), 'startDate' => $newDate,
-            'endDate' => $newDate->addDays($diffInDays), 'startTime' => $event->startTime(), 'endTime' => $event->endTime(),
-            'isAllDay' => $event->isAllDay(), 'color' => $event->color(), 'teacher' => $event->teacher(), 'activity' => $event->activity(),
-            'isRecurring' => false, 'rRepeat' => $event->rRepeat(), 'rEvery' => $event->rEvery(), 'rEndDate' => $event->rEndDate(),
-            'rEndsNever' => $event->rEndsNever(), 'location' => $event->location(), 'visibility' => $event->visibility(),
-            'notifyMeBy' => $event->notifyMeBy(), 'notifyMeBefore' => $event->notifyMeBefore(),
-            'absoluteStart' => $event->absoluteStart(), 'absoluteEnd' => $event->absoluteEnd()
-        ]);
+        $newEvent = $this->eventProcessor->copy($event);
+        $newEvent->setIsRecurring(false);
+        $this->eventProcessor->displaceDates($newEvent, $newDate);
+
+        $this->repository->of(Event::class)->create($event);
+
+        // WHAT??? REFACTORING MESS... EVERYWHERE...
 
         if ($event->lessons()->count() > 0)
         {
@@ -114,9 +114,7 @@ class EventService extends AuthenticatedService
             $this->dispatchJob(new CreateEventLessons($newEvent, $studentIds));
         }
 
-        return [
-            'newEvent' => $this->transformer->of(Event::class)->transform($newEvent)
-        ];
+        return $newEvent;
     }
 
     public function upcomingEvents()
