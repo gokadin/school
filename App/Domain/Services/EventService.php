@@ -4,6 +4,7 @@ namespace App\Domain\Services;
 
 use App\Domain\Events\Event;
 use App\Domain\Processors\EventProcessor;
+use App\Domain\Users\Authenticator;
 use App\Domain\Users\User;
 use App\Jobs\School\CreateEventLessons;
 use App\Repositories\Repository;
@@ -11,17 +12,19 @@ use App\Repositories\UserRepository;
 use Carbon\Carbon;
 use Library\Events\EventManager;
 use Library\Queue\Queue;
+use Library\Transformer\Transformer;
 
-class EventService extends Service
+class EventService extends AuthenticatedService
 {
     /**
      * @var EventProcessor
      */
     private $eventProcessor;
 
-    public function __construct(Queue $queue, EventManager $eventManager, Repository $repository)
+    public function __construct(Queue $queue, EventManager $eventManager, Transformer $transformer,
+                                Repository $repository, Authenticator $authenticator)
     {
-        parent::__construct($queue, $eventManager, $repository);
+        parent::__construct($queue, $eventManager, $transformer, $repository, $authenticator);
 
         $this->eventProcessor = new EventProcessor();
     }

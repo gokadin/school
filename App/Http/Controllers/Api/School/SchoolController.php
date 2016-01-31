@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Api\School;
 
 use App\Domain\Services\UserService;
-use App\Http\Controllers\Api\ApiController;
+use App\Http\Controllers\ApiController;
 
 class SchoolController extends ApiController
 {

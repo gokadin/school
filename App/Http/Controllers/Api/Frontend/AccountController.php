@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Api\Frontend;
 
 use App\Domain\Services\LoginService;
-use App\Http\Controllers\Api\ApiController;
+use App\Http\Controllers\ApiController;
 use App\Http\Requests\Test\Frontend\LoginRequest;
 
 class AccountController extends ApiController
