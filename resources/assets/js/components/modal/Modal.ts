@@ -1,22 +1,22 @@
-import {Component} from 'angular2/core';
+import {OnInit} from 'angular2/core';
 
-require('./modal.scss');
-
-@Component({
-    selector: 'modal',
-    template: require('./modal.html')
-})
-export class Modal {
+export class Modal implements OnInit {
     show: boolean;
 
+    constructor() {
+        this.show = false;
+    }
+
+    ngOnInit() {
+        window.addEventListener('keyup', this.handleKeyUp); // not working
+    }
+
     open(): void {
-        console.log('show pressed');
         document.body.style.overflow = 'hidden';
         this.show = true;
     }
 
     cancel(): void {
-        console.log('cancel pressed');
         document.body.style.overflow = 'auto';
         this.show = false;
     }
@@ -28,14 +28,11 @@ export class Modal {
 
         this.cancel();
     }
-//},
-//    ready: function() {
-//    window.addEventListener('keyup', this.handleKeyUp);
-//
-//    handleKeyUp: function(e) {
-//    if (this.show && e.keyCode == 27) {
-//        this.close();
-//    }
-//}
-//}
+
+    handleKeyUp(e): void {
+        console.log(this.show);
+        if (this.show && e.keyCode == 27) {
+            this.cancel();
+        }
+    }
 }

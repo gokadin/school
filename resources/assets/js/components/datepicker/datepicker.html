@@ -1,0 +1,10 @@
+<div class="datepicker">
+    <input type="text" [ngFormControl]="control"
+           (focus)="open()"
+           (click)="open()"
+           (blur)="close()" />
+
+    <div class="picker-container" *ngIf="show" (click)="preventDefaultt($event)">
+
+    </div>
+</div>

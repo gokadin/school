@@ -1,4 +1,9 @@
 <div id="monthly-calendar">
+    <form [ngFormModel]="form" (ngSubmit)="onSubmit(form.value)" class="form-1">
+        <div class="form-row">
+            <datepicker [control]="form.controls['test']"></datepicker>
+        </div>
+    </form>
     <div class="header">
         <div class="navigation">
             <button type="button" (click)="previousMonth()"><i class="fa fa-chevron-left"></i></button>
@@ -16,7 +21,7 @@
             <tr *ngFor="#row of rows">
                 <td [id]="'event-td-' + (row * 7 + col)" *ngFor="#col of cols" (drop)="handleDrop($event, row * 7 + col)" (dragover)="handleDragOver($event)">
                     <div class="top">
-                        <div class="add" (click)="openNewEventModal(dates[row * 7 + col].date)"><i class="fa fa-plus-circle"></i></div>
+                        <div class="add" (click)="openNewEventModal(dates[row * 7 + col].date, newev)"><i class="fa fa-plus-circle"></i></div>
                         <div class="date-number" [class.faded]="dates[row * 7 + col].date.month() != currentDate.month()">
                             {{ dates[row * 7 + col].date.format('D') }}
                         </div>
@@ -68,4 +73,4 @@
     </div>
 </div>
 
-<new-event-modal></new-event-modal>
+<new-event-modal #newev></new-event-modal>

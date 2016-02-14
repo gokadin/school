@@ -6,22 +6,32 @@ require('./calendar.scss');
 
 import {EventService} from "../../../services/eventService";
 import {Event} from "../../../models/event";
-import {Modal} from "../../modal/Modal";
 import {NewEventModal} from "./newEventModal/NewEventModal";
+import {Modal} from "../../modal/Modal";
+import {Datepicker} from "../../datepicker/Datepicker";
+import {ControlGroup, AbstractControl, Control, FormBuilder, Validators} from 'angular2/common';
 
 @Component({
     selector: 'calendar',
-    directives: [NewEventModal],
+    directives: [NewEventModal, Datepicker],
     template: require('./calendar.html')
 })
 export class Calendar {
+    form: ControlGroup;
+    test: AbstractControl;
+
     currentDate: any;
     dates: any;
     rows: number[];
     cols: number[];
-    newEventModal: Modal;
 
-    constructor(private eventService: EventService) {
+    constructor(private eventService: EventService, fb: FormBuilder) {
+        this.form = fb.group({
+            'test': ['', Validators.required]
+        });
+
+        this.test = this.form.controls['test'];
+
         this.currentDate = moment();
 
         eventService.calendarEvents
@@ -29,19 +39,25 @@ export class Calendar {
                 (events: Event[]) => this.distributeEvents(events)
             );
 
-        eventService.fetchCalendarEvents(
+        this.today();
+    }
+
+    onSubmit(value: any) {
+        console.log('Submitted test: ', value);
+    }
+
+    previousMonth(): void { this.currentDate.subtract(1, 'months'); this.loadCurrentMonth(); }
+    nextMonth(): void { this.currentDate.add(1, 'months'); this.loadCurrentMonth(); }
+    today(): void { this.currentDate = moment(); this.loadCurrentMonth(); }
+
+    loadCurrentMonth(): void {
+        this.eventService.fetchCalendarEvents(
             moment(this.currentDate).date(1).subtract(1, 'weeks'),
             moment(this.currentDate).date(this.currentDate.daysInMonth()).add(1, 'weeks')
         );
 
-        this.today();
-
-        this.newEventModal = new NewEventModal();
+        this.buildDateArray();
     }
-
-    previousMonth(): void { this.currentDate.substract(1, 'months'); this.buildDateArray(); }
-    nextMonth(): void { this.currentDate.add(1, 'months'); this.buildDateArray(); }
-    today(): void { this.currentDate = moment(); this.buildDateArray(); }
 
     buildDateArray(): void {
         this.dates = [];
@@ -93,7 +109,12 @@ export class Calendar {
 
     distributeEvents(events: Event[]): void {
         events.forEach((event: Event) => {
-            this.dates[this.getIndexFromDate(event.startDate)].events.push(event);
+            let index = this.getIndexFromDate(event.startDate);
+            if (index < 0 || index > this.dates.length - 1) {
+                return;
+            }
+
+            this.dates[index].events.push(event);
         });
     }
 
@@ -137,7 +158,7 @@ export class Calendar {
         }
     }
 
-    openNewEventModal(date: Moment): void {
-        this.newEventModal.open();
+    openNewEventModal(date: Moment, modal: NewEventModal): void {
+        modal.open();
     }
 }

@@ -1,0 +1,18 @@
+.datepicker {
+  position: relative;
+
+  > input[type="text"] {
+    height: 40px;
+  }
+
+  .picker-container {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    min-height: 100px;
+    background-color: white;
+    min-width: 50px;
+    border: 1px solid #cccccc;
+    margin-top: 3px;
+  }
+}

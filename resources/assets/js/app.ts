@@ -5,6 +5,7 @@ import {HTTP_PROVIDERS, BaseRequestOptions, RequestOptions, Headers} from 'angul
 
 require('font-awesome-webpack');
 require('./../sass/app.scss');
+require('./components/modal/modal.scss');
 
 import {AppRequestOptions} from './requests/appRequestOptions';
 

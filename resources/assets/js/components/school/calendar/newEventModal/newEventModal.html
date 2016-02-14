@@ -1,8 +1,122 @@
-in modal
-<modal>
-    <div class="modal-1">
-        <div class="header">New event</div>
-    </div>
+<div class="modal-container" [hidden]="!show">
+    <div class="modal-veil" (click)="cancelWithClick($event)">
+        <div class="modal-content">
+            <div class="modal-1">
+                <div class="header">New event</div>
+                <div class="body">
 
-    <button class="button-red" (click)="cancel()">Close</button>
-</modal>
+                    <form class="form-1" [ngFormModel]="form" (ngSubmit)="onSubmit(form.value)">
+                        <div class="form-row">
+                            <label for="title">Title</label>
+                            <input id="title" type="text" placeholder="Title" [ngFormControl]="form.controls['title']"
+                                   [class.invalid]="!title.valid && title.touched" [class.valid]="title.valid && title.touched" />
+                            <div class="form-error" *ngIf="!title.valid && title.touched">title is required</div>
+                        </div>
+
+                        <div class="form-row">
+                            <label for="description">Description</label>
+                            <textarea id="description" placeholder="Description (optional)" [ngFormControl]="form.controls['description']"
+                                      [class.valid]="description.touched" ></textarea>
+                        </div>
+
+                        <div class="form-row date-and-time">
+                            <!--<datepicker class="datepicker" :model.sync="newEvent.startDate"></datepicker>-->
+                            <!--<select v-model="newEvent.startTime" v-show="!newEvent.isAllDay">-->
+                            <!--<option v-for="time in timeSelect" value="{{ time }}">{{ time }}</option>-->
+                            <!--</select>-->
+                            <!--<label class="to">to</label>-->
+                            <!--<datepicker class="datepicker" :model.sync="newEvent.endDate"></datepicker>-->
+                            <!--<select v-model="newEvent.endTime" v-show="!newEvent.isAllDay">-->
+                            <!--<option v-for="time in timeSelect" value="{{ time }}">{{ time }}</option>-->
+                            <!--</select>-->
+                        </div>
+
+                        <!--<div class="form-row recurring-row-1" v-show="newEvent.isRecurring">-->
+                        <!--<label for="rRepeat">Repeat</label>-->
+                        <!--<select name="rRepeat" id="rRepeat" v-model="newEvent.rRepeat">-->
+                        <!--<option value="daily">Daily</option>-->
+                        <!--<option value="weekly">Weekly</option>-->
+                        <!--<option value="weekdays">Weekdays (Monday to Friday)</option>-->
+                        <!--<option value="monthly">Monthly</option>-->
+                        <!--<option value="yearly">Yearly</option>-->
+                        <!--</select>-->
+                        <!--</div>-->
+
+                        <!--<div class="form-row recurring-row-2" v-show="newEvent.isRecurring">-->
+                        <!--<label>Ends</label>-->
+                        <!--<div class="checkbox-1">-->
+                        <!--<label>-->
+                        <!--<input type="checkbox" v-model="newEvent.rEndsNever" />-->
+                        <!--<i></i>Never-->
+                        <!--</label>-->
+                        <!--</div>-->
+                        <!--<datepicker class="datepicker" :model.sync="newEvent.rEndDate" v-show="!newEvent.rEndsNever"></datepicker>-->
+                        <!--</div>-->
+
+                        <!--<div class="form-row event-options">-->
+                        <!--<div class="checkbox-1">-->
+                        <!--<label>-->
+                        <!--<input type="checkbox" v-model="newEvent.isAllDay" />-->
+                        <!--<i></i>All day-->
+                        <!--</label>-->
+                        <!--</div>-->
+                        <!--<div class="checkbox-1">-->
+                        <!--<label>-->
+                        <!--<input type="checkbox" v-model="newEvent.isRecurring" />-->
+                        <!--<i></i>Recurring-->
+                        <!--</label>-->
+                        <!--</div>-->
+                        <!--</div>-->
+
+                        <!--<div class="form-row">-->
+                        <!--<label>Color</label>-->
+                        <!--<div class="color-options">-->
+                        <!--<div-->
+                        <!--:class="['color-' + color, isColorSelected(color) ? 'color-selected' : '']"-->
+                        <!--v-for="color in eventColors"-->
+                        <!--@click="selectColor(color)"-->
+                        <!--&gt;</div>-->
+                        <!--</div>-->
+                        <!--</div>-->
+
+                        <!--<div :class="['more-options-toggler', showMoreOptions ? 'more-options-open' : '']" @click="showMoreOptions = !showMoreOptions">-->
+                        <!--More options<i class="fa"></i>-->
+                        <!--</div>-->
+
+                        <!--<div class="more-options" v-show="showMoreOptions">-->
+
+                        <!--<div class="form-row">-->
+                        <!--<label>Activity</label>-->
+                        <!--<search-select name="activityId"-->
+                        <!--:data="activities"-->
+                        <!--value="id"-->
+                        <!--display="name"-->
+                        <!--:model.sync="newEvent.activityId"-->
+                        <!--placeholder="Select an activity"-->
+                        <!--&gt;-->
+                        <!--</search-select>-->
+                        <!--</div>-->
+
+                        <!--<div class="form-row student-row">-->
+                        <!--<label>Students</label>-->
+                        <!--<tag-select name="studentIds"-->
+                        <!--uri="/api/school/teacher/students/search"-->
+                        <!--method="post"-->
+                        <!--searchkey="search"-->
+                        <!--:model.sync="newEvent.studentIds"-->
+                        <!--placeholder="Search students"-->
+                        <!--display="fullName"-->
+                        <!--value="id"-->
+                        <!--&gt;</tag-select>-->
+                        <!--</div>-->
+
+                        <!--</div>-->
+                    </form>
+                </div>
+                <div class="footer">
+                    <button class="button-red" (click)="cancel()">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

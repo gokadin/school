@@ -29,6 +29,9 @@
   }
 }
 
+.modal-container.test {
+  display: none;
+}
 
 .modal-enter .modal-veil, .modal-leave .modal-veil {
   background-color: rgba(0, 0, 0, 0.0);
