@@ -9,7 +9,7 @@ export class Modal implements OnInit {
 
     ngOnInit() {
         window.addEventListener('keyup', this.handleKeyUp); // not working
-    }
+    } 
 
     open(): void {
         document.body.style.overflow = 'hidden';

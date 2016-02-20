@@ -1,7 +1,7 @@
 <div id="monthly-calendar">
     <form [ngFormModel]="form" (ngSubmit)="onSubmit(form.value)" class="form-1">
         <div class="form-row">
-            <datepicker [control]="form.controls['test']"></datepicker>
+            <datepicker [control]="form.controls['test']" placeholder="Start date"></datepicker>
         </div>
     </form>
     <div class="header">

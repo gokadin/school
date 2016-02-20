@@ -9,6 +9,7 @@ require('./datepicker.scss');
 })
 export class Datepicker {
     @Input() control: AbstractControl;
+    @Input() placeholder: string;
     show: boolean;
 
     open() {

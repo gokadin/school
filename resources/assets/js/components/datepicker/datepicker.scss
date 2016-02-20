@@ -1,8 +1,29 @@
 .datepicker {
   position: relative;
+  outline: 0;
 
-  > input[type="text"] {
-    height: 40px;
+  .input-container {
+    position: relative;
+
+    input[type="text"] {
+      height: 40px;
+      padding-right: 45px;
+      cursor: pointer;
+      background-color: white;
+    }
+
+    i.fa {
+      position: absolute;
+      right: 1px;
+      top: 1px;
+      font-size: 22px;
+      background-color: #e2e2e2;
+      height: 38px;
+      width: 39px;
+      text-align: center;
+      line-height: 38px;
+      cursor: pointer;
+    }
   }
 
   .picker-container {

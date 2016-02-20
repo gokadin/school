@@ -1,10 +1,14 @@
-<div class="datepicker">
-    <input type="text" [ngFormControl]="control"
-           (focus)="open()"
-           (click)="open()"
-           (blur)="close()" />
+<div class="datepicker" tabindex="-1" (focus)="open()" (blur)="close()">
+    <div class="input-container">
+        <input type="text" [ngFormControl]="control" disabled
+               [placeholder]="placeholder"
+               (focus)="open()"
+               (click)="open()"
+               (blur)="close()" />
+        <i class="fa fa-calendar" (click)="open()"></i>
+    </div>
 
     <div class="picker-container" *ngIf="show" (click)="preventDefaultt($event)">
-
+        
     </div>
 </div>
