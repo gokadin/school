@@ -5,7 +5,7 @@
                 <div class="header">New event</div>
                 <div class="body">
 
-                    <form class="form-1" [ngFormModel]="form" (ngSubmit)="onSubmit(form.value)">
+                    <form class="form-1" [ngFormModel]="form" (ngSubmit)="onSubmit()">
                         <div class="form-row">
                             <label for="title">Title</label>
                             <input id="title" type="text" placeholder="Title" [ngFormControl]="form.controls['title']"
@@ -20,6 +20,7 @@
                         </div>
 
                         <div class="form-row date-and-time">
+                            <datepicker [control]="form.controls['startDate']" placeholder="Start date"></datepicker>
                             <!--<datepicker class="datepicker" :model.sync="newEvent.startDate"></datepicker>-->
                             <!--<select v-model="newEvent.startTime" v-show="!newEvent.isAllDay">-->
                             <!--<option v-for="time in timeSelect" value="{{ time }}">{{ time }}</option>-->
@@ -114,6 +115,7 @@
                     </form>
                 </div>
                 <div class="footer">
+                    <button class="button-green" (click)="onSubmit()">Create</button>
                     <button class="button-red" (click)="cancel()">Close</button>
                 </div>
             </div>

@@ -1,14 +1,37 @@
-<div class="datepicker" tabindex="-1" (focus)="open()" (blur)="close()">
-    <div class="input-container">
-        <input type="text" [ngFormControl]="control" disabled
-               [placeholder]="placeholder"
-               (focus)="open()"
-               (click)="open()"
-               (blur)="close()" />
-        <i class="fa fa-calendar" (click)="open()"></i>
+<div class="datepicker" [class.open]="show" tabindex="-1" (click)="open()" (focus)="open()" (blur)="close()">
+    <div class="input-container" (click)="open()">
+        <input type="text" [ngFormControl]="control" disabled (click)="open()"
+               [placeholder]="placeholder" [(ngModel)]="controlValue" />
+        <i class="fa fa-calendar"></i>
     </div>
 
-    <div class="picker-container" *ngIf="show" (click)="preventDefaultt($event)">
-        
+    <div class="picker-container" *ngIf="show">
+        <div class="picker-header">
+            <div class="year-picker">
+                <i class="fa fa-chevron-left" (click)="previousYear()"></i>
+                <div class="label">{{ currentDate.format('YYYY') }}</div>
+                <i class="fa fa-chevron-right" (click)="nextYear()"></i>
+            </div>
+            <div class="month-picker">
+                <i class="fa fa-chevron-left" (click)="previousMonth()"></i>
+                <div class="label">{{ currentDate.format('MMMM') }}</div>
+                <i class="fa fa-chevron-right" (click)="nextMonth()"></i>
+            </div>
+        </div>
+        <div class="picker-body">
+            <table cellspacing="0">
+                <tr>
+                    <th>Sun</th><th>Mon</th><th>Tue</th><th>Wed</th><th>Thu</th><th>Fri</th><th>Sat</th>
+                </tr>
+                <tr *ngFor="#row of rows">
+                    <td *ngFor="#col of cols">
+                        <i class="date-number" [class.faded]="dates[row * 7 + col].month() != currentDate.month()"
+                        (click)="selectDate(dates[row * 7 + col], $event)">
+                            {{ dates[row * 7 + col].format('D') }}
+                        </i>
+                    </td>
+                </tr>
+            </table>
+        </div>
     </div>
 </div>

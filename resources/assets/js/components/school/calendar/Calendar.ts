@@ -159,6 +159,14 @@ export class Calendar {
     }
 
     openNewEventModal(date: Moment, modal: NewEventModal): void {
+        modal.prepare({
+            startDate: date
+        }, this.createNewEvent);
+
         modal.open();
+    }
+
+    createNewEvent(data: Object): void {
+        console.log(data);
     }
 }
