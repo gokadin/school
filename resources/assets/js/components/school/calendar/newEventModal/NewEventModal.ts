@@ -4,6 +4,7 @@ import {ControlGroup, AbstractControl, Control, FormBuilder, Validators} from 'a
 import {Event} from "../../../../models/event";
 import {Modal} from "../../../modal/Modal";
 import {Datepicker} from "../../../datepicker/Datepicker";
+import moment = require("moment");
 
 @Component({
     selector: 'new-event-modal',
@@ -18,13 +19,25 @@ export class NewEventModal extends Modal {
     description: AbstractControl;
     startDate: AbstractControl;
 
-    constructor(fb: FormBuilder) {
+    constructor(private fb: FormBuilder) {
         super();
 
-        this.form = fb.group({
+        this.data = {
+            startDate: moment()
+        };
+
+        this.buildForm();
+    }
+
+    onSubmit(): void {
+        this.callback(this.form.value);
+    }
+
+    buildForm(): void {
+        this.form = this.fb.group({
             'title': ['', Validators.required],
             'description': [''],
-            'startDate': ['']
+            'startDate': [this.data.startDate.format('YYYY-MM-DD')]
         });
 
         this.title = this.form.controls['title'];
@@ -32,12 +45,10 @@ export class NewEventModal extends Modal {
         this.startDate = this.form.controls['startDate'];
     }
 
-    onSubmit(): void {
-        this.callback(this.form.value);
-    }
-
     prepare(data: Object, callback: Function) {
         this.data = data;
         this.callback = callback;
+
+        this.buildForm();
     }
 }

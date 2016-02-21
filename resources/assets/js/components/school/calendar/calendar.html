@@ -1,9 +1,4 @@
 <div id="monthly-calendar">
-    <form [ngFormModel]="form" (ngSubmit)="onSubmit(form.value)" class="form-1">
-        <div class="form-row">
-            <datepicker [control]="form.controls['test']" placeholder="Start date"></datepicker>
-        </div>
-    </form>
     <div class="header">
         <div class="navigation">
             <button type="button" (click)="previousMonth()"><i class="fa fa-chevron-left"></i></button>

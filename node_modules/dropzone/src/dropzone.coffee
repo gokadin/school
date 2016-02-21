@@ -211,6 +211,10 @@ class Dropzone extends Emitter
     # be set to an appropriate mime type (e.g. "image/*", "audio/*", or "video/*").
     capture: null
 
+    # Before the file is appended to the formData, the function _renameFilename is performed for file.name
+    # which executes the function defined in renameFilename
+    renameFilename: null
+
     # Dictionary
 
     # The text used before any files are dropped
@@ -379,7 +383,7 @@ class Dropzone extends Emitter
         file.previewTemplate = file.previewElement # Backwards compatibility
 
         @previewsContainer.appendChild file.previewElement
-        node.textContent = file.name for node in file.previewElement.querySelectorAll("[data-dz-name]")
+        node.textContent = @_renameFilename(file.name) for node in file.previewElement.querySelectorAll("[data-dz-name]")
         node.innerHTML = @filesize file.size for node in file.previewElement.querySelectorAll("[data-dz-size]")
 
         if @options.addRemoveLinks
@@ -756,6 +760,12 @@ class Dropzone extends Emitter
     else
       "#{@options.paramName}#{if @options.uploadMultiple then "[#{n}]" else ""}"
 
+  # If @options.renameFilename is a function,
+  # the function will be used to rename the file.name before appending it to the formData
+  _renameFilename: (name) ->
+    return name unless typeof @options.renameFilename is "function"
+    @options.renameFilename name
+
   # Returns a form that can be used as fallback if the browser does not support DragnDrop
   #
   # If the dropzone is already a form, only the input field and button are returned. Otherwise a complete form element is provided.
@@ -889,18 +899,28 @@ class Dropzone extends Emitter
   _addFilesFromDirectory: (directory, path) ->
     dirReader = directory.createReader()
 
-    entriesReader = (entries) =>
-      for entry in entries
-        if entry.isFile
-          entry.file (file) =>
-            return if @options.ignoreHiddenFiles and file.name.substring(0, 1) is '.'
-            file.fullPath = "#{path}/#{file.name}"
-            @addFile file
-        else if entry.isDirectory
-          @_addFilesFromDirectory entry, "#{path}/#{entry.name}"
-      return
+    errorHandler = (error) -> console?.log? error
 
-    dirReader.readEntries entriesReader, (error) -> console?.log? error
+    readEntries = () =>
+      dirReader.readEntries (entries) =>
+        if entries.length > 0
+          for entry in entries
+            if entry.isFile
+              entry.file (file) =>
+                return if @options.ignoreHiddenFiles and file.name.substring(0, 1) is '.'
+                file.fullPath = "#{path}/#{file.name}"
+                @addFile file
+            else if entry.isDirectory
+              @_addFilesFromDirectory entry, "#{path}/#{entry.name}"
+
+          # Recursively call readEntries() again, since browser only handle
+          # the first 100 entries.
+          # See: https://developer.mozilla.org/en-US/docs/Web/API/DirectoryReader#readEntries
+          readEntries()
+        return null
+      , errorHandler
+
+    readEntries()
 
 
 
@@ -1222,7 +1242,7 @@ class Dropzone extends Emitter
     # Finally add the file
     # Has to be last because some servers (eg: S3) expect the file to be the
     # last parameter
-    formData.append @_getParamName(i), files[i], files[i].name for i in [0..files.length-1]
+    formData.append @_getParamName(i), files[i], @_renameFilename(files[i].name) for i in [0..files.length-1]
 
     @submitRequest xhr, formData, files
 
@@ -1257,7 +1277,7 @@ class Dropzone extends Emitter
 
 
 
-Dropzone.version = "4.2.0"
+Dropzone.version = "4.3.0"
 
 
 # This is a map of options for your different dropzones. Add configurations

@@ -8,30 +8,20 @@ import {EventService} from "../../../services/eventService";
 import {Event} from "../../../models/event";
 import {NewEventModal} from "./newEventModal/NewEventModal";
 import {Modal} from "../../modal/Modal";
-import {Datepicker} from "../../datepicker/Datepicker";
 import {ControlGroup, AbstractControl, Control, FormBuilder, Validators} from 'angular2/common';
 
 @Component({
     selector: 'calendar',
-    directives: [NewEventModal, Datepicker],
+    directives: [NewEventModal],
     template: require('./calendar.html')
 })
 export class Calendar {
-    form: ControlGroup;
-    test: AbstractControl;
-
     currentDate: any;
     dates: any;
     rows: number[];
     cols: number[];
 
     constructor(private eventService: EventService, fb: FormBuilder) {
-        this.form = fb.group({
-            'test': ['', Validators.required]
-        });
-
-        this.test = this.form.controls['test'];
-
         this.currentDate = moment();
 
         eventService.calendarEvents
@@ -40,10 +30,6 @@ export class Calendar {
             );
 
         this.today();
-    }
-
-    onSubmit(value: any) {
-        console.log('Submitted test: ', value);
     }
 
     previousMonth(): void { this.currentDate.subtract(1, 'months'); this.loadCurrentMonth(); }

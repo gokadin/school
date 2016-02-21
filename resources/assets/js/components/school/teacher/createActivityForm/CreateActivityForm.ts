@@ -11,18 +11,18 @@ import {Flash} from "../../../flash/Flash";
     template: require('./createActivityForm.html')
 })
 export class CreateActivityForm {
-    form:ControlGroup;
-    submitEnabled:boolean = true;
-    periods:Object[];
-    createAnother:boolean;
+    form: ControlGroup;
+    submitEnabled: boolean = true;
+    periods: Object[];
+    createAnother: boolean;
 
     constructor(fb:FormBuilder, private http:Http, private router:Router, private flash:Flash) {
         flash.show(); // NOT WORKING!!!!!!!!!!!!!!!!!!!!!!!!!
         this.initializePeriods();
 
         this.form = fb.group({
-            name: ['a', Validators.required],
-            rate: [2, Validators.required],
+            name: ['', Validators.required],
+            rate: ['', Validators.required],
             period: ['month'],
             location: ['']
         });

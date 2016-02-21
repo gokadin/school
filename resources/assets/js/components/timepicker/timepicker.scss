@@ -1,0 +1,210 @@
+.timepicker {
+  position: relative;
+  outline: 0;
+
+  .input-container {
+    position: relative;
+    width: 300px;
+
+    input[type="text"] {
+      height: 40px;
+      width: 100%;
+      padding-right: 45px;
+      cursor: pointer;
+      background-color: white;
+    }
+
+    i.fa {
+      position: absolute;
+      right: 1px;
+      top: 1px;
+      font-size: 22px;
+      background-color: #e2e2e2;
+      height: 38px;
+      width: 39px;
+      text-align: center;
+      line-height: 38px;
+      cursor: pointer;
+    }
+  }
+
+  .picker-container {
+    position: absolute;
+    z-index: 10;
+    top: 100%;
+    left: 0;
+    background-color: white;
+    border: 1px solid #cccccc;
+    margin-top: 3px;
+
+    .picker-header {
+      height: 40px;
+      border-bottom: 1px solid #cccccc;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      .hours, .minutes {
+        width: 30px;
+        height: 30px;
+        line-height: 30px;
+        border-radius: 3px;
+        cursor: pointer;
+        text-align: center;
+        font-size: 22px;
+        color: #808080;
+      }
+
+      .hours.active, .minutes.active {
+        color: #26a69a;
+      }
+
+      .hours:hover, .minutes:hover {
+        background-color: #26a69a;
+        color: #fff;
+      }
+
+      .colon {
+        font-size: 22px;
+        color: #808080;
+        font-weight: 600;
+      }
+    }
+
+    .picker-body {
+      height: 220px;
+      width: 220px;
+      background-color: #f8f8f8;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      .circle {
+        border-radius: 50%;
+        border: 1px solid #cccccc;
+        background-color: white;
+        width: 200px;
+        height: 200px;
+
+        .hours, .minutes {
+          position: relative;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          width: 200px;
+          height: 200px;
+
+          .center-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background-color: #2fd0c0;
+          }
+
+          .number {
+            position: absolute;
+            width: 26px;
+            height: 26px;
+            line-height: 26px;
+            font-size: 14px;
+            color: #808080;
+            text-align: center;
+            border-radius: 50%;
+            cursor: pointer;
+          }
+
+          .number:hover, .number.active {
+            color: #fff;
+            background-color: rgba(38, 166, 164, 0.7);
+          }
+
+          .number.number-invisible {
+            cursor: default;
+          }
+
+          .line:after {
+            content: "";
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            border-top: 1px solid #2fd0c0;
+            opacity: 0.6;
+            width: 70px;
+            transform-origin: 0% 0%;
+          }
+        }
+
+        .hours {
+          .hour-00 { top: 5px; left: 87px; }
+          .hour-13 { top: 18px; left: 127px; }
+          .hour-14 { top: 47px; left: 156px; }
+          .hour-15 { top: 87px; right: 5px; }
+          .hour-16 { top: 127px; left: 156px; }
+          .hour-17 { top: 156px; left: 127px; }
+          .hour-18 { bottom: 5px; left: 87px; }
+          .hour-19 { top: 156px; left: 47px; }
+          .hour-20 { top: 127px; left: 18px; }
+          .hour-21 { top: 87px; left: 5px; }
+          .hour-22 { top: 47px; left: 18px; }
+          .hour-23 { top: 18px; left: 47px; }
+
+          .hour-12 { top: 33px; left: 87px; }
+          .hour-1 { top: 40px; left: 114px; }
+          .hour-2 { top: 60px; left: 134px; }
+          .hour-3 { top: 87px; right: 33px; }
+          .hour-4 { top: 114px; left: 134px; }
+          .hour-5 { top: 134px; left: 114px; }
+          .hour-6 { bottom: 33px; left: 87px; }
+          .hour-7 { top: 134px; left: 60px; }
+          .hour-8 { top: 114px; left: 40px; }
+          .hour-9 { top: 87px; left: 33px; }
+          .hour-10 { top: 60px; left: 40px; }
+          .hour-11 { top: 40px; left: 60px; }
+
+          .line-12:after, .line-1:after, .line-2:after, .line-3:after, .line-4:after, .line-5:after, .line-6:after,
+          .line-7:after, .line-8:after, .line-9:after, .line-10:after, .line-11:after {
+            width: 42px;
+          }
+
+          .line-00:after, .line-12:after { transform: rotate(-90deg); }
+          .line-13:after, .line-1:after { transform: rotate(-60deg); }
+          .line-14:after, .line-2:after { transform: rotate(-30deg); }
+          .line-15:after, .line-3:after { transform: rotate(0deg); }
+          .line-16:after, .line-4:after { transform: rotate(30deg); }
+          .line-17:after, .line-5:after { transform: rotate(60deg); }
+          .line-18:after, .line-6:after { transform: rotate(90deg); }
+          .line-19:after, .line-7:after { transform: rotate(120deg); }
+          .line-20:after, .line-8:after { transform: rotate(150deg); }
+          .line-21:after, .line-9:after { transform: rotate(180deg); }
+          .line-22:after, .line-10:after { transform: rotate(-150deg); }
+          .line-23:after, .line-11:after { transform: rotate(-120deg); }
+        }
+
+        .minutes {
+          .minute-00 { top: 5px; left: 87px; }
+
+          .minute-15 { top: 87px; right: 5px; }
+
+          .minute-30 { bottom: 5px; left: 87px; }
+
+          .minute-45 { top: 87px; left: 5px; }
+
+          .line-00:after { transform: rotate(-90deg); }
+
+          .line-15:after { transform: rotate(0deg); }
+
+          .line-30:after { transform: rotate(90deg); }
+
+          .line-45:after { transform: rotate(180deg); }
+        }
+      }
+    }
+  }
+}
+
+.timepicker.open {
+  .input-container i.fa {
+    background-color: #26a69a;
+    color: #fff;
+  }
+}

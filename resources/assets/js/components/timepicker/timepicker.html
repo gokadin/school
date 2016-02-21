@@ -1,0 +1,36 @@
+<div class="timepicker" tabindex="-1" [class.open]="show" (click)="open()" (focus)="open()" (blur)="close()">
+    <div class="input-container">
+        <input type="text" disabled [ngFormControl]="control"
+               [placeholder]="placeholder" [(ngModel)]="controlValue" />
+        <i class="fa fa-clock-o"></i>
+    </div>
+
+    <div class="picker-container" *ngIf="show">
+        <div class="picker-header">
+            <div class="hours" [class.active]="mode == 'hours'" (click)="changeMode('hours')">{{ selectedHour }}</div>
+            <div class="colon">:</div>
+            <div class="minutes" [class.active]="mode == 'minutes'" (click)="changeMode('minutes')">55</div>
+        </div>
+        <div class="picker-body">
+            <div class="circle">
+                <div class="hours" *ngIf="mode == 'hours'">
+                    <div class="center-dot"></div>
+                    <div class="number" [ngClass]="'hour-' + number" [class.active]="selectedHour == number"
+                         *ngFor="#number of hours" (click)="selectHour(number)">
+                        {{ number }}
+                    </div>
+                    <div class="line" [ngClass]="'line-' + selectedHour"></div>
+                </div>
+                <div class="minutes" *ngIf="mode == 'minutes'">
+                    <div class="center-dot"></div>
+                    <div class="number" [class.number-invisible]="number % 5 != 0"
+                         [ngClass]="'minute-' + number" [class.active]="selectedMinute == number"
+                         *ngFor="#number of minutes" (click)="selectMinute(number)">
+                        {{ number }}
+                    </div>
+                    <div class="line" [ngClass]="'line-' + selectedMinute"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

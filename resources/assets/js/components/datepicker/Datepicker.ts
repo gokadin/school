@@ -1,4 +1,4 @@
-import {Component, Input, OnInit} from 'angular2/core';
+import {Component, Input} from 'angular2/core';
 import {AbstractControl} from 'angular2/common';
 import moment = require('moment');
 import Moment = moment.Moment;
@@ -31,7 +31,11 @@ export class Datepicker {
             return;
         }
 
-        this.today();
+        if (this.control && moment(this.control.value).isValid()) {
+            this.setCalendarDate(moment(this.control.value));
+        } else {
+            this.today();
+        }
 
         this.show = true;
     }
@@ -47,9 +51,18 @@ export class Datepicker {
     selectDate(date: Moment, e): void {
         e.stopPropagation();
 
-        this.controlValue = date.format('YYYY-MM-DD');
+        this.setInputDate(date);
 
         this.close();
+    }
+
+    setInputDate(date: Moment): void {
+        this.controlValue = date.format('YYYY-MM-DD');
+    }
+
+    setCalendarDate(date: Moment): void {
+        this.currentDate = date;
+        this.buildDateArray();
     }
 
     today(): void { this.currentDate = moment(); this.buildDateArray(); }
@@ -57,6 +70,7 @@ export class Datepicker {
     nextMonth(): void { this.currentDate.add(1, 'months'); this.buildDateArray(); }
     previousYear(): void { this.currentDate.subtract(1, 'years'); this.buildDateArray(); }
     nextYear(): void { this.currentDate.add(1, 'years'); this.buildDateArray(); }
+
 
     buildDateArray(): void {
         this.dates = [];
