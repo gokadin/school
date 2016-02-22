@@ -2,38 +2,26 @@
 
 namespace App\Http\Controllers\Api\School\Teacher;
 
-use App\Domain\Services\LessonService;
-use App\Domain\Services\StudentService;
-use App\Http\Controllers\Api\ApiController;
-use App\Http\Requests\Api\School\FromStudentIdsRequest;
-use App\Http\Requests\Api\School\GetTeacherStudentsRequest;
-use App\Http\Requests\Api\School\SearchStudentRequest;
-use App\Http\Requests\Api\School\StudentLessonsRequest;
+use App\Http\Controllers\ApiController;
+use App\Http\Requests\Api\School\Teacher\Student\PaginateRequest;
+use App\Http\Requests\Api\School\Teacher\Student\PendingRequest;
+use App\Http\Translators\Api\School\Teacher\Student\PaginateTranslator;
+use App\Http\Translators\Api\School\Teacher\Student\PendingTranslator;
+use Library\Http\Response;
 
 class StudentController extends ApiController
 {
-    public function index(GetTeacherStudentsRequest $request, StudentService $studentService)
+    public function paginate(PaginateRequest $request, PaginateTranslator $translator): Response
     {
-        return $this->respondOk($studentService->getStudentList($request->all()));
+        $data = $translator->translateRequest($request);
+
+        return $data ? $this->respondOk($data) : $this->respondBadRequest();
     }
 
-    public function fromIds(FromStudentIdsRequest $request, StudentService $studentService)
+    public function pending(PendingRequest $request, PendingTranslator $translator): Response
     {
-        return $this->respondOk(['students' => $studentService->getInIds($request->ids)]);
-    }
+        $data = $translator->translateRequest($request);
 
-    public function search(SearchStudentRequest $request, StudentService $studentService)
-    {
-        return $this->respondOk(['results' => $studentService->search($request->all())]);
-    }
-
-    public function newStudents(StudentService $studentService)
-    {
-        return $this->respondOk(['newStudents' => $studentService->newStudents()]);
-    }
-
-    public function lessonRange(StudentLessonsRequest $request, LessonService $lessonService)
-    {
-        return $lessonService->range($request->get('id'), $request->all());
+        return $data ? $this->respondOk($data) : $this->respondBadRequest();
     }
 }

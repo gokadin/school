@@ -2,12 +2,10 @@
 
 namespace App\Domain\Services;
 
-use App\Domain\Events\Event;
-use App\Domain\Events\Lesson;
 use App\Domain\Users\Student;
+use App\Domain\Users\Teacher;
 use App\Domain\Users\TempStudent;
 use App\Events\School\StudentPreRegistered;
-use Carbon\Carbon;
 
 class StudentService extends AuthenticatedService
 {
@@ -28,6 +26,17 @@ class StudentService extends AuthenticatedService
             'students' => $this->transformer->of(Student::class)->transform($data['data']),
             'pagination' => $data['pagination']
         ];
+    }
+
+    public function paginate(Teacher $teacher, int $page, int $max, array $sortingRules, array $searchRules): array
+    {
+        return $this->repository->paginate(
+            $teacher->students(), $page, $max > 20 ? 20 : $max, $sortingRules, $searchRules);
+    }
+
+    public function pending(Teacher $teacher)
+    {
+        return $this->repository->of(Student::class)->pendingStudentsOfTeacher($teacher)->toArray();
     }
 
     public function getInIds(array $ids)

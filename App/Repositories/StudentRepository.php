@@ -41,7 +41,7 @@ class StudentRepository extends RepositoryBase
         $this->dm->flush();
     }
 
-    public function newStudentsOf(Teacher $teacher)
+    public function pendingStudentsOfTeacher(Teacher $teacher)
     {
         $ids = $this->dm->queryBuilder()->table('temp_students')
             ->where('teacher_id', '=', $teacher->getId())

@@ -1,0 +1,38 @@
+<div id="pending-students" class="panel-1" *ngIf="!isLoading && !hasError && data">
+    <div class="data-table-1">
+        <div class="header">
+            <div class="title">
+                New students
+            </div>
+            <div class="filter" *ngIf="open">
+                <label>
+                    <span>Filter:</span>
+                    <input type="text" placeholder="Type to filter..." />
+                </label>
+            </div>
+            <div
+                    class="collapse-table-button"
+                    [class.open]="open" [class.closed]="!open"
+                    (click)="open = !open"
+            ></div>
+        </div>
+        <div class="table" *ngIf="open">
+            <table cellspacing="0">
+                <tr>
+                    <th>First name</th>
+                    <th>Last name</th>
+                    <th>Email</th>
+                    <th>Activity</th>
+                    <th>Status</th>
+                </tr>
+                <tr *ngFor="#student of data">
+                    <td>{{ student.firstName == '' ? 'n/a' : student.firstName }}</td>
+                    <td>{{ student.lastName == '' ? 'n/a' : student.lastName }}</td>
+                    <td>{{ student.email }}</td>
+                    <td>{{ student.activityName }}</td>
+                    <td [ngClass]="student.status"><span>{{ student.status }}</span></td>
+                </tr>
+            </table>
+        </div>
+    </div>
+</div>

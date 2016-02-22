@@ -7,6 +7,7 @@ import {AuthService} from "../../../services/authService";
 
 import {IndexModule} from "./index/IndexModule";
 import {ActivityModule} from "./activity/ActivityModule";
+import {StudentModule} from "./student/StudentModule";
 import {CalendarModule} from "./calendar/CalendarModule";
 
 @Component({
@@ -17,6 +18,7 @@ import {CalendarModule} from "./calendar/CalendarModule";
 @RouteConfig([
     { path: '/...', name: 'Index', component: IndexModule, useAsDefault: true },
     { path: '/activities/...', name: 'Activity', component: ActivityModule},
+    { path: '/students/...', name: 'Student', component: StudentModule},
     { path: '/calendar/...', name: 'Calendar', component: CalendarModule},
 ])
 export class TeacherModule {

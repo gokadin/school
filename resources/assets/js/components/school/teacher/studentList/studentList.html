@@ -1,0 +1,74 @@
+<div class="panel-1">
+    <div class="data-table-1">
+        <div class="header">
+            <div class="title">
+                Student list
+            </div>
+        </div>
+        <div class="table">
+            <div class="component-loading" *ngIf="isLoading"></div>
+            <div class="component-error" *ngIf="hasError"></div>
+            <div class="no-data" *ngIf="!isLoading && !hasError && initialDataSize == 0">
+                You have no students yet.
+                <a [routerLink]="['/School/Teacher/Student/Create']"><button type="button" class="button-green">Add one</button></a>
+            </div>
+            <table cellspacing="0" *ngIf="!isLoading && initialDataSize > 0 && !hasError">
+                <tr>
+                    <th>First name</th>
+                    <th>Last name</th>
+                    <th>Email</th>
+                    <th>Activity</th>
+                    <th>Actions</th>
+                </tr>
+                <tr class="data-table-no-results" *ngIf="data.length == 0">
+                    <td colspan="5">
+                        No results
+                    </td>
+                </tr>
+                <tr *ngFor="#student of data">
+                    <td>{{ student.firstName }}</td>
+                    <td>{{ student.lastName }}</td>
+                    <td>{{ student.email }}</td>
+                    <td>{{ student.activityName }}</td>
+                    <td class="actions">
+                        <ul>
+                            <li><i class="delete" title="delete" (click)="delete(student)"></i></li>
+                            <li><i class="show" title="profile" (click)="profile1(student)"></i></li>
+                        </ul>
+                    </td>
+                </tr>
+                <tr class="input-row">
+                    <td>
+                        <input type="text" placeholder="Search first name" [ngFormControl]="searchRules.firstName" />
+                    </td>
+                    <td>
+                        <input type="text" placeholder="Search last name" [ngFormControl]="searchRules.lastName" />
+                    </td>
+                    <td>
+                        <input type="text" placeholder="Search email" [ngFormControl]="searchRules.email" />
+                    </td>
+                    <td></td>
+                    <td></td>
+                </tr>
+            </table>
+        </div>
+        <div class="footer" *ngIf="!isLoading && initialDataSize > 0 && !hasError">
+            <div class="showing">
+                Showing {{ data.length == 0 ? 0 : page * max + 1 }}
+                to {{ ((page + 1) * max) > total ? total : (page + 1) * max }}
+                of {{ total }} <span>entries</span>
+            </div>
+            <div class="page-selector">
+                <button [class.disabled]="page == 0" (click)="previousPage()">
+                    <i class="fa fa-arrow-left"></i>
+                </button>
+                <button>
+                    {{ page + 1 }}
+                </button>
+                <button [class.disabled]="(page + 1) * max >= total" (click)="nextPage()">
+                    <i class="fa fa-arrow-right"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

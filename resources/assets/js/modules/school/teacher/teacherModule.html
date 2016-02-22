@@ -91,13 +91,13 @@
                         </li>
                     </ul>
                 </li>
-                <li class="multi-level" [class.open]="subMenus.students">
+                <li class="multi-level" [class.open]="subMenus.students" [class.active]="router.isRouteActive(router.generate(['./Student']))">
                     <a href="javascript:;" (click)="toggleSubMenu('students')">
                         <i class="fa fa-group"></i>Students
                     </a>
                     <ul *ngIf="subMenus.students">
-                        <li>
-                            <a href="#">
+                        <li [class.active]="router.isRouteActive(router.generate(['./Student/Index']))">
+                            <a [routerLink]="['./Student/Index']">
                                 View
                             </a>
                         </li>

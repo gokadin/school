@@ -7,6 +7,7 @@ use App\Domain\Events\Event;
 use App\Domain\Setting\TeacherSettings;
 use Library\DataMapper\Collection\EntityCollection;
 use App\Domain\Common\Address;
+use Library\DataMapper\Collection\PersistentCollection;
 
 /**
  * @Entity(name="teachers")
