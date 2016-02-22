@@ -12,12 +12,6 @@
                             <div class="form-error" *ngIf="!title.valid && title.touched">title is required</div>
                         </div>
 
-                        <div class="form-row">
-                            <label for="description">Description</label>
-                            <textarea id="description" placeholder="Description (optional)" [ngFormControl]="form.controls['description']"
-                                      [class.valid]="description.touched" ></textarea>
-                        </div>
-
                         <div class="form-row start-row">
                             <label>From</label>
                             <div class="date-and-time-group">
@@ -44,27 +38,28 @@
                             </div>
                         </div>
 
-                        <!--<div class="form-row recurring-row-1" v-show="newEvent.isRecurring">-->
-                        <!--<label for="rRepeat">Repeat</label>-->
-                        <!--<select name="rRepeat" id="rRepeat" v-model="newEvent.rRepeat">-->
-                        <!--<option value="daily">Daily</option>-->
-                        <!--<option value="weekly">Weekly</option>-->
-                        <!--<option value="weekdays">Weekdays (Monday to Friday)</option>-->
-                        <!--<option value="monthly">Monthly</option>-->
-                        <!--<option value="yearly">Yearly</option>-->
-                        <!--</select>-->
-                        <!--</div>-->
+                        <div class="form-row recurring-row-1" *ngIf="form.controls['isRecurring'].value">
+                            <label for="rRepeat">Repeat</label>
+                            <select name="rRepeat" id="rRepeat" [ngFormControl]="form.controls['rRepeat']">
+                                <option value="daily">Daily</option>
+                                <option value="weekly">Weekly</option>
+                                <option value="weekdays">Weekdays (Monday to Friday)</option>
+                                <option value="monthly">Monthly</option>
+                                <option value="yearly">Yearly</option>
+                            </select>
+                        </div>
 
-                        <!--<div class="form-row recurring-row-2" v-show="newEvent.isRecurring">-->
-                        <!--<label>Ends</label>-->
-                        <!--<div class="checkbox-1">-->
-                        <!--<label>-->
-                        <!--<input type="checkbox" v-model="newEvent.rEndsNever" />-->
-                        <!--<i></i>Never-->
-                        <!--</label>-->
-                        <!--</div>-->
-                        <!--<datepicker class="datepicker" :model.sync="newEvent.rEndDate" v-show="!newEvent.rEndsNever"></datepicker>-->
-                        <!--</div>-->
+                        <div class="form-row recurring-row-2" *ngIf="form.controls['isRecurring'].value">
+                            <label>Ends</label>
+                            <div class="checkbox-1">
+                                <label>
+                                    <input type="checkbox" [ngFormControl]="form.controls['rEndsNever']" />
+                                    <i></i>Never
+                                </label>
+                            </div>
+                            <datepicker [control]="form.controls['rEndDate']" placeholder="End date"
+                                        *ngIf="!form.controls['rEndsNever'].value"></datepicker>
+                        </div>
 
                         <div class="form-row event-options">
                             <div class="checkbox-1">
@@ -101,6 +96,12 @@
                         </div>
 
                         <div class="more-options" *ngIf="showMoreOptions">
+
+                            <div class="form-row">
+                                <label for="description">Description</label>
+                                <textarea id="description" placeholder="Description (optional)" [ngFormControl]="form.controls['description']"
+                                      [class.valid]="description.touched" ></textarea>
+                            </div>
 
                         <!--<div class="form-row">-->
                         <!--<label>Activity</label>-->

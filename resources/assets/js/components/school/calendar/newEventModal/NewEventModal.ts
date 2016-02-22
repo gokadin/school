@@ -29,6 +29,9 @@ export class NewEventModal extends Modal {
     endTime: AbstractControl;
     isAllDay: AbstractControl;
     isRecurring: AbstractControl;
+    rRepeat: AbstractControl;
+    rEndsNever: AbstractControl;
+    rEndDate: AbstractControl;
 
     constructor(private fb: FormBuilder) {
         super();
@@ -53,9 +56,12 @@ export class NewEventModal extends Modal {
             'startDate': [this.data.startDate.format('YYYY-MM-DD')],
             'startTime': [this.data.startTime],
             'endDate': [this.data.endDate.format('YYYY-MM-DD')],
-            'endTime': [this.data.startTime],
+            'endTime': [this.data.endTime],
             'isAllDay': [this.data.isAllDay],
-            'isRecurring': [false]
+            'isRecurring': [false],
+            'rRepeat': ['weekly'],
+            'rEndsNever': [true],
+            'rEndDate': [this.data.endDate.format('YYYY-MM-DD')]
         });
 
         this.title = this.form.controls['title'];
@@ -65,7 +71,10 @@ export class NewEventModal extends Modal {
         this.endDate = this.form.controls['endDate'];
         this.endTime = this.form.controls['endTime'];
         this.isAllDay = this.form.controls['isAllDay'];
-        this.isRecurring = this.form.controls['isRecurring']
+        this.isRecurring = this.form.controls['isRecurring'];
+        this.rRepeat = this.form.controls['rRepeat'];
+        this.rEndsNever = this.form.controls['rEndsNever'];
+        this.rEndDate = this.form.controls['rEndDate'];
     }
 
     prepare(data: Object, callback: Function): void {
@@ -77,7 +86,10 @@ export class NewEventModal extends Modal {
     }
 
     onSubmit(): void {
-        this.callback(this.form.value);
+        let formValues = this.form.value;
+        formValues['color'] = this.selectedColor;
+
+        this.callback(formValues);
     }
 
     selectColor(color: string): void {
