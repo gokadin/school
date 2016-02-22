@@ -10,6 +10,7 @@ require('./timepicker.scss');
 export class Timepicker {
     @Input() control: AbstractControl;
     @Input() placeholder: string;
+    controlValue: string;
     show: boolean = true;
     mode: string;
     hours: Array<string>;
@@ -18,20 +19,30 @@ export class Timepicker {
     selectedMinute: string;
 
     constructor() {
+        this.controlValue = '';
+
         this.hours = ['00'];
         for (let i = 1; i < 24; i++) {
             this.hours.push(i.toString());
         }
 
-        this.minutes = ['00'];
-        for (let i = 1; i < 60; i++) {
+        this.minutes = ['00', '05'];
+        for (let i = 10; i < 60; i+= 5) {
             this.minutes.push(i.toString());
         }
 
+        this.selectDefaultTime();
+
+        this.mode = 'hours';
+    }
+
+    selectDefaultTime(): void {
         this.selectedHour = '12';
         this.selectedMinute = '00';
+    }
 
-        this.mode = 'minutes';
+    isTimeValid(timeString: string): boolean {
+        return /^[0-9]{1,2}:[0-9]{2}$/.test(timeString);
     }
 
     open() {
@@ -41,7 +52,13 @@ export class Timepicker {
 
         this.mode = 'hours';
 
-        // ... parse
+        if (this.control && this.isTimeValid(this.control.value)) {
+            let hourAndMinute = this.control.value.split(':');
+            this.selectedHour = hourAndMinute[0];
+            this.selectedMinute = hourAndMinute[1];
+        } else {
+            this.selectDefaultTime();
+        }
 
         this.show = true;
     }
@@ -72,10 +89,25 @@ export class Timepicker {
     selectHour(hour: string): void {
         this.selectedHour = hour;
         this.changeMode('minutes');
+
+        if (this.controlValue == '' || !this.isTimeValid(this.controlValue)) {
+            this.controlValue = hour + ':' + this.selectedMinute;
+        } else {
+            this.controlValue = hour + ':' + this.controlValue.split(':')[1];
+        }
     }
 
-    selectMinute(minute: string): void {
+    selectMinute(minute: string, e): void {
+        e.stopPropagation();
+
         this.selectedMinute = minute;
-        //this.close();
+
+        if (this.controlValue == '' || !this.isTimeValid(this.controlValue)) {
+            this.controlValue = this.selectedHour + ':' + minute;
+        } else {
+            this.controlValue = this.controlValue.split(':')[0] + ':' + minute;
+        }
+
+        this.close();
     }
 }

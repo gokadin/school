@@ -9,7 +9,7 @@
         <div class="picker-header">
             <div class="hours" [class.active]="mode == 'hours'" (click)="changeMode('hours')">{{ selectedHour }}</div>
             <div class="colon">:</div>
-            <div class="minutes" [class.active]="mode == 'minutes'" (click)="changeMode('minutes')">55</div>
+            <div class="minutes" [class.active]="mode == 'minutes'" (click)="changeMode('minutes')">{{ selectedMinute }}</div>
         </div>
         <div class="picker-body">
             <div class="circle">
@@ -23,9 +23,8 @@
                 </div>
                 <div class="minutes" *ngIf="mode == 'minutes'">
                     <div class="center-dot"></div>
-                    <div class="number" [class.number-invisible]="number % 5 != 0"
-                         [ngClass]="'minute-' + number" [class.active]="selectedMinute == number"
-                         *ngFor="#number of minutes" (click)="selectMinute(number)">
+                    <div class="number" [ngClass]="'minute-' + number" [class.active]="selectedMinute == number"
+                         *ngFor="#number of minutes" (click)="selectMinute(number, $event)">
                         {{ number }}
                     </div>
                     <div class="line" [ngClass]="'line-' + selectedMinute"></div>

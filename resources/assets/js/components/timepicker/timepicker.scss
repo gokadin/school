@@ -118,10 +118,6 @@
             background-color: rgba(38, 166, 164, 0.7);
           }
 
-          .number.number-invisible {
-            cursor: default;
-          }
-
           .line:after {
             content: "";
             position: absolute;
@@ -182,20 +178,30 @@
 
         .minutes {
           .minute-00 { top: 5px; left: 87px; }
-
+          .minute-05 { top: 18px; left: 127px; }
+          .minute-10 { top: 47px; left: 156px; }
           .minute-15 { top: 87px; right: 5px; }
-
+          .minute-20 { top: 127px; left: 156px; }
+          .minute-25 { top: 156px; left: 127px; }
           .minute-30 { bottom: 5px; left: 87px; }
-
+          .minute-35 { top: 156px; left: 47px; }
+          .minute-40 { top: 127px; left: 18px; }
           .minute-45 { top: 87px; left: 5px; }
+          .minute-50 { top: 47px; left: 18px; }
+          .minute-55 { top: 18px; left: 47px; }
 
           .line-00:after { transform: rotate(-90deg); }
-
+          .line-05:after { transform: rotate(-60deg); }
+          .line-10:after { transform: rotate(-30deg); }
           .line-15:after { transform: rotate(0deg); }
-
+          .line-20:after { transform: rotate(30deg); }
+          .line-25:after { transform: rotate(60deg); }
           .line-30:after { transform: rotate(90deg); }
-
+          .line-35:after { transform: rotate(120deg); }
+          .line-40:after { transform: rotate(150deg); }
           .line-45:after { transform: rotate(180deg); }
+          .line-50:after { transform: rotate(-150deg); }
+          .line-55:after { transform: rotate(-120deg); }
         }
       }
     }
