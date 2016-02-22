@@ -1,10 +1,9 @@
 <div class="modal-container" [hidden]="!show">
     <div class="modal-veil" (click)="cancelWithClick($event)">
         <div class="modal-content">
-            <div class="modal-1">
+            <div id="new-event-modal" class="modal-1">
                 <div class="header">New event</div>
                 <div class="body">
-
                     <form class="form-1" [ngFormModel]="form" (ngSubmit)="onSubmit()">
                         <div class="form-row">
                             <label for="title">Title</label>
@@ -19,16 +18,30 @@
                                       [class.valid]="description.touched" ></textarea>
                         </div>
 
-                        <div class="form-row date-and-time">
-                            <datepicker [control]="form.controls['startDate']" placeholder="Start date"></datepicker>
-                            <!--<select v-model="newEvent.startTime" v-show="!newEvent.isAllDay">-->
-                            <!--<option v-for="time in timeSelect" value="{{ time }}">{{ time }}</option>-->
-                            <!--</select>-->
-                            <!--<label class="to">to</label>-->
-                            <!--<datepicker class="datepicker" :model.sync="newEvent.endDate"></datepicker>-->
-                            <!--<select v-model="newEvent.endTime" v-show="!newEvent.isAllDay">-->
-                            <!--<option v-for="time in timeSelect" value="{{ time }}">{{ time }}</option>-->
-                            <!--</select>-->
+                        <div class="form-row start-row">
+                            <label>From</label>
+                            <div class="date-and-time-group">
+                                <div class="start-date">
+                                    <datepicker [control]="form.controls['startDate']" placeholder="Start date"></datepicker>
+                                </div>
+                                <div class="start-time">
+                                    <timepicker *ngIf="!form.controls['isAllDay'].value"
+                                                [control]="form.controls['startTime']" placeholder="Start time"></timepicker>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-row end-row">
+                            <label>To</label>
+                            <div class="date-and-time-group">
+                                <div class="end-date">
+                                    <datepicker [control]="form.controls['endDate']" placeholder="End date"></datepicker>
+                                </div>
+                                <div class="end-time">
+                                    <timepicker *ngIf="!form.controls['isAllDay'].value"
+                                                [control]="form.controls['endTime']" placeholder="End time"></timepicker>
+                                </div>
+                            </div>
                         </div>
 
                         <!--<div class="form-row recurring-row-1" v-show="newEvent.isRecurring">-->
@@ -53,37 +66,41 @@
                         <!--<datepicker class="datepicker" :model.sync="newEvent.rEndDate" v-show="!newEvent.rEndsNever"></datepicker>-->
                         <!--</div>-->
 
-                        <!--<div class="form-row event-options">-->
-                        <!--<div class="checkbox-1">-->
-                        <!--<label>-->
-                        <!--<input type="checkbox" v-model="newEvent.isAllDay" />-->
-                        <!--<i></i>All day-->
-                        <!--</label>-->
-                        <!--</div>-->
-                        <!--<div class="checkbox-1">-->
-                        <!--<label>-->
-                        <!--<input type="checkbox" v-model="newEvent.isRecurring" />-->
-                        <!--<i></i>Recurring-->
-                        <!--</label>-->
-                        <!--</div>-->
-                        <!--</div>-->
+                        <div class="form-row event-options">
+                            <div class="checkbox-1">
+                                <label>
+                                    <input type="checkbox" [ngFormControl]="form.controls['isAllDay']" />
+                                    <i></i>All day
+                                </label>
+                            </div>
+                            <div class="checkbox-1">
+                                <label>
+                                    <input type="checkbox" [ngFormControl]="form.controls['isRecurring']" />
+                                    <i></i>Recurring
+                                </label>
+                            </div>
+                        </div>
 
-                        <!--<div class="form-row">-->
-                        <!--<label>Color</label>-->
-                        <!--<div class="color-options">-->
-                        <!--<div-->
-                        <!--:class="['color-' + color, isColorSelected(color) ? 'color-selected' : '']"-->
-                        <!--v-for="color in eventColors"-->
-                        <!--@click="selectColor(color)"-->
-                        <!--&gt;</div>-->
-                        <!--</div>-->
-                        <!--</div>-->
+                        <div class="form-row">
+                            <label>Color</label>
+                            <div class="color-options">
+                                <div
+                                    [ngClass]="'color-' + color"
+                                    [class.color-selected]="color == selectedColor"
+                                    *ngFor="#color of eventColors"
+                                    (click)="selectColor(color)">
+                                </div>
+                            </div>
+                        </div>
 
-                        <!--<div :class="['more-options-toggler', showMoreOptions ? 'more-options-open' : '']" @click="showMoreOptions = !showMoreOptions">-->
-                        <!--More options<i class="fa"></i>-->
-                        <!--</div>-->
+                        <div
+                            class="more-options-toggler"
+                            [class.more-options-open]="showMoreOptions"
+                            (click)="showMoreOptions = !showMoreOptions">
+                            More options<i class="fa"></i>
+                        </div>
 
-                        <!--<div class="more-options" v-show="showMoreOptions">-->
+                        <div class="more-options" *ngIf="showMoreOptions">
 
                         <!--<div class="form-row">-->
                         <!--<label>Activity</label>-->
@@ -110,7 +127,7 @@
                         <!--&gt;</tag-select>-->
                         <!--</div>-->
 
-                        <!--</div>-->
+                        </div>
                     </form>
                 </div>
                 <div class="footer">

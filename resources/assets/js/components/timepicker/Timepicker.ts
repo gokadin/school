@@ -11,7 +11,7 @@ export class Timepicker {
     @Input() control: AbstractControl;
     @Input() placeholder: string;
     controlValue: string;
-    show: boolean = true;
+    show: boolean;
     mode: string;
     hours: Array<string>;
     minutes: Array<string>;

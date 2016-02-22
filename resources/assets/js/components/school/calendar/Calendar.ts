@@ -146,7 +146,11 @@ export class Calendar {
 
     openNewEventModal(date: Moment, modal: NewEventModal): void {
         modal.prepare({
-            startDate: date
+            startDate: date,
+            endDate: date,
+            startTime: '12:00',
+            endTime: '13:00',
+            isAllDay: true
         }, this.createNewEvent);
 
         modal.open();
