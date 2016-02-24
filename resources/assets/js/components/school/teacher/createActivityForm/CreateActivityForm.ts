@@ -1,22 +1,23 @@
 import {Component} from 'angular2/core';
-import {FORM_DIRECTIVES, FormBuilder, ControlGroup, Validators} from 'angular2/common';
-import {Http, Request} from 'angular2/http';
+import {FORM_DIRECTIVES, FormBuilder, Validators} from 'angular2/common';
+import {Http} from 'angular2/http';
 import {Router} from 'angular2/router';
 
 import {Flash} from "../../../flash/Flash";
+import {FormComponent} from "../../../FormComponent";
 
 @Component({
     selector: 'create-activity-form',
     directives: [FORM_DIRECTIVES],
     template: require('./createActivityForm.html')
 })
-export class CreateActivityForm {
-    form: ControlGroup;
-    submitEnabled: boolean = true;
+export class CreateActivityForm extends FormComponent{
     periods: Object[];
     createAnother: boolean;
 
-    constructor(fb:FormBuilder, private http:Http, private router:Router, private flash:Flash) {
+    constructor(fb: FormBuilder, http: Http, private router: Router, private flash: Flash) {
+        super('/api/school/teacher/activities/', http);
+
         flash.show(); // NOT WORKING!!!!!!!!!!!!!!!!!!!!!!!!!
         this.initializePeriods();
 
@@ -40,32 +41,7 @@ export class CreateActivityForm {
         ];
     }
 
-    onSubmit(value:Object):void {
-        if (!this.form.valid || !this.submitEnabled) {
-            this.form.find('name').markAsTouched();
-            this.form.find('rate').markAsTouched();
-
-            return;
-        }
-
-        this.submitEnabled = false;
-        this.submit(value);
-        this.afterSubmit();
-    }
-
-    submit(value:Object):void {
-        this.http.post('/api/school/teacher/activities/', JSON.stringify(value))
-            .subscribe(
-                () => {
-                    this.submitEnabled = true;
-                },
-                () => {
-                    this.submitEnabled = true;
-                }
-            );
-    }
-
-    afterSubmit():void {
+    afterSubmit(): void {
         if (!this.createAnother) {
             this.router.navigate(['/School/Teacher/Activity/Index']);
 

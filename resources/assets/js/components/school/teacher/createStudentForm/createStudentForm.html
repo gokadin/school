@@ -1,0 +1,37 @@
+<div class="panel-1">
+    <div class="panel-title">Add a student</div>
+
+    <form action="" class="form-1" [ngFormModel]="form" (ngSubmit)="onSubmit()">
+
+        <div class="form-row">
+            <label for="first-name">First name</label>
+            <input id="first-name" type="text" placeholder="First name (optional)" [ngFormControl]="form.controls['firstName']"
+                   [class.valid]="firstName.touched" />
+        </div>
+
+        <div class="form-row">
+            <label for="last-name">Last name</label>
+            <input id="last-name" type="text" placeholder="Last name (optional)" [ngFormControl]="form.controls['lastName']"
+                   [class.valid]="lastName.touched" />
+        </div>
+
+        <div class="form-row">
+            <label for="email">Email</label>
+            <input id="email" type="text" placeholder="Email" [ngFormControl]="form.controls['email']"
+                   [class.invalid]="!email.valid && email.touched" [class.valid]="email.valid && email.touched" />
+            <div class="form-error" *ngIf="!email.valid && email.touched">email is required</div>
+        </div>
+
+        <div class="form-buttons">
+            <div class="checkbox-1">
+                <label>
+                    <input type="checkbox" [(ngModel)]="createAnother" />
+                    <i></i>Add another
+                </label>
+            </div>
+
+            <button type="submit" class="button-green button-large" [class.disabled]="!form.valid || !submitEnabled">Send invitation</button>
+        </div>
+
+    </form>
+</div>

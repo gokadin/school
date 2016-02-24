@@ -101,8 +101,8 @@
                                 View
                             </a>
                         </li>
-                        <li>
-                            <a href="#)">
+                        <li [class.active]="router.isRouteActive(router.generate(['./Student/Create']))">
+                            <a [routerLink]="['./Student/Create']">
                                 Create
                             </a>
                         </li>
