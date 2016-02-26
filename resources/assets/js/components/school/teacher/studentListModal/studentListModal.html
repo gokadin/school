@@ -1,0 +1,44 @@
+<div class="modal-container" [hidden]="!show">
+    <div class="modal-veil" (click)="cancelWithClick($event)">
+        <div class="modal-content">
+            <div class="modal-1 student-list-modal">
+                <div class="header">Student list</div>
+                <div class="body">
+                    <div class="data-table-1">
+                        <div class="table">
+                            <div class="component-loading" *ngIf="loading"></div>
+                            <div class="no-data" *ngIf="!loading && students.length == 0">
+                                Could not find any students
+                                <a [routerLink]="['/School/Teacher/Student/Create']"><button type="button" class="button-green">Add one</button></a>
+                            </div>
+                            <div class="student-filter">
+                                <label>
+                                    <input type="text" placeholder="Type to filter" />
+                                </label>
+                            </div>
+                            <table *ngIf="!loading && students.length > 0">
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Email</th>
+                                    <th>Actions</th>
+                                </tr>
+                                <tr *ngFor="#student of students">
+                                    <td>{{ student.fullName }}</td>
+                                    <td>{{ student.email }}</td>
+                                    <td class="actions">
+                                        <ul>
+                                            <li><a class="show" title="profile" [routerLink]="['/School/Teacher/Student/Show', {id: student.id}]"></a></li>
+                                        </ul>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="footer">
+                    <button class="button-red" (click)="cancel()">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

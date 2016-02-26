@@ -20,6 +20,7 @@ $router->group(['namespace' => 'Api', 'prefix' => '/api', 'as' => 'api', 'middle
             {
                 $router->resource('ActivityController', ['store', 'update', 'delete']);
                 $router->get('/paginate', 'ActivityController@paginate');
+                $router->get('/{id}/students', 'ActivityController@students');
             });
 
             $router->group(['prefix' => '/students', 'as' => 'student'], function($router)

@@ -1,0 +1,19 @@
+#activity-list {
+  .student-count {
+    i {
+      display: block;
+      font-style: normal;
+      cursor: pointer;
+      width: 25px;
+      height: 25px;
+      line-height: 25px;
+      text-align: center;
+      border-radius: 3px;
+    }
+
+    i:hover {
+      background-color: #26a69a;
+      color: #fff;
+    }
+  }
+}

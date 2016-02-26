@@ -1,32 +1,43 @@
 import {Injectable, provide} from 'angular2/core';
-import {Http, Response} from 'angular2/http';
+import {Http} from 'angular2/http';
 import {Observable, Subject} from 'rxjs';
 
 import {Activity} from "../models/Activity";
+import {Student} from "../models/Student";
 
 @Injectable()
 export class ActivityService {
     paginated: Subject<Object>;
+    students: Subject<Object>;
 
     constructor(private http: Http) {
         this.paginated = new Subject<Object>();
+        this.students = new Subject<Object>();
+    }
+
+    fetchStudents(activity: Activity): void {
+        this.http.get('/api/school/teacher/activities/' + activity.id + '/students')
+            .map(data => data.json())
+            .map(data => data.students
+                .map(student => new Student(student)))
+            .subscribe(
+                students => this.students.next(students)
+            );
     }
 
     paginate(page: number, max: number, searchRules: Object = {}, sortingRules = {}): void {
         this.http.get('/api/school/teacher/activities/paginate?page=' + page + '&max=' +
             max + this.buildSearchParams(searchRules) + this.buildSortParams(sortingRules))
-            .map((data: Response) => data.json())
-            .map((data: any) => {
+            .map(data => data.json())
+            .map(data => {
                 return {
                     pagination: data.pagination,
                     activities: data.activities
-                        .map((activity: Object) => new Activity(activity))
+                        .map(activity => new Activity(activity))
                 }
             })
             .subscribe(
-                (data: Object) => {
-                    this.paginated.next(data);
-                }
+                data => this.paginated.next(data)
             );
     }
 

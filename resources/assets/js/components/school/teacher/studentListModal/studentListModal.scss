@@ -1,0 +1,26 @@
+.student-list-modal {
+  .student-filter {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    margin: 5px 0;
+
+    label {
+      input[type="text"] {
+        border: 1px solid #cccccc;
+        height: 30px;
+        width: 200px;
+        border-radius: 0;
+        padding: 3px;
+      }
+
+      input[type="text"]:focus {
+        border: 1px solid #808080;
+      }
+    }
+  }
+
+  table tr:last-child td {
+    border-bottom: none !important;
+  }
+}

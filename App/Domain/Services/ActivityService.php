@@ -20,16 +20,11 @@ class ActivityService extends AuthenticatedService
             $teacher->activities(), $page, $max > 20 ? 20 : $max, $sortingRules, $searchRules);
     }
 
-    public function getActivityStudentList($id)
+    public function studentList(Teacher $teacher, int $activityId): array
     {
-        $activity = $this->repository->of(Activity::class)->find($id);
-        if (is_null($activity))
-        {
-            return false;
-        }
+        $activity = $teacher->activities()->find($activityId);
 
-        return $this->transformer->of(Student::class)->only(['id', 'fullName'])
-            ->transform($activity->students()->toArray());
+        return is_null($activity) ? [] : $activity->students()->toArray();
     }
 
     public function create(array $data)

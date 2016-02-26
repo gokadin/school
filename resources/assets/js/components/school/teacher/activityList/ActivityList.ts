@@ -5,10 +5,13 @@ import {Control, AbstractControl} from 'angular2/common';
 
 import {ActivityService} from "../../../../services/ActivityService";
 import {Activity} from "../../../../models/Activity";
+import {StudentListModal} from "../studentListModal/StudentListModal";
+
+require('./activityList.scss');
 
 @Component({
     selector: 'activity-list',
-    directives: [ROUTER_DIRECTIVES],
+    directives: [ROUTER_DIRECTIVES, StudentListModal],
     template: require('./activityList.html')
 })
 export class ActivityList {
@@ -84,6 +87,17 @@ export class ActivityList {
 
         this.page--;
         this.fetchActivities();
+    }
+
+    showStudents(modal: StudentListModal, activity: Activity): void {
+        this.activityService.students.subscribe(
+            students => modal.setStudents(students)
+        );
+
+        modal.setLoading();
+        modal.open();
+
+        this.activityService.fetchStudents(activity);
     }
 
     delete(activity: Activity): void {

@@ -1,4 +1,4 @@
-<div class="panel-1">
+<div class="panel-1" id="activity-list">
     <div class="data-table-1">
         <div class="header">
             <div class="title">
@@ -29,7 +29,7 @@
                     <td>{{ activity.name }}</td>
                     <td>{{ activity.rate }}</td>
                     <td>{{ activity.period }}</td>
-                    <td class="student-count"><i>{{ activity.studentCount }}</i></td>
+                    <td class="student-count"><i (click)="showStudents(studentEventModal, activity)">{{ activity.studentCount }}</i></td>
                     <td class="actions">
                         <ul>
                             <li><i class="delete" title="delete" (click)="delete(activity)"></i></li>
@@ -72,3 +72,5 @@
         </div>
     </div>
 </div>
+
+<student-list-modal #studentEventModal></student-list-modal>
