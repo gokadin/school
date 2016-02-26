@@ -26,6 +26,7 @@ $router->group(['namespace' => 'Api', 'prefix' => '/api', 'as' => 'api', 'middle
             {
                 $router->get('/paginate', 'StudentController@paginate');
                 $router->get('/pending', 'StudentController@pending');
+                $router->resource('StudentController', ['show']);
             });
 
             $router->group(['prefix' => '/events', 'as' => 'event'], function($router)

@@ -6,12 +6,12 @@ use App\Http\Requests\Request;
 
 class PaginateRequest extends Request
 {
-    function authorize()
+    public function authorize(): bool
     {
         return true;
     }
 
-    function rules()
+    public function rules(): array
     {
         return [
             'page' => ['required', 'numeric'],

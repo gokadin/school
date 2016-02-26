@@ -266,25 +266,25 @@ button.disabled {
             cursor: pointer;
             margin-right: 10px;
 
-            i {
+            i, a {
               font-family: FontAwesome;
               content: "";
               font-style: normal;
               font-size: 20px;
             }
 
-            i.delete:after {
+            i.delete:after, a.delete:after {
               content: "\f00d";
               color: #a94442;
               font-size: 18px;
             }
 
-            i.update:after {
+            i.update:after, a.update:after {
               color: #4C4C4C;
               content: "\f040";
             }
 
-            i.show:after {
+            i.show:after, a.show:after{
               content: "\f06e";
               font-size: 17px;
             }
@@ -465,39 +465,6 @@ button.disabled {
 
 .switcher-1-content {
   margin-left: 260px;
-}
-
-.switcher-2 {
-  ul {
-    display: flex;
-    flex-wrap: wrap;
-    list-style: none;
-    background-color: white;
-    border-bottom: 1px solid #cccccc;
-    padding-left: 10px;
-
-    li {
-      height: 40px;
-      flex-basis: 140px;
-
-      a {
-        height: 100%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-
-        i {
-          margin-right: 7px;
-          position: relative;
-          top: -1px;
-        }
-      }
-    }
-
-    li.active, li:hover a { background-color: #f8f8f8; }
-
-    li.active { border-bottom: 2px solid #26a69a; }
-  }
 }
 
 .search-select {

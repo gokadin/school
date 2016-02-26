@@ -4,7 +4,6 @@ namespace App\Http\Translators\Api\School\Teacher\Student;
 
 use App\Domain\Services\StudentService;
 use App\Domain\Users\Authenticator;
-use App\Domain\Users\Student;
 use App\Domain\Users\TempStudent;
 use App\Http\Translators\AuthenticatedTranslator;
 use Library\Http\Request;

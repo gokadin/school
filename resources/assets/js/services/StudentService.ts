@@ -9,10 +9,26 @@ import {TempStudent} from "../models/TempStudent";
 export class StudentService {
     paginated: Subject<Object>;
     pending: Subject<Object>;
+    profile: Subject<Object>;
 
     constructor(private http: Http) {
         this.paginated = new Subject<Object>();
         this.pending = new Subject<Object>();
+        this.profile = new Subject<Object>();
+    }
+
+    fetchProfile(id: number): void {
+        this.http.get('/api/school/teacher/students/' + id)
+            .map((data: Response) => data.json())
+            .map(data => {
+                data.student = new Student(data.student);
+                return data;
+            })
+            .subscribe(
+                (data: Object) => {
+                    this.profile.next(data);
+                }
+            );
     }
 
     fetchPending(): void {

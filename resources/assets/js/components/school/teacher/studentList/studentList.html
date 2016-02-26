@@ -33,7 +33,7 @@
                     <td class="actions">
                         <ul>
                             <li><i class="delete" title="delete" (click)="delete(student)"></i></li>
-                            <li><i class="show" title="profile" (click)="profile1(student)"></i></li>
+                            <li><a class="show" title="profile" [routerLink]="['/School/Teacher/Student/Show', {id: student.id}]"></a></li>
                         </ul>
                     </td>
                 </tr>

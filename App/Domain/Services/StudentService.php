@@ -2,13 +2,31 @@
 
 namespace App\Domain\Services;
 
+use App\Domain\Processors\RegistrationFormProcessor;
+use App\Domain\Users\Authenticator;
 use App\Domain\Users\Student;
 use App\Domain\Users\Teacher;
-use App\Domain\Users\TempStudent;
 use App\Events\School\StudentPreRegistered;
+use App\Repositories\Repository;
+use Library\Events\EventManager;
+use Library\Queue\Queue;
+use Library\Transformer\Transformer;
 
 class StudentService extends AuthenticatedService
 {
+    /**
+     * @var RegistrationFormProcessor
+     */
+    private $registrationFormProcessor;
+
+    public function __construct(Queue $queue, EventManager $eventManager, Transformer $transformer, Repository $repository,
+                                Authenticator $authenticator, RegistrationFormProcessor $registrationFormProcessor)
+    {
+        parent::__construct($queue, $eventManager, $transformer, $repository, $authenticator);
+
+        $this->registrationFormProcessor = $registrationFormProcessor;
+    }
+
     public function findStudent($id)
     {
         return $this->user->students()->find($id);
@@ -81,13 +99,7 @@ class StudentService extends AuthenticatedService
 
         return [
             'student' => $student,
-            'registrationForm' => json_decode($student->teacher()->settings()->registrationForm(), true)
+            'profileInformation' => $this->registrationFormProcessor->buildProfileInformation($student)
         ];
-    }
-
-    public function newStudents()
-    {
-        return $this->transformer->of(TempStudent::class)
-            ->transform($this->repository->of(Student::class)->newStudentsOf($this->user)->toArray());
     }
 }

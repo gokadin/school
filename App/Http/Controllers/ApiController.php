@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use Library\Http\Response;
+
 abstract class ApiController extends Controller
 {
     const STATUS_OK = 200;
@@ -9,22 +11,27 @@ abstract class ApiController extends Controller
     const STATUS_INTERNAL_SERVER_ERROR = 500;
     const STATUS_BAD_REQUEST = 400;
 
-    public function respondOk($data = [])
+    protected function respond(array $data): Response
+    {
+        return $data ? $this->respondOk($data) : $this->respondBadRequest();
+    }
+
+    protected function respondOk($data = [])
     {
         return $this->response->json($data, self::STATUS_OK);
     }
 
-    public function respondUnauthorized($data = 'You are not authorized to perform this action.')
+    protected function respondUnauthorized($data = 'You are not authorized to perform this action.')
     {
         return $this->response->json($data, self::STATUS_UNAUTHORIZED);
     }
 
-    public function respondServerError($data = 'Internal server error.')
+    protected function respondServerError($data = 'Internal server error.')
     {
         return $this->response->json($data, self::STATUS_INTERNAL_SERVER_ERROR);
     }
 
-    public function respondBadRequest($data = 'Bad request.')
+    protected function respondBadRequest($data = 'Bad request.')
     {
         return $this->response->json($data, self::STATUS_BAD_REQUEST);
     }

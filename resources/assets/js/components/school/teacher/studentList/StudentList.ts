@@ -4,6 +4,7 @@ import {Router, ROUTER_DIRECTIVES} from 'angular2/router';
 import {Control, AbstractControl} from 'angular2/common';
 
 import {StudentService} from "../../../../services/StudentService";
+import {Student} from "../../../../models/Student";
 
 @Component({
     selector: 'student-list',
@@ -20,7 +21,7 @@ export class StudentList {
     total: number;
     searchRules: Object;
 
-    constructor(private studentService: StudentService) {
+    constructor(private studentService: StudentService, private router: Router) {
         this.isLoading = true;
         this.initialDataSize = 0;
         this.page = 0;
@@ -83,5 +84,9 @@ export class StudentList {
 
         this.page--;
         this.fetchStudents();
+    }
+
+    delete(student: Student): void {
+        // ...
     }
 }

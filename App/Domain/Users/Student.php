@@ -83,7 +83,7 @@ class Student extends User
 
     public function extraInfo()
     {
-        return json_decode($this->extraInfo, true);
+        return is_null($this->extraInfo) ? [] : json_decode($this->extraInfo, true);
     }
 
     public function setExtraInfo($extraInfo)

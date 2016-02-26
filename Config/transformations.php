@@ -35,7 +35,9 @@ return [
         'lastName' => function($o) { return $o->lastName(); },
         'fullName' => function($o) { return $o->firstName().' '.$o->lastName(); },
         'email' => function($o) { return $o->email(); },
-        'activityName' => function($o) { return $o->activity()->name(); }
+        'activityName' => function($o) { return $o->activity()->name(); },
+        'active' => function($o) { return $o->active(); },
+        'createdAt' => function($o) { return $o->createdAt(); }
     ],
 
     App\Domain\Events\Event::class => [

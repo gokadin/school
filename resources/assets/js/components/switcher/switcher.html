@@ -1,0 +1,7 @@
+<div class="switcher-2">
+    <ul>
+        <li *ngFor="#link of links" [class.active]="router.isRouteActive(router.generate(link.route))">
+            <a [routerLink]="link.route"><i class="fa" [ngClass]="link.icon"></i>{{ link.name }}</a>
+        </li>
+    </ul>
+</div>
