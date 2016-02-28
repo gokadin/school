@@ -1,6 +1,4 @@
-import {OnInit} from 'angular2/core';
-
-export class Modal implements OnInit {
+export class Modal {
     show: boolean;
 
     constructor() {
@@ -8,8 +6,8 @@ export class Modal implements OnInit {
     }
 
     ngOnInit() {
-        window.addEventListener('keyup', this.handleKeyUp); // not working
-    } 
+        window.addEventListener('keypress', e => this.handleKeyPress(e));
+    }
 
     open(): void {
         document.body.style.overflow = 'hidden';
@@ -17,6 +15,10 @@ export class Modal implements OnInit {
     }
 
     cancel(): void {
+        if (!this.show) {
+            return;
+        }
+
         document.body.style.overflow = 'auto';
         this.show = false;
     }
@@ -29,9 +31,8 @@ export class Modal implements OnInit {
         this.cancel();
     }
 
-    handleKeyUp(e): void {
-        console.log(this.show);
-        if (this.show && e.keyCode == 27) {
+    handleKeyPress(e): void {
+        if (e.keyCode == 27) {
             this.cancel();
         }
     }

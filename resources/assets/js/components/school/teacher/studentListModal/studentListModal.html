@@ -11,7 +11,7 @@
                                 Could not find any students
                                 <a [routerLink]="['/School/Teacher/Student/Create']"><button type="button" class="button-green">Add one</button></a>
                             </div>
-                            <div class="student-filter">
+                            <div class="student-filter" *ngIf="!loading && students.length > 0">
                                 <label>
                                     <input type="text" placeholder="Type to filter" />
                                 </label>

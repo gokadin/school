@@ -16,6 +16,10 @@ $router->group(['namespace' => 'Api', 'prefix' => '/api', 'as' => 'api', 'middle
 
         $router->group(['namespace' => 'Teacher', 'prefix' => '/teacher', 'as' => 'teacher'], function($router)
         {
+            $router->group(['prefix' => '/search', 'as' => 'search'], function($router) {
+                $router->get('/general/{search}', 'SearchController@generalSearch');
+            });
+
             $router->group(['prefix' => '/activities', 'as' => 'activity'], function($router)
             {
                 $router->resource('ActivityController', ['store', 'update', 'delete']);

@@ -1,4 +1,5 @@
-<div class="timepicker" tabindex="-1" [class.open]="show" (click)="open()" (focus)="open()" (blur)="close()">
+<div class="timepicker" tabindex="-1" [class.open]="show" (click)="open()" (focus)="open()" (blur)="close()"
+     (keypress)="handleKeyPress($event)">
     <div class="input-container">
         <input type="text" disabled [ngFormControl]="control"
                [placeholder]="placeholder" [(ngModel)]="controlValue" />

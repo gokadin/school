@@ -2,13 +2,15 @@
 
 namespace App\Http\Controllers\Api\School\Teacher;
 
-use App\Domain\Services\SearchService;
-use App\Http\Controllers\Api\ApiController;
+use App\Http\Controllers\ApiController;
+use App\Http\Requests\Api\School\Teacher\Search\GeneralSearchRequest;
+use App\Http\Translators\Api\School\Teacher\Search\GeneralSearchTranslator;
+use Library\Http\Response;
 
 class SearchController extends ApiController
 {
-    public function index(SearchService $searchService, $search)
+    public function generalSearch(GeneralSearchRequest $request, GeneralSearchTranslator $translator): Response
     {
-        return $this->respondOk($searchService->searchAllForTeacher(urldecode($search)));
+        return $this->respond($translator->translateRequest($request));
     }
 }

@@ -24,7 +24,7 @@ export class StudentProfile {
             data => {
                 this.student = data.student;
                 this.profileInformation = data.profileInformation;
-                this.loading = false; // do loading and error
+                this.loading = false;
             }
         );
 

@@ -9,10 +9,11 @@ import {IndexModule} from "./index/IndexModule";
 import {ActivityModule} from "./activity/ActivityModule";
 import {StudentModule} from "./student/StudentModule";
 import {CalendarModule} from "./calendar/CalendarModule";
+import {GeneralSearch} from "../../../components/school/teacher/generalSearch/GeneralSearch";
 
 @Component({
     selector: 'teacher-module',
-    directives: [ROUTER_DIRECTIVES],
+    directives: [ROUTER_DIRECTIVES, GeneralSearch],
     template: require('./teacherModule.html')
 })
 @RouteConfig([

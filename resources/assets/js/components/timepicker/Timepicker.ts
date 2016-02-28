@@ -110,4 +110,11 @@ export class Timepicker {
 
         this.close();
     }
+
+    handleKeyPress(e): void {
+        if (e.keyCode == 27 && this.show) {
+            e.stopPropagation();
+            this.close();
+        }
+    }
 }

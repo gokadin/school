@@ -96,4 +96,11 @@ export class Datepicker {
             this.cols.push(i);
         }
     }
+
+    handleKeyPress(e): void {
+        if (e.keyCode == 27 && this.show) {
+            e.stopPropagation();
+            this.close();
+        }
+    }
 }

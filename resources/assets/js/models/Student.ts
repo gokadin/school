@@ -18,7 +18,10 @@ export class Student {
         this.fullName = obj && obj.fullName || '';
         this.email = obj && obj.email || 0;
         this.activityName = obj && obj.activityName || '';
-        this.dateRegistered = obj && moment(obj.createdAt.date) || null;
         this.active = obj && obj.active || false;
+
+        if (obj && obj.createdAt) {
+            this.dateRegistered = moment(obj.createdAt.date);
+        }
     }
 }

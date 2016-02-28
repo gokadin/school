@@ -1,0 +1,35 @@
+<div class="general-search">
+    <div class="search-container">
+        <input type="text" placeholder="Search..." maxlength="50" autocomplete="off" [ngFormControl]="searchInput"
+               (focus)="open()" (click)="open()" (blur)="close()" [(ngModel)]="searchInputModel"
+               (keypress)="handleKeyPress($event.keyCode)" />
+        <i class="fa fa-search"></i>
+    </div>
+    <div class="results-container" *ngIf="show && touched" (mousedown)="ignoreClick($event)">
+        <div id="general-search-results" class="results">
+            <div class="no-results" *ngIf="!haveData()">
+                no results
+            </div>
+            <div class="result-section" *ngIf="students.length > 0">
+                <div class="title">
+                    <div>students</div>
+                    <div>{{ students.length }}{{ students.length == 10 ? '+' : '' }} {{ students.length > 1 ? 'results' : 'result' }}</div>
+                </div>
+                <div class="row" *ngFor="#student of students; #i = index" [class.selected]="selectedIndex == i"
+                     (click)="routeToStudent(student)">
+                    {{ student.firstName}} {{ student.lastName }}
+                </div>
+            </div>
+            <dib class="result-section" *ngIf="activities.length > 0">
+                <div class="title">
+                    <div>Activities</div>
+                    <div>{{ activities.length }}{{ activities.length == 10 ? '+' : '' }} {{ activities.length > 1 ? 'results' : 'result' }}</div>
+                </div>
+                <div class="row" *ngFor="#activity of activities; #i = index" [class.selected]="selectedIndex - students.length == i"
+                     (click)="routeToActivities()">
+                    {{ activity.name }}
+                </div>
+            </dib>
+        </div>
+    </div>
+</div>
