@@ -129,27 +129,6 @@ class EventService extends AuthenticatedService
             return Carbon::parse($a['startDate'])->lt(Carbon::parse($b['startDate'])) ? -1 : 1;
         });
 
-        $grouped = [];
-        foreach ($events as $event)
-        {
-            if (sizeof($grouped) == 4)
-            {
-                array_pop($grouped);
-                break;
-            }
-
-            $grouped[$event['startDate']][] = $event;
-        }
-
-        $groupedArray = [];
-        foreach ($grouped as $key => $group)
-        {
-            $groupedArray[] = [
-                'date' => $key,
-                'events' => $group
-            ];
-        }
-
         return $events;
     }
 

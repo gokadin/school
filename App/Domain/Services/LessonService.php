@@ -4,41 +4,43 @@ namespace App\Domain\Services;
 
 use App\Domain\Events\Event;
 use App\Domain\Events\Lesson;
+use App\Domain\Processors\EventProcessor;
+use App\Domain\Users\Authenticator;
 use App\Domain\Users\Student;
+use App\Repositories\Repository;
 use Carbon\Carbon;
+use Library\Events\EventManager;
+use Library\Queue\Queue;
+use Library\Transformer\Transformer;
 
 class LessonService extends AuthenticatedService
 {
-    public function range($id, $data)
+    /**
+     * @var EventProcessor
+     */
+    private $eventProcessor;
+
+    public function __construct(Queue $queue, EventManager $eventManager, Transformer $transformer,
+                                Repository $repository, Authenticator $authenticator, EventProcessor $eventProcessor)
     {
-        $student = $this->repository->of(Student::class)->find($id);
+        parent::__construct($queue, $eventManager, $transformer, $repository, $authenticator);
 
-        $from = Carbon::parse($data['from']);
-        $to = Carbon::parse($data['to']);
-        $lessons = $student->lessons()->where('absoluteEnd', '>', $from->toDateString())
-            ->where('absoluteStart', '<', $to->toDateString())
-            ->toArray();;
+        $this->eventProcessor = $eventProcessor;
+    }
 
-        $lessons = $this->readLessons($lessons, $from, $to);
+    public function getLessons(Student $student, Carbon $from, Carbon $to)
+    {
+//        $lessons = $student->lessons()->where('absoluteEnd', '>', $from->toDateString())
+//            ->where('absoluteStart', '<', $to->toDateString())
+//            ->toArray();
 
-        $grouped = [];
-        foreach ($lessons as $lesson)
-        {
-            $grouped[$lesson['startDate']][] = $lesson;
-        }
+//        $lessons = $this->eventProcessor->extractLessons($lessons, $from, $to);
+//
+//        usort($lessons, function($a, $b) {
+//            return Carbon::parse($a->event()->startDate())->lt(Carbon::parse($b->event()->startDate())) ? -1 : 1;
+//        });
 
-        $groupedArray = [];
-        foreach ($grouped as $key => $group)
-        {
-            $groupedArray[] = [
-                'date' => $key,
-                'lessons' => $group
-            ];
-        }
-
-        return [
-            'lessons' => $groupedArray
-        ];
+        return $student->lessons()->toArray();
     }
 
     public function updateAttendance(array $data)
@@ -50,108 +52,5 @@ class LessonService extends AuthenticatedService
             : $lesson->miss(Carbon::parse($data['date']));
 
         $this->repository->of(Event::class)->updateLesson($lesson);
-    }
-
-    public function readLessons(array $lessons, Carbon $minDate, Carbon $maxDate, $maxPerRecurrence = 99999)
-    {
-        $result = [];
-        foreach ($lessons as $lesson)
-        {
-            $event = $lesson->event();
-            $transformed = $this->transformer->of(Lesson::class)->transform($lesson);
-
-            if (!$event->isRecurring())
-            {
-                $result[] = $transformed;
-
-                continue;
-            }
-
-            $result = array_merge($result, $this->readRecurringLesson($transformed, $event, $lesson->missedDates(), $minDate, $maxDate, $maxPerRecurrence));
-        }
-
-        return $result;
-    }
-
-    private function readRecurringLesson(array $transformed, Event $event, array $missedDates, Carbon $minDate, Carbon $maxDate, $maxPerRecurrence)
-    {
-        list($startDate, $endDate) = $this->initialRecurringDates($transformed['startDate'], $transformed['endDate'], $event->rRepeat(), $minDate);
-
-        $recurrence = $transformed;
-        $recurrence['startDate'] = $startDate->toDateString();
-        $recurrence['endDate'] = $endDate->toDateString();
-        $recurrence['attended'] = !isset($missedDates[$recurrence['startDate']]);
-
-        $result = [];
-        if (!in_array($startDate->toDateString(), $event->skipDates()))
-        {
-            $result[] = $recurrence;
-        }
-
-        for ($i = 0; $i < $maxPerRecurrence; $i++)
-        {
-            list($startDate, $endDate) = $this->nextRecurringDates($event->rRepeat(), $startDate, $endDate);
-
-            if (in_array($startDate->toDateString(), $event->skipDates()))
-            {
-                continue;
-            }
-
-            if ($startDate->gt($maxDate))
-            {
-                return $result;
-            }
-
-            $recurrence = $transformed;
-            $recurrence['startDate'] = $startDate->toDateString();
-            $recurrence['endDate'] = $endDate->toDateString();
-            $recurrence['attended'] = !isset($missedDates[$recurrence['startDate']]);
-
-            $result[] = $recurrence;
-        }
-
-        return $result;
-    }
-
-    private function initialRecurringDates($startDate, $endDate, $rRepeat, Carbon $minDate)
-    {
-        $startDate = Carbon::parse($startDate);
-        $endDate = Carbon::parse($endDate);
-
-        if ($minDate->lte($startDate))
-        {
-            return [$startDate, $endDate];
-        }
-
-        switch ($rRepeat)
-        {
-            case 'daily':
-                $diffInDays = $startDate->diffInDays($minDate);
-                return [$startDate->addDays($diffInDays), $endDate->addDays($diffInDays)];
-            case 'weekly':
-                $diffInWeeks = $startDate->diffInWeeks($minDate);
-                return [$startDate->addWeeks($diffInWeeks), $endDate->addWeeks($diffInWeeks)];
-            case 'monthly':
-                $diffInMonths = $startDate->diffInMonths($minDate);
-                return [$startDate->addMonths($diffInMonths), $endDate->addMonths($diffInMonths)];
-            case 'yearly':
-                $diffInYears = $startDate->diffInYears($minDate);
-                return [$startDate->addYears($diffInYears), $endDate->addYears($diffInYears)];
-        }
-    }
-
-    private function nextRecurringDates($repeat, Carbon $startDate, Carbon $endDate)
-    {
-        switch ($repeat)
-        {
-            case 'daily':
-                return [$startDate->addDay(), $endDate->addDay()];
-            case 'weekly':
-                return [$startDate->addWeek(), $endDate->addWeek()];
-            case 'monthly':
-                return [$startDate->addMonth(), $endDate->addMonth()];
-            case 'yearly':
-                return [$startDate->addYear(), $endDate->addYear()];
-        }
     }
 }

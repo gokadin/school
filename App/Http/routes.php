@@ -32,6 +32,7 @@ $router->group(['namespace' => 'Api', 'prefix' => '/api', 'as' => 'api', 'middle
                 $router->get('/paginate', 'StudentController@paginate');
                 $router->get('/pending', 'StudentController@pending');
                 $router->resource('StudentController', ['show']);
+                $router->get('/{id}/lessons', 'StudentController@lessons');
             });
 
             $router->group(['prefix' => '/events', 'as' => 'event'], function($router)
@@ -49,16 +50,6 @@ $router->group(['namespace' => 'Api', 'prefix' => '/api', 'as' => 'api', 'middle
 //
 //        $router->group(['namespace' => 'Teacher', 'prefix' => '/teacher', 'as' =>'teacher'], function($router)
 //        {
-//            $router->get('/search/{search}', 'SearchController@index');
-//
-//            $router->group(['prefix' => '/activities', 'as' => 'activity'], function($router) {
-//                $router->get('/', 'ActivityController@getAll');
-//                $router->post('/', 'ActivityController@index');
-//                $router->get('/{id}/students', 'ActivityController@students');
-//                $router->delete('/{activityId}', 'ActivityController@destroy');
-//                $router->put('/{activityId}', 'ActivityController@update');
-//            });
-//
 //            $router->group(['prefix' => '/students', 'as' => 'student'], function($router) {
 //                $router->get('/new-students', 'StudentController@newStudents');
 //                $router->post('/', 'StudentController@index');

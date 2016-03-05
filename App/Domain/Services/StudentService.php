@@ -8,6 +8,7 @@ use App\Domain\Users\Student;
 use App\Domain\Users\Teacher;
 use App\Events\School\StudentPreRegistered;
 use App\Repositories\Repository;
+use Carbon\Carbon;
 use Library\Events\EventManager;
 use Library\Queue\Queue;
 use Library\Transformer\Transformer;
@@ -93,7 +94,7 @@ class StudentService extends AuthenticatedService
         return true;
     }
 
-    public function getProfile($id)
+    public function getProfile($id): array
     {
         $student = $this->repository->of(Student::class)->find($id);
 

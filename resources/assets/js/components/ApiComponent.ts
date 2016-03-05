@@ -3,8 +3,8 @@ export class ApiComponent {
     isLoading: boolean = true;
     hasError: boolean = false;
 
-    subscribeToSource(x) {
-        x.subscribe(
+    subscribeToSource(source) {
+        source.subscribe(
             data => {
                 this.hasError = false;
                 this.isLoading = false;

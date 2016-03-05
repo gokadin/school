@@ -162,7 +162,7 @@ export class GeneralSearch {
         } else {
             selectedPosition = (this.selectedIndex + 1) * 30 + 44;
         }
-        
+
         if (selectedPosition > el.scrollTop + 400) {
             el.scrollTop = selectedPosition - 400;
         } else if (selectedPosition <= el.scrollTop + 22) {

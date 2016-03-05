@@ -1,20 +1,37 @@
 import {Injectable, provide} from 'angular2/core';
 import {Http, Response} from 'angular2/http';
 import {Observable, Subject} from 'rxjs';
+import moment = require("moment");
 
 import {Student} from "../models/Student";
 import {TempStudent} from "../models/TempStudent";
+import {Lesson} from "../models/Lesson";
 
 @Injectable()
 export class StudentService {
     paginated: Subject<Object>;
     pending: Subject<Object>;
     profile: Subject<Object>;
+    lessons: Subject<Object>;
 
     constructor(private http: Http) {
         this.paginated = new Subject<Object>();
         this.pending = new Subject<Object>();
         this.profile = new Subject<Object>();
+        this.lessons = new Subject<Object>();
+    }
+
+    fetchLessons(id: number): void {
+        let from = moment().subtract(1, 'months').format('YYYY-MM-DD');
+        let to = moment().format('YYYY-MM-DD');
+
+        this.http.get('/api/school/teacher/students/' + id + '/lessons?from=' + from + '&to=' + to)
+            .map(data => data.json())
+            //.map(data => data.lessons
+            //    .map(lesson => new Lesson(lesson)))
+            .subscribe(
+                data => this.lessons.next(data.lessons)
+            );
     }
 
     fetchProfile(id: number): void {
@@ -25,9 +42,7 @@ export class StudentService {
                 return data;
             })
             .subscribe(
-                (data: Object) => {
-                    this.profile.next(data);
-                }
+                (data: Object) => this.profile.next(data)
             );
     }
 
