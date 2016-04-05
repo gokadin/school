@@ -205,10 +205,10 @@ module.exports = function (content) {
 
     this.cacheable();
 
-    sassOptions.data = content;
+    sassOptions.data = sassOptions.data ? (sassOptions.data + os.EOL + content) : content;
 
     // Skip empty files, otherwise it will stop webpack, see issue #21
-    if (content.trim() === '') {
+    if (sassOptions.data.trim() === '') {
         return isSync ? content : callback(null, content);
     }
 
@@ -235,7 +235,14 @@ module.exports = function (content) {
     }
 
     // indentedSyntax is a boolean flag
-    sassOptions.indentedSyntax = Boolean(sassOptions.indentedSyntax);
+    var ext = path.extname(resourcePath);
+
+    // If we are compling sass and indentedSyntax isn't set, automatically set it.
+    if (ext && ext.toLowerCase() === '.sass' && sassOptions.indentedSyntax === undefined) {
+        sassOptions.indentedSyntax = true;
+    } else {
+        sassOptions.indentedSyntax = Boolean(sassOptions.indentedSyntax);
+    }
 
     // Allow passing custom importers to `node-sass`. Accepts `Function` or an array of `Function`s.
     sassOptions.importer = sassOptions.importer ? [].concat(sassOptions.importer) : [];
