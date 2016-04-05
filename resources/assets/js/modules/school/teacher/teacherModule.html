@@ -136,8 +136,8 @@
                         </li>
                     </ul>
                 </li>
-                <li>
-                    <a href="#">
+                <li [class.active]="router.isRouteActive(router.generate(['./Account']))">
+                    <a [routerLink]="['./Account/Profile']">
                         <i class="fa fa-user"></i>Account
                     </a>
                 </li>

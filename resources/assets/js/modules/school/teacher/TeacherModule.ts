@@ -10,6 +10,7 @@ import {ActivityModule} from "./activity/ActivityModule";
 import {StudentModule} from "./student/StudentModule";
 import {CalendarModule} from "./calendar/CalendarModule";
 import {GeneralSearch} from "../../../components/school/teacher/generalSearch/GeneralSearch";
+import {AccountModule} from "./account/AccountModule";
 
 @Component({
     selector: 'teacher-module',
@@ -21,6 +22,7 @@ import {GeneralSearch} from "../../../components/school/teacher/generalSearch/Ge
     { path: '/activities/...', name: 'Activity', component: ActivityModule},
     { path: '/students/...', name: 'Student', component: StudentModule},
     { path: '/calendar/...', name: 'Calendar', component: CalendarModule},
+    { path: '/account/...', name: 'Account', component: AccountModule }
 ])
 export class TeacherModule {
     subMenus: Object;
