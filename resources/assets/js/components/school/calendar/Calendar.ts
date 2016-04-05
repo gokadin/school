@@ -1,5 +1,4 @@
 import {Component} from 'angular2/core';
-import {Router} from 'angular2/router';
 import moment = require('moment');
 import Moment = moment.Moment;
 
@@ -21,8 +20,14 @@ export class Calendar {
     dates: any;
     rows: number[];
     cols: number[];
+    hours: number[];
+    mode: string;
+    weekViewLoaded: boolean = false;
 
-    constructor(private eventService: EventService, private router: Router, fb: FormBuilder) {
+    constructor(private eventService: EventService, fb: FormBuilder) {
+        this.loadWeekView(); // remove
+        this.mode = 'week'; // change
+
         this.currentDate = moment();
 
         eventService.calendarEvents
@@ -72,6 +77,16 @@ export class Calendar {
         for (let i = 0; i < 7; i++) {
             this.cols.push(i);
         }
+    }
+
+    loadWeekView(): void {
+        this.hours = [];
+
+        for (let i = 1; i < 25; i++) {
+            this.hours.push(i);
+        }
+
+        this.weekViewLoaded = true;
     }
 
     getIndexFromDate(date: Moment): number {
@@ -162,10 +177,38 @@ export class Calendar {
     }
 
     showMonthlyCalendar(): void {
+        if (this.mode == 'month') {
+            return;
+        }
 
+        this.mode = 'month';
     }
 
     showWeeklyCalendar(): void {
+        if (this.mode == 'week') {
+            return;
+        }
 
+        if (!this.weekViewLoaded) {
+            this.loadWeekView();
+        }
+
+        this.mode = 'week';
+    }
+
+    enterAvailabilityMode(): void {
+        if (this.mode != 'week') {
+            return;
+        }
+
+        this.mode = 'availability';
+    }
+
+    exitAvailabilityMode(): void {
+        if (this.mode != 'availability') {
+            return;
+        }
+
+        this.mode = 'week';
     }
 }
