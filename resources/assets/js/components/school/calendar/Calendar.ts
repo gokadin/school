@@ -162,7 +162,7 @@ export class Calendar {
     }
 
     showMonthlyCalendar(): void {
-        router.navigate(['./Calendar']);
+
     }
 
     showWeeklyCalendar(): void {
