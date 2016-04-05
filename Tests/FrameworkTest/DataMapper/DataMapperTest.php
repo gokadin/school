@@ -6,6 +6,8 @@ use Library\DataMapper\Collection\PersistentCollection;
 use Tests\FrameworkTest\TestData\DataMapper\AddressTwo;
 use Library\DataMapper\Collection\EntityCollection;
 use Tests\FrameworkTest\TestData\DataMapper\Address;
+use Tests\FrameworkTest\TestData\DataMapper\Event;
+use Tests\FrameworkTest\TestData\DataMapper\Lesson;
 use Tests\FrameworkTest\TestData\DataMapper\SimpleEntity;
 use Tests\FrameworkTest\TestData\DataMapper\Student;
 use Tests\FrameworkTest\TestData\DataMapper\Teacher;
@@ -1214,5 +1216,36 @@ class DataMapperTest extends DataMapperBaseTest
         // Assert
         $this->assertEquals(0, sizeof($studentData));
         $this->assertEquals(0, sizeof($teacherData));
+    }
+
+    /* MANY TO MANY FINDS */
+
+    public function testManyToManyFind()
+    {
+        // Arrange
+        $this->setUpAssociations();
+        $teacher = new Teacher('Tom');
+        $this->dm->persist($teacher);
+        $student = new Student('student1', $teacher);
+        $this->dm->persist($student);
+        $teacher->addStudent($student);
+        $event = new Event('event1');
+        $this->dm->persist($event);
+        $lesson = new Lesson('lesson1', $student, $event);
+        $this->dm->persist($lesson);
+        $event->addLesson($lesson);
+        $student->addLesson($lesson);
+        $this->dm->flush();
+        $studentId = $student->getId();
+
+        // Act
+        $this->dm->detachAll();
+        $student = $this->dm->find(Student::class, $studentId);
+
+        // Assert
+        $this->assertNotNull($student);
+        $this->assertEquals(1, $student->lessons()->count());
+        $this->assertEquals('lesson1', $student->lessons()->first()->name());
+        $this->assertEquals('event1', $student->lessons()->first()->event()->name());
     }
 }

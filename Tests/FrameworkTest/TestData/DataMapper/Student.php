@@ -2,6 +2,7 @@
 
 namespace Tests\FrameworkTest\TestData\DataMapper;
 
+use Library\DataMapper\Collection\EntityCollection;
 use Library\DataMapper\DataMapperTimestamps;
 
 /** @Entity */
@@ -18,10 +19,14 @@ class Student
     /** @BelongsTo(target="Tests\FrameworkTest\TestData\DataMapper\Teacher") */
     protected $teacher;
 
+    /** @HasMany(target="Tests\FrameworkTest\TestData\DataMapper\Lesson", mappedBy="student", nullable) */
+    protected $lessons;
+
     public function __construct($name, $teacher)
     {
         $this->name = $name;
         $this->teacher = $teacher;
+        $this->lessons = new EntityCollection();
     }
 
     public function getId()
@@ -47,5 +52,20 @@ class Student
     public function teacher()
     {
         return $this->teacher;
+    }
+
+    public function lessons()
+    {
+        return $this->lessons;
+    }
+
+    public function addLesson($lesson)
+    {
+        $this->lessons->add($lesson);
+    }
+
+    public function removeLesson($lesson)
+    {
+        $this->lessons->remove($lesson);
     }
 }

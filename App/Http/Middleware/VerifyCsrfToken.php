@@ -22,20 +22,23 @@ class VerifyCsrfToken
 
     public function handle(Request $request, Closure $next)
     {
-        if (in_array($request->method(), $this->methodsToVerify))
+        if (!in_array($request->method(), $this->methodsToVerify))
         {
-            $token = $this->session->generateToken();
-            if ($request->data('_token') != $token && $request->header('CSRFTOKEN') != $token)
-            {
-                if ($request->isJson())
-                {
-                    $this->response->json([], 401);
-                    $this->response->executeResponse();
-                    return;
-                }
+            return $next($request);
+        }
 
-                throw new RuntimeException('CSRF token mismatch.');
-            }
+        $token = $this->session->generateToken();
+        if ($request->isJson() && $request->header('csrftoken') != $token)
+        {
+            $this->response->json([], 401);
+            $this->response->executeResponse();
+            return;
+        }
+
+        if (!$request->isJson() && $request->data('_token') != $token)
+        {
+            throw new RuntimeException('CSRF token mismatch.');
+            return;
         }
 
         return $next($request);

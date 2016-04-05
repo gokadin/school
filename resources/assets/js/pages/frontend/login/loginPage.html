@@ -2,23 +2,23 @@
 
     <form class="form-fe-1" [ngFormModel]="form" (ngSubmit)="login(form.value)">
 
-    <div class="form-title">
-        Login
-    </div>
+        <div class="form-title">
+            Login
+        </div>
 
-    <div class="form-row">
-        <label for="email">Email</label>
-        <input type="text" id="email" [ngFormControl]="form.controls['email']" />
-    </div>
+        <div class="form-row">
+            <label for="email">Email</label>
+            <input type="text" id="email" [ngFormControl]="form.controls['email']" />
+        </div>
 
-    <div class="form-row">
-        <label for="password">Password</label>
-        <input type="password" id="password" [ngFormControl]="form.controls['password']" />
-    </div>
+        <div class="form-row">
+            <label for="password">Password</label>
+            <input type="password" id="password" [ngFormControl]="form.controls['password']" />
+        </div>
 
-    <div class="form-button">
-        <button type="submit">Login</button>
-    </div>
+        <div class="form-button">
+            <button type="submit">Login</button>
+        </div>
 
     </form>
 

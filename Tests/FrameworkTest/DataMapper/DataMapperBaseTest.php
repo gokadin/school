@@ -2,6 +2,8 @@
 
 namespace Tests\FrameworkTest\DataMapper;
 
+use Tests\FrameworkTest\TestData\DataMapper\Event;
+use Tests\FrameworkTest\TestData\DataMapper\Lesson;
 use Library\DataMapper\DataMapper;
 use Library\DataMapper\EntityCollection;
 use Tests\FrameworkTest\BaseTest;
@@ -70,7 +72,9 @@ abstract class DataMapperBaseTest extends BaseTest
             Teacher::class,
             Student::class,
             Address::class,
-            AddressTwo::class
+            AddressTwo::class,
+            Lesson::class,
+            Event::class
         ];
 
         $this->setUpBase();
