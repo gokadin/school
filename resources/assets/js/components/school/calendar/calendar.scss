@@ -15,37 +15,60 @@
       line-height: 35px;
     }
 
+    button:disabled {
+      cursor: not-allowed !important;
+      background-color: #f2f2f2;
+    }
+
     button:hover {
       background-color: #f2f2f2;
       cursor: pointer;
     }
 
     .navigation {
-      flex-basis: 25%;
+      flex-basis: 35%;
+      display: flex;
 
-      button { width: 35px; }
+      button {
+        margin-right: 5px;
+        width: 35px;
+      }
       button.today { width: 60px; }
     }
 
     .display {
-      flex-basis: 50%;
+      flex-basis: 30%;
       text-align: center;
       font-size: 14px;
       font-weight: 600;
     }
 
     .mode {
-      flex-basis: 25%;
+      flex-basis: 35%;
       justify-content: flex-end;
       display: flex;
 
-      > button:last-child {
+      > button {
         margin-left: 5px;
+      }
+
+      .cancel-availability-mode-button,
+      .save-availability-mode-button {
+        color: #fff;
+      }
+
+      .cancel-availability-mode-button {
+        background-color: #a94442;
+      }
+
+      .save-availability-mode-button {
+        background-color: #67b168;
+        width: 120px;
       }
 
       .calendar-options {
         z-index: 100;
-        margin-left: 25px;
+        margin-left: 5px;
         width: 35px;
         height: 35px;
         background-color: #fff;
@@ -61,6 +84,10 @@
           line-height: 35px;
           font-size: 22px;
           text-align: center;
+        }
+
+        .arrow-box {
+          border-color: #b3b3b3;
         }
       }
 
@@ -292,16 +319,26 @@
           width: 60px;
         }
 
+        td:first-child {
+          text-align: center;
+        }
+
         td {
           height: 50px;
 
           .hour-first-half {
             border-bottom: 1px solid #e4e4e4;
           }
-        }
 
-        td:first-child {
-          text-align: center;
+          .hour-first-half,
+          .hour-second-half {
+            height: 50%;
+
+            .availability-block {
+              background-color: rgba(57, 137, 168, 0.5);
+              height: 100%;
+            }
+          }
         }
       }
     }

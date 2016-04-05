@@ -28,7 +28,7 @@ class VerifyCsrfToken
         }
 
         $token = $this->session->generateToken();
-        if ($request->isJson() && $request->header('csrftoken') != $token)
+        if ($request->isJson() && $request->header('CSRFTOKEN') != $token)
         {
             $this->response->json([], 401);
             $this->response->executeResponse();

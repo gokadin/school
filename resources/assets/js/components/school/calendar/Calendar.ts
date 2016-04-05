@@ -26,7 +26,7 @@ export class Calendar {
 
     constructor(private eventService: EventService, fb: FormBuilder) {
         this.loadWeekView(); // remove
-        this.mode = 'week'; // change
+        this.mode = 'availability'; // change
 
         this.currentDate = moment();
 
@@ -197,8 +197,8 @@ export class Calendar {
     }
 
     enterAvailabilityMode(): void {
-        if (this.mode != 'week') {
-            return;
+        if (this.mode != 'week' && !this.weekViewLoaded) {
+            this.loadWeekView();
         }
 
         this.mode = 'availability';
