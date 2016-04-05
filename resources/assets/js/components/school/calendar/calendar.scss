@@ -7,6 +7,7 @@
 
     button {
       height: 35px;
+      width: 80px;
       border: 1px solid #cccccc;
       background: #fff;
       font-size: 12px;
@@ -29,7 +30,6 @@
       flex-basis: 10%;
 
       button {
-        width: 60px;
         margin-left: 20px;
       }
     }
@@ -43,6 +43,12 @@
 
     .mode {
       flex-basis: 20%;
+      justify-content: flex-end;
+      display: flex;
+
+      > button:last-child {
+        margin-left: 10px;
+      }
     }
   }
 

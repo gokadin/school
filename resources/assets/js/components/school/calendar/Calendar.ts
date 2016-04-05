@@ -1,4 +1,5 @@
 import {Component} from 'angular2/core';
+import {Router} from 'angular2/router';
 import moment = require('moment');
 import Moment = moment.Moment;
 
@@ -21,7 +22,7 @@ export class Calendar {
     rows: number[];
     cols: number[];
 
-    constructor(private eventService: EventService, fb: FormBuilder) {
+    constructor(private eventService: EventService, private router: Router, fb: FormBuilder) {
         this.currentDate = moment();
 
         eventService.calendarEvents
@@ -158,5 +159,13 @@ export class Calendar {
 
     createNewEvent(data: Object): void {
         console.log(data);
+    }
+
+    showMonthlyCalendar(): void {
+        router.navigate(['./Calendar']);
+    }
+
+    showWeeklyCalendar(): void {
+
     }
 }

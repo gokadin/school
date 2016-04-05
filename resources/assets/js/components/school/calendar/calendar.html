@@ -6,7 +6,10 @@
         </div>
         <div class="today" (click)="today()"><button type="button">today</button></div>
         <div class="display">{{ currentDate.format('MMMM YYYY') }}</div>
-        <div class="mode"></div>
+        <div class="mode">
+            <button type="button" click="showMonthlyCalendar()">month</button>
+            <button type="button" click="showWeeklyCalendar()">week</button>
+        </div>
     </div>
     <div class="body">
         <table cellspacing="0">
