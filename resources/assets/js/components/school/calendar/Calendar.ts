@@ -20,6 +20,7 @@ export class Calendar {
     dates: any;
     rows: number[];
     cols: number[];
+    currentRow: number;
     hours: number[];
     mode: string;
     weekViewLoaded: boolean = false;
@@ -66,9 +67,21 @@ export class Calendar {
         for (let i = 0; i < totalCount; i++) {
             this.dates.push({
                 date: moment(startDate.add(1, 'days')),
-                events: []
+                events: [],
+                availabilities: []
             });
         }
+
+        // temp
+        this.dates[0].availabilities.push({
+            startTime: '2:00',
+            endTime: '3:30'
+        });
+        this.dates[1].availabilities.push({
+            startTime: '2:30',
+            endTime: '5:00'
+        });
+        // temp
 
         for (let i = 0; i < totalCount / 7; i++) {
             this.rows.push(i);
@@ -85,6 +98,8 @@ export class Calendar {
         for (let i = 1; i < 25; i++) {
             this.hours.push(i);
         }
+
+        this.currentRow = 0;
 
         this.weekViewLoaded = true;
     }
@@ -210,5 +225,62 @@ export class Calendar {
         }
 
         this.mode = 'week';
+    }
+
+    isHourBlockAvailable(col: number, hour: string): boolean {
+        let dateObject = this.dates[this.currentRow * 7 + col];
+
+        for (let i = 0; i < dateObject.availabilities.length; i++) {
+            if (this.isTimeBetween(hour, dateObject.availabilities[i].startTime, dateObject.availabilities[i].endTime)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    isEndOfAvailableBlock(col: number, hour: string): boolean {
+        let dateObject = this.dates[this.currentRow * 7 + col];
+
+        for (let i = 0; i < dateObject.availabilities.length; i++) {
+            let timeParts = hour.split(':');
+            let endParts = dateObject.availabilities[i].endTime.split(':');
+            if (parseInt(timeParts[0]) == parseInt(endParts[0]) && parseInt(timeParts[1]) == parseInt(endParts[1])) {
+                console.log(hour + ' ' + dateObject.availabilities[i].endTime); // stopped HERRRERERERE!!!
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    isTimeBetween(time: string, start: string, end: string): boolean {
+        let timeParts = time.split(':');
+        let timeHour = parseInt(timeParts[0]);
+        let timeMinute = parseInt(timeParts[1]);
+
+        let startParts = start.split(':');
+        let startHour = parseInt(startParts[0]);
+        let startMinut = parseInt(startParts[1]);
+        if (timeHour < startHour || (timeHour == startHour && timeMinute < startMinut)) {
+            return false;
+        }
+
+        let endParts = end.split(':');
+        let endHour = parseInt(endParts[0]);
+        let endMinute = parseInt(endParts[1]);
+        if (timeHour > endHour || (timeHour == endHour && timeMinute > endMinute)) {
+            return false;
+        }
+
+        return true;
+    }
+
+    createAvailability(col: number, hour: string): void {
+        if (this.isHourBlockAvailable(col, hour)) {
+            return;
+        }
+
+        console.log('create at date: ' + this.dates[this.currentRow * 7 + col].date.format('YYYY-MM-dd') + ' at ' + hour);
     }
 }

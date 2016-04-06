@@ -333,13 +333,38 @@
           .hour-first-half,
           .hour-second-half {
             height: 50%;
-
-            .availability-block {
-              background-color: rgba(57, 137, 168, 0.5);
-              height: 100%;
-            }
+            cursor: pointer;
           }
         }
+      }
+    }
+
+    table.availability-mode {
+      .hour-first-half,
+      .hour-second-half {
+        position: relative;
+
+        .availability-block {
+          background-color: rgba(57, 137, 168, 0.5);
+          height: 100%;
+        }
+      }
+
+      .hour-first-half:not(.available-block):hover,
+      .hour-second-half:not(.available-block):hover {
+        background-color: rgba(57, 137, 168, 0.3);
+      }
+
+      .hour-first-half:not(.available-block):hover:after,
+      .hour-second-half:not(.available-block):hover:after {
+        font-family: FontAwesome;
+        content: "\f055";
+        color: #67b168;
+        font-size: 22px;
+        line-height: 25px;
+        position: absolute;
+        left: 50%;
+        margin-left: -11px;
       }
     }
   }

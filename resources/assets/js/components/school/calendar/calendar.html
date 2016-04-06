@@ -85,18 +85,21 @@
     </div>
 
     <div class="body" id="week-view" *ngIf="mode == 'week' || mode == 'availability'">
-        <table cellpadding="0">
+        <table cellpadding="0" [class.availability-mode]="mode == 'availability'">
             <tr>
                 <th>time</th><th>Sun</th><th>Mon</th><th>Tue</th><th>Wed</th><th>Thu</th><th>Fri</th><th>Sat</th>
             </tr>
             <tr *ngFor="#hour of hours">
                 <td>{{ hour < 13 ? hour + 'am' : hour - 12 + 'pm' }}</td>
                 <td *ngFor="#col of cols">
-                    <div class="hour-first-half">
-                        <div class="availability-block" *ngIf="mode == 'availability' && col == 2 && hour > 1 && hour < 4"></div>
+                    <div class="hour-first-half" [class.available-block]="isHourBlockAvailable(col, hour + ':00')"
+                         (click)="createAvailability(col, hour + ':00')">
+                        <div class="availability-block" *ngIf="mode == 'availability' && isHourBlockAvailable(col, hour + ':00')"></div>
                     </div>
-                    <div class="hour-second-half">
-                        <div class="availability-block" *ngIf="mode == 'availability' && col == 2 && hour > 1 && hour < 4"></div>
+                    <div class="hour-second-half" [class.available-block]="isHourBlockAvailable(col, hour + ':30') && !isEndOfAvailableBlock(col, hour + ':30')"
+                         (click)="createAvailability(col, hour + ':30')">
+                        <div class="availability-block"
+                             *ngIf="mode == 'availability' && isHourBlockAvailable(col, hour + ':30') && !isEndOfAvailableBlock(col, hour + ':30')"></div>
                     </div>
                 </td>
             </tr>
