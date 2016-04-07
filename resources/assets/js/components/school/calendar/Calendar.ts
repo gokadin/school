@@ -239,14 +239,29 @@ export class Calendar {
         return false;
     }
 
+    isBeginingOfAvailableBlock(col: number, hour: string): boolean {
+        let dateObject = this.dates[this.currentRow * 7 + col];
+
+        for (let i = 0; i < dateObject.availabilities.length; i++) {
+            let timeParts = hour.split(':');
+            let startParts = dateObject.availabilities[i].startTime.split(':');
+
+            if (parseInt(timeParts[0]) == parseInt(startParts[0]) && parseInt(timeParts[1]) == parseInt(startParts[1])) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     isEndOfAvailableBlock(col: number, hour: string): boolean {
         let dateObject = this.dates[this.currentRow * 7 + col];
 
         for (let i = 0; i < dateObject.availabilities.length; i++) {
             let timeParts = hour.split(':');
             let endParts = dateObject.availabilities[i].endTime.split(':');
+
             if (parseInt(timeParts[0]) == parseInt(endParts[0]) && parseInt(timeParts[1]) == parseInt(endParts[1])) {
-                console.log(hour + ' ' + dateObject.availabilities[i].endTime); // stopped HERRRERERERE!!!
                 return true;
             }
         }
@@ -269,18 +284,24 @@ export class Calendar {
         let endParts = end.split(':');
         let endHour = parseInt(endParts[0]);
         let endMinute = parseInt(endParts[1]);
-        if (timeHour > endHour || (timeHour == endHour && timeMinute > endMinute)) {
+        if (timeHour > endHour || (timeHour == endHour && timeMinute >= endMinute)) {
             return false;
         }
 
         return true;
     }
 
-    createAvailability(col: number, hour: string): void {
-        if (this.isHourBlockAvailable(col, hour)) {
+    createAvailability(col: number, time: string): void {
+        if (this.isHourBlockAvailable(col, time)) {
             return;
         }
 
-        console.log('create at date: ' + this.dates[this.currentRow * 7 + col].date.format('YYYY-MM-dd') + ' at ' + hour);
+        let timeParts = time.split(':');
+        let hour = parseInt(timeParts[0]);
+        let minute = parseInt(timeParts[1]);
+        this.dates[this.currentRow * 7 + col].availabilities.push({
+            startTime: time,
+            endTime: minute == 0 ? hour + ':30' : (hour + 1) + ':00'
+        });
     }
 }

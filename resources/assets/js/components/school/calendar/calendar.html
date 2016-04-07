@@ -94,12 +94,21 @@
                 <td *ngFor="#col of cols">
                     <div class="hour-first-half" [class.available-block]="isHourBlockAvailable(col, hour + ':00')"
                          (click)="createAvailability(col, hour + ':00')">
-                        <div class="availability-block" *ngIf="mode == 'availability' && isHourBlockAvailable(col, hour + ':00')"></div>
+                        <div class="availability-block"
+                             *ngIf="mode == 'availability' && isHourBlockAvailable(col, hour + ':00')">
+                            <div class="availability-drag-bar-start" *ngIf="isBeginingOfAvailableBlock(col, hour + ':00')"></div>
+                            <div class="availability-content"></div>
+                            <div class="availability-drag-bar-end" *ngIf="isEndOfAvailableBlock(col, hour + ':30')"></div>
+                        </div>
                     </div>
-                    <div class="hour-second-half" [class.available-block]="isHourBlockAvailable(col, hour + ':30') && !isEndOfAvailableBlock(col, hour + ':30')"
+                    <div class="hour-second-half" [class.available-block]="isHourBlockAvailable(col, hour + ':30')"
                          (click)="createAvailability(col, hour + ':30')">
                         <div class="availability-block"
-                             *ngIf="mode == 'availability' && isHourBlockAvailable(col, hour + ':30') && !isEndOfAvailableBlock(col, hour + ':30')"></div>
+                             *ngIf="mode == 'availability' && isHourBlockAvailable(col, hour + ':30')">
+                            <div class="availability-drag-bar-start" *ngIf="isBeginingOfAvailableBlock(col, hour + ':30')"></div>
+                            <div class="availability-content"></div>
+                            <div class="availability-drag-bar-end" *ngIf="isEndOfAvailableBlock(col, hour + 1 + ':00')"></div>
+                        </div>
                     </div>
                 </td>
             </tr>
