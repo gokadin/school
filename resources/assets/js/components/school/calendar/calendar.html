@@ -85,34 +85,30 @@
     </div>
 
     <div class="body" id="week-view" *ngIf="mode == 'week' || mode == 'availability'">
-        <table cellpadding="0" [class.availability-mode]="mode == 'availability'">
-            <tr>
-                <th>time</th><th>Sun</th><th>Mon</th><th>Tue</th><th>Wed</th><th>Thu</th><th>Fri</th><th>Sat</th>
-            </tr>
-            <tr *ngFor="#hour of hours">
-                <td>{{ hour < 13 ? hour + 'am' : hour - 12 + 'pm' }}</td>
-                <td *ngFor="#col of cols">
-                    <div class="hour-first-half" [class.available-block]="isHourBlockAvailable(col, hour + ':00')"
-                         (click)="createAvailability(col, hour + ':00')">
-                        <div class="availability-block"
-                             *ngIf="mode == 'availability' && isHourBlockAvailable(col, hour + ':00')">
-                            <div class="availability-drag-bar-start" *ngIf="isBeginingOfAvailableBlock(col, hour + ':00')"></div>
-                            <div class="availability-content"></div>
-                            <div class="availability-drag-bar-end" *ngIf="isEndOfAvailableBlock(col, hour + ':30')"></div>
-                        </div>
-                    </div>
-                    <div class="hour-second-half" [class.available-block]="isHourBlockAvailable(col, hour + ':30')"
-                         (click)="createAvailability(col, hour + ':30')">
-                        <div class="availability-block"
-                             *ngIf="mode == 'availability' && isHourBlockAvailable(col, hour + ':30')">
-                            <div class="availability-drag-bar-start" *ngIf="isBeginingOfAvailableBlock(col, hour + ':30')"></div>
-                            <div class="availability-content"></div>
-                            <div class="availability-drag-bar-end" *ngIf="isEndOfAvailableBlock(col, hour + 1 + ':00')"></div>
-                        </div>
-                    </div>
-                </td>
-            </tr>
-        </table>
+        <div class="table-double-wrapper">
+            <div class="table-wrapper">
+                <table>
+                    <tr>
+                        <th><div>time</div></th><th>
+                        <div>Sun <i>{{ dates[currentRow * 7].date.format('Do') }}</i></div></th>
+                        <th><div>Mon <i>{{ dates[currentRow * 7 + 1].date.format('Do') }}</i></div></th>
+                        <th><div>Tue <i>{{ dates[currentRow * 7 + 2].date.format('Do') }}</i></div></th>
+                        <th><div>Wed <i>{{ dates[currentRow * 7 + 3].date.format('Do') }}</i></div></th>
+                        <th><div>Thu <i>{{ dates[currentRow * 7 + 4].date.format('Do') }}</i></div></th>
+                        <th><div>Fri <i>{{ dates[currentRow * 7 + 5].date.format('Do') }}</i></div></th>
+                        <th><div>Sat <i>{{ dates[currentRow * 7 + 6].date.format('Do') }}</i></div></th>
+                    </tr>
+                    <tr>
+                        <td class="time-rows">
+                            <div *ngFor="#hour of hours" class="time-display">{{ hour < 13 ? hour + 'am' : hour - 12 + 'pm' }}</div>
+                        </td>
+                        <td *ngFor="#col of cols" class="day-rows">
+                            {{ col }}
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
     </div>
 </div>
 
