@@ -358,13 +358,91 @@
 
         td.time-rows {
           .time-display {
-            height: 50px;
-            line-height: 50px;
+            height: 48px;
+            line-height: 48px;
             text-align: center;
           }
 
           .time-display:not(:last-child) {
             border-bottom: 1px solid #ddd;
+          }
+        }
+
+        td.day-rows {
+          .day-col {
+            position: relative;
+            height: 100%;
+
+            .day-row.row-quarter-marker {
+              border-bottom: 1px dotted #ddd;
+            }
+
+            .day-row.row-half-marker {
+              border-bottom: 1px solid #ddd;
+            }
+
+            .day-row {
+              height: 12px;
+            }
+
+            .availability-block {
+              position: absolute;
+              background-color: #26a69a;
+              opacity: 0.7;
+              top: 0;
+              left: 0;
+              height: 0px;
+              width: 100%;
+              cursor: pointer;
+              display: flex;
+              flex-direction: column;
+              justify-content: space-between;
+
+              .availability-block-content {
+                flex-basis: 100%;
+              }
+
+              .availability-block-end {
+                position: relative;
+                flex-basis: 8px;
+                background-color: #0b574f;
+                opacity: 0.9;
+                cursor: row-resize;
+              }
+
+              .availability-block-end:after {
+                position: absolute;
+                content: "...";
+                color: #000;
+                font-size: 28px;
+                top: -22px;
+                left: 50%;
+                transform: translateX(-50%);
+              }
+            }
+
+            .day-hour-block {
+              position: relative;
+              height: 48px;
+              border-bottom: 1px solid #ddd;
+              cursor: pointer;
+            }
+
+            .day-hour-block:not(.hour-block-available):hover:after {
+              content: "\f055";
+              font-family: FontAwesome;
+              background-color: #26a69a;
+              opacity: 0.4;
+              font-size: 26px;
+              color: #fff;
+              height: 100%;
+              width: 100%;
+              position: absolute;
+              top: 0;
+              left: 0;
+              line-height: 48px;
+              text-align: center;
+            }
           }
         }
       }
