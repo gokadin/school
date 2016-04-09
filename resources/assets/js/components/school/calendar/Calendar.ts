@@ -11,6 +11,8 @@ import {Modal} from "../../modal/Modal";
 import {ControlGroup, AbstractControl, Control, FormBuilder, Validators} from 'angular2/common';
 
 import {TimePipe} from "../../../pipes/school/TimePipe";
+import {AvailabilityService} from "../../../services/AvailabilityService";
+import {Availability} from "../../../models/Availability";
 
 @Component({
     selector: 'calendar',
@@ -28,7 +30,9 @@ export class Calendar {
     mode: string;
     weekViewLoaded: boolean = false;
 
-    constructor(private eventService: EventService, fb: FormBuilder) {
+    constructor(private eventService: EventService,
+                private availabilityService: AvailabilityService,
+                fb: FormBuilder) {
         this.loadWeekView(); // remove
         this.mode = 'availability'; // change
 
@@ -37,6 +41,11 @@ export class Calendar {
         eventService.calendarEvents
             .subscribe(
                 (events: Event[]) => this.distributeEvents(events)
+            );
+
+        availabilityService.availabilities
+            .subscribe(
+                (availabilities: Availability[]) => this.distributeAvailabilities(availabilities)
             );
 
         this.today();
@@ -74,17 +83,6 @@ export class Calendar {
                 availabilities: []
             });
         }
-
-        // temp
-        this.dates[0].availabilities.push({
-            startTime: 250,
-            endTime: 350
-        });
-        this.dates[1].availabilities.push({
-            startTime: 200,
-            endTime: 500
-        });
-        // temp
 
         for (let i = 0; i < totalCount / 7; i++) {
             this.rows.push(i);
@@ -146,6 +144,27 @@ export class Calendar {
 
             this.dates[index].events.push(event);
         });
+    }
+
+    distributeAvailabilities(availabilities: Availability[]): void {
+        if (!Array.isArray(availabilities)) {
+            this.distributeAvailability(availabilities);
+            return;
+        }
+
+        availabilities.forEach(availability => {
+            this.distributeAvailability(availability);
+        });
+    }
+
+    distributeAvailability(availability: Availability): void {
+        let index = this.getIndexFromDate(availability.date);
+
+        if (index < 0 || index > this.dates.length - 1) {
+            return;
+        }
+
+        this.dates[index].availabilities.push(availability);
     }
 
     handleDragStart(e, event: Event, index: number): void {
@@ -258,9 +277,15 @@ export class Calendar {
             return;
         }
 
-        this.dates[this.currentRow * 7 + col].availabilities.push({
+        this.availabilityService.storeAvailability(new Availability({
+            date: this.dates[this.currentRow * 7 + col].date.format('YYYY-MM-dd'),
             startTime: start,
             endTime: end
-        });
+        }));
+
+        //this.dates[this.currentRow * 7 + col].availabilities.push({
+        //    startTime: start,
+        //    endTime: end
+        //});
     }
 }

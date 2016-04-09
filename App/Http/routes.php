@@ -41,6 +41,14 @@ $router->group(['namespace' => 'Api', 'prefix' => '/api', 'as' => 'api', 'middle
                 $router->get('/range', 'EventController@range');
                 $router->patch('/{id}/{oldDate}/date', 'EventController@updateDate');
             });
+
+            $router->group(['namespace' => 'Calendar', 'prefix' => '/calendar', 'as' => 'calendar'], function($router)
+            {
+                $router->group(['prefix' => '/availabilities', 'as' => 'availability'], function($router)
+                {
+                    $router->resource('AvailabilityController', ['index', 'store']);
+                });
+            });
         });
     });
 });

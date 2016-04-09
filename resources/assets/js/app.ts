@@ -19,6 +19,7 @@ import {SchoolModule} from './modules/school/SchoolModule';
 import {FrontendModule} from './modules/frontend/FrontendModule';
 import {SEARCH_PROVIDERS} from "./services/SearchService";
 import {ACCOUNT_PROVIDERS} from "./services/AccountService";
+import {AVAILABILITIES_PROVIDERS} from "./services/AvailabilityService";
 
 @Component({
     selector: 'app',
@@ -43,5 +44,6 @@ bootstrap(App, [
     FLASH_PROVIDERS,
     SEARCH_PROVIDERS,
     ACCOUNT_PROVIDERS,
+    AVAILABILITIES_PROVIDERS,
     provide(RequestOptions, {useClass: AppRequestOptions})
 ]);
