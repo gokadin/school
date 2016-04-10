@@ -8,7 +8,6 @@ import {EventService} from "../../../services/eventService";
 import {Event} from "../../../models/event";
 import {NewEventModal} from "./newEventModal/NewEventModal";
 import {Modal} from "../../modal/Modal";
-import {ControlGroup, AbstractControl, Control, FormBuilder, Validators} from 'angular2/common';
 
 import {TimePipe} from "../../../pipes/school/TimePipe";
 import {AvailabilityService} from "../../../services/AvailabilityService";
@@ -29,14 +28,20 @@ export class Calendar {
     hours: Object[];
     mode: string;
     weekViewLoaded: boolean = false;
+    resizing: boolean = false;
+    resizeStartPosition: number;
+    currentAvailability: Availability;
+    currentAvailabilitySiblings: Availability[];
 
     constructor(private eventService: EventService,
-                private availabilityService: AvailabilityService,
-                fb: FormBuilder) {
-        this.loadWeekView(); // remove
-        this.mode = 'availability'; // change
+                private availabilityService: AvailabilityService) {
+        document.addEventListener('mouseup', e => this.handleAvailabilityResizeMouseUp());
 
         this.currentDate = moment();
+
+        this.buildDateArray();
+        this.loadWeekView(); // remove
+        this.mode = 'availability'; // change
 
         eventService.calendarEvents
             .subscribe(
@@ -94,6 +99,10 @@ export class Calendar {
     }
 
     loadWeekView(): void {
+        this.currentRow = 0;
+
+        this.availabilityService.fetch(this.dates[this.currentRow * 7].date, this.dates[this.currentRow * 7 + 6].date);
+
         this.hours = [];
 
         for (let i = 1; i < 25; i++) {
@@ -109,8 +118,6 @@ export class Calendar {
                 quarters: quarters
             });
         }
-
-        this.currentRow = 0;
 
         this.weekViewLoaded = true;
     }
@@ -277,15 +284,70 @@ export class Calendar {
             return;
         }
 
-        this.availabilityService.storeAvailability(new Availability({
-            date: this.dates[this.currentRow * 7 + col].date.format('YYYY-MM-dd'),
+        this.availabilityService.store(new Availability({
+            date: moment(this.dates[this.currentRow * 7 + col].date).subtract(1, 'days'),
             startTime: start,
             endTime: end
         }));
+    }
 
-        //this.dates[this.currentRow * 7 + col].availabilities.push({
-        //    startTime: start,
-        //    endTime: end
-        //});
+    handleAvailabilityResizeMouseDown(event, availability: Availability, col): void {
+        this.resizing = true;
+        this.currentAvailability = availability;
+        this.resizeStartPosition = event.clientY;
+
+        this.currentAvailabilitySiblings = [];
+        let availabilities = this.dates[this.currentRow * 7 + col].availabilities;
+        for (let i = 0; i < availabilities.length; i++) {
+            if (availabilities[i].id != availability.id &&
+                availabilities[i].position >= availability.position + availability.height) {
+                this.currentAvailabilitySiblings.push(availabilities[i]);
+            }
+        }
+    }
+
+    handleAvailabilityResizeMouseUp(): void {
+        if (!this.resizing) {
+            return;
+        }
+
+        if (this.currentAvailability.originalHeight == this.currentAvailability.height) {
+            return;
+        }
+
+        this.currentAvailability.endTime += (this.currentAvailability.height - this.currentAvailability.originalHeight) / 12 * 25;
+        this.currentAvailability.originalHeight = this.currentAvailability.height;
+
+        this.availabilityService.update(this.currentAvailability)
+            .subscribe();
+
+        this.currentAvailability = null;
+        this.resizing = false;
+    }
+
+    handleAvailabilityResizeMouseMove(event): void {
+        if (!this.resizing) {
+            return;
+        }
+
+        let height = this.currentAvailability.originalHeight + event.clientY - this.resizeStartPosition;
+
+        if (height < 12) {
+            this.currentAvailability.height = 12;
+            return;
+        }
+
+        if (height % 12 != 0) {
+            return;
+        }
+
+        for (let i = 0; i < this.currentAvailabilitySiblings.length; i++) {
+            if (this.currentAvailability.position + height >= this.currentAvailabilitySiblings[i].position) {
+                this.currentAvailability.height = this.currentAvailabilitySiblings[i].position - this.currentAvailability.position;
+                return;
+            }
+        }
+
+        this.currentAvailability.height = height;
     }
 }

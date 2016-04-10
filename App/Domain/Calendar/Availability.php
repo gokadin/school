@@ -17,10 +17,7 @@ class Availability
     private $teacher;
 
     /** @Column(type="datetime") */
-    private $startDate;
-
-    /** @Column(type="datetime") */
-    private $endDate;
+    private $date;
 
     /** @Column(type="integer", size="3") */
     private $startTime;
@@ -28,11 +25,10 @@ class Availability
     /** @Column(type="integer", size="3") */
     private $endTime;
 
-    public function __construct(Teacher $teacher, $startDate, $endDate, $startTime, $endTime)
+    public function __construct(Teacher $teacher, $date, $startTime, $endTime)
     {
         $this->teacher = $teacher;
-        $this->startDate = $startDate;
-        $this->endDate = $endDate;
+        $this->date = $date;
         $this->startTime = $startTime;
         $this->endTime = $endTime;
     }
@@ -47,24 +43,14 @@ class Availability
         $this->teacher = $teacher;
     }
 
-    public function startDate()
+    public function date()
     {
-        return $this->startDate;
+        return $this->date;
     }
 
-    public function setStartDate($startDate)
+    public function setDate($date)
     {
-        $this->startDate = $startDate;
-    }
-
-    public function endDate()
-    {
-        return $this->endDate;
-    }
-
-    public function setEndDate($endDate)
-    {
-        $this->endDate = $endDate;
+        $this->date = $date;
     }
 
     public function startTime()

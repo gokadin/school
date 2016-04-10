@@ -85,5 +85,12 @@ return [
         'startTime' => function($o) { return $o->event()->startTime(); },
         'endTime' => function($o) { return $o->event()->endTime(); },
         'attended' => function($o) { return !isset($o->missedDates()[Carbon\Carbon::parse($o->event()->startDate())->toDateString()]); }
+    ],
+
+    App\Domain\Calendar\Availability::class => [
+        'id' => function($o) { return $o->getId(); },
+        'date' => function($o) { return Carbon\Carbon::parse($o->date())->toDateString(); },
+        'startTime' => function($o) { return $o->startTime(); },
+        'endTime' => function($o) { return $o->endTime(); }
     ]
 ];

@@ -13,16 +13,18 @@ export class AvailabilityService {
         this.availabilities = new Subject<Object>();
     }
 
-    fetchAvailabilities(fromDate: Moment, toDate: Moment): void {
-        this.http.get('/api/school/teacher/calendar/availabilities?fromDate=' +
+    fetch(fromDate: Moment, toDate: Moment): void {
+        this.http.get('/api/school/teacher/calendar/availabilities/range?fromDate=' +
             fromDate.format('YYYY-MM-DD') + '&toDate=' + toDate.format('YYYY-MM-DD'))
             .map(data => data.json())
+            .map(data => data.availabilities
+                .map(availability => new Availability(availability)))
             .subscribe(
                 data => this.availabilities.next(data)
             );
     }
 
-    storeAvailability(availability: Availability): void {
+    store(availability: Availability): void {
         this.http.post('/api/school/teacher/calendar/availabilities/', JSON.stringify({
             date: availability.date.format('YYYY-MM-DD'),
             startTime: availability.startTime,
@@ -35,6 +37,14 @@ export class AvailabilityService {
                     this.availabilities.next(availability);
                 }
             );
+    }
+
+    update(availability: Availability): void {
+        return this.http.put('/api/school/teacher/calendar/availabilities/' + availability.id, JSON.stringify({
+            date: availability.date.format('YYYY-MM-DD'),
+            startTime: availability.startTime,
+            endTime: availability.endTime
+        }));
     }
 }
 

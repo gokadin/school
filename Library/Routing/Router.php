@@ -78,10 +78,10 @@ class Router
                     $this->addRoute(['GET'], '/{id}/edit', $controller.'@edit');
                     break;
                 case 'update':
-                    $this->addRoute(['PUT'], '/update/{id}', $controller.'@update');
+                    $this->addRoute(['PUT'], '/{id}', $controller.'@update');
                     break;
                 case 'destroy':
-                    $this->addRoute(['DELETE'], '/destroy/{id}', $controller.'@destroy');
+                    $this->addRoute(['DELETE'], '/{id}', $controller.'@destroy');
                     break;
             }
         }

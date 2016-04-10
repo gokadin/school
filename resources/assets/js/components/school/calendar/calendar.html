@@ -103,19 +103,24 @@
                             <div *ngFor="#hour of hours" class="time-display">{{ hour.value | hour }}</div>
                         </td>
                         <td *ngFor="#col of cols" class="day-rows">
-                            <div class="day-col" *ngIf="mode == 'availability'">
+                            <div class="day-col" *ngIf="mode == 'availability'" (mousemove)="handleAvailabilityResizeMouseMove($event)">
                                 <div *ngFor="#hour of hours" class="day-hour-block"
                                      [class.hour-block-available]="isTimeAvailable(col, hour.value, hour.value + 100)"
+                                     [class.do-not-display-hover]="resizing"
                                      (click)="createAvailability(col, hour.value, hour.value + 100)">
                                     <div *ngFor="#quarter of hour.quarters; #even = even; #odd = odd" class="day-row" [class.row-half-marker]="odd"
                                          [class.row-quarter-marker]="even">
                                     </div>
                                 </div>
 
-                                <div *ngFor="#block of dates[currentRow * 7 + col].availabilities" class="availability-block"
-                                     [ngStyle]="{'height': (block.endTime - block.startTime) / 25 * 12 + 'px', 'top': block.startTime / 25 * 12 - 48 + 'px'}">
-                                    <div class="availability-block-content"></div>
-                                    <div class="availability-block-end"></div>
+                                <div *ngFor="#availability of dates[currentRow * 7 + col].availabilities" class="availability-block"
+                                           [ngStyle]="{'height': availability.height + 'px', 'top': availability.position + 'px'}">
+                                    <div class="resizable-content"></div>
+                                    <div class="resizable-end" (mousedown)="handleAvailabilityResizeMouseDown($event, availability, col)">
+                                        <div class="dot"></div>
+                                        <div class="dot"></div>
+                                        <div class="dot"></div>
+                                    </div>
                                 </div>
                             </div>
                         </td>

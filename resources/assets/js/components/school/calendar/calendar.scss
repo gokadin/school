@@ -391,34 +391,8 @@
               opacity: 0.7;
               top: 0;
               left: 0;
-              height: 0px;
               width: 100%;
               cursor: pointer;
-              display: flex;
-              flex-direction: column;
-              justify-content: space-between;
-
-              .availability-block-content {
-                flex-basis: 100%;
-              }
-
-              .availability-block-end {
-                position: relative;
-                flex-basis: 8px;
-                background-color: #0b574f;
-                opacity: 0.9;
-                cursor: row-resize;
-              }
-
-              .availability-block-end:after {
-                position: absolute;
-                content: "...";
-                color: #000;
-                font-size: 28px;
-                top: -22px;
-                left: 50%;
-                transform: translateX(-50%);
-              }
             }
 
             .day-hour-block {
@@ -428,7 +402,7 @@
               cursor: pointer;
             }
 
-            .day-hour-block:not(.hour-block-available):hover:after {
+            .day-hour-block:not(.hour-block-available):not(.do-not-display-hover):hover:after {
               content: "\f055";
               font-family: FontAwesome;
               background-color: #26a69a;
@@ -442,6 +416,37 @@
               left: 0;
               line-height: 48px;
               text-align: center;
+            }
+
+            .availability-block {
+              display: flex;
+              flex-direction: column;
+              height: 0;
+            }
+
+            .resizable-content {
+              flex-basis: 100%;
+            }
+
+            .resizable-end {
+              position: relative;
+              flex-basis: 8px;
+              background-color: #0b574f;
+              opacity: 0.9;
+              cursor: row-resize;
+              color: #000;
+              font-size: 28px;
+              display: flex;
+              justify-content: center;
+              align-items: center;
+
+              .dot {
+                height: 5px;
+                width: 5px;
+                border-radius: 100%;
+                background-color: #ddd;
+                margin: 0 2px;
+              }
             }
           }
         }

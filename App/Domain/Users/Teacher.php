@@ -3,6 +3,7 @@
 namespace App\Domain\Users;
 
 use App\Domain\Activities\Activity;
+use App\Domain\Calendar\Availability;
 use App\Domain\Events\Event;
 use App\Domain\Setting\TeacherSettings;
 use Library\DataMapper\Collection\EntityCollection;
@@ -29,6 +30,9 @@ class Teacher extends User
     /** @HasMany(target="App\Domain\Events\Event", mappedBy="teacher") */
     private $events;
 
+    /** @HasMany(target="App\Domain\Calendar\Availability", mappedBy="teacher", nullable) */
+    private $availabilities;
+
     public function __construct($firstName, $lastName, $email, $password, $subscription,
                                 Address $address, $school, TeacherSettings $settings)
     {
@@ -38,6 +42,7 @@ class Teacher extends User
         $this->settings = $settings;
         $this->activities = new EntityCollection();
         $this->students = new EntityCollection();
+        $this->availabilities = new EntityCollection();
     }
 
     public function subscription()
@@ -112,5 +117,23 @@ class Teacher extends User
     public function removeEvent(Event $event)
     {
         $this->events->remove($event);
+    }
+
+    /**
+     * @return PersistentCollection
+     */
+    public function availabilities()
+    {
+        return $this->availabilities;
+    }
+
+    public function addAvailability(Availability $availability)
+    {
+        $this->availabilities->add($availability);
+    }
+
+    public function removeAvailability(Availability $availability)
+    {
+        $this->availabilities->remove($availability);
     }
 }

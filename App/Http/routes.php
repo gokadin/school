@@ -46,7 +46,8 @@ $router->group(['namespace' => 'Api', 'prefix' => '/api', 'as' => 'api', 'middle
             {
                 $router->group(['prefix' => '/availabilities', 'as' => 'availability'], function($router)
                 {
-                    $router->resource('AvailabilityController', ['index', 'store']);
+                    $router->get('/range', 'AvailabilityController@range');
+                    $router->resource('AvailabilityController', ['store', 'update']);
                 });
             });
         });
