@@ -107,7 +107,7 @@ export class Calendar {
 
         for (let i = 1; i < 25; i++) {
             let quarters = [];
-            for (let j = 1; j < 4; j++) {
+            for (let j = 0; j < 4; j++) {
                 quarters.push({
                     value: i * 100 + j * 25, formattedAmPm: i < 13 ? i + ':' + j * 15 + 'am' : (i - 12) + ':' + j * 15 + 'pm', formatted24: i + ':' + j * 15
                 });
@@ -123,7 +123,7 @@ export class Calendar {
     }
 
     getIndexFromDate(date: Moment): number {
-        let offset = this.currentDate.date(1).weekday();
+        let offset = this.currentDate.date(1).weekday() - 1;
 
         if (date.month() == this.currentDate.month()) {
             return date.date() + offset;
@@ -285,13 +285,14 @@ export class Calendar {
         }
 
         this.availabilityService.store(new Availability({
-            date: moment(this.dates[this.currentRow * 7 + col].date).subtract(1, 'days'),
+            date: this.dates[this.currentRow * 7 + col].date,
             startTime: start,
             endTime: end
         }));
     }
 
     handleAvailabilityResizeMouseDown(event, availability: Availability, col): void {
+        event.preventDefault();
         this.resizing = true;
         this.currentAvailability = availability;
         this.resizeStartPosition = event.clientY;
@@ -349,5 +350,92 @@ export class Calendar {
         }
 
         this.currentAvailability.height = height;
+    }
+
+    handleAvailabilityDragStart(event, availability: Availability, col: number): void {
+        if (this.resizing) {
+            this.handleAvailabilityResizeMouseUp();
+        }
+
+        event.dataTransfer.setData('id', availability.id.toString());
+        event.dataTransfer.setData('oldCol', col.toString());
+        event.dataTransfer.effectAllowed = 'move';
+    }
+
+    handleAvailabilityDragOver(event): void {
+        event.preventDefault();
+    }
+
+    handleAvailabilityDrop(event, col: number, newStartTime: number): void {
+        event.preventDefault();
+        event.dataTransfer.dropEffect = 'move';
+
+        let id = parseInt(event.dataTransfer.getData('id'));
+        let oldCol = parseInt(event.dataTransfer.getData('oldCol'));
+
+        let oldAvailabilities = this.dates[this.currentRow * 7 + oldCol].availabilities;
+        let availability = null;
+        let availabilityIndex = 0;
+        for (let i = 0; i < oldAvailabilities.length; i++) {
+            if (oldAvailabilities[i].id == id) {
+                availability = oldAvailabilities[i];
+                availabilityIndex = i;
+                break;
+            }
+        }
+
+        if (availability == null) {
+            return;
+        }
+
+        availability.endTime += newStartTime - availability.startTime;
+        availability.startTime = newStartTime;
+        availability.calculatePosition();
+
+        if (oldCol != col) {
+            availability.date = moment(this.dates[this.currentRow * 7 + col].date);
+            this.dates[this.currentRow * 7 + oldCol].availabilities.splice(availabilityIndex, 1);
+            this.dates[this.currentRow * 7 + col].availabilities.push(availability);
+        }
+
+        availability = this.mergeAvailabilitiesOnDrop(availability, col);
+
+        if (availability.endTime > 2500) {
+            availability.endTime = 2500;
+        }
+
+        availability.calculateHeight();
+
+        this.availabilityService.update(availability)
+            .subscribe();
+    }
+
+    mergeAvailabilitiesOnDrop(availability: Availability, col: number): void {
+        let availabilities = this.dates[this.currentRow * 7 + col].availabilities;
+        let toMergeIndexes = [];
+        for (let i = 0; i < availabilities.length; i++) {
+            if (availabilities[i].id == availability.id) {
+                continue;
+            }
+
+            if (availabilities[i].startTime < availability.endTime && availabilities[i].endTime > availability.startTime) {
+                toMergeIndexes.push(i);
+            }
+        }
+
+        let highest = availability.endTime;
+        for (let i = toMergeIndexes.length - 1; i >= 0; i--) {
+            if (availabilities[toMergeIndexes[i]].endTime > highest) {
+                highest = availabilities[toMergeIndexes[i]].endTime;
+            }
+
+            this.availabilityService.delete(availabilities[toMergeIndexes[i]])
+                .subscribe();
+            availabilities.splice(toMergeIndexes[i], 1);
+        }
+
+        availability.endTime = highest;
+
+        return availability;
     }
 }

@@ -27,4 +27,9 @@ class AvailabilityService extends Service
 
         $this->repository->of(Availability::class)->update($availability);
     }
+
+    public function delete(Teacher $teacher, int $id)
+    {
+        $this->repository->of(Availability::class)->delete($teacher->availabilities()->find($id));
+    }
 }

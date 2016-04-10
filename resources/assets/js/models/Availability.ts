@@ -16,8 +16,16 @@ export class Availability {
         this.startTime = obj && parseInt(obj.startTime) || 100;
         this.endTime = obj && parseInt(obj.endTime) || 100;
 
+        this.calculateHeight();
+        this.calculatePosition();
+    }
+
+    calculateHeight(): void {
         this.height = (this.endTime - this.startTime) / 25 * 12;
         this.originalHeight = this.height;
+    }
+
+    calculatePosition(): void {
         this.position = this.startTime / 25 * 12 - 48;
     }
 }

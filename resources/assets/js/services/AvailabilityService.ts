@@ -46,6 +46,10 @@ export class AvailabilityService {
             endTime: availability.endTime
         }));
     }
+
+    delete(availability: Availability): void {
+        return this.http.delete('/api/school/teacher/calendar/availabilities/' + availability.id);
+    }
 }
 
 export var AVAILABILITIES_PROVIDERS = [

@@ -26,4 +26,11 @@ class AvailabilityRepository extends RepositoryBase
     {
         $this->dm->flush();
     }
+
+    public function delete($availability)
+    {
+        $this->dm->delete($availability);
+
+        $this->dm->flush();
+    }
 }

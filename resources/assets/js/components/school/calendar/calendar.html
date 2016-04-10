@@ -108,13 +108,17 @@
                                      [class.hour-block-available]="isTimeAvailable(col, hour.value, hour.value + 100)"
                                      [class.do-not-display-hover]="resizing"
                                      (click)="createAvailability(col, hour.value, hour.value + 100)">
-                                    <div *ngFor="#quarter of hour.quarters; #even = even; #odd = odd" class="day-row" [class.row-half-marker]="odd"
-                                         [class.row-quarter-marker]="even">
+                                    <div *ngFor="#quarter of hour.quarters; #even = even; #odd = odd" class="day-row"
+                                         [class.row-half-marker]="odd"
+                                         [class.row-quarter-marker]="even"
+                                         (drop)="handleAvailabilityDrop($event, col, quarter.value)"
+                                         (dragover)="handleAvailabilityDragOver($event)">
                                     </div>
                                 </div>
 
                                 <div *ngFor="#availability of dates[currentRow * 7 + col].availabilities" class="availability-block"
-                                           [ngStyle]="{'height': availability.height + 'px', 'top': availability.position + 'px'}">
+                                     [ngStyle]="{'height': availability.height + 'px', 'top': availability.position + 'px'}"
+                                     draggable="true" (dragstart)="handleAvailabilityDragStart($event, availability, col)">
                                     <div class="resizable-content"></div>
                                     <div class="resizable-end" (mousedown)="handleAvailabilityResizeMouseDown($event, availability, col)">
                                         <div class="dot"></div>
