@@ -11,11 +11,12 @@ module.exports = {
     filename: 'bundle.js'
   },
   resolve: {
-    extensions: ['', '.webpack.js', '.web.js', '.ts', '.js']
+    extensions: ['', '.webpack.js', '.web.js', '.ts', '.js', '.spec.ts'],
+    modulesDirectories: ['node_modules', 'resources/assets/js']
   },
   module: {
     loaders: [
-      {test: /\.ts$/, loader: 'ts-loader'},
+      {test: /\.ts$/, loader: 'ts-loader', exclude: [/resources\/assets\/js\/test/, /node_modules/]},
       {test: /\.css$/, loader: 'style!css'},
       {test: /\.scss$/, loader: 'style!css!sass'},
       {test: /\.less$/, loader: "style!css!less"},
