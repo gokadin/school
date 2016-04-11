@@ -32,16 +32,13 @@ export class Calendar {
     resizeStartPosition: number;
     currentAvailability: Availability;
     currentAvailabilitySiblings: Availability[];
+    availabilitiesChanged: boolean = false;
 
-    constructor(private eventService: EventService,
-                private availabilityService: AvailabilityService) {
+    constructor(private eventService: EventService, private availabilityService: AvailabilityService) {
         document.addEventListener('mouseup', e => this.handleAvailabilityResizeMouseUp());
 
         this.currentDate = moment();
-
-        this.buildDateArray();
-        this.loadWeekView(); // remove
-        this.mode = 'availability'; // change
+        this.mode = 'month';
 
         eventService.calendarEvents
             .subscribe(
@@ -67,6 +64,14 @@ export class Calendar {
         );
 
         this.buildDateArray();
+    }
+
+    loadCurrentAvailabilities(): void {
+        for (let i = 0; i < 7; i++) {
+            this.dates[this.currentRow * 7 + i].availabilities = [];
+        }
+
+        this.availabilityService.fetch(this.dates[this.currentRow * 7].date, this.dates[this.currentRow * 7 + 6].date);
     }
 
     buildDateArray(): void {
@@ -100,8 +105,6 @@ export class Calendar {
 
     loadWeekView(): void {
         this.currentRow = 0;
-
-        this.availabilityService.fetch(this.dates[this.currentRow * 7].date, this.dates[this.currentRow * 7 + 6].date);
 
         this.hours = [];
 
@@ -170,7 +173,7 @@ export class Calendar {
         if (index < 0 || index > this.dates.length - 1) {
             return;
         }
-
+        
         this.dates[index].availabilities.push(availability);
     }
 
@@ -255,6 +258,9 @@ export class Calendar {
             this.loadWeekView();
         }
 
+        this.loadCurrentAvailabilities();
+        this.availabilitiesChanged = false;
+
         this.mode = 'availability';
     }
 
@@ -284,11 +290,23 @@ export class Calendar {
             return;
         }
 
+        if (!this.availabilitiesChanged) {
+            this.availabilitiesChanged = true;
+        }
+
         this.availabilityService.store(new Availability({
             date: this.dates[this.currentRow * 7 + col].date,
             startTime: start,
             endTime: end
         }));
+    }
+
+    deleteAvailability(availability: Availability): void {
+        if (!this.availabilitiesChanged) {
+            this.availabilitiesChanged = true;
+        }
+
+        // ...
     }
 
     handleAvailabilityResizeMouseDown(event, availability: Availability, col): void {
@@ -318,6 +336,10 @@ export class Calendar {
 
         this.currentAvailability.endTime += (this.currentAvailability.height - this.currentAvailability.originalHeight) / 12 * 25;
         this.currentAvailability.originalHeight = this.currentAvailability.height;
+
+        if (!this.availabilitiesChanged) {
+            this.availabilitiesChanged = true;
+        }
 
         this.availabilityService.update(this.currentAvailability)
             .subscribe();
@@ -406,6 +428,10 @@ export class Calendar {
 
         availability.calculateHeight();
 
+        if (!this.availabilitiesChanged) {
+            this.availabilitiesChanged = true;
+        }
+
         this.availabilityService.update(availability)
             .subscribe();
     }
@@ -437,5 +463,11 @@ export class Calendar {
         availability.endTime = highest;
 
         return availability;
+    }
+
+    applyAvailabilityChangesToFutureWeeks(): void {
+        this.availabilitiesChanged = false;
+
+        // ...
     }
 }

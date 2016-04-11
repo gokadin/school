@@ -19,10 +19,12 @@
                     </div>
                 </div>
             </div>
+            <button class="save-availability-mode-button" type="button" [disabled]="!availabilitiesChanged"
+                    *ngIf="mode == 'availability'" (click)="applyAvailabilityChangesToFutureWeeks()">
+                Apply to future weeks
+            </button>
             <button class="cancel-availability-mode-button" type="button" (click)="exitAvailabilityMode()"
-                    *ngIf="mode == 'availability'">Cancel</button>
-            <button class="save-availability-mode-button" type="button"
-                    *ngIf="mode == 'availability'">Save changes</button>
+                    *ngIf="mode == 'availability'">Exit availabilities</button>
         </div>
     </div>
     <div class="body" id="month-view" *ngIf="mode == 'month'">
@@ -119,7 +121,9 @@
                                 <div *ngFor="#availability of dates[currentRow * 7 + col].availabilities" class="availability-block"
                                      [ngStyle]="{'height': availability.height + 'px', 'top': availability.position + 'px'}"
                                      draggable="true" (dragstart)="handleAvailabilityDragStart($event, availability, col)">
-                                    <div class="resizable-content"></div>
+                                    <div class="resizable-content">
+                                        {{ availability.startTime }} - {{ availability.endTime }}
+                                    </div>
                                     <div class="resizable-end" (mousedown)="handleAvailabilityResizeMouseDown($event, availability, col)">
                                         <div class="dot"></div>
                                         <div class="dot"></div>

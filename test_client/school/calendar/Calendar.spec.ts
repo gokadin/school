@@ -20,7 +20,7 @@ describe('availabilities', () => {
         calendar = new Calendar(mockEventService, mockAvailabilityService);
     });
 
-    test('should switch mode when entering availability mode', () => {
+    test('enterAvailabilityModeShouldSwitchMode', () => {
         // Act
         calendar.enterAvailabilityMode();
 
@@ -28,7 +28,7 @@ describe('availabilities', () => {
         expect(calendar.mode).toBe('availability');
     });
 
-    test('should load week view when entering availability mode and week view is not loaded', () => {
+    test('enterAvailabilityMode should load week view if it is not loaded', () => {
         // Assert
         expect(calendar.weekViewLoaded).toBe(false);
 
@@ -39,7 +39,18 @@ describe('availabilities', () => {
         expect(calendar.weekViewLoaded).toBe(true);
     });
 
-    test('should switch to week mode when exiting availability mode', () => {
+    test('enterAvailabilityMode load current availabilities', () => {
+        // Arrange
+        let callCount = mockAvailabilityService.stubMethods.fetch.callCount;
+
+        // Act
+        calendar.enterAvailabilityMode();
+
+        // Assert
+        expect(mockAvailabilityService.stubMethods.fetch.callCount).toBe(callCount + 1);
+    });
+
+    test('exitAvailabilityMode should switch to week mode', () => {
         // Act
         calendar.enterAvailabilityMode();
 
@@ -54,6 +65,10 @@ describe('availabilities', () => {
     });
 
     test('isTimeAvailable should return false if there is no data', () => {
+        // Arrange
+        calendar.currentRow = 0;
+        calendar.dates[0].availabilities = [];
+
         // Act
         let result = calendar.isTimeAvailable(0, 0, 0);
 

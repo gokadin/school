@@ -59,11 +59,17 @@
 
       .cancel-availability-mode-button {
         background-color: #a94442;
+        width: 140px;
       }
 
       .save-availability-mode-button {
         background-color: #67b168;
-        width: 120px;
+        width: 170px;
+      }
+
+      .save-availability-mode-button:disabled {
+        background-color: #f2f2f2;
+        color: #444;
       }
 
       .calendar-options {
@@ -425,6 +431,9 @@
 
             .resizable-content {
               flex-basis: 100%;
+              color: #fff;
+              padding: 2px;
+              font-size: 12px;
             }
 
             .resizable-end {
