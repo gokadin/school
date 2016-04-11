@@ -251,7 +251,7 @@ export class Calendar {
     }
 
     enterAvailabilityMode(): void {
-        if (this.mode != 'week' && !this.weekViewLoaded) {
+        if (!this.weekViewLoaded) {
             this.loadWeekView();
         }
 

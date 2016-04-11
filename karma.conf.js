@@ -38,7 +38,10 @@ module.exports = function(config) {
       },
       module: {
         loaders: [
-          { test: /\.ts$/, loader: 'ts-loader', exclude: [/node_modules/]}
+          {test: /\.ts$/, loader: 'ts-loader', exclude: [/node_modules/]},
+          {test: /\.css$/, loader: 'style!css'},
+          {test: /\.scss$/, loader: 'style!css!sass'},
+          {test: /\.html$/, loader: 'raw'}
         ]
       },
       stats: {
