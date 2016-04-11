@@ -1,29 +1,35 @@
-import {SpyObject} from 'angular2/testing_internal';
+import {MockService} from "../../helpers/MockService";
+import Moment = moment.Moment;
 
-import {AvailabilityService} from "../../../resources/assets/js/services/AvailabilityService";
+import {Availability} from "../../../resources/assets/js/models/Availability";
 
-export class MockAvailabilityService extends SpyObject {
-    fakeResponse;
-    availabilities;
-    fetch;
-    store;
-    update;
-    delete;
+export class MockAvailabilityService extends MockService {
+    availabilities: Object;
 
     constructor() {
-        super(AvailabilityService);
+        super();
 
-        this.fakeResponse = [];
-        this.availabilities = {
-            subscribe: (callback) => callback(this.fakeResponse)
-        };
-        this.fetch = this.spy('fetch').andReturn(this);
-        this.store = this.spy('store').andReturn(this);
-        this.update = this.spy('update').andReturn(this);
-        this.delete = this.spy('delete').andReturn(this);
+        this.availabilities = this.getObservableProperty();
+
+        this.registerStubMethod('fetch');
+        this.registerStubMethod('store');
+        this.registerStubMethod('update');
+        this.registerStubMethod('delete');
     }
 
-    setResponse(json: any): void {
-        this.fakeResponse = json;
+    fetch(from: Moment, to: Moment): void {
+        this.recordCall('fetch', [from, to]);
+    }
+
+    store(availability: Availability): void {
+        this.recordCall('store', [availability]);
+    }
+
+    update(availability: Availability): void {
+        this.recordCall('update', [availability]);
+    }
+
+    delete(availability: Availability): void {
+        this.recordCall('delete', [availability]);
     }
 }
