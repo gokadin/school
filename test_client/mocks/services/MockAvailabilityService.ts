@@ -27,9 +27,11 @@ export class MockAvailabilityService extends MockService {
 
     update(availability: Availability): void {
         this.recordCall('update', [availability]);
+        return this.getObservableProperty();
     }
 
     delete(availability: Availability): void {
         this.recordCall('delete', [availability]);
+        return this.getObservableProperty();
     }
 }

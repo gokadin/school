@@ -13,7 +13,11 @@ export class MockService {
 
     getObservableProperty(): void {
         return {
-            subscribe: (callback) => callback(this.fakeResponse)
+            subscribe: (callback) => {
+                if (callback) {
+                    callback(this.fakeResponse);
+                }
+            }
         };
     }
 

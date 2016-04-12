@@ -66,7 +66,6 @@ describe('availabilities', () => {
 
     test('isTimeAvailable should return false if there is no data', () => {
         // Arrange
-        calendar.currentRow = 0;
         calendar.dates[0].availabilities = [];
 
         // Act
@@ -78,7 +77,6 @@ describe('availabilities', () => {
 
     test('isTimeAvailable should return false if there is only an availability ending before the start time', () => {
         // Arrange
-        calendar.currentRow = 0;
         calendar.dates[0].availabilities.push(new Availability({
             id: 1, date: moment(), startTime: 200, endTime: 300
         }));
@@ -92,7 +90,6 @@ describe('availabilities', () => {
 
     test('isTimeAvailable should return false if there is only an availability starting after the end time', () => {
         // Arrange
-        calendar.currentRow = 0;
         calendar.dates[0].availabilities.push(new Availability({
             id: 1, date: moment(), startTime: 400, endTime: 500
         }));
@@ -106,7 +103,6 @@ describe('availabilities', () => {
 
     test('isTimeAvailable should return true if there is an availability overlapping the given times', () => {
         // Arrange
-        calendar.currentRow = 0;
         calendar.dates[0].availabilities.push(new Availability({
             id: 1, date: moment(), startTime: 399, endTime: 500
         }));
@@ -120,7 +116,6 @@ describe('availabilities', () => {
 
     test('createAvailability should not create an availability if the time is already available', () => {
         // Arrange
-        calendar.currentRow = 0;
         calendar.dates[0].availabilities.push(new Availability({
             id: 1, date: moment(), startTime: 300, endTime: 450
         }));
@@ -134,7 +129,6 @@ describe('availabilities', () => {
 
     test('createAvailability should store the availability if the time is not already available', () => {
         // Arrange
-        calendar.currentRow = 0;
         calendar.dates[0].availabilities.push(new Availability({
             id: 1, date: moment(), startTime: 300, endTime: 400
         }));
@@ -144,5 +138,65 @@ describe('availabilities', () => {
 
         // Assert
         expect(mockAvailabilityService.stubMethods.store.callCount).toBe(1);
+    });
+
+    test('createAvailability should set availabilitiesChanged to true', () => {
+        // Assert
+        expect(calendar.availabilitiesChanged).toBe(false);
+
+        // Act
+        calendar.createAvailability(0, 400, 500);
+
+        // Assert
+        expect(calendar.availabilitiesChanged).toBe(true);
+    });
+
+    test('deleteAvailability should remove it from the dates array', () => {
+        // Arrange
+        let availability = new Availability({
+            id: 1, date: moment(), startTime: 300, endTime: 400
+        });
+        calendar.dates[0].availabilities.push(availability);
+        calendar.dates[0].availabilities.push(new Availability({
+            id: 2, date: moment(), startTime: 300, endTime: 400
+        }));
+
+        // Act
+        calendar.deleteAvailability(0, availability);
+
+        // Assert
+        expect(calendar.dates[0].availabilities.length).toBe(1);
+        expect(calendar.dates[0].availabilities[0].id).toBe(2);
+    });
+
+    test('deleteAvailability should delete the availability', () => {
+        // Arrange
+        let availability = new Availability({
+            id: 1, date: moment(), startTime: 300, endTime: 400
+        });
+        calendar.dates[0].availabilities.push(availability);
+
+        // Act
+        calendar.deleteAvailability(0, availability);
+
+        // Assert
+        expect(mockAvailabilityService.stubMethods.delete.callCount).toBe(1);
+    });
+
+    test('deleteAvailability should set availabilitiesChanged to true', () => {
+        // Arrange
+        let availability = new Availability({
+            id: 1, date: moment(), startTime: 300, endTime: 400
+        });
+        calendar.dates[0].availabilities.push(availability);
+
+        // Assert
+        expect(calendar.availabilitiesChanged).toBe(false);
+
+        // Act
+        calendar.deleteAvailability(0, availability);
+
+        // Assert
+        expect(calendar.availabilitiesChanged).toBe(true);
     });
 });

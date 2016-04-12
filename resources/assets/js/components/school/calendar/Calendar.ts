@@ -29,7 +29,6 @@ export class Calendar {
     mode: string;
     weekViewLoaded: boolean = false;
     resizing: boolean = false;
-    resizeStartPosition: number;
     currentAvailability: Availability;
     currentAvailabilitySiblings: Availability[];
     availabilitiesChanged: boolean = false;
@@ -38,6 +37,7 @@ export class Calendar {
         document.addEventListener('mouseup', e => this.handleAvailabilityResizeMouseUp());
 
         this.currentDate = moment();
+        this.currentRow = 0;
         this.mode = 'month';
 
         eventService.calendarEvents
