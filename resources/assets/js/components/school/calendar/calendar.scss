@@ -322,6 +322,28 @@
     }
 
     table {
+      tr.resize-rows {
+        height: 0px;
+        position: relative;
+
+        td {
+          height: 0px;
+        }
+
+        .resize-rows-container {
+          position: absolute;
+          top: 0;
+          left: 0;
+          z-index: 10;
+          width: 100%;
+          opacity: 0;
+        }
+
+        .resize-row {
+          height: 12px;
+        }
+      }
+
       tr {
         th:first-child {
           width: 60px;

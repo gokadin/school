@@ -100,12 +100,24 @@
                         <th><div>Fri <i>{{ dates[currentRow * 7 + 5].date.format('Do') }}</i></div></th>
                         <th><div>Sat <i>{{ dates[currentRow * 7 + 6].date.format('Do') }}</i></div></th>
                     </tr>
+                    <tr class="resize-rows" *ngIf="mode == 'availability'">
+                        <td></td>
+                        <td>
+                            <div class="resize-rows-container" *ngIf="resizing">
+                                <div *ngFor="#hour of hours">
+                                    <div *ngFor="#quarter of hour.quarters" class="resize-row"
+                                         (mouseenter)="handleAvailabilityResizeMouseEnter(quarter.value + 25)">
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
                     <tr>
                         <td class="time-rows">
                             <div *ngFor="#hour of hours" class="time-display">{{ hour.value | hour }}</div>
                         </td>
                         <td *ngFor="#col of cols" class="day-rows">
-                            <div class="day-col" *ngIf="mode == 'availability'" (mousemove)="handleAvailabilityResizeMouseMove($event)">
+                            <div class="day-col" *ngIf="mode == 'availability'">
                                 <div *ngFor="#hour of hours" class="day-hour-block"
                                      [class.hour-block-available]="isTimeAvailable(col, hour.value, hour.value + 100)"
                                      [class.do-not-display-hover]="resizing"

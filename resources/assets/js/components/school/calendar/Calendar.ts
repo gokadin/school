@@ -173,7 +173,7 @@ export class Calendar {
         if (index < 0 || index > this.dates.length - 1) {
             return;
         }
-        
+
         this.dates[index].availabilities.push(availability);
     }
 
@@ -313,7 +313,6 @@ export class Calendar {
         event.preventDefault();
         this.resizing = true;
         this.currentAvailability = availability;
-        this.resizeStartPosition = event.clientY;
 
         this.currentAvailabilitySiblings = [];
         let availabilities = this.dates[this.currentRow * 7 + col].availabilities;
@@ -330,11 +329,12 @@ export class Calendar {
             return;
         }
 
+        this.resizing = false;
+
         if (this.currentAvailability.originalHeight == this.currentAvailability.height) {
             return;
         }
 
-        this.currentAvailability.endTime += (this.currentAvailability.height - this.currentAvailability.originalHeight) / 12 * 25;
         this.currentAvailability.originalHeight = this.currentAvailability.height;
 
         if (!this.availabilitiesChanged) {
@@ -345,33 +345,25 @@ export class Calendar {
             .subscribe();
 
         this.currentAvailability = null;
-        this.resizing = false;
     }
 
-    handleAvailabilityResizeMouseMove(event): void {
+    handleAvailabilityResizeMouseEnter(time: number): void {
         if (!this.resizing) {
             return;
         }
 
-        let height = this.currentAvailability.originalHeight + event.clientY - this.resizeStartPosition;
-
-        if (height < 12) {
-            this.currentAvailability.height = 12;
-            return;
-        }
-
-        if (height % 12 != 0) {
+        if (time - this.currentAvailability.startTime < 25) {
             return;
         }
 
         for (let i = 0; i < this.currentAvailabilitySiblings.length; i++) {
-            if (this.currentAvailability.position + height >= this.currentAvailabilitySiblings[i].position) {
-                this.currentAvailability.height = this.currentAvailabilitySiblings[i].position - this.currentAvailability.position;
+            if (time > this.currentAvailabilitySiblings[i].startTime) {
                 return;
             }
         }
 
-        this.currentAvailability.height = height;
+        this.currentAvailability.endTime = time;
+        this.currentAvailability.height = (time - this.currentAvailability.startTime) / 25 * 12;
     }
 
     handleAvailabilityDragStart(event, availability: Availability, col: number): void {
