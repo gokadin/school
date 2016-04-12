@@ -114,7 +114,7 @@
                     </tr>
                     <tr>
                         <td class="time-rows">
-                            <div *ngFor="#hour of hours" class="time-display">{{ hour.value | hour }}</div>
+                            <div *ngFor="#hour of hours" class="time-display">{{ hour.value | time:'hour' }}</div>
                         </td>
                         <td *ngFor="#col of cols" class="day-rows">
                             <div class="day-col" *ngIf="mode == 'availability'">
@@ -134,7 +134,10 @@
                                      [ngStyle]="{'height': availability.height + 'px', 'top': availability.position + 'px'}"
                                      draggable="true" (dragstart)="handleAvailabilityDragStart($event, availability, col)">
                                     <div class="resizable-content">
-                                        {{ availability.startTime }} - {{ availability.endTime }}
+                                        <div *ngIf="availability.endTime - availability.startTime >= 75">
+                                            {{ availability.startTime | time:'ampm' }} - {{ availability.endTime | time:'ampm' }}
+                                            <div class="delete-availability" (click)="deleteAvailability(col, availability)">delete</div>
+                                        </div>
                                     </div>
                                     <div class="resizable-end" (mousedown)="handleAvailabilityResizeMouseDown($event, availability, col)">
                                         <div class="dot"></div>

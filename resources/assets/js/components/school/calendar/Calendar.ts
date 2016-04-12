@@ -301,12 +301,21 @@ export class Calendar {
         }));
     }
 
-    deleteAvailability(availability: Availability): void {
+    deleteAvailability(col: number, availability: Availability): void {
         if (!this.availabilitiesChanged) {
             this.availabilitiesChanged = true;
         }
 
-        // ...
+        let availabilities = this.dates[this.currentRow * 7 + col].availabilities;
+        for (let i = 0; i < availabilities.length; i++) {
+            if (availabilities[i].id == availability.id) {
+                availabilities.splice(i, 1);
+                break;
+            }
+        }
+
+        this.availabilityService.delete(availability)
+            .subscribe();
     }
 
     handleAvailabilityResizeMouseDown(event, availability: Availability, col): void {

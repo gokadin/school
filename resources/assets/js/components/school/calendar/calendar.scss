@@ -453,9 +453,22 @@
 
             .resizable-content {
               flex-basis: 100%;
-              color: #fff;
               padding: 2px;
               font-size: 12px;
+
+              > div {
+                color: #fff;
+
+                .delete-availability {
+                  color: #ac2925;
+                  margin-top: 2px;
+                  width: 45px;
+                }
+
+                .delete-availability:hover {
+                  text-decoration: underline;
+                }
+              }
             }
 
             .resizable-end {
