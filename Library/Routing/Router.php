@@ -62,8 +62,8 @@ class Router
         {
             switch ($action)
             {
-                case 'index':
-                    $this->addRoute(['GET'], '/', $controller.'@index');
+                case 'fetch':
+                    $this->addRoute(['GET'], '/', $controller.'@fetch');
                     break;
                 case 'show':
                     $this->addRoute(['GET'], '/{id}', $controller.'@show');

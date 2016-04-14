@@ -3,19 +3,43 @@
 namespace App\Domain\Services;
 
 use App\Domain\Calendar\Availability;
+use App\Domain\Processors\AvailabilityProcessor;
 use App\Domain\Users\Teacher;
+use App\Repositories\AvailabilityRepository;
+use App\Repositories\Repository;
 use Carbon\Carbon;
+use Library\Events\EventManager;
 
 class AvailabilityService extends Service
 {
-    public function range(Teacher $teacher, Carbon $fromDate, Carbon $toDate)
+    /**
+     * @var AvailabilityRepository
+     */
+    private $availabilityRepository;
+
+    public function __construct(EventManager $eventManager, Repository $repository)
     {
-        return $this->repository->of(Availability::class)->range($teacher, $fromDate, $toDate);
+        parent::__construct($eventManager, $repository);
+
+        $this->availabilityRepository = $repository->of(Availability::class);
+    }
+
+    public function fetch(Teacher $teacher, Carbon $weekStartDate): array
+    {
+        $availabilityProcessor = new AvailabilityProcessor();
+
+        $weekAvailability = $this->availabilityRepository->getWeekNonDefault($teacher, $weekStartDate);
+
+        return is_null($weekAvailability) ?: $availabilityProcessor->extractJsonData($weekAvailability);
+
+        $defaultAvailability = $this->availabilityRepository->getLastDefault($teacher, $weekStartDate);
+
+        return is_null($defaultAvailability) ? [] : $availabilityProcessor->extractFromJson($defaultAvailability);
     }
 
     public function store(Availability $availability)
     {
-        return $this->repository->of(Availability::class)->store($availability);
+        return $this->availabilityRepository->store($availability);
     }
 
     public function update(Teacher $teacher, array $updated)
@@ -25,11 +49,11 @@ class AvailabilityService extends Service
         $availability->setStartTime($updated['startTime']);
         $availability->setEndTime($updated['endTime']);
 
-        $this->repository->of(Availability::class)->update($availability);
+        $this->availabilityRepository->update($availability);
     }
 
-    public function delete(Teacher $teacher, int $id)
+    public function destroy(Teacher $teacher, int $id)
     {
-        $this->repository->of(Availability::class)->delete($teacher->availabilities()->find($id));
+        $this->availabilityRepository->delete($teacher->availabilities()->find($id));
     }
 }

@@ -3,6 +3,7 @@
 namespace App\Domain\Calendar;
 
 use App\Domain\Users\Teacher;
+use Carbon\Carbon;
 use Library\DataMapper\DataMapperPrimaryKey;
 use Library\DataMapper\DataMapperTimestamps;
 
@@ -17,13 +18,13 @@ class Availability
     private $teacher;
 
     /** @Column(type="datetime") */
-    private $date;
+    private $weekStartDate;
 
-    /** @Column(type="integer", size="3") */
-    private $startTime;
+    /** @Column(type="boolean", defaultValue="false") */
+    private $isDefault;
 
-    /** @Column(type="integer", size="3") */
-    private $endTime;
+    /** @Column(type="text", defaultValue="[]") */
+    private $jsonData;
 
     public function __construct(Teacher $teacher, $date, $startTime, $endTime)
     {
@@ -33,6 +34,9 @@ class Availability
         $this->endTime = $endTime;
     }
 
+    /**
+     * @return Teacher
+     */
     public function teacher()
     {
         return $this->teacher;
@@ -43,33 +47,33 @@ class Availability
         $this->teacher = $teacher;
     }
 
-    public function date()
+    public function weekStartDate()
     {
-        return $this->date;
+        return $this->weekStartDate;
     }
 
-    public function setDate($date)
+    public function setWeekStartDate(Carbon $weekStartDate)
     {
-        $this->date = $date;
+        $this->weekStartDate = $weekStartDate;
     }
 
-    public function startTime()
+    public function isDefault()
     {
-        return $this->startTime;
+        return $this->isDefault;
     }
 
-    public function setStartTime($startTime)
+    public function setAsDefault()
     {
-        $this->startTime = $startTime;
+        return $this->isDefault = true;
     }
 
-    public function endTime()
+    public function jsonData()
     {
-        return $this->endTime;
+        return $this->jsonData;
     }
 
-    public function setEndTime($endTime)
+    public function setJsonData(string $jsonData)
     {
-        $this->endTime = $endTime;
+        $this->jsonData = $jsonData;
     }
 }

@@ -7,9 +7,9 @@ use Library\Queue\Queue;
 
 class EventManager
 {
-    protected $listeners = [];
-    protected $container;
-    protected $queue;
+    private $container;
+    private $queue;
+    private $listeners = [];
 
     public function __construct($config, Container $container, Queue $queue)
     {
@@ -19,7 +19,7 @@ class EventManager
         $this->registerListeners($config);
     }
 
-    protected function registerListeners($config)
+    private function registerListeners($config)
     {
         foreach ($config as $eventClass => $listeners)
         {
@@ -53,7 +53,7 @@ class EventManager
      * @param $event
      * @return void
      */
-    public function fire($event)
+    public function fire(Event $event)
     {
         if ($event instanceof ShouldBroadcast)
         {
@@ -61,16 +61,42 @@ class EventManager
         }
 
         $eventClass = get_class($event);
-
         if (!isset($this->listeners[$eventClass]))
         {
             return;
         }
 
-        foreach ($this->listeners[$eventClass] as $listenerClass)
+        $this->executeListeners($this->listeners[$eventClass], $event);
+    }
+
+    private function executeListeners(array $listeners, Event $event)
+    {
+        foreach ($listeners as $listenerClass)
         {
-            $this->queue->push($event, $this->container->resolve($listenerClass));
+            $this->executeListener($this->container->resolve($listenerClass), $event);
         }
+    }
+
+    private function executeListener(Listener $listener, Event $event)
+    {
+        if ($listener instanceof ShouldQueue)
+        {
+            $this->executeAsyncListener($listener, $event);
+
+            return;
+        }
+
+        $this->executeSyncListener($listener, $event);
+    }
+
+    private function executeSyncListener(Listener $listener, Event $event)
+    {
+        $listener->handle($event);
+    }
+
+    private function executeAsyncListener(Listener $listener, Event $event)
+    {
+
     }
 
     // **************************** NOT WORKING!!!!!
@@ -79,7 +105,7 @@ class EventManager
      *
      * @param $event
      */
-    protected function broadcastEvent($event)
+    private function broadcastEvent($event)
     {
         $data = $event->broadcastOn();
 

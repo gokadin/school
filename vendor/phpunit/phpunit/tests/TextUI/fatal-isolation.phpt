@@ -1,5 +1,5 @@
 --TEST--
-phpunit FatalTest ../_files/FatalTest.php
+phpunit FatalTest --process-isolation ../_files/FatalTest.php
 --FILE--
 <?php
 $_SERVER['argv'][1] = '--no-configuration';
@@ -13,7 +13,7 @@ PHPUnit_TextUI_Command::main();
 --EXPECTF--
 PHPUnit %s by Sebastian Bergmann and contributors.
 
-E
+E                                                                   1 / 1 (100%)
 
 Time: %s, Memory: %sMb
 

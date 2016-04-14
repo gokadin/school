@@ -21,8 +21,6 @@ use Symfony\Component\Yaml\Exception\ParseException;
 class Parser
 {
     const BLOCK_SCALAR_HEADER_PATTERN = '(?P<separator>\||>)(?P<modifiers>\+|\-|\d+|\+\d+|\-\d+|\d+\+|\d+\-)?(?P<comments> +#.*)?';
-    // BC - wrongly named
-    const FOLDED_SCALAR_PATTERN = self::BLOCK_SCALAR_HEADER_PATTERN;
 
     private $offset = 0;
     private $lines = array();
@@ -240,10 +238,6 @@ class Parser
                 if ($isRef) {
                     $this->refs[$isRef] = $data[$key];
                 }
-
-                if ($objectForMap && !is_object($data)) {
-                    $data = (object) $data;
-                }
             } else {
                 // multiple documents are not supported
                 if ('---' === $this->currentLine) {
@@ -307,6 +301,16 @@ class Parser
             mb_internal_encoding($mbEncoding);
         }
 
+        if ($objectForMap && !is_object($data) && 'mapping' === $context) {
+            $object = new \stdClass();
+
+            foreach ($data as $key => $value) {
+                $object->$key = $value;
+            }
+
+            $data = $object;
+        }
+
         return empty($data) ? null : $data;
     }
 
@@ -343,7 +347,11 @@ class Parser
     private function getNextEmbedBlock($indentation = null, $inSequence = false)
     {
         $oldLineIndentation = $this->getCurrentLineIndentation();
-        $insideBlockScalar = $this->isBlockScalarHeader();
+        $blockScalarIndentations = array();
+
+        if ($this->isBlockScalarHeader()) {
+            $blockScalarIndentations[] = $this->getCurrentLineIndentation();
+        }
 
         if (!$this->moveToNextLine()) {
             return;
@@ -380,8 +388,8 @@ class Parser
 
         $isItUnindentedCollection = $this->isStringUnIndentedCollectionItem();
 
-        if (!$insideBlockScalar) {
-            $insideBlockScalar = $this->isBlockScalarHeader();
+        if (empty($blockScalarIndentations) && $this->isBlockScalarHeader()) {
+            $blockScalarIndentations[] = $this->getCurrentLineIndentation();
         }
 
         $previousLineIndentation = $this->getCurrentLineIndentation();
@@ -389,8 +397,17 @@ class Parser
         while ($this->moveToNextLine()) {
             $indent = $this->getCurrentLineIndentation();
 
-            if (!$insideBlockScalar && $indent === $previousLineIndentation) {
-                $insideBlockScalar = $this->isBlockScalarHeader();
+            // terminate all block scalars that are more indented than the current line
+            if (!empty($blockScalarIndentations) && $indent < $previousLineIndentation && trim($this->currentLine) !== '') {
+                foreach ($blockScalarIndentations as $key => $blockScalarIndentation) {
+                    if ($blockScalarIndentation >= $this->getCurrentLineIndentation()) {
+                        unset($blockScalarIndentations[$key]);
+                    }
+                }
+            }
+
+            if (empty($blockScalarIndentations) && !$this->isCurrentLineComment() && $this->isBlockScalarHeader()) {
+                $blockScalarIndentations[] = $this->getCurrentLineIndentation();
             }
 
             $previousLineIndentation = $indent;
@@ -406,7 +423,7 @@ class Parser
             }
 
             // we ignore "comment" lines only when we are not inside a scalar block
-            if (!$insideBlockScalar && $this->isCurrentLineComment()) {
+            if (empty($blockScalarIndentations) && $this->isCurrentLineComment()) {
                 continue;
             }
 
@@ -487,10 +504,7 @@ class Parser
             $parsedValue = Inline::parse($value, $exceptionOnInvalidType, $objectSupport, $objectForMap, $this->refs);
 
             if ('mapping' === $context && '"' !== $value[0] && "'" !== $value[0] && '[' !== $value[0] && '{' !== $value[0] && '!' !== $value[0] && false !== strpos($parsedValue, ': ')) {
-                @trigger_error(sprintf('Using a colon in the unquoted mapping value "%s" in line %d is deprecated since Symfony 2.8 and will throw a ParseException in 3.0.', $value, $this->getRealCurrentLineNb() + 1), E_USER_DEPRECATED);
-
-                // to be thrown in 3.0
-                // throw new ParseException('A colon cannot be used in an unquoted mapping value.');
+                throw new ParseException('A colon cannot be used in an unquoted mapping value.');
             }
 
             return $parsedValue;
@@ -574,7 +588,7 @@ class Parser
             $previousLineIndented = false;
             $previousLineBlank = false;
 
-            for ($i = 0; $i < count($blockLines); $i++) {
+            for ($i = 0; $i < count($blockLines); ++$i) {
                 if ('' === $blockLines[$i]) {
                     $text .= "\n";
                     $previousLineIndented = false;
@@ -669,7 +683,7 @@ class Parser
         //checking explicitly the first char of the trim is faster than loops or strpos
         $ltrimmedLine = ltrim($this->currentLine, ' ');
 
-        return $ltrimmedLine[0] === '#';
+        return '' !== $ltrimmedLine && $ltrimmedLine[0] === '#';
     }
 
     /**

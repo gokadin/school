@@ -4,17 +4,17 @@ namespace App\Http\Controllers\Api\School\Teacher\Calendar;
 
 use App\Http\Controllers\ApiController;
 use App\Http\Requests\Api\School\Teacher\Calendar\Availability\DeleteRequest;
-use App\Http\Requests\Api\School\Teacher\Calendar\Availability\IndexRequest;
+use App\Http\Requests\Api\School\Teacher\Calendar\Availability\FetchRequest;
 use App\Http\Requests\Api\School\Teacher\Calendar\Availability\StoreRequest;
 use App\Http\Requests\Api\School\Teacher\Calendar\Availability\UpdateRequest;
 use App\Http\Translators\Api\School\Teacher\Calendar\Availability\DeleteTranslator;
-use App\Http\Translators\Api\School\Teacher\Calendar\Availability\IndexTranslator;
+use App\Http\Translators\Api\School\Teacher\Calendar\Availability\FetchTranslator;
 use App\Http\Translators\Api\School\Teacher\Calendar\Availability\StoreTranslator;
 use App\Http\Translators\Api\School\Teacher\Calendar\Availability\UpdateTranslator;
 
 class AvailabilityController extends ApiController
 {
-    public function range(IndexRequest $request, IndexTranslator $translator)
+    public function fetch(FetchRequest $request, FetchTranslator $translator)
     {
         return $this->respond($translator->translateRequest($request));
     }

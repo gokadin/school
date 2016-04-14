@@ -1,6 +1,6 @@
 <?php
 
-namespace ApplicationTest\Domain\Services;
+namespace Tests\ApplicationTest\Domain\Services;
 
 use App\Domain\Services\EventService;
 use Tests\ApplicationTest\BaseTest;
@@ -16,7 +16,7 @@ class EventServiceTest extends BaseTest
     {
         parent::setUp();
 
-        $this->createApplication();
+        $this->app = $this->createApplication();
 
         $this->service = $this->app->container()->resolve(EventService::class);
     }
@@ -30,7 +30,7 @@ class EventServiceTest extends BaseTest
     {
         // Arrange
 
-
+        $this->assertTrue(true);
         // Act
 
         // Assert

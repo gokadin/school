@@ -2,6 +2,7 @@
 
 namespace Library\Queue;
 
+use Library\Events\Handler;
 use Library\Queue\Drivers\SyncQueueDriver;
 use Library\Queue\Drivers\DatabaseQueueDriver;
 
@@ -11,23 +12,21 @@ class Queue
     protected $syncDriver;
     protected $syncOnly;
 
-    public function __construct()
+    public function __construct($config)
     {
-        $settings = require __DIR__.'/../../Config/queue.php';
-
         $this->syncOnly = false;
 
-        $this->setDrivers($settings);
+        $this->setDrivers($config);
     }
 
-    protected function setDrivers($settings)
+    protected function setDrivers($config)
     {
         $this->syncDriver = new SyncQueueDriver();
 
-        switch ($settings['use'])
+        switch ($config['use'])
         {
             case 'database':
-                $this->asyncDriver = new DatabaseQueueDriver($settings['connections']['database']);
+                $this->asyncDriver = new DatabaseQueueDriver($config['connections']['database']);
                 break;
             default:
                 $this->syncOnly = true;
@@ -36,14 +35,15 @@ class Queue
         }
     }
 
-    public function push($job, $handler = null)
+    public function push(Handler $handler, $event = null)
     {
-        if ($this->syncOnly || env('CONSOLE') || !($job instanceof ShouldQueue))
+        if ($this->syncOnly || env('CONSOLE'))
         {
-            $this->syncDriver->push($job, $handler);
+            $this->syncDriver->push($handler, $handler);
+
             return;
         }
 
-        $this->asyncDriver->push($job, $handler);
+        $this->asyncDriver->push($handler, $handler);
     }
 }

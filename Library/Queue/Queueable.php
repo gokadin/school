@@ -4,13 +4,12 @@ namespace Library\Queue;
 
 trait Queueable
 {
-    protected $delay = 0;
-    protected $maxAttempts = 3;
+    private $delay = 0;
+    private $maxAttempts = 3;
 
-    public function setDelay($seconds)
+    protected function setDelay($seconds)
     {
         $this->delay = $seconds;
-        return $this;
     }
 
     public function getDelay()
@@ -18,10 +17,9 @@ trait Queueable
         return $this->delay;
     }
 
-    public function setMaxAttempts($number)
+    protected function setMaxAttempts($number)
     {
         $this->maxAttempts = $number;
-        return $this;
     }
 
     public function getMaxAttempts()
