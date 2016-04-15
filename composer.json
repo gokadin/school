@@ -13,7 +13,7 @@
     "mtdowling/cron-expression": "^1.0",
     "mailgun/mailgun-php": "^1.8",
     "firebase/php-jwt": "^3.0",
-    "phpunit/phpunit": "5.3.*"
+    "phpunit/phpunit": "^5.3"
   },
   "autoload": {
     "psr-0": {"": ""}
