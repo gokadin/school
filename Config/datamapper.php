@@ -26,7 +26,7 @@ return [
         App\Domain\Setting\StudentSettings::class,
         App\Domain\Events\Event::class,
         App\Domain\Events\Lesson::class,
-        App\Domain\Calendar\Availability::class
+        App\Domain\Calendar\WeekAvailability::class
     ]
 
 ];

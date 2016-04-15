@@ -30,8 +30,8 @@ class Teacher extends User
     /** @HasMany(target="App\Domain\Events\Event", mappedBy="teacher") */
     private $events;
 
-    /** @HasMany(target="App\Domain\Calendar\Availability", mappedBy="teacher", nullable) */
-    private $availabilities;
+    /** @HasMany(target="App\Domain\Calendar\WeekAvailability", mappedBy="teacher", nullable) */
+    private $weekAvailabilities;
 
     public function __construct($firstName, $lastName, $email, $password, $subscription,
                                 Address $address, $school, TeacherSettings $settings)
@@ -122,17 +122,17 @@ class Teacher extends User
     /**
      * @return PersistentCollection
      */
-    public function availabilities()
+    public function weekAvailabilities()
     {
-        return $this->availabilities;
+        return $this->weekAvailabilities;
     }
 
-    public function addAvailability(Availability $availability)
+    public function addWeekAvailability(Availability $availability)
     {
         $this->availabilities->add($availability);
     }
 
-    public function removeAvailability(Availability $availability)
+    public function removeWeekAvailability(Availability $availability)
     {
         $this->availabilities->remove($availability);
     }

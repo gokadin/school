@@ -8,14 +8,9 @@ use Carbon\Carbon;
 
 class AvailabilityRepository extends RepositoryBase
 {
-    public function range(Teacher $teacher, Carbon $fromDate, Carbon $toDate)
-    {
-        return $teacher->availabilities()->where('date', '>=', $fromDate)->where('date', '<=', $toDate)->toArray();
-    }
-
     public function getWeekNonDefault(Teacher $teacher, Carbon $weekStartDate)
     {
-        return $teacher->availabilities()
+        return $teacher->weekAvailabilities()
             ->where('isDefault', '=', false)
             ->where('date', '=', $weekStartDate->toDateString())
             ->first();
@@ -23,7 +18,7 @@ class AvailabilityRepository extends RepositoryBase
 
     public function getLastDefault(Teacher $teacher, Carbon $weekStartDate)
     {
-        return $teacher->availabilities()
+        return $teacher->weekAvailabilities()
             ->where('isDefault', '=', true)
             ->where('date', '<=', $weekStartDate->toDateString())
             ->sortBy('date', false)

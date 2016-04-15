@@ -2,78 +2,52 @@
 
 namespace App\Domain\Calendar;
 
-use App\Domain\Users\Teacher;
 use Carbon\Carbon;
-use Library\DataMapper\DataMapperPrimaryKey;
-use Library\DataMapper\DataMapperTimestamps;
+use JsonSerializable;
 
-/**
- * @Entity(name="availabilities")
- */
-class Availability
+class Availability implements JsonSerializable
 {
-    use DataMapperPrimaryKey, DataMapperTimestamps;
+    /**
+     * @var string
+     */
+    private $uniqueId;
 
-    /** @BelongsTo(target="\App\Domain\Users\Teacher") */
-    private $teacher;
+    /**
+     * @var Carbon
+     */
+    private $date;
 
-    /** @Column(type="datetime") */
-    private $weekStartDate;
+    /**
+     * @var int
+     */
+    private $startTime;
 
-    /** @Column(type="boolean", defaultValue="false") */
-    private $isDefault;
+    /**
+     * @var int
+     */
+    private $endTime;
 
-    /** @Column(type="text", defaultValue="[]") */
-    private $jsonData;
-
-    public function __construct(Teacher $teacher, $date, $startTime, $endTime)
+    public function __construct(Carbon $date, int $startTime, int $endTime)
     {
-        $this->teacher = $teacher;
         $this->date = $date;
         $this->startTime = $startTime;
         $this->endTime = $endTime;
+
+        $this->generateUniqueId();
     }
 
-    /**
-     * @return Teacher
-     */
-    public function teacher()
+    public function generateUniqueId()
     {
-        return $this->teacher;
+        $this->uniqueId = $this->date->dayOfWeek.'-'.$this->startTime.'-'.$this->endTime;
     }
 
-    public function setTeacher(Teacher $teacher)
+    public function jsonSerialize()
     {
-        $this->teacher = $teacher;
-    }
-
-    public function weekStartDate()
-    {
-        return $this->weekStartDate;
-    }
-
-    public function setWeekStartDate(Carbon $weekStartDate)
-    {
-        $this->weekStartDate = $weekStartDate;
-    }
-
-    public function isDefault()
-    {
-        return $this->isDefault;
-    }
-
-    public function setAsDefault()
-    {
-        return $this->isDefault = true;
-    }
-
-    public function jsonData()
-    {
-        return $this->jsonData;
-    }
-
-    public function setJsonData(string $jsonData)
-    {
-        $this->jsonData = $jsonData;
+        return [
+            'uniqueId' => $this->uniqueId,
+            'date' => $this->date->toDateString(),
+            'startTime' => $this->startTime,
+            'endTime' => $this->endTime
+        ];
     }
 }

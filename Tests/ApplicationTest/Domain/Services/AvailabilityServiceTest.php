@@ -4,6 +4,7 @@ namespace Tests\ApplicationTest\Domain\Services;
 
 use App\Domain\Activities\Activity;
 use App\Domain\Calendar\Availability;
+use App\Domain\Calendar\WeekAvailability;
 use App\Domain\Common\Address;
 use App\Domain\Events\Event;
 use App\Domain\School\School;
@@ -27,7 +28,7 @@ class AvailabilityServiceTest extends ServiceTest
             Student::class,
             TeacherSettings::class,
             Event::class,
-            Availability::class,
+            WeekAvailability::class,
             Address::class,
             School::class
         ]);
@@ -43,21 +44,31 @@ class AvailabilityServiceTest extends ServiceTest
     public function test_fetch_shouldReturnEmptyIfThereIsNoRecord()
     {
         // Act
-        //$availabilities = $this->service->fetch($this->teacher, Carbon::now()->startOfWeek()->subDay());
+        $availabilities = $this->service->fetch($this->teacher, Carbon::now()->startOfWeek()->subDay());
 
         // Assert
-        //$this->assertEquals(0, sizeof($availabilities));
-        $this->assertTrue(false);
+        $this->assertEquals(0, sizeof($availabilities));
     }
 
     public function test_fetch_shouldReturnNonDefaultRecordAtGivenDateIfItExists()
     {
         // Arrange
+        $date = Carbon::now()->startOfWeek()->subDay();
+        $defaultWeekAvailability = new WeekAvailability($this->teacher, $date->subWeeks(2));
+        $defaultWeekAvailability->isDefault();
+        $nonDefaultWeekAvailability = new WeekAvailability($this->teacher, $date);
+        $availability = new Availability($date, 100, 200);
+        $nonDefaultWeekAvailability->setJsonData(json_encode([$availability->jsonSerialize()]));
+        $this->dm->persist($defaultWeekAvailability);
+        $this->dm->persist($nonDefaultWeekAvailability);
+        $this->dm->flush();
 
         // Act
+        $availabilities = $this->service->fetch($this->teacher, $date);
 
         // Assert
-        $this->assertTrue(false);
+        $this->assertEquals(1, sizeof($availabilities));
+        $this->assertEquals($date->toDateString(), $availabilities[0]['date']);
     }
 
     public function test_fetch_shouldReturnLastDefaultWeekBeforeGivenDateIfThereIsNoNonDefaultRecordForThatDate()

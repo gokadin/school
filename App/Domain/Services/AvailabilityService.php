@@ -30,7 +30,10 @@ class AvailabilityService extends Service
 
         $weekAvailability = $this->availabilityRepository->getWeekNonDefault($teacher, $weekStartDate);
 
-        return is_null($weekAvailability) ?: $availabilityProcessor->extractJsonData($weekAvailability);
+        if (!is_null($weekAvailability))
+        {
+            return $availabilityProcessor->extractJsonData($weekAvailability);
+        }
 
         $defaultAvailability = $this->availabilityRepository->getLastDefault($teacher, $weekStartDate);
 
