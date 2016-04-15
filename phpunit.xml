@@ -3,7 +3,7 @@
          colors="true">
     <testsuites>
         <testsuite name="Application Test Suite">
-            <directory>./Tests/</directory>
+            <directory>./Tests/ApplicationTest/Domain/Services/AvailabilityTest.php</directory>
         </testsuite>
     </testsuites>
 </phpunit>
