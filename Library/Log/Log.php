@@ -6,7 +6,7 @@ class Log
 {
     private $logFolder;
 
-    public function __construct($logFolder = 'Storage/Logs')
+    public function __construct($logFolder = '../Storage/Logs')
     {
         $this->setLogFolder($logFolder);
     }
