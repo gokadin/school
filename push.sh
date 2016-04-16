@@ -10,6 +10,4 @@ then branch="$1"
 else branch="master"
 fi
 
-echo $branch
-
-#git push origin $branch
+git push origin $branch
