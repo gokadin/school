@@ -40,7 +40,8 @@ class ContainerConfiguration
         $session = new Session();
         $this->container->registerInstance('session', $session);
         $this->container->registerInstance('log', new Log());
-        $queue = new Queue();
+        $queueConfig = require $app->basePath().'Config/queue.php';
+        $queue = new Queue($queueConfig);
         $this->container->registerInstance('queue', $queue);
         $eventManagerConfig = require $app->basePath().'Config/events.php';
         $this->container->registerInstance('eventManager',
@@ -61,7 +62,6 @@ class ContainerConfiguration
         // Services requiring a database
         $validator = new Validator($database);
         $this->container->registerInstance('validator', $validator);
-        //$this->container->registerInstance('sentry', new Sentry($dm));
         $router = new Router($this->container);
         $this->container->registerInstance('router', $router);
         $this->container->registerInstance('response', new Response($router, $session));

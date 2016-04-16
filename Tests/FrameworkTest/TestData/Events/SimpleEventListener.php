@@ -2,7 +2,9 @@
 
 namespace Tests\FrameworkTest\TestData\Events;
 
-class SimpleEventListener
+use Library\Events\Listener;
+
+class SimpleEventListener extends Listener
 {
     public function handle(SimpleEvent $event)
     {

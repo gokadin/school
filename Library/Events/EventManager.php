@@ -96,7 +96,7 @@ class EventManager
 
     private function executeAsyncListener(Listener $listener, Event $event)
     {
-
+        $this->queue->push($listener, $event);
     }
 
     // **************************** NOT WORKING!!!!!

@@ -2,7 +2,9 @@
 
 namespace Tests\FrameworkTest\TestData\Events;
 
-class SimpleEvent
+use Library\Events\Event;
+
+class SimpleEvent extends Event
 {
     protected $fired;
     protected $secondFired;

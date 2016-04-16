@@ -9,6 +9,7 @@ use Library\Facades\Facade;
 use Library\Http\Response;
 use Library\Http\View;
 use Library\Http\ViewFactory;
+use Library\Routing\Router;
 
 class Application
 {
@@ -16,17 +17,22 @@ class Application
     protected $container;
     protected $controllerResponse;
 
+    /**
+     * @var Router
+     */
+    private $router;
+
     public function __construct()
     {
         $this->configureErrorHandling();
-
-        Facade::setFacadeApplication($this);
 
         $this->container = new Container();
         $this->controllerResponse = null;
         $this->basePath = __DIR__.'/../';
 
         $this->configureContainer();
+
+        $this->router = $this->container->resolve('router');
 
         $this->loadRoutes();
     }
@@ -67,8 +73,7 @@ class Application
 
     private function loadRoutes()
     {
-        $router = $this->container()->resolveInstance('router');
-
+        $router = $this->router;
         $router->group(['namespace' => 'App\\Http\\Controllers'], function($router) {
             require __DIR__ . '/../App/Http/routes.php';
         });
@@ -76,8 +81,7 @@ class Application
 
     public function processRoute()
     {
-        $result = $this->container()->resolveInstance('router')->dispatch(
-            $this->container()->resolveInstance('request'));
+        $result = $this->router->dispatch($this->container()->resolveInstance('request'));
 
         $this->controllerResponse = $result;
     }

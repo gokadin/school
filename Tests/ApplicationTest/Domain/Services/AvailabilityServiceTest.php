@@ -15,7 +15,7 @@ use App\Domain\Users\Student;
 use App\Domain\Users\Teacher;
 use Carbon\Carbon;
 
-class AvailabilityServiceTest extends ServiceTest
+class AvailabilityServiceTest extends ServiceTestBase
 {
     public function setUp()
     {

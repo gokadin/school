@@ -2,7 +2,9 @@
 
 namespace Tests\FrameworkTest\TestData\Events;
 
-class ListenerWithResolvableConstructor
+use Library\Events\Listener;
+
+class ListenerWithResolvableConstructor extends Listener
 {
     protected $simpleEvent;
 

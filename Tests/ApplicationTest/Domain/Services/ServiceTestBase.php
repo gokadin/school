@@ -8,7 +8,7 @@ use Library\Events\EventManager;
 use Library\Queue\Queue;
 use Tests\ApplicationTest\BaseTest;
 
-class ServiceTest extends BaseTest
+class ServiceTestBase extends BaseTest
 {
     /**
      * @var Service

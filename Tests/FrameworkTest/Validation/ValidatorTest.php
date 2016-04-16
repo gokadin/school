@@ -4,23 +4,24 @@ namespace Tests\FrameworkTest\Validation;
 
 use Library\Database\Database;
 use Library\Database\Table;
-use Library\Testing\DatabaseTransactions;
-use Library\Facades\Session;
 use Library\Validation\Validator;
 use Tests\FrameworkTest\BaseTest;
 
 class ValidatorTest extends BaseTest
 {
-    use DatabaseTransactions;
-
+    /**
+     * @var Validator
+     */
     protected $validator;
+
+    /**
+     * @var Database
+     */
     protected $database;
 
     public function setUp()
     {
         parent::setUp();
-
-        $this->createApplication();
 
         $this->database = new Database([
             'driver' => 'mysql',
@@ -35,18 +36,23 @@ class ValidatorTest extends BaseTest
         $this->validator = new Validator($this->database);
     }
 
+    public function tearDown()
+    {
+        parent::tearDown();
+    }
+
     public function testMakeWorksWithSimpleSingleValidationWhenValid()
     {
         // Assert
         $this->assertTrue($this->validator->make(['one' => 1], ['one' => 'required']));
-        $this->assertFalse(Session::hasErrors());
+        $this->assertFalse($this->validator->hasErrors());
     }
 
     public function testMakeWorksWithSimpleSingleValidationWhenInvalid()
     {
         // Assert
         $this->assertFalse($this->validator->make(['one' => null], ['one' => 'required']));
-        $this->assertTrue(Session::hasErrors());
+        $this->assertTrue($this->validator->hasErrors());
     }
 
     public function testMakeWorksWithMultipleValidationsWhenAllValid()
@@ -56,7 +62,7 @@ class ValidatorTest extends BaseTest
             ['one' => 1, 'two' => 2, 'three' => 3],
             ['one' => 'required', 'two' => 'numeric', 'three' => 'required']
         ));
-        $this->assertFalse(Session::hasErrors());
+        $this->assertFalse($this->validator->hasErrors());
     }
 
     public function testMakeWorksWithMultipleValidationsWhenOneInvalid()
@@ -66,7 +72,7 @@ class ValidatorTest extends BaseTest
             ['one' => 1, 'two' => 'text', 'three' => 3],
             ['one' => 'required', 'two' => 'numeric', 'three' => 'required']
         ));
-        $this->assertTrue(Session::hasErrors());
+        $this->assertTrue($this->validator->hasErrors());
     }
 
     public function testMakeWorksWithMoreDataThanThereAreValidations()
@@ -76,21 +82,21 @@ class ValidatorTest extends BaseTest
             ['one' => 1, 'two' => 2, 'three' => 3],
             ['one' => 'required', 'three' => 'required']
         ));
-        $this->assertFalse(Session::hasErrors());
+        $this->assertFalse($this->validator->hasErrors());
     }
 
     public function testMakeWorksWithComplexValidationRuleWhenValid()
     {
         // Assert
         $this->assertTrue($this->validator->make(['one' => 20], ['one' => 'min:15']));
-        $this->assertFalse(Session::hasErrors());
+        $this->assertFalse($this->validator->hasErrors());
     }
 
     public function testMakeWorksWithComplexValidationRuleWhenInvalid()
     {
         // Assert
         $this->assertFalse($this->validator->make(['one' => 1], ['one' => 'min:15']));
-        $this->assertTrue(Session::hasErrors());
+        $this->assertTrue($this->validator->hasErrors());
     }
 
     public function testMakeWorksWithMultipleValidationsOnSameFieldWhenAllValid()
@@ -100,7 +106,7 @@ class ValidatorTest extends BaseTest
             ['one' => 1],
             ['one' => ['required', 'numeric']]
         ));
-        $this->assertFalse(Session::hasErrors());
+        $this->assertFalse($this->validator->hasErrors());
     }
 
     public function testMakeWorksWithMultipleValidationsOnSameFieldWhenOneIsInValid()
@@ -110,7 +116,7 @@ class ValidatorTest extends BaseTest
             ['one' => 'text'],
             ['one' => ['required', 'numeric']]
         ));
-        $this->assertTrue(Session::hasErrors());
+        $this->assertTrue($this->validator->hasErrors());
     }
 
     public function testSingleCustomErrorWorks()
@@ -123,8 +129,8 @@ class ValidatorTest extends BaseTest
 
         // Assert
         $this->assertFalse($result);
-        $this->assertTrue(Session::hasErrors());
-        $errors = Session::getErrors();
+        $this->assertTrue($this->validator->hasErrors());
+        $errors = $this->validator->errors();
         $this->assertEquals('custom', $errors['one'][0]);
     }
 
@@ -141,8 +147,8 @@ class ValidatorTest extends BaseTest
 
         // Assert
         $this->assertFalse($result);
-        $this->assertTrue(Session::hasErrors());
-        $errors = Session::getErrors();
+        $this->assertTrue($this->validator->hasErrors());
+        $errors = $this->validator->errors();
         $this->assertEquals(2, sizeof($errors['one']));
         $this->assertEquals('customMin', $errors['one'][1]);
         $this->assertEquals(2, sizeof($errors['two']));
@@ -161,8 +167,8 @@ class ValidatorTest extends BaseTest
         );
 
         $this->assertFalse($result);
-        $this->assertTrue(Session::hasErrors());
-        $errors = Session::getErrors();
+        $this->assertTrue($this->validator->hasErrors());
+        $errors = $this->validator->errors();
         $this->assertEquals('one is required', $errors['one'][0]);
         $this->assertEquals('one should be higher than 10', $errors['one'][1]);
     }
@@ -216,13 +222,15 @@ class ValidatorTest extends BaseTest
         // Assert
         $this->assertTrue($this->validator->max(10, 11));
         $this->assertTrue($this->validator->max(10, 10));
+        $this->assertTrue($this->validator->max('text', 5));
+        $this->assertTrue($this->validator->max('text', 4));
     }
 
     public function testMaxWorksWhenInvalid()
     {
         // Assert
         $this->assertFalse($this->validator->max(11, 10));
-        $this->assertFalse($this->validator->max('text', 10));
+        $this->assertFalse($this->validator->max('text', 3));
     }
 
     public function testBetweenWorksWhenValid()
@@ -310,8 +318,7 @@ class ValidatorTest extends BaseTest
     public function testEqualsFieldWorksWhenValid()
     {
         // Arrange
-        $_SERVER['REQUEST_METHOD'] = 'POST';
-        $_POST['one'] = 1;
+        $this->validator->make(['one' => 1], []);
 
         // Assert
         $this->assertTrue($this->validator->equalsField(1, 'one'));
@@ -319,10 +326,6 @@ class ValidatorTest extends BaseTest
 
     public function testEqualsFieldWorksWhenInvalid()
     {
-        // Arrange
-        $_POST['_method'] = 'POST';
-        $_SERVER['REQUEST_METHOD'] = 'POST';
-
         // Assert
         $this->assertFalse($this->validator->equalsField(2, 'one'));
         $this->assertFalse($this->validator->equalsField(2, 'nonexistant'));

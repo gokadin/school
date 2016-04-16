@@ -2,7 +2,9 @@
 
 namespace Tests\FrameworkTest\TestData\Events;
 
-class EventTestingResolvableConstructor
+use Library\Events\Event;
+
+class EventTestingResolvableConstructor extends Event
 {
     protected $fired;
     protected $resolvedParameter;

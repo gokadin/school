@@ -4,6 +4,7 @@ namespace Library\Routing;
 
 use Library\Container\Container;
 use Library\Http\Request;
+use Library\Validation\Validator;
 use Symfony\Component\Yaml\Exception\RuntimeException;
 use ReflectionMethod;
 
@@ -19,10 +20,10 @@ class Router
     protected $names = [];
     private $catchAll;
 
-    public function __construct(Container $container)
+    public function __construct(Container $container, Validator $validator)
     {
         $this->container = $container;
-        $this->validator = $container->resolveInstance('validator');
+        $this->validator = $validator;
         $this->routes = new RouteCollection();
     }
 
@@ -161,7 +162,7 @@ class Router
         }
 
         $middlewares = array();
-        if (sizeof($this->middlewares > 0))
+        if (sizeof($this->middlewares) > 0)
         {
             foreach ($this->middlewares as $middleware)
             {

@@ -23,9 +23,10 @@ class Validator
         $this->data = $data;
 
         if ($rules == null || sizeof($rules) == 0)
+        {
             return true;
+        }
 
-        $errors = [];
         $isValid = true;
 
         foreach ($rules as $field => $constraints)
@@ -80,6 +81,11 @@ class Validator
         }
 
         return $isValid;
+    }
+
+    public function hasErrors()
+    {
+        return sizeof($this->errors) > 0;
     }
 
     public function errors()
@@ -162,13 +168,10 @@ class Validator
 
     public function required($value)
     {
-        if ($value == 0)
-        {
-            return true;
-        }
-
         if ($value == null || trim($value) === '')
+        {
             return false;
+        }
 
         return true;
     }
@@ -251,7 +254,7 @@ class Validator
 
     public function equalsField($value, $fieldName)
     {
-        return $value == $this->data[$fieldName];
+        return isset($this->data[$fieldName]) ? $value == $this->data[$fieldName] : false;
     }
 
     public function date($value)

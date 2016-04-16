@@ -237,7 +237,11 @@ class PersistentCollectionTest extends DataMapperBaseTest
     {
         // Arrange
         $this->setUpSimpleEntity();
+        $se = new SimpleEntity(1, 2, '1', '2');
+        $this->dm->persist($se);
+        $this->dm->flush();
         $collection = new PersistentCollection($this->dm, SimpleEntity::class);
+        $collection->add($se);
 
         // Act
         $collection->sortBy('rubbish')->count();
