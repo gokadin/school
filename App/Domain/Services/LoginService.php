@@ -18,10 +18,9 @@ class LoginService extends Service
      */
     private $authenticator;
 
-    public function __construct(Queue $queue, EventManager $eventManager, Transformer $transformer,
-                                Repository $repository, Authenticator $authenticator)
+    public function __construct(EventManager $eventManager, Repository $repository, Authenticator $authenticator)
     {
-        parent::__construct($queue, $eventManager, $transformer, $repository);
+        parent::__construct($eventManager, $repository);
 
         $this->authenticator = $authenticator;
     }

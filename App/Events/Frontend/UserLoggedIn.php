@@ -2,7 +2,7 @@
 
 namespace App\Events\Frontend;
 
-use App\Events\Event;
+use Library\Events\Event;
 
 class UserLoggedIn extends Event
 {

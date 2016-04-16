@@ -11,7 +11,7 @@ abstract class ApiController extends Controller
     const STATUS_INTERNAL_SERVER_ERROR = 500;
     const STATUS_BAD_REQUEST = 400;
 
-    protected function respond(array $data): Response
+    protected function respond($data): Response
     {
         return $data ? $this->respondOk($data) : $this->respondBadRequest();
     }

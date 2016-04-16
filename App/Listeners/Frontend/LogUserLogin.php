@@ -3,18 +3,21 @@
 namespace App\Listeners\Frontend;
 
 use App\Events\Frontend\UserLoggedIn;
-use App\Listeners\Listener;
-use Library\Queue\ShouldQueue;
+use Library\Events\Listener;
+use Library\Events\ShouldQueue;
+use Library\Log\Log;
 
 class LogUserLogin extends Listener implements ShouldQueue
 {
+    private $log;
+
+    public function __construct(Log $log)
+    {
+        $this->log = $log;
+    }
+
     public function handle(UserLoggedIn $event)
     {
-        // ...
-
-        $user = $event->user();
-        $type = $event->type();
-
-        // no need for userrepo.. need stats stuff
+        $this->log->info(ucfirst($event->type()).' '.$event->user()->name().' logged in.');
     }
 }

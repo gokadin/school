@@ -3,9 +3,9 @@
 namespace App\Listeners\School;
 
 use App\Events\School\StudentPreRegistered;
-use App\Listeners\Listener;
+use Library\Events\Listener;
+use Library\Events\ShouldQueue;
 use Library\Mail\Mail;
-use Library\Queue\ShouldQueue;
 
 class SendStudentPreRegistrationEmail extends Listener implements ShouldQueue
 {

@@ -2,18 +2,21 @@
 
 namespace App\Http\Controllers\Api\Frontend;
 
-use App\Domain\Services\LoginService;
 use App\Http\Controllers\ApiController;
-use App\Http\Requests\Test\Frontend\LoginRequest;
+use App\Http\Requests\Api\Frontend\Account\CurrentUserRequest;
+use App\Http\Requests\Api\Frontend\Account\LoginRequest;
+use App\Http\Translators\Api\Frontend\Account\CurrentUserTranslator;
+use App\Http\Translators\Api\Frontend\Account\LoginTranslator;
 
 class AccountController extends ApiController
 {
-    public function login(LoginRequest $loginRequest, LoginService $loginService)
+    public function currentUser(CurrentUserRequest $request, CurrentUserTranslator $translator)
     {
-        $authToken = $loginService->login($loginRequest->data('email'), $loginRequest->data('password'));
+        return $this->respond($translator->translateRequest($request));
+    }
 
-        return !$authToken
-            ? $this->respondBadRequest()
-            : $this->respondOk(['authToken' => $authToken]);
+    public function login(LoginRequest $request, LoginTranslator $translator)
+    {
+        return $this->respond($translator->translateRequest($request));
     }
 }

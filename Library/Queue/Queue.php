@@ -39,11 +39,11 @@ class Queue
     {
         if ($this->syncOnly || env('CONSOLE'))
         {
-            $this->syncDriver->push($handler, $handler);
+            $this->syncDriver->push($handler, $event);
 
             return;
         }
 
-        $this->asyncDriver->push($handler, $handler);
+        $this->asyncDriver->push($handler, $event);
     }
 }

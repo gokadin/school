@@ -15,15 +15,23 @@ export class AuthService {
     }
 
     loadUser() {
-        this.http.get('/api/school/currentUser')
-            .map(data => { return data.json(); })
+        this.http.get('/api/frontend/account/currentUser')
+            .map(data => data.json())
             .subscribe(
-                data => this.user.next(new User(data))
+                data => {
+                    if (data.loggedIn) {
+                        this.user.next(new User(data.currentUser));
+                    }
+                }
             );
     }
 
-    login(authToken: string) {
-        localStorage.setItem('authToken', authToken);
+    login(email: string, password: string) {
+        return this.http.post('/api/frontend/account/login', JSON.stringify({
+                email: email,
+                password: password
+            }))
+            .map(res => res.json());
     }
 
     logout() {

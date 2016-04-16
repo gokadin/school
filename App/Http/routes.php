@@ -6,14 +6,13 @@ $router->group(['namespace' => 'Api', 'prefix' => '/api', 'as' => 'api', 'middle
     {
         $router->group(['prefix' => '/account', 'as' => 'account'], function($router)
         {
+            $router->get('/currentUser', 'AccountController@currentUser');
             $router->post('/login', 'AccountController@login');
         });
     });
 
     $router->group(['namespace' => 'School', 'prefix' => '/school', 'as' => 'school', 'middleware' => 'VerifyAuthentication'], function($router)
     {
-        $router->get('/currentUser', 'SchoolController@currentUser');
-
         $router->group(['namespace' => 'Teacher', 'prefix' => '/teacher', 'as' => 'teacher'], function($router)
         {
             $router->group(['prefix' => '/search', 'as' => 'search'], function($router) {

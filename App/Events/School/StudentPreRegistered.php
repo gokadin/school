@@ -3,7 +3,7 @@
 namespace App\Events\School;
 
 use App\Domain\Users\TempStudent;
-use App\Events\Event;
+use Library\Events\Event;
 
 class StudentPreRegistered extends Event
 {

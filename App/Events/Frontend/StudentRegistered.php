@@ -3,7 +3,7 @@
 namespace App\Events\Frontend;
 
 use App\Domain\Users\Student;
-use App\Events\Event;
+use Library\Events\Event;
 
 class StudentRegistered extends Event
 {

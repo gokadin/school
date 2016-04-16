@@ -11,7 +11,7 @@ import {AuthService} from "./../../../services/authService";
 export class LoginPage {
     form: ControlGroup;
 
-    constructor(public http: Http, public authService: AuthService, fb: FormBuilder) {
+    constructor(public authService: AuthService, fb: FormBuilder) {
         this.form = fb.group({
             'email': ['', Validators.required],
             'password': ['', Validators.required]
@@ -19,17 +19,13 @@ export class LoginPage {
     }
 
     login(value) {
-        this.http.post('/api/frontend/account/login', JSON.stringify({
-            email: value.email,
-            password: value.password
-        }))
-        .map(res => res.json())
-        .subscribe(
-            data => {
-                this.authService.login(data.authToken);
-                window.location.replace('/school/');
-            },
-            err => console.log(err)
-        );
+        this.authService.login(value.email, value.password)
+            .subscribe(
+                data => {
+                    localStorage.setItem('authToken', data.authToken);
+                    thi.authService.setToken(data.authToken);
+                },
+                err => console.log(err)
+            );
     }
 }

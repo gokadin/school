@@ -2,8 +2,8 @@
 
 namespace App\Domain\Services;
 
-use App\Events\Event;
 use App\Repositories\Repository;
+use Library\Events\Event;
 use Library\Events\EventManager;
 
 abstract class Service

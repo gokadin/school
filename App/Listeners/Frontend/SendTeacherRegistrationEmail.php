@@ -3,9 +3,9 @@
 namespace App\Listeners\Frontend;
 
 use App\Events\Frontend\TeacherRegistered;
-use App\Listeners\Listener;
+use Library\Events\Listener;
+use Library\Events\ShouldQueue;
 use Library\Mail\Mail;
-use Library\Queue\ShouldQueue;
 
 class SendTeacherRegistrationEmail extends Listener implements ShouldQueue
 {
