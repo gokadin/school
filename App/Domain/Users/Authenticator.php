@@ -95,7 +95,7 @@ class Authenticator
         return false;
     }
 
-    private function loginTeacher($user)
+    public function loginTeacher($user)
     {
         return $this->createJwt([
             'id' => $user->getId(),
@@ -103,7 +103,7 @@ class Authenticator
         ]);
     }
 
-    private function loginStudent($user)
+    public function loginStudent($user)
     {
         return $this->createJwt([
             'id' => $user->getId(),

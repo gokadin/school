@@ -2,15 +2,31 @@
 
 namespace App\Http\Translators\Api\Frontend\Account;
 
+use App\Domain\Users\Authenticator;
 use App\Domain\Users\User;
-use App\Http\Translators\AuthenticatedTranslator;
+use App\Http\Translators\Translator;
 use Library\Http\Request;
+use Library\Transformer\Transformer;
 
-class CurrentUserTranslator extends AuthenticatedTranslator
+class CurrentUserTranslator extends Translator
 {
+    /**
+     * @var Authenticator
+     */
+    private $authenticator;
+
+    public function __construct(Transformer $transformer, Authenticator $authenticator)
+    {
+        parent::__construct($transformer);
+
+        $this->authenticator = $authenticator;
+    }
+
     public function translateRequest(Request $request)
     {
-        return $this->translateResponse($this->user);
+        $this->authenticator->processAuthorization($request->header('Authorization'));
+
+        return $this->translateResponse($this->authenticator->user());
     }
 
     private function translateResponse($user): array

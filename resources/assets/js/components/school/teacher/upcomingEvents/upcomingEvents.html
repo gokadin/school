@@ -4,7 +4,7 @@
     </div>
     <div class="component-loading" *ngIf="isLoading"></div>
     <div class="component-error" *ngIf="hasError"></div>
-    <div class="no-data" *ngIf="!isLoading && data.length == 0">
+    <div class="no-data" *ngIf="!isLoading && data && data.length == 0">
         You have no calendar events.
         <a href="/school/teacher/calendar/"><button type="button" class="button-green">Go to calendar</button></a>
     </div>

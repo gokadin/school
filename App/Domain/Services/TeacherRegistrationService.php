@@ -6,12 +6,8 @@ use App\Domain\Users\Authenticator;
 use App\Domain\Users\Teacher;
 use App\Events\Frontend\TeacherRegistered;
 use App\Events\Frontend\UserLoggedIn;
-use App\Jobs\Frontend\PreRegisterTeacher;
-use App\Jobs\Frontend\RegisterTeacher;
 use App\Repositories\Repository;
 use Library\Events\EventManager;
-use Library\Queue\Queue;
-use Library\Transformer\Transformer;
 
 class TeacherRegistrationService extends Service
 {
@@ -20,10 +16,9 @@ class TeacherRegistrationService extends Service
      */
     private $authenticator;
 
-    public function __construct(Queue $queue, EventManager $eventManager, Transformer $transformer, Repository $repository,
-                                Authenticator $authenticator)
+    public function __construct(EventManager $eventManager, Repository $repository, Authenticator $authenticator)
     {
-        parent::__construct($queue, $eventManager, $transformer, $repository);
+        parent::__construct($eventManager, $repository);
 
         $this->authenticator = $authenticator;
     }

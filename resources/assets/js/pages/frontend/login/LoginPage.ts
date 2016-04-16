@@ -22,8 +22,8 @@ export class LoginPage {
         this.authService.login(value.email, value.password)
             .subscribe(
                 data => {
-                    localStorage.setItem('authToken', data.authToken);
-                    thi.authService.setToken(data.authToken);
+                    this.authService.setToken(data.authToken);
+                    location.href = '/school/';
                 },
                 err => console.log(err)
             );

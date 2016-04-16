@@ -34,6 +34,10 @@ export class AuthService {
             .map(res => res.json());
     }
 
+    setToken(authToken: string): void {
+        localStorage.setItem('authToken', authToken);
+    }
+
     logout() {
         localStorage.removeItem('authToken');
     }
