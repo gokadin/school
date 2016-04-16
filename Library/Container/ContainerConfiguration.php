@@ -62,23 +62,12 @@ class ContainerConfiguration
         // Services requiring a database
         $validator = new Validator($database);
         $this->container->registerInstance('validator', $validator);
-        $router = new Router($this->container);
+        $router = new Router($this->container, $validator);
         $this->container->registerInstance('router', $router);
         $this->container->registerInstance('response', new Response($router, $session));
-        $this->container->registerInstance('form', new Form($router, $session));
         $shao = new Shao($this->container);
         $this->container->registerInstance('shao', $shao);
         $mailConfig = require $app->basePath().'Config/mail.php';
         $this->container->registerInstance('mail', new Mail($mailConfig, $shao));
-
-        if (env('APP_DEBUG'))
-        {
-            $this->configureDebugContainer();
-        }
-    }
-
-    protected function configureDebugContainer()
-    {
-        $this->container->registerInstance('modelFactory', new ModelFactory());
     }
 }

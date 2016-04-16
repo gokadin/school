@@ -32,7 +32,7 @@ class Application
 
         $this->configureContainer();
 
-        $this->router = $this->container->resolve('router');
+        $this->router = $this->container->resolveInstance('router');
 
         $this->loadRoutes();
     }
