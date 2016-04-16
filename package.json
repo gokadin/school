@@ -16,8 +16,6 @@
   "version": "1.0.0",
   "main": "gulpfile.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "watchify -vd -p browserify-hmr -t vueify -e resources/assets/js/main.js -o public/js/main.js"
   },
   "repository": {
     "type": "git",

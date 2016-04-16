@@ -87,6 +87,13 @@ module.exports = function(config) {
 
     // Continuous Integration mode
     // if true, Karma captures browsers, runs the tests and exits
-    singleRun: true
+    singleRun: true,
+
+    plugins: [
+      'karma-teamcity-reporter',
+      'karma-jasmine',
+      'karma-webpack',
+      'karma-phantomjs-launcher'
+    ],
   })
 }
