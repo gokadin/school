@@ -41,6 +41,36 @@ class Availability implements JsonSerializable
         $this->uniqueId = $this->date->dayOfWeek.'-'.$this->startTime.'-'.$this->endTime;
     }
 
+    public function date()
+    {
+        return $this->date;
+    }
+
+    public function setDate(Carbon $date)
+    {
+        $this->date = $date;
+    }
+
+    public function startTime()
+    {
+        return $this->startTime;
+    }
+
+    public function setStartTime(string $startTime)
+    {
+        $this->startTime = $startTime;
+    }
+
+    public function endTime()
+    {
+        return $this->endTime;
+    }
+
+    public function setEndTime(string $endTime)
+    {
+        $this->endTime = $endTime;
+    }
+
     public function jsonSerialize()
     {
         return [

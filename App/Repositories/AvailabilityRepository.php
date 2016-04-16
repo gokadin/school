@@ -12,7 +12,7 @@ class AvailabilityRepository extends RepositoryBase
     {
         return $teacher->weekAvailabilities()
             ->where('isDefault', '=', false)
-            ->where('date', '=', $weekStartDate->toDateString())
+            ->where('weekStartDate', '=', $weekStartDate->toDateString())
             ->first();
     }
 

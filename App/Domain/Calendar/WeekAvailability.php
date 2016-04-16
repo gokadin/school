@@ -26,10 +26,10 @@ class WeekAvailability
     /** @Column(type="text", defaultValue="[]") */
     private $jsonData;
 
-    public function __construct(Teacher $teacher, $date)
+    public function __construct(Teacher $teacher, $weekStartDate)
     {
         $this->teacher = $teacher;
-        $this->date = $date;
+        $this->weekStartDate = $weekStartDate;
     }
 
     /**

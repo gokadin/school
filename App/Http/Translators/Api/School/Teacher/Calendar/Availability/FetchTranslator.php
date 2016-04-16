@@ -8,7 +8,7 @@ use Library\Http\Request;
 
 class FetchTranslator extends AvailabilityTranslator
 {
-    public function translateRequest(Request $request): array
+    public function translateRequest(Request $request)
     {
         $weekStartDate = Carbon::parse($request->weekStartDate);
         if ($weekStartDate->dayOfWeek != Carbon::SUNDAY)

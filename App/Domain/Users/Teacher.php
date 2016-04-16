@@ -30,7 +30,7 @@ class Teacher extends User
     /** @HasMany(target="App\Domain\Events\Event", mappedBy="teacher") */
     private $events;
 
-    /** @HasMany(target="App\Domain\Calendar\WeekAvailability", mappedBy="teacher", nullable) */
+    /** @HasMany(target="App\Domain\Calendar\WeekAvailability", mappedBy="teacher") */
     private $weekAvailabilities;
 
     public function __construct($firstName, $lastName, $email, $password, $subscription,

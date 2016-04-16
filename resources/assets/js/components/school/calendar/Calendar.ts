@@ -71,7 +71,7 @@ export class Calendar {
             this.dates[this.currentRow * 7 + i].availabilities = [];
         }
 
-        this.availabilityService.fetch(this.dates[this.currentRow * 7].date, this.dates[this.currentRow * 7 + 6].date);
+        this.availabilityService.fetch(this.dates[this.currentRow * 7].date);
     }
 
     buildDateArray(): void {

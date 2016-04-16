@@ -13,9 +13,8 @@ export class AvailabilityService {
         this.availabilities = new Subject<Object>();
     }
 
-    fetch(fromDate: Moment, toDate: Moment): void {
-        this.http.get('/api/school/teacher/calendar/availabilities/range?fromDate=' +
-            fromDate.format('YYYY-MM-DD') + '&toDate=' + toDate.format('YYYY-MM-DD'))
+    fetch(date: Moment): void {
+        this.http.get('/api/school/teacher/calendar/availabilities/?weekStartDate=' + date.format('YYYY-MM-DD'))
             .map(data => data.json())
             .map(data => data.availabilities
                 .map(availability => new Availability(availability)))

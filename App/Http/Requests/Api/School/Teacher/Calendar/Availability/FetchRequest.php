@@ -14,8 +14,7 @@ class FetchRequest extends Request
     public function rules(): array
     {
         return [
-            'fromDate' => 'required',
-            'toDate' => 'required'
+            'weekStartDate' => 'required'
         ];
     }
 }
