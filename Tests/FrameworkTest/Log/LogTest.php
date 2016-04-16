@@ -20,10 +20,10 @@ class LogTest extends BaseTest
         $log = new Log();
 
         // Act
-        $log->setLogFolder('Test/Folder');
+        $log->setLogFolder('TestData/Logs');
 
         // Assert
-        $this->assertEquals('Test/Folder', $log->getLogFolder());
+        $this->assertEquals('TestData/Logs', $log->getLogFolder());
     }
 
     public function testSetLogFolderWithEndingSlash()
@@ -32,18 +32,17 @@ class LogTest extends BaseTest
         $log = new Log();
 
         // Act
-        $log->setLogFolder('Test/Folder/');
+        $log->setLogFolder('TestData/Logs/');
 
         // Assert
-        $this->assertEquals('Test/Folder', $log->getLogFolder());
+        $this->assertEquals('TestData/Logs', $log->getLogFolder());
     }
 
     public function testLogFileNameIsCorrectlyGenerated()
     {
         // Arrange
-        $log = new Log();
-        $log->setLogFolder('Tests/FrameworkTest/TestData/Logs');
-        $expectedFileName = __DIR__.'/../TestData/Logs/log-'.date('d-m-Y');
+        $log = new Log('TestData/Logs');
+        $expectedFileName = 'TestData/Logs/log-'.date('d-m-Y');
 
         // Act
         $log->info('testing');

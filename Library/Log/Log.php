@@ -4,13 +4,11 @@ namespace Library\Log;
 
 class Log
 {
-    const DEFAULT_LOG_FOLDER = 'Storage/Logs';
+    private $logFolder;
 
-    protected $logFolder;
-
-    public function __construct()
+    public function __construct($logFolder = 'Storage/Logs')
     {
-        $this->logFolder = self::DEFAULT_LOG_FOLDER;
+        $this->setLogFolder($logFolder);
     }
 
     public function setLogFolder($str)
@@ -18,6 +16,11 @@ class Log
         if (substr($str, -1) == '/')
         {
             $str = substr($str, 0, strlen($str) - 1);
+        }
+
+        if (!file_exists($str))
+        {
+            mkdir($str, 0777, true);
         }
 
         $this->logFolder = $str;
@@ -54,7 +57,7 @@ class Log
 
     protected function generateFileName()
     {
-        return __DIR__.'/../../'.$this->logFolder.'/log-'.date('d-m-Y');
+        return $this->logFolder.'/log-'.date('d-m-Y');
     }
 
     protected function getMessagePrefix()
