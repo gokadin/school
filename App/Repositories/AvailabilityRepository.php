@@ -3,6 +3,7 @@
 namespace App\Repositories;
 
 use App\Domain\Calendar\Availability;
+use App\Domain\Calendar\WeekAvailability;
 use App\Domain\Users\Teacher;
 use Carbon\Carbon;
 
@@ -43,7 +44,7 @@ class AvailabilityRepository extends RepositoryBase
 //            ->toArray();
     }
 
-    public function store(Availability $availability)
+    public function store(WeekAvailability $availability)
     {
         $this->dm->persist($availability);
 

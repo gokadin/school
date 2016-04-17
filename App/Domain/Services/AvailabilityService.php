@@ -40,9 +40,18 @@ class AvailabilityService extends Service
         return is_null($defaultAvailability) ? [] : $availabilityProcessor->extractJsonData($defaultAvailability);
     }
 
-    public function store(Availability $availability)
+    public function store(Teacher $teacher, Availability $availability)
     {
-        return $this->availabilityRepository->store($availability);
+        $weekAvailability = $this->availabilityRepository
+            ->getWeekNonDefault($teacher, $availability->date()->copy()->startOfWeek()->subDay());
+
+        if (!is_null($weekAvailability))
+        {
+            $weekAvailability->addAvailability($availability);
+            $this->availabilityRepository->store($weekAvailability);
+
+            return $availability->uniqueId();
+        }
     }
 
     public function update(Teacher $teacher, array $updated)

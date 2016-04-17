@@ -12,7 +12,7 @@ class AvailabilityProcessor
     {
         $availabilities = [];
 
-        foreach (json_decode($weekAvailability->jsonData(), true) as $availability)
+        foreach ($weekAvailability->availabilities() as $availability)
         {
             $availabilities[] = new Availability(
                 Carbon::parse($availability['date']),

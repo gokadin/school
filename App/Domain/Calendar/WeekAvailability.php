@@ -20,16 +20,23 @@ class WeekAvailability
     /** @Column(type="datetime") */
     private $weekStartDate;
 
-    /** @Column(type="boolean", defaultValue="false") */
+    /** @Column(type="boolean", default="false") */
     private $isDefault;
 
-    /** @Column(type="text", defaultValue="[]") */
+    /** @Column(type="text") */
     private $jsonData;
+
+    /**
+     * @var array
+     */
+    private $decodedJsonData;
 
     public function __construct(Teacher $teacher, $weekStartDate)
     {
         $this->teacher = $teacher;
         $this->weekStartDate = $weekStartDate;
+
+        $this->jsonData = '[]';
     }
 
     /**
@@ -73,5 +80,46 @@ class WeekAvailability
     public function setJsonData(string $jsonData)
     {
         $this->jsonData = $jsonData;
+    }
+
+    public function availabilities()
+    {
+        $this->decodeAvailabilitiesIfNull();
+
+        return $this->decodedJsonData;
+    }
+
+    public function addAvailability(Availability $availability)
+    {
+        $this->decodeAvailabilitiesIfNull();
+
+        $this->decodedJsonData[] = $availability->jsonSerialize();
+
+        $this->jsonData = json_encode($this->decodedJsonData);
+    }
+
+    public function removeAvailability(Availability $availability)
+    {
+        $this->decodeAvailabilitiesIfNull();
+
+        for ($i = 0; $i < sizeof($this->decodedJsonData); $i++)
+        {
+            if ($this->decodedJsonData[$i]['uniqueId'] == $availability->uniqueId())
+            {
+                unset($this->decodedJsonData[$i]);
+
+                break;
+            }
+        }
+
+        $this->jsonData = json_encode($this->decodedJsonData);
+    }
+
+    private function decodeAvailabilitiesIfNull()
+    {
+        if (is_null($this->decodedJsonData))
+        {
+            $this->decodedJsonData = json_decode($this->jsonData, true);
+        }
     }
 }

@@ -108,4 +108,26 @@ class AvailabilityServiceTest extends ServiceTestBase
         $this->assertEquals(1, sizeof($availabilities));
         $this->assertEquals($availability->uniqueId(), $availabilities[0]->uniqueId());
     }
+
+    public function test_store_whenANonDefaultWeekAvailabilityExistsForThatWeekItShouldAddToIt()
+    {
+        // Arrange
+        $weekStartDate = Carbon::now()->startOfWeek()->subDay();
+        $nonDefaultWeekAvailability = new WeekAvailability($this->teacher, $weekStartDate);
+        $this->dm->persist($nonDefaultWeekAvailability);
+        $this->dm->flush();
+        $this->teacher->addWeekAvailability($nonDefaultWeekAvailability);
+
+        $a1 = new Availability(Carbon::now()->startOfWeek()->addDay(), 100, 200);
+        $a2 = new Availability(Carbon::now()->startOfWeek()->addDays(3), 100, 200);
+
+        // Act
+        $this->service->store($this->teacher, $a1);
+        $this->service->store($this->teacher, $a2);
+
+        $availabilities = $nonDefaultWeekAvailability->availabilities();
+
+        // Assert
+        $this->assertEquals(2, sizeof($availabilities));
+    }
 }
