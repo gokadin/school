@@ -118,16 +118,60 @@ class AvailabilityServiceTest extends ServiceTestBase
         $this->dm->flush();
         $this->teacher->addWeekAvailability($nonDefaultWeekAvailability);
 
-        $a1 = new Availability(Carbon::now()->startOfWeek()->addDay(), 100, 200);
-        $a2 = new Availability(Carbon::now()->startOfWeek()->addDays(3), 100, 200);
+        $a1 = new Availability(Carbon::now()->startOfWeek(), 100, 200);
+        $a2 = new Availability(Carbon::now()->startOfWeek()->addDays(2), 100, 200);
 
         // Act
-        $this->service->store($this->teacher, $a1);
-        $this->service->store($this->teacher, $a2);
+        $a1UniqueId = $this->service->store($this->teacher, $a1);
+        $a2UniqueId = $this->service->store($this->teacher, $a2);
 
         $availabilities = $nonDefaultWeekAvailability->availabilities();
 
         // Assert
+        $this->assertEquals($a1->uniqueId(), $a1UniqueId);
+        $this->assertEquals($a2->uniqueId(), $a2UniqueId);
         $this->assertEquals(2, sizeof($availabilities));
+    }
+
+    public function test_store_whenNonDefaultAndDefaultWeekAvailabilitiesDoNotExistForThatWeekThenItShouldCreateANonDefaultOneAndAddToIt()
+    {
+        // Arrange
+        $a1 = new Availability(Carbon::now()->startOfWeek()->subDay()->addDays(3), 100, 200);
+
+        // Act
+        $uniqueId = $this->service->store($this->teacher, $a1);
+
+        $weekAvailability = $this->dm->findAll(WeekAvailability::class)->first();
+
+        // Assert
+        $this->assertEquals($a1->uniqueId(), $uniqueId);
+        $this->assertNotNull($weekAvailability);
+        $this->assertEquals(1, sizeof($weekAvailability->availabilities()));
+        $this->assertEquals($a1->uniqueId(), $weekAvailability->availabilities()[0]['uniqueId']);
+    }
+
+    public function test_store_whenNonDefaultDoesNotExistItShouldCreateItFromTheExistingDefaultTemplateAndAddToIt()
+    {
+        // Arrange
+        $weekStartDate = Carbon::now()->startOfWeek()->subDay();
+        $a1 = new Availability($weekStartDate->copy()->addDays(3), 100, 200);
+
+        $a2 = new Availability($weekStartDate->copy()->subWeeks(3)->addDays(2), 300, 400);
+        $defaultWeekAvailability = new WeekAvailability($this->teacher, $weekStartDate->copy()->subWeeks(3));
+        $defaultWeekAvailability->setAsDefault();
+        $defaultWeekAvailability->addAvailability($a2);
+        $this->dm->persist($defaultWeekAvailability);
+        $this->dm->flush();
+        $this->teacher->addWeekAvailability($defaultWeekAvailability);
+
+        // Act
+        $uniqueId = $this->service->store($this->teacher, $a1);
+
+        $weekAvailability = $this->dm->findOneBy(WeekAvailability::class, ['weekStartDate' => $weekStartDate->toDateString()]);
+
+        // Assert
+        $this->assertEquals($a1->uniqueId(), $uniqueId);
+        $this->assertNotNull($weekAvailability);
+        $this->assertEquals(2, sizeof($weekAvailability->availabilities()));
     }
 }

@@ -26,24 +26,6 @@ class AvailabilityRepository extends RepositoryBase
             ->first();
     }
 
-    public function getDefault(Teacher $teacher)
-    {
-//        $results = $teacher->availabilities()->where('isDefault', '=', true)->sortBy('createdAt', false)->slice(0, 1);
-//
-//        if (sizeof($results) == 0)
-//        {
-//            return [];
-//        }
-//
-//        $availability = $results[0];
-//
-//        return $teacher->availabilities()
-//            ->where('isDefault', '=', true)
-//            ->where('createdAt', '<=', Carbon::parse($availability->createdAt())->toDateString())
-//            ->wehre('createdAt', '>=', Carbon::parse($availability->createdAt())->startOfWeek()->subDay()->toDateString())
-//            ->toArray();
-    }
-
     public function store(WeekAvailability $availability)
     {
         $this->dm->persist($availability);

@@ -3,6 +3,7 @@
 namespace App\Domain\Services;
 
 use App\Domain\Calendar\Availability;
+use App\Domain\Calendar\WeekAvailability;
 use App\Domain\Processors\AvailabilityProcessor;
 use App\Domain\Users\Teacher;
 use App\Repositories\AvailabilityRepository;
@@ -42,16 +43,34 @@ class AvailabilityService extends Service
 
     public function store(Teacher $teacher, Availability $availability)
     {
-        $weekAvailability = $this->availabilityRepository
-            ->getWeekNonDefault($teacher, $availability->date()->copy()->startOfWeek()->subDay());
+        $weekStartDate = $availability->date()->copy()->startOfWeek()->subDay();
+
+        $weekAvailability = $this->availabilityRepository->getWeekNonDefault($teacher, $weekStartDate);
 
         if (!is_null($weekAvailability))
         {
+            $weekAvailability->addAvailability($availability);
+            $this->availabilityRepository->update($weekAvailability);
+
+            return $availability->uniqueId();
+        }
+
+        $defaultAvailability = $this->availabilityRepository->getLastDefault($teacher, $weekStartDate);
+        $weekAvailability = new WeekAvailability($teacher, $weekStartDate);
+
+        if (!is_null($defaultAvailability))
+        {
+            $weekAvailability->setJsonData($defaultAvailability->jsonData());
             $weekAvailability->addAvailability($availability);
             $this->availabilityRepository->store($weekAvailability);
 
             return $availability->uniqueId();
         }
+
+        $weekAvailability->addAvailability($availability);
+        $this->availabilityRepository->store($weekAvailability);
+
+        return $availability->uniqueId();
     }
 
     public function update(Teacher $teacher, array $updated)
