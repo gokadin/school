@@ -10,15 +10,15 @@ class StoreTranslator extends AvailabilityTranslator
 {
     public function translateRequest(Request $request): array
     {
-        return $this->translateResponse($this->availabilityService->store(new Availability(
-            $this->user, Carbon::parse($request->date), $request->startTime, $request->endTime
+        return $this->translateResponse($this->availabilityService->store($this->user, new Availability(
+            Carbon::parse($request->date), $request->startTime, $request->endTime
         )));
     }
 
-    private function translateResponse(int $id): array
+    private function translateResponse(string $uniqueId): array
     {
         return [
-            'id' => $id
+            'id' => $uniqueId
         ];
     }
 }

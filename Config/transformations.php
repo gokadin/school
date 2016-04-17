@@ -88,7 +88,7 @@ return [
     ],
 
     App\Domain\Calendar\Availability::class => [
-        'id' => function($o) { return $o->getId(); },
+        'id' => function($o) { return $o->uniqueId(); },
         'date' => function($o) { return Carbon\Carbon::parse($o->date())->toDateString(); },
         'startTime' => function($o) { return $o->startTime(); },
         'endTime' => function($o) { return $o->endTime(); }

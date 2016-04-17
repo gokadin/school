@@ -14,11 +14,14 @@ class AvailabilityProcessor
 
         foreach ($weekAvailability->availabilities() as $availability)
         {
-            $availabilities[] = new Availability(
+            $availabilityObject = new Availability(
                 Carbon::parse($availability['date']),
                 $availability['startTime'],
                 $availability['endTime']
             );
+            $availabilityObject->setUniqueId($availability['uniqueId']);
+
+            $availabilities[] = $availabilityObject;
         }
 
         return $availabilities;

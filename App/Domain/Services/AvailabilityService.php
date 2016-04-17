@@ -43,7 +43,9 @@ class AvailabilityService extends Service
 
     public function store(Teacher $teacher, Availability $availability)
     {
-        $weekStartDate = $availability->date()->copy()->startOfWeek()->subDay();
+        $weekStartDate = $availability->date()->dayOfWeek == Carbon::SUNDAY
+            ? $availability->date()->copy()
+            : $availability->date()->copy()->startOfWeek()->subDay();
 
         $weekAvailability = $this->availabilityRepository->getWeekNonDefault($teacher, $weekStartDate);
 
@@ -61,6 +63,7 @@ class AvailabilityService extends Service
         if (!is_null($defaultAvailability))
         {
             $weekAvailability->setJsonData($defaultAvailability->jsonData());
+            $weekAvailability->setNextAvailabilityId($defaultAvailability->nextAvailabilityId());
             $weekAvailability->addAvailability($availability);
             $this->availabilityRepository->store($weekAvailability);
 
@@ -73,14 +76,59 @@ class AvailabilityService extends Service
         return $availability->uniqueId();
     }
 
-    public function update(Teacher $teacher, array $updated)
+    public function update(Teacher $teacher, Availability $availability)
     {
-        $availability = $teacher->availabilities()->find($updated['id']);
-        $availability->setDate(Carbon::parse($updated['date']));
-        $availability->setStartTime($updated['startTime']);
-        $availability->setEndTime($updated['endTime']);
+        $weekStartDate = $availability->date()->dayOfWeek == Carbon::SUNDAY
+            ? $availability->date()->copy()
+            : $availability->date()->copy()->startOfWeek()->subDay();
 
-        $this->availabilityRepository->update($availability);
+        $weekAvailability = $this->availabilityRepository->getWeekNonDefault($teacher, $weekStartDate);
+
+        if (!is_null($weekAvailability))
+        {
+            $availabilities = $weekAvailability->availabilities();
+            foreach ($availabilities as &$a)
+            {
+                if ($a['uniqueId'] == $availability->uniqueId())
+                {
+                    $a['date'] = $availability->date()->toDateString();
+                    $a['startTime'] = $availability->startTime();
+                    $a['endTime'] = $availability->endTime();
+
+                    break;
+                }
+            }
+
+            $weekAvailability->setJsonData(json_encode($availabilities));
+
+            $this->availabilityRepository->update($weekAvailability);
+
+            return;
+        }
+
+        $defaultAvailability = $this->availabilityRepository->getLastDefault($teacher, $weekStartDate);
+        $weekAvailability = new WeekAvailability($teacher, $weekStartDate);
+        $weekAvailability->setJsonData($defaultAvailability->jsonData());
+        $weekAvailability->setNextAvailabilityId($defaultAvailability->nextAvailabilityId());
+
+        $availabilities = $weekAvailability->availabilities();
+        foreach ($availabilities as &$a)
+        {
+            if ($a['uniqueId'] == $availability->uniqueId())
+            {
+                $a['date'] = $availability->date()->toDateString();
+                $a['startTime'] = $availability->startTime();
+                $a['endTime'] = $availability->endTime();
+
+                continue;
+            }
+
+            $a['date'] = $weekStartDate->copy()->addDays(Carbon::parse($a['date'])->dayOfWeek)->toDateString();
+        }
+
+        $weekAvailability->setJsonData(json_encode($availabilities));
+
+        $this->availabilityRepository->store($weekAvailability);
     }
 
     public function destroy(Teacher $teacher, int $id)

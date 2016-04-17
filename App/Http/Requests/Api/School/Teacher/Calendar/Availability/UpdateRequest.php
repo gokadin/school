@@ -2,13 +2,13 @@
 
 namespace App\Http\Requests\Api\School\Teacher\Calendar\Availability;
 
-use App\Http\Requests\AuthenticatedRequest;
+use App\Http\Requests\Request;
 
-class UpdateRequest extends AuthenticatedRequest
+class UpdateRequest extends Request
 {
     public function authorize()
     {
-        return $this->user->availabilities()->containsId($this->id);
+        return true;
     }
 
     public function rules()

@@ -8,7 +8,7 @@ use JsonSerializable;
 class Availability implements JsonSerializable
 {
     /**
-     * @var string
+     * @var int
      */
     private $uniqueId;
 
@@ -33,17 +33,17 @@ class Availability implements JsonSerializable
         $this->startTime = $startTime;
         $this->endTime = $endTime;
 
-        $this->generateUniqueId();
-    }
-
-    private function generateUniqueId()
-    {
-        $this->uniqueId = $this->date->dayOfWeek.'-'.$this->startTime.'-'.$this->endTime;
+        $this->uniqueId = 0;
     }
 
     public function uniqueId()
     {
         return $this->uniqueId;
+    }
+
+    public function setUniqueId(int $uniqueId)
+    {
+        $this->uniqueId = $uniqueId;
     }
 
     public function date()

@@ -150,6 +150,22 @@ class AvailabilityServiceTest extends ServiceTestBase
         $this->assertEquals($a1->uniqueId(), $weekAvailability->availabilities()[0]['uniqueId']);
     }
 
+    public function test_store_ifAvailabilityDateIsASundayItShouldAddToTheCorrectWeek()
+    {
+        // Arrange
+        $a1 = new Availability(Carbon::now()->startOfWeek()->subDay(), 100, 200);
+
+        // Act
+        $this->service->store($this->teacher, $a1);
+
+        $weekAvailability = $this->dm->findAll(WeekAvailability::class)->first();
+
+        // Assert
+        $this->assertNotNull($weekAvailability);
+        $this->assertEquals(1, sizeof($weekAvailability->availabilities()));
+        $this->assertEquals($a1->date()->toDateString(), Carbon::parse($weekAvailability->weekStartDate())->toDateString());
+    }
+
     public function test_store_whenNonDefaultDoesNotExistItShouldCreateItFromTheExistingDefaultTemplateAndAddToIt()
     {
         // Arrange
@@ -173,5 +189,66 @@ class AvailabilityServiceTest extends ServiceTestBase
         $this->assertEquals($a1->uniqueId(), $uniqueId);
         $this->assertNotNull($weekAvailability);
         $this->assertEquals(2, sizeof($weekAvailability->availabilities()));
+    }
+
+    public function test_update_whenNonDefaultExists()
+    {
+        // Arrange
+        $weekStartDate = Carbon::now()->startOfWeek()->subDay();
+        $nonDefaultWeekAvailability = new WeekAvailability($this->teacher, $weekStartDate);
+        $aShouldNotUpdate = new Availability($weekStartDate, 100, 200);
+        $aShouldUpdate = new Availability($weekStartDate, 300, 400);
+        $nonDefaultWeekAvailability->addAvailability($aShouldNotUpdate);
+        $nonDefaultWeekAvailability->addAvailability($aShouldUpdate);
+        $this->dm->persist($nonDefaultWeekAvailability);
+        $this->dm->flush();
+        $this->teacher->addWeekAvailability($nonDefaultWeekAvailability);
+
+        $aUpdated = new Availability($weekStartDate->copy()->addDay(), 350, 550);
+        $aUpdated->setUniqueId(2);
+
+        // Act
+        $this->service->update($this->teacher, $aUpdated);
+
+        // Assert
+        $this->assertEquals($weekStartDate->toDateString(), $nonDefaultWeekAvailability->availabilities()[0]['date']);
+        $this->assertEquals(100, $nonDefaultWeekAvailability->availabilities()[0]['startTime']);
+        $this->assertEquals(200, $nonDefaultWeekAvailability->availabilities()[0]['endTime']);
+        $this->assertEquals($weekStartDate->copy()->addDay()->toDateString(), $nonDefaultWeekAvailability->availabilities()[1]['date']);
+        $this->assertEquals(350, $nonDefaultWeekAvailability->availabilities()[1]['startTime']);
+        $this->assertEquals(550, $nonDefaultWeekAvailability->availabilities()[1]['endTime']);
+    }
+
+    public function test_update_whenOnlyDefaultExists()
+    {
+        // Arrange
+        $weekStartDate = Carbon::now()->startOfWeek()->subDay();
+        $defaultWeekAvailability = new WeekAvailability($this->teacher, $weekStartDate->copy()->subWeeks(3));
+        $defaultWeekAvailability->setAsDefault();
+        $aShouldNotUpdate = new Availability($weekStartDate->copy()->subWeeks(3), 100, 200);
+        $aShouldUpdate = new Availability($weekStartDate->copy()->subWeeks(3), 300, 400);
+        $defaultWeekAvailability->addAvailability($aShouldNotUpdate);
+        $defaultWeekAvailability->addAvailability($aShouldUpdate);
+        $this->dm->persist($defaultWeekAvailability);
+        $this->dm->flush();
+        $this->teacher->addWeekAvailability($defaultWeekAvailability);
+
+        $aUpdated = new Availability($weekStartDate, 300, 550);
+        $aUpdated->setUniqueId(2);
+
+        // Act
+        $this->service->update($this->teacher, $aUpdated);
+
+        $weekAvailability = $this->dm->findOneBy(WeekAvailability::class, ['weekStartDate' => $weekStartDate->toDateString()]);
+
+        // Assert
+        $this->assertNotNull($weekAvailability);
+        $this->assertEquals(2, sizeof($weekAvailability->availabilities()));
+        $this->assertEquals($weekStartDate->toDateString(), $weekAvailability->availabilities()[0]['date']);
+        $this->assertEquals(100, $weekAvailability->availabilities()[0]['startTime']);
+        $this->assertEquals(200, $weekAvailability->availabilities()[0]['endTime']);
+        $this->assertEquals($weekStartDate->toDateString(), $weekAvailability->availabilities()[1]['date']);
+        $this->assertEquals(300, $weekAvailability->availabilities()[1]['startTime']);
+        $this->assertEquals(550, $weekAvailability->availabilities()[1]['endTime']);
     }
 }

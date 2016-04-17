@@ -26,6 +26,9 @@ class WeekAvailability
     /** @Column(type="text") */
     private $jsonData;
 
+    /** @Column(type="integer", default="1") */
+    private $nextAvailabilityId;
+
     /**
      * @var array
      */
@@ -37,6 +40,7 @@ class WeekAvailability
         $this->weekStartDate = $weekStartDate;
 
         $this->jsonData = '[]';
+        $this->nextAvailabilityId = 1;
     }
 
     /**
@@ -80,6 +84,18 @@ class WeekAvailability
     public function setJsonData(string $jsonData)
     {
         $this->jsonData = $jsonData;
+
+        $this->decodedJsonData = null;
+    }
+
+    public function nextAvailabilityId()
+    {
+        return $this->nextAvailabilityId;
+    }
+
+    public function setNextAvailabilityId(int $id)
+    {
+        $this->nextAvailabilityId = $id;
     }
 
     public function availabilities()
@@ -93,9 +109,12 @@ class WeekAvailability
     {
         $this->decodeAvailabilitiesIfNull();
 
+        $availability->setUniqueId($this->nextAvailabilityId);
         $this->decodedJsonData[] = $availability->jsonSerialize();
 
         $this->jsonData = json_encode($this->decodedJsonData);
+
+        $this->nextAvailabilityId++;
     }
 
     public function removeAvailability(Availability $availability)
