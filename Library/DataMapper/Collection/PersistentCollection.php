@@ -432,6 +432,8 @@ final class PersistentCollection extends AbstractEntityCollection implements Obs
 
         $this->subset = $queryBuilder->select([$this->metadata->primaryKey()->propName()]);
         $this->subsetCount = sizeof($this->subset);
+
+        $this->resetState();
     }
 
     protected function executeWheres(QueryBuilder &$queryBuilder)

@@ -3,7 +3,7 @@
 namespace App\Domain\Users;
 
 use App\Domain\Activities\Activity;
-use App\Domain\Calendar\Availability;
+use App\Domain\Calendar\WeekAvailability;
 use App\Domain\Events\Event;
 use App\Domain\Setting\TeacherSettings;
 use Library\DataMapper\Collection\EntityCollection;
@@ -127,13 +127,13 @@ class Teacher extends User
         return $this->weekAvailabilities;
     }
 
-    public function addWeekAvailability(Availability $availability)
+    public function addWeekAvailability(WeekAvailability $availability)
     {
-        $this->availabilities->add($availability);
+        $this->weekAvailabilities->add($availability);
     }
 
-    public function removeWeekAvailability(Availability $availability)
+    public function removeWeekAvailability(WeekAvailability $availability)
     {
-        $this->availabilities->remove($availability);
+        $this->weekAvailabilities->remove($availability);
     }
 }

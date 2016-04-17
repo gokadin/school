@@ -56,34 +56,56 @@ class AvailabilityServiceTest extends ServiceTestBase
     public function test_fetch_shouldReturnNonDefaultRecordAtGivenDateIfItExists()
     {
         // Arrange
-        $this->teacher = $this->dm->find(Teacher::class, $this->teacher->getId());
-        $date = Carbon::now()->startOfWeek()->subDay();
-        $defaultWeekAvailability = new WeekAvailability($this->teacher, $date->subWeeks(2));
+        $dateWeWant = Carbon::now()->startOfWeek()->subDay();
+        $defaultWeekAvailability = new WeekAvailability($this->teacher, $dateWeWant);
         $defaultWeekAvailability->setAsDefault();
-        $nonDefaultWeekAvailability = new WeekAvailability($this->teacher, $date);
-        $availability = new Availability($date, 100, 200);
+        $nonDefaultWeekAvailability = new WeekAvailability($this->teacher, $dateWeWant);
+        $availability = new Availability($dateWeWant, 100, 200);
         $nonDefaultWeekAvailability->setJsonData(json_encode([$availability->jsonSerialize()]));
         $this->dm->persist($defaultWeekAvailability);
         $this->dm->persist($nonDefaultWeekAvailability);
         $this->dm->flush();
-        $this->dm->detach($this->teacher);
-        $this->teacher = $this->dm->find(Teacher::class, $this->teacher->getId());
+        $this->teacher->addWeekAvailability($defaultWeekAvailability);
+        $this->teacher->addWeekAvailability($nonDefaultWeekAvailability);
 
         // Act
-        $availabilities = $this->service->fetch($this->teacher, $date);
+        $availabilities = $this->service->fetch($this->teacher, $dateWeWant);
 
         // Assert
         $this->assertEquals(1, sizeof($availabilities));
-        $this->assertEquals($date->toDateString(), $availabilities[0]->date()->toDateString());
+        $this->assertEquals($availability->uniqueId(), $availabilities[0]->uniqueId());
     }
 
-//    public function test_fetch_shouldReturnLastDefaultWeekBeforeGivenDateIfThereIsNoNonDefaultRecordForThatDate()
-//    {
-//        // Arrange
-//
-//        // Act
-//
-//        // Assert
-//        $this->assertTrue(false);
-//    }
+    public function test_fetch_shouldReturnLastDefaultWeekBeforeGivenDateIfThereIsNoNonDefaultRecordForThatDate()
+    {
+        // Arrange
+        $dateWeWant = Carbon::now()->startOfWeek()->subDay();
+
+        $defaultWeWant = new WeekAvailability($this->teacher, $dateWeWant);
+        $defaultWeWant->setAsDefault();
+        $availability = new Availability($dateWeWant, 100, 200);
+        $defaultWeWant->setJsonData(json_encode([$availability]));
+        $this->dm->persist($defaultWeWant);
+
+        $defaultOlder = new WeekAvailability($this->teacher,
+            Carbon::now()->startOfWeek()->subDay()->subWeek(10));
+        $defaultOlder->setAsDefault();
+        $this->dm->persist($defaultOlder);
+
+        $nonDefaultWeekAvailability = new WeekAvailability($this->teacher,
+            Carbon::now()->startOfWeek()->subDay()->addWeek());
+        $this->dm->persist($nonDefaultWeekAvailability);
+
+        $this->dm->flush();
+        $this->teacher->addWeekAvailability($defaultWeWant);
+        $this->teacher->addWeekAvailability($nonDefaultWeekAvailability);
+        $this->teacher->addWeekAvailability($defaultOlder);
+
+        // Act
+        $availabilities = $this->service->fetch($this->teacher, $dateWeWant);
+
+        // Assert
+        $this->assertEquals(1, sizeof($availabilities));
+        $this->assertEquals($availability->uniqueId(), $availabilities[0]->uniqueId());
+    }
 }

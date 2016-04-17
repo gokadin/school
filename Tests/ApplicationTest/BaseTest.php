@@ -110,5 +110,6 @@ abstract class BaseTest extends TestCase
         $this->dm->flush();
 
         $this->dm->detach($this->teacher);
+        $this->teacher = $this->dm->find(Teacher::class, $this->teacher->getId());
     }
 }

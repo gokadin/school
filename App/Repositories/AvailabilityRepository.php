@@ -20,8 +20,8 @@ class AvailabilityRepository extends RepositoryBase
     {
         return $teacher->weekAvailabilities()
             ->where('isDefault', '=', true)
-            ->where('date', '<=', $weekStartDate->toDateString())
-            ->sortBy('date', false)
+            ->where('weekStartDate', '<=', $weekStartDate->toDateString())
+            ->sortBy('weekStartDate', false)
             ->first();
     }
 

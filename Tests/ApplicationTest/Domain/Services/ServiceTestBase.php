@@ -5,6 +5,7 @@ namespace Tests\ApplicationTest\Domain\Services;
 use App\Domain\Services\Service;
 use Library\Container\Container;
 use Library\Events\EventManager;
+use Library\Log\Log;
 use Library\Queue\Queue;
 use Tests\ApplicationTest\BaseTest;
 
@@ -37,6 +38,7 @@ class ServiceTestBase extends BaseTest
         $this->setUpDatamapper($datamapperClasses);
 
         $queue = new Queue(['use' => 'sync']);
+        $this->container->registerInstance('log', new Log('TestData/Logs'));
         $this->container->registerInstance('queue', $queue);
         $this->container->registerInstance('eventManager', new EventManager([], $this->container, $queue));
         $this->container->registerInstance('datamapper', $this->dm);

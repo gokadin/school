@@ -37,7 +37,7 @@ class AvailabilityService extends Service
 
         $defaultAvailability = $this->availabilityRepository->getLastDefault($teacher, $weekStartDate);
 
-        return is_null($defaultAvailability) ? [] : $availabilityProcessor->extractFromJson($defaultAvailability);
+        return is_null($defaultAvailability) ? [] : $availabilityProcessor->extractJsonData($defaultAvailability);
     }
 
     public function store(Availability $availability)

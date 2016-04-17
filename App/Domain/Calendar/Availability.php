@@ -36,9 +36,14 @@ class Availability implements JsonSerializable
         $this->generateUniqueId();
     }
 
-    public function generateUniqueId()
+    private function generateUniqueId()
     {
         $this->uniqueId = $this->date->dayOfWeek.'-'.$this->startTime.'-'.$this->endTime;
+    }
+
+    public function uniqueId()
+    {
+        return $this->uniqueId;
     }
 
     public function date()
