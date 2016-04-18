@@ -33,12 +33,12 @@ class AvailabilityService extends Service
 
         if (!is_null($weekAvailability))
         {
-            return $availabilityProcessor->extractJsonData($weekAvailability);
+            return $availabilityProcessor->extractJsonData($weekAvailability, $weekStartDate);
         }
 
         $defaultAvailability = $this->availabilityRepository->getLastDefault($teacher, $weekStartDate);
 
-        return is_null($defaultAvailability) ? [] : $availabilityProcessor->extractJsonData($defaultAvailability);
+        return is_null($defaultAvailability) ? [] : $availabilityProcessor->extractJsonData($defaultAvailability, $weekStartDate);
     }
 
     public function store(Teacher $teacher, Availability $availability)
@@ -131,8 +131,35 @@ class AvailabilityService extends Service
         $this->availabilityRepository->store($weekAvailability);
     }
 
-    public function destroy(Teacher $teacher, int $id)
+    public function destroy(Teacher $teacher, Availability $availability)
     {
-        $this->availabilityRepository->delete($teacher->availabilities()->find($id));
+        $weekStartDate = $availability->date()->dayOfWeek == Carbon::SUNDAY
+            ? $availability->date()->copy()
+            : $availability->date()->copy()->startOfWeek()->subDay();
+
+        $weekAvailability = $this->availabilityRepository->getWeekNonDefault($teacher, $weekStartDate);
+
+        if (!is_null($weekAvailability))
+        {
+            $weekAvailability->removeAvailability($availability);
+            $this->availabilityRepository->update($weekAvailability);
+
+            return;
+        }
+
+        $defaultAvailability = $this->availabilityRepository->getLastDefault($teacher, $weekStartDate);
+        $weekAvailability = new WeekAvailability($teacher, $weekStartDate);
+        $weekAvailability->setJsonData($defaultAvailability->jsonData());
+        $weekAvailability->setNextAvailabilityId($defaultAvailability->nextAvailabilityId());
+
+        $availabilities = $weekAvailability->availabilities();
+        foreach ($availabilities as &$a)
+        {
+            $a['date'] = $weekStartDate->copy()->addDays(Carbon::parse($a['date'])->dayOfWeek)->toDateString();
+        }
+
+        $weekAvailability->setJsonData(json_encode($availabilities));
+        $weekAvailability->removeAvailability($availability);
+        $this->availabilityRepository->store($weekAvailability);
     }
 }

@@ -251,4 +251,52 @@ class AvailabilityServiceTest extends ServiceTestBase
         $this->assertEquals(300, $weekAvailability->availabilities()[1]['startTime']);
         $this->assertEquals(550, $weekAvailability->availabilities()[1]['endTime']);
     }
+
+    public function test_destroy_whenNonDefaultExists()
+    {
+        // Arrange
+        $weekStartDate = Carbon::now()->startOfWeek()->subDay();
+        $nonDefaultWeekAvailability = new WeekAvailability($this->teacher, $weekStartDate);
+        $aShouldNotDelete = new Availability($weekStartDate, 100, 200);
+        $aShouldDelete = new Availability($weekStartDate, 300, 400);
+        $nonDefaultWeekAvailability->addAvailability($aShouldNotDelete);
+        $nonDefaultWeekAvailability->addAvailability($aShouldDelete);
+        $this->dm->persist($nonDefaultWeekAvailability);
+        $this->dm->flush();
+        $this->teacher->addWeekAvailability($nonDefaultWeekAvailability);
+
+        // Act
+        $this->service->destroy($this->teacher, $aShouldDelete);
+
+        // Assert
+        $this->assertEquals(1, sizeof($nonDefaultWeekAvailability->availabilities()));
+        $this->assertEquals(1, $nonDefaultWeekAvailability->availabilities()[0]['uniqueId']);
+    }
+
+    public function test_destroy_whenOnlyDefaultExists()
+    {
+        // Arrange
+        $weekStartDate = Carbon::now()->startOfWeek()->subDay();
+        $defaultWeekAvailability = new WeekAvailability($this->teacher, $weekStartDate->copy()->subWeeks(3));
+        $defaultWeekAvailability->setAsDefault();
+        $aShouldNotDelete = new Availability($weekStartDate->copy()->subWeeks(3), 100, 200);
+        $aShouldDelete = new Availability($weekStartDate->copy()->subWeeks(3), 300, 400);
+        $defaultWeekAvailability->addAvailability($aShouldNotDelete);
+        $defaultWeekAvailability->addAvailability($aShouldDelete);
+        $this->dm->persist($defaultWeekAvailability);
+        $this->dm->flush();
+        $this->teacher->addWeekAvailability($defaultWeekAvailability);
+
+        // Act
+        $temp = new Availability($weekStartDate, 0, 0);
+        $temp->setUniqueId($aShouldDelete->uniqueId());
+        $this->service->destroy($this->teacher, $temp);
+
+        $weekAvailability = $this->dm->findOneBy(WeekAvailability::class, ['weekStartDate' => $weekStartDate->toDateString()]);
+
+        // Assert
+        $this->assertNotNull($weekAvailability);
+        $this->assertEquals(1, sizeof($weekAvailability->availabilities()));
+        $this->assertEquals($weekStartDate->toDateString(), $weekAvailability->availabilities()[0]['date']);
+    }
 }

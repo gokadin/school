@@ -8,14 +8,14 @@ use Carbon\Carbon;
 
 class AvailabilityProcessor
 {
-    public function extractJsonData(WeekAvailability $weekAvailability): array
+    public function extractJsonData(WeekAvailability $weekAvailability, Carbon $realWeekStartDate): array
     {
         $availabilities = [];
 
         foreach ($weekAvailability->availabilities() as $availability)
         {
             $availabilityObject = new Availability(
-                Carbon::parse($availability['date']),
+                $realWeekStartDate->copy()->addDays(Carbon::parse($availability['date'])->dayOfWeek),
                 $availability['startTime'],
                 $availability['endTime']
             );

@@ -47,7 +47,8 @@ export class AvailabilityService {
     }
 
     delete(availability: Availability): void {
-        return this.http.delete('/api/school/teacher/calendar/availabilities/' + availability.id);
+        return this.http.delete('/api/school/teacher/calendar/availabilities/' + availability.id,
+            {weekStartDate: availability.date.format('YYYY-MM-DD')});
     }
 }
 
