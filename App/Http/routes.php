@@ -46,6 +46,7 @@ $router->group(['namespace' => 'Api', 'prefix' => '/api', 'as' => 'api', 'middle
                 $router->group(['prefix' => '/availabilities', 'as' => 'availability'], function($router)
                 {
                     $router->resource('AvailabilityController', ['fetch', 'store', 'update', 'destroy']);
+                    $router->post('/apply-to-future-weeks', 'AvailabilityController@applyToFutureWeeks');
                 });
             });
         });

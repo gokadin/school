@@ -53,20 +53,75 @@ export class Calendar {
         this.today();
     }
 
-    previousMonth(): void { this.currentDate.subtract(1, 'months'); this.loadCurrentMonth(); }
-    nextMonth(): void { this.currentDate.add(1, 'months'); this.loadCurrentMonth(); }
-    today(): void { this.currentDate = moment(); this.loadCurrentMonth(); }
+    previousMonth(): void {
+        switch (this.mode) {
+            case 'week':
+            case 'availability':
+                if (this.currentRow == 0) {
+
+                } else {
+                    this.currentRow--;
+                }
+                break;
+            default:
+                this.currentDate.subtract(1, 'months');
+                break;
+        }
+
+        this.loadCurrentMode();
+    }
+
+    nextMonth(): void {
+        switch (this.mode) {
+            case 'week':
+            case 'availability':
+                this.currentRow++;
+                break;
+            default:
+                this.currentDate.add(1, 'months');
+                break;
+        }
+
+        this.loadCurrentMode();
+    }
+
+    today(): void {
+        switch (this.mode) {
+            case 'week':
+            case 'availability':
+
+                break;
+            default:
+                this.currentDate = moment();
+                break;
+        }
+
+        this.loadCurrentMode();
+    }
+
+    loadCurrentMode(): void {
+        switch (this.mode) {
+            case 'availability':
+                this.loadCurrentAvailabilities();
+                break;
+            default:
+                this.loadCurrentMonth();
+                break;
+        }
+    }
 
     loadCurrentMonth(): void {
+        this.buildDateArray();
+
         this.eventService.fetchCalendarEvents(
             moment(this.currentDate).date(1).subtract(1, 'weeks'),
             moment(this.currentDate).date(this.currentDate.daysInMonth()).add(1, 'weeks')
         );
-
-        this.buildDateArray();
     }
 
     loadCurrentAvailabilities(): void {
+        this.buildDateArray();
+
         for (let i = 0; i < 7; i++) {
             this.dates[this.currentRow * 7 + i].availabilities = [];
         }
@@ -469,6 +524,7 @@ export class Calendar {
     applyAvailabilityChangesToFutureWeeks(): void {
         this.availabilitiesChanged = false;
 
-        // ...
+        this.availabilityService.applyToFutureWeeks(this.dates[this.currentRow * 7].date)
+            .subscribe(); // show flash
     }
 }

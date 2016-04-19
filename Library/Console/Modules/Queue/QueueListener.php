@@ -3,8 +3,6 @@
 namespace Library\Console\Modules\Queue;
 
 use Library\Database\Database;
-use Library\Facades\App;
-use Library\Facades\Log;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;

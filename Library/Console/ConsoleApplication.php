@@ -35,8 +35,8 @@ class ConsoleApplication
 
     protected function addRequiredModules()
     {
-        $database = $this->framework->container()->resolveInstance('database');
-        $this->app->add(new QueueListener($database));
+        //$database = $this->framework->container()->resolveInstance('database');
+        //$this->app->add(new QueueListener($database));
         $this->app->add(new ScheduleRunner());
         $this->app->add(new RequestGenerator());
         $this->app->add(new TranslatorGenerator());

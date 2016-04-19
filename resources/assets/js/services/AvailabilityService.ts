@@ -49,6 +49,11 @@ export class AvailabilityService {
     delete(availability: Availability) {
         return this.http.delete('/api/school/teacher/calendar/availabilities/' + availability.id + 'a' + availability.date.format('YYYY-MM-DD'));
     }
+
+    applyToFutureWeeks(date: Moment) {
+        return this.http.post('/api/school/teacher/calendar/availabilities/apply-to-future-weeks',
+            JSON.stringify({date: date.format('YYYY-MM-DD')}));
+    }
 }
 
 export var AVAILABILITIES_PROVIDERS = [

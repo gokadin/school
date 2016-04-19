@@ -52,7 +52,7 @@ class AvailabilityProcessor
 
     public function copyToDefaultTemplate(WeekAvailability $weekAvailability)
     {
-        $default = $this->copyWeekAvailability($weekAvailability, $weekAvailability->weekStartDate());
+        $default = $this->copyWeekAvailability($weekAvailability, Carbon::parse($weekAvailability->weekStartDate()));
         $default->setAsDefault();
 
         return $default;

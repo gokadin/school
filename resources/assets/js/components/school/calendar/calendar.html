@@ -1,9 +1,9 @@
 <div id="monthly-calendar">
     <div class="header">
         <div class="navigation">
-            <button type="button" (click)="previousMonth()" [disabled]="mode == 'availability'"><i class="fa fa-chevron-left"></i></button>
-            <button type="button" class="today" (click)="today()" [disabled]="mode == 'availability'">today</button>
-            <button type="button" (click)="nextMonth()" [disabled]="mode == 'availability'"><i class="fa fa-chevron-right"></i></button>
+            <button type="button" (click)="previousMonth()"><i class="fa fa-chevron-left"></i></button>
+            <button type="button" class="today" (click)="today()">today</button>
+            <button type="button" (click)="nextMonth()"><i class="fa fa-chevron-right"></i></button>
         </div>
         <div class="display">{{ currentDate.format('MMMM YYYY') }}</div>
         <div class="mode">

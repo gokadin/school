@@ -32,12 +32,14 @@ class Templates
 
         $str .= '{'.PHP_EOL;
 
-        $str .= self::tab.'public function authorize(): boolean'.PHP_EOL;
-        $str .= self::tab.'{'.PHP_EOL.PHP_EOL;
+        $str .= self::tab.'public function authorize(): bool'.PHP_EOL;
+        $str .= self::tab.'{'.PHP_EOL;
+        $str .= self::tab.self::tab.'return true;'.PHP_EOL;
         $str .= self::tab.'}'.PHP_EOL.PHP_EOL;
 
         $str .= self::tab.'public function rules(): array'.PHP_EOL;
-        $str .= self::tab.'{'.PHP_EOL.PHP_EOL;
+        $str .= self::tab.'{'.PHP_EOL;
+        $str .= self::tab.self::tab.'return [];'.PHP_EOL;
         $str .= self::tab.'}'.PHP_EOL;
 
         $str .= '}'.PHP_EOL;

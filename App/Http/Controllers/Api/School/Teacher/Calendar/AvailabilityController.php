@@ -3,10 +3,12 @@
 namespace App\Http\Controllers\Api\School\Teacher\Calendar;
 
 use App\Http\Controllers\ApiController;
+use App\Http\Requests\Api\School\Teacher\Calendar\Availability\ApplyToFutureWeeksRequest;
 use App\Http\Requests\Api\School\Teacher\Calendar\Availability\DestroyRequest;
 use App\Http\Requests\Api\School\Teacher\Calendar\Availability\FetchRequest;
 use App\Http\Requests\Api\School\Teacher\Calendar\Availability\StoreRequest;
 use App\Http\Requests\Api\School\Teacher\Calendar\Availability\UpdateRequest;
+use App\Http\Translators\Api\School\Teacher\Calendar\Availability\ApplyToFutureWeeksTranslator;
 use App\Http\Translators\Api\School\Teacher\Calendar\Availability\DestroyTranslator;
 use App\Http\Translators\Api\School\Teacher\Calendar\Availability\FetchTranslator;
 use App\Http\Translators\Api\School\Teacher\Calendar\Availability\StoreTranslator;
@@ -32,6 +34,13 @@ class AvailabilityController extends ApiController
     }
 
     public function destroy(DestroyRequest $request, DestroyTranslator $translator)
+    {
+        $translator->translateRequest($request);
+
+        return $this->respondOk();
+    }
+
+    public function applyToFutureWeeks(ApplyToFutureWeeksRequest $request, ApplyToFutureWeeksTranslator $translator)
     {
         $translator->translateRequest($request);
 
