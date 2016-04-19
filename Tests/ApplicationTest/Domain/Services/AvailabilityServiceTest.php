@@ -299,4 +299,28 @@ class AvailabilityServiceTest extends ServiceTestBase
         $this->assertEquals(1, sizeof($weekAvailability->availabilities()));
         $this->assertEquals($weekStartDate->toDateString(), $weekAvailability->availabilities()[0]['date']);
     }
+
+    public function test_applyToFutureWeeks_correctlyCopiesCurrentWeekToADefaultTempalteForTheSameWeek()
+    {
+        // Arrange
+        $weekStartDate = Carbon::now()->startOfWeek()->subDay();
+        $nonDefaultWeekAvailability = new WeekAvailability($this->teacher, $weekStartDate);
+        $a1 = new Availability($weekStartDate->copy()->addDay(), 100, 200);
+        $a2 = new Availability($weekStartDate->copy()->addDays(3), 300, 400);
+        $nonDefaultWeekAvailability->addAvailability($a1);
+        $nonDefaultWeekAvailability->addAvailability($a2);
+        $this->dm->persist($nonDefaultWeekAvailability);
+        $this->dm->flush();
+        $this->teacher->addWeekAvailability($nonDefaultWeekAvailability);
+
+        // Act
+        $this->service->applyToFutureWeeks($this->teacher, $weekStartDate);
+
+        $default = $this->dm->findOneBy(WeekAvailability::class,
+            ['weekStartDate' => $weekStartDate->toDateString(), 'isDefault' => true]);
+
+        // Assert
+        $this->assertNotNull($default);
+        $this->assertEquals(2, sizeof($default->availabilities()));
+    }
 }

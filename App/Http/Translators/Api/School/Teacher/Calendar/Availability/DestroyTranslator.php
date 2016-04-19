@@ -10,8 +10,14 @@ class DestroyTranslator extends AvailabilityTranslator
 {
     public function translateRequest(Request $request)
     {
-        $availability = new Availability(Carbon::parse($request->weekStartDate), 0, 0);
-        $availability->setUniqueId($request->id);
+        $parts = explode('a', $request->id);
+        if (sizeof($parts) != 2)
+        {
+            return false;
+        }
+
+        $availability = new Availability(Carbon::parse($parts[1]), 0, 0);
+        $availability->setUniqueId($parts[0]);
 
         $this->availabilityService->destroy($this->user, $availability);
     }

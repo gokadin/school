@@ -38,7 +38,7 @@ export class AvailabilityService {
             );
     }
 
-    update(availability: Availability): void {
+    update(availability: Availability) {
         return this.http.put('/api/school/teacher/calendar/availabilities/' + availability.id, JSON.stringify({
             date: availability.date.format('YYYY-MM-DD'),
             startTime: availability.startTime,
@@ -46,9 +46,8 @@ export class AvailabilityService {
         }));
     }
 
-    delete(availability: Availability): void {
-        return this.http.delete('/api/school/teacher/calendar/availabilities/' + availability.id,
-            {weekStartDate: availability.date.format('YYYY-MM-DD')});
+    delete(availability: Availability) {
+        return this.http.delete('/api/school/teacher/calendar/availabilities/' + availability.id + 'a' + availability.date.format('YYYY-MM-DD'));
     }
 }
 

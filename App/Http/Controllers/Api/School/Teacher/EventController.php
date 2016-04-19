@@ -29,6 +29,7 @@ class EventController extends ApiController
 
     public function range(RangeRequest $request, RangeTranslator $translator): Response
     {
+        return $this->respondOk([]);
         $data = $translator->translateRequest($request);
 
         return $data ? $this->respondOk($data) : $this->respondBadRequest();

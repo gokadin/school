@@ -14,8 +14,7 @@ class DestroyRequest extends Request
     public function rules(): array
     {
         return [
-            'id' => ['required', 'numeric'],
-            'weekStartDate' => 'required'
+            'id' => 'required'
         ];
     }
 }

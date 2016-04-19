@@ -121,11 +121,11 @@ class WeekAvailability
     {
         $this->decodeAvailabilitiesIfNull();
 
-        for ($i = 0; $i < sizeof($this->decodedJsonData); $i++)
+        foreach ($this->decodedJsonData as $key => $value)
         {
-            if ($this->decodedJsonData[$i]['uniqueId'] == $availability->uniqueId())
+            if ($value['uniqueId'] == $availability->uniqueId())
             {
-                unset($this->decodedJsonData[$i]);
+                unset($this->decodedJsonData[$key]);
 
                 break;
             }
