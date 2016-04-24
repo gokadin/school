@@ -2,6 +2,7 @@
 
 namespace Tests\FrameworkTest\DataMapper;
 
+use Tests\FrameworkTest\TestData\DataMapper\TimeEntity;
 use Tests\FrameworkTest\TestData\DataMapper\Event;
 use Tests\FrameworkTest\TestData\DataMapper\Lesson;
 use Library\DataMapper\DataMapper;
@@ -61,6 +62,15 @@ abstract class DataMapperBaseTest extends BaseTest
     {
         $this->classes = [
             SimpleEntity::class
+        ];
+
+        $this->setUpBase();
+    }
+
+    protected function setUpTimeEntity()
+    {
+        $this->classes = [
+            TimeEntity::class
         ];
 
         $this->setUpBase();

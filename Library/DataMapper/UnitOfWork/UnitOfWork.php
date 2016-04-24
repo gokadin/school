@@ -356,7 +356,7 @@ final class UnitOfWork implements Observable
                 $value = $value == 1 ? true : false;
             }
 
-            if ($column->isTimestamp())
+            if ($column->isDateTime())
             {
                 $value = Carbon::parse($value);
             }

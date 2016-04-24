@@ -12,6 +12,7 @@ class Column
     const TYPE_TEXT = 'text';
     const TYPE_DECIMAL = 'decimal';
     const TYPE_BOOLEAN = 'boolean';
+    const TYPE_DATETIME = 'datetime';
 
     protected $columnName;
     protected $propName;
@@ -53,6 +54,11 @@ class Column
     public function isBoolean()
     {
         return $this->type == self::TYPE_BOOLEAN;
+    }
+
+    public function isDateTime()
+    {
+        return $this->type == self::TYPE_DATETIME;
     }
 
     public function isPrimaryKey()

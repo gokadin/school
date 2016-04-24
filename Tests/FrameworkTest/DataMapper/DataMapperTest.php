@@ -2,6 +2,8 @@
 
 namespace Tests\FrameworkTest\DataMapper;
 
+use Carbon\Carbon;
+use Tests\FrameworkTest\TestData\DataMapper\TimeEntity;
 use Library\DataMapper\Collection\PersistentCollection;
 use Tests\FrameworkTest\TestData\DataMapper\AddressTwo;
 use Library\DataMapper\Collection\EntityCollection;
@@ -353,6 +355,29 @@ class DataMapperTest extends DataMapperBaseTest
         $this->assertEquals($foundS2->getOne(), $s2->getOne());
         $this->assertEquals($foundS3->getOne(), $s3->getOne());
         $this->assertEquals($foundS3->getTwo(), $s3->getTwo());
+    }
+
+    /*
+     * DATETIME TESTS
+     */
+
+    public function testDateTimePropertyIsAlwaysHydratedAsCarbonInstance()
+    {
+        // Arrange
+        $this->setUpTimeEntity();
+        $a = new TimeEntity(Carbon::now());
+        $this->dm->persist($a);
+        $this->dm->flush();
+        $this->dm->detachAll();
+
+        // Act
+        $a = $this->dm->find(TimeEntity::class, $a->getId());
+
+        // Assert
+        $this->assertNotNull($a);
+        $this->assertTrue($a->createdAt() instanceof Carbon);
+        $this->assertTrue($a->updatedAt() instanceof Carbon);
+        $this->assertTrue($a->date() instanceof Carbon);
     }
 
     /*
