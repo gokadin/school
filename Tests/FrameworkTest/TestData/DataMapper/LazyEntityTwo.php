@@ -9,6 +9,8 @@ class LazyEntityTwo
 {
     use DataMapperPrimaryKey;
 
+    public $publicProp = 'public';
+
     /** @Column(type="string") */
     private $name;
 
