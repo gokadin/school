@@ -157,7 +157,17 @@ class AvailabilityService extends Service
             return false;
         }
 
-        $default = $this->availabilityProcessor->copyToDefaultTemplate($weekAvailability);
-        $this->availabilityRepository->store($default);
+        $default = $this->availabilityRepository->getCurrentDefault($teacher, $weekStartDate);
+
+        if (is_null($default))
+        {
+            $default = $this->availabilityProcessor->copyToDefaultTemplate($weekAvailability);
+            $this->availabilityRepository->store($default);
+            return true;
+        }
+
+        $default->setJsonData($weekAvailability->jsonData());
+        $default->setNextAvailabilityId($weekAvailability->nextAvailabilityId());
+        $this->availabilityRepository->update($default);
     }
 }

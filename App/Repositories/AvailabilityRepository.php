@@ -26,6 +26,14 @@ class AvailabilityRepository extends RepositoryBase
             ->first();
     }
 
+    public function getCurrentDefault(Teacher $teacher, Carbon $weekStartDate)
+    {
+        return $teacher->weekAvailabilities()
+            ->where('isDefault', '=', true)
+            ->where('weekStartDate', '=', $weekStartDate->toDateString())
+            ->first();
+    }
+
     public function store(WeekAvailability $availability)
     {
         $this->dm->persist($availability);
