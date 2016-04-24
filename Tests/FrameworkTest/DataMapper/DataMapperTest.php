@@ -3,6 +3,9 @@
 namespace Tests\FrameworkTest\DataMapper;
 
 use Carbon\Carbon;
+use Library\DataMapper\Proxy\ProxyEntity;
+use Tests\FrameworkTest\TestData\DataMapper\LazyEntityOne;
+use Tests\FrameworkTest\TestData\DataMapper\LazyEntityTwo;
 use Tests\FrameworkTest\TestData\DataMapper\TimeEntity;
 use Library\DataMapper\Collection\PersistentCollection;
 use Tests\FrameworkTest\TestData\DataMapper\AddressTwo;

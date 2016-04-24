@@ -15,6 +15,7 @@ use Library\DataMapper\Observer;
 use Library\DataMapper\Persisters\BatchEntityPersister;
 use Library\DataMapper\Persisters\EntityPersister;
 use Library\DataMapper\Persisters\SingleEntityPersister;
+use Library\DataMapper\Proxy\ProxyEntity;
 
 /**
  * Keeps track of all entities known to data mapper
@@ -388,11 +389,24 @@ final class UnitOfWork implements Observable
 
     private function buildHasOne($entity, Metadata $metadata, Association $association, array $data)
     {
-        $assocEntity = $this->find($association->target(), $data[$association->column()->name()]);
+        $value = null;
 
-        if (!is_null($assocEntity))
+        if ($this->isLoaded($association->target(), $data[$association->column()->name()]))
         {
-            $metadata->reflProp($association->propName())->setValue($entity, $assocEntity);
+            $value = $this->entities[$this->idMap[$association->target()][$data[$association->column()->name()]]];
+        }
+        else if ($association->isLazy())
+        {
+            $value = new ProxyEntity();
+        }
+        else
+        {
+            $value = $this->loadSingle($association->target(), $data[$association->column()->name()]);
+        }
+
+        if (!is_null($value))
+        {
+            $metadata->reflProp($association->propName())->setValue($entity, $value);
         }
     }
 
@@ -598,6 +612,7 @@ final class UnitOfWork implements Observable
                 switch ($association->type())
                 {
                     case Metadata::ASSOC_HAS_ONE:
+                        continue 2;
                     case Metadata::ASSOC_BELONGS_TO:
                         if ($classes[$assocClass] < $number)
                         {

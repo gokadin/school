@@ -2,6 +2,7 @@
 
 namespace Library\DataMapper\Mapping\Drivers;
 
+use Library\DataMapper\Mapping\Association;
 use Library\DataMapper\Mapping\Column;
 use Library\DataMapper\Mapping\Metadata;
 use ReflectionClass;
@@ -67,6 +68,9 @@ class AnnotationDriver
                 $target = $parsedProperty[Metadata::ASSOC_HAS_ONE]['target'];
                 $targetShortName = substr($target, strrpos($target, '\\') + 1);
                 $nullable = isset($parsedProperty[Metadata::ASSOC_HAS_ONE]['nullable']);
+                $load = isset($parsedProperty[Metadata::ASSOC_HAS_ONE]['load']) && $parsedProperty[Metadata::ASSOC_HAS_ONE]['load'] == 'always'
+                    ? Association::LOAD_ALWAYS
+                    : Association::LOAD_LAZY;
 
                 $cascades = [];
                 if (isset($parsedProperty[Metadata::ASSOC_HAS_ONE]['cascade']))
@@ -75,13 +79,16 @@ class AnnotationDriver
                     $cascades =  array_map('trim', explode(',', $cascadeString));
                 }
 
-                $metadata->addHasOneAssociation($targetShortName, $property->getName(), $target, $cascades, $nullable);
+                $metadata->addHasOneAssociation($targetShortName, $property->getName(), $target, $cascades, $nullable, $load);
             }
             else if (isset($parsedProperty[Metadata::ASSOC_BELONGS_TO]))
             {
                 $target = $parsedProperty[Metadata::ASSOC_BELONGS_TO]['target'];
                 $targetShortName = substr($target, strrpos($target, '\\') + 1);
                 $nullable = isset($parsedProperty[Metadata::ASSOC_BELONGS_TO]['nullable']);
+                $load = isset($parsedProperty[Metadata::ASSOC_HAS_ONE]['load']) && $parsedProperty[Metadata::ASSOC_HAS_ONE]['load'] == 'always'
+                    ? Association::LOAD_ALWAYS
+                    : Association::LOAD_LAZY;
 
                 $cascades = [];
                 if (isset($parsedProperty[Metadata::ASSOC_BELONGS_TO]['cascade']))
@@ -90,7 +97,7 @@ class AnnotationDriver
                     $cascades =  array_map('trim', explode(',', $cascadeString));
                 }
 
-                $metadata->addBelongsToAssociation($targetShortName, $property->getName(), $target, $cascades, $nullable);
+                $metadata->addBelongsToAssociation($targetShortName, $property->getName(), $target, $cascades, $nullable, $load);
             }
         }
 

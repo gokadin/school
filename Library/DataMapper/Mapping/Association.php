@@ -4,6 +4,9 @@ namespace Library\DataMapper\Mapping;
 
 class Association
 {
+    const LOAD_ALWAYS = 'LOAD_ALWAYS';
+    const LOAD_LAZY = 'LOAD_LAZY';
+
     /**
      * @var Column
      */
@@ -24,7 +27,10 @@ class Association
 
     private $mappedBy;
 
-    public function __construct($column, $type, $target, $propName, array $cascades, $isNullable, $mappedBy = null)
+    private $load;
+
+    public function __construct($column, $type, $target, $propName, array $cascades, $isNullable,
+                                $mappedBy = null, $load = 'LOAD_LAZY')
     {
         $this->column = $column;
         $this->type = $type;
@@ -33,6 +39,7 @@ class Association
         $this->cascades = $cascades;
         $this->isNullable = $isNullable;
         $this->mappedBy = $mappedBy;
+        $this->load = $load;
     }
 
     public function column()
@@ -68,6 +75,11 @@ class Association
     public function mappedBy()
     {
         return $this->mappedBy;
+    }
+
+    public function isLazy()
+    {
+        return $this->load == self::LOAD_LAZY;
     }
 
     public function hasDeleteCascade()

@@ -2,6 +2,8 @@
 
 namespace Tests\FrameworkTest\DataMapper;
 
+use Tests\FrameworkTest\TestData\DataMapper\LazyEntityOne;
+use Tests\FrameworkTest\TestData\DataMapper\LazyEntityTwo;
 use Tests\FrameworkTest\TestData\DataMapper\TimeEntity;
 use Tests\FrameworkTest\TestData\DataMapper\Event;
 use Tests\FrameworkTest\TestData\DataMapper\Lesson;
@@ -71,6 +73,16 @@ abstract class DataMapperBaseTest extends BaseTest
     {
         $this->classes = [
             TimeEntity::class
+        ];
+
+        $this->setUpBase();
+    }
+
+    protected function setUpLazyEntities()
+    {
+        $this->classes = [
+            LazyEntityOne::class,
+            LazyEntityTwo::class
         ];
 
         $this->setUpBase();

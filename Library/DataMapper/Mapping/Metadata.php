@@ -134,7 +134,7 @@ class Metadata
         return sizeof($this->associations) > 0;
     }
 
-    public function addHasOneAssociation($columnName, $propName, $target, $cascades, $nullable)
+    public function addHasOneAssociation($columnName, $propName, $target, $cascades, $nullable, $load)
     {
         $column = new Column(lcfirst($columnName).'_id', $propName, 'integer', AnnotationDriver::DEFAULT_INTEGER_SIZE);
         $column->setForeignKey();
@@ -142,10 +142,10 @@ class Metadata
         $this->columns[$columnName] = $column;
 
         $this->associations[$propName] = new Association(
-            $column, self::ASSOC_HAS_ONE, $target, $propName, $cascades, $nullable);
+            $column, self::ASSOC_HAS_ONE, $target, $propName, $cascades, $nullable, null, $load);
     }
 
-    public function addBelongsToAssociation($columnName, $propName, $target, $cascades, $nullable)
+    public function addBelongsToAssociation($columnName, $propName, $target, $cascades, $nullable, $load)
     {
         $column = new Column(lcfirst($columnName).'_id', $propName, 'integer', AnnotationDriver::DEFAULT_INTEGER_SIZE);
         $column->setForeignKey();
@@ -153,7 +153,7 @@ class Metadata
         $this->columns[$columnName] = $column;
 
         $this->associations[$propName] = new Association(
-            $column, self::ASSOC_BELONGS_TO, $target, $propName, $cascades, $nullable);
+            $column, self::ASSOC_BELONGS_TO, $target, $propName, $cascades, $nullable, null, $load);
     }
 
     public function addHasManyAssociation($propName, $target, $cascades, $nullable, $mappedBy)
