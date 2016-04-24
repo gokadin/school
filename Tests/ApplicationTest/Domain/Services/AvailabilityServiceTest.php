@@ -356,9 +356,44 @@ class AvailabilityServiceTest extends ServiceTestBase
         $this->assertEquals($a2->uniqueId(), $default->availabilities()[0]['uniqueId']);
         $this->assertEquals($a2->startTime(), $default->availabilities()[0]['startTime']);
     }
-//
-//    public function test_applyToFutureWeeks_shouldRemoveAllFutureDefaultAvailabilities()
-//    {
-//
-//    }
+
+    public function test_applyToFutureWeeks_shouldRemoveAllFutureDefaultAvailabilities()
+    {
+        // Arrange
+        $weekStartDate = Carbon::now()->startOfWeek()->subDay();
+        $default = new WeekAvailability($this->teacher, $weekStartDate);
+        $default->setAsDefault();
+        $a1 = new Availability($weekStartDate, 100, 200);
+        $default->addAvailability($a1);
+        $this->dm->persist($default);
+        $this->teacher->addWeekAvailability($default);
+
+        for ($i = 0; $i < 5; $i++)
+        {
+            $d = new WeekAvailability($this->teacher, $weekStartDate->copy()->addWeek($i + 2));
+            $d->setAsDefault();
+            $this->dm->persist($d);
+        }
+
+        $nonDefault = new WeekAvailability($this->teacher, $weekStartDate);
+        $a2 = new Availability($weekStartDate, 300, 400);
+        $nonDefault->addAvailability($a2);
+        $this->dm->persist($nonDefault);
+        $this->teacher->addWeekAvailability($nonDefault);
+
+        $this->dm->flush();
+        $this->dm->detachAll();
+
+        // Act
+        $this->teacher = $this->dm->find(Teacher::class, $this->teacher->getId());
+        $this->service->applyToFutureWeeks($this->teacher, $weekStartDate);
+
+        $defaults = $this->teacher->weekAvailabilities()
+            ->where('isDefault', '=', true)
+            ->where('weekStartDate', '>', $weekStartDate->toDateString())
+            ->toArray();
+
+        // Assert
+        $this->assertEquals(0, sizeof($defaults));
+    }
 }

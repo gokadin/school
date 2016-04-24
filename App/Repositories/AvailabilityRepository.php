@@ -34,6 +34,14 @@ class AvailabilityRepository extends RepositoryBase
             ->first();
     }
 
+    public function removeFutureTemplates(Carbon $weekStartDate)
+    {
+        $this->dm->queryBuilder()->table('week_availabilities')
+            ->where('isDefault', '=', true)
+            ->where('weekStartDate', '>=', $weekStartDate->copy()->addWeek()->toDateString())
+            ->delete();
+    }
+
     public function store(WeekAvailability $availability)
     {
         $this->dm->persist($availability);

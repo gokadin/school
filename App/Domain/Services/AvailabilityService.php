@@ -162,12 +162,19 @@ class AvailabilityService extends Service
         if (is_null($default))
         {
             $default = $this->availabilityProcessor->copyToDefaultTemplate($weekAvailability);
+            $this->removeFutureTemplates($weekStartDate);
             $this->availabilityRepository->store($default);
             return true;
         }
 
         $default->setJsonData($weekAvailability->jsonData());
         $default->setNextAvailabilityId($weekAvailability->nextAvailabilityId());
+        $this->removeFutureTemplates($weekStartDate);
         $this->availabilityRepository->update($default);
+    }
+
+    private function removeFutureTemplates(Carbon $weekStartDate)
+    {
+        $this->availabilityRepository->removeFutureTemplates($weekStartDate);
     }
 }
