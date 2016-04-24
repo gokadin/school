@@ -798,6 +798,11 @@ final class UnitOfWork implements Observable
         $column = $association->column();
         $assocValue = $metadata->reflProp($column->propName())->getValue($this->entities[$oid]);
 
+        if ($assocValue instanceof ProxyEntity)
+        {
+            return $assocValue->getId();
+        }
+
         if (is_null($assocValue))
         {
             if ($association->isNullable())

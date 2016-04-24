@@ -41,6 +41,11 @@ class ProxyEntity
         $this->parentId = $parentId;
     }
 
+    public function getId()
+    {
+        return $this->id;
+    }
+
     public function __get($name)
     {
         $entity = $this->resolve();
