@@ -397,7 +397,8 @@ final class UnitOfWork implements Observable
         }
         else if ($association->isLazy())
         {
-            $value = new ProxyEntity();
+            $value = new ProxyEntity($this, $association, $data[$association->column()->name()],
+                $metadata->className(), $data[$metadata->primaryKey()->name()]);
         }
         else
         {
@@ -1074,6 +1075,16 @@ final class UnitOfWork implements Observable
         return $changeSet;
     }
 
+    public function replaceProxy(string $parentClass, string $parentId, string $propName, $replacement)
+    {
+        if (!isset($this->idMap[$parentClass][$parentId]))
+        {
+            return;
+        }
+
+        $metadata = $this->dm->getMetadata($parentClass);
+        $metadata->reflProp($propName)->setValue($this->entities[$this->idMap[$parentClass][$parentId]], $replacement);
+    }
 
     public function subscribe(Observer $observer)
     {
