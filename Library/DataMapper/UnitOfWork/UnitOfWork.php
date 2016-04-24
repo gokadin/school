@@ -389,6 +389,11 @@ final class UnitOfWork implements Observable
 
     private function buildHasOne($entity, Metadata $metadata, Association $association, array $data)
     {
+        if (is_null($data[$association->column()->name()]))
+        {
+            return;
+        }
+
         $value = null;
 
         if ($this->isLoaded($association->target(), $data[$association->column()->name()]))

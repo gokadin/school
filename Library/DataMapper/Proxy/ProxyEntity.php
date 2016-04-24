@@ -18,7 +18,7 @@ class ProxyEntity
     private $association;
 
     /**
-     * @var int
+     * @var mixed
      */
     private $id;
 
@@ -32,8 +32,7 @@ class ProxyEntity
      */
     private $parentId;
 
-    public function __construct(UnitOfWork $uow, Association $association, int $id,
-                                string $parentClass, $parentId)
+    public function __construct(UnitOfWork $uow, Association $association, $id, string $parentClass, $parentId)
     {
         $this->uow = $uow;
         $this->association = $association;
